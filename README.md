@@ -1,19 +1,13 @@
 # picx
 
-## Project setup
-```
-npm install
-```
+使用 GitHub API 搭建的图床管理器，免费、稳定、简单、高效、不限容量。
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## 项目依赖
 
-### Compiles and minifies for production
-```
-npm run build
-```
+### UI 库 Element UI
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+### 网络请求 Axios
+
+## Licence
+
+[MIT](https://github.com/XPoet/picx/blob/master/LICENSE) Copyright (c) 2020 XPoet
