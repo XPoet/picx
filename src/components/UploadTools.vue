@@ -21,7 +21,7 @@
     <div class="tool-item">
       <el-switch
         v-model="rename"
-        inactive-text="重命名"
+        inactive-text="哈希命名"
         @change="renameChange"
       >
       </el-switch>
@@ -52,8 +52,14 @@
       return {
         setMaxSize: false,
         maxSize: 200,
-        rename: false,
+        rename: true,
       }
+    },
+
+    mounted() {
+      this.setMaxSizeChange(this.setMaxSize)
+      this.maxSizeChange(this.maxSize)
+      this.renameChange(this.rename)
     },
 
 

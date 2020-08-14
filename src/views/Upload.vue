@@ -1,30 +1,90 @@
 <template>
 
-  <div>
+  <div class="upload-page-container">
 
-    <div class="upload-container">
+    <!-- 上传区域 -->
+    <el-row class="row-item">
       <div class="upload-area"
            @dragover.prevent
            @drop.stop.prevent="onDrop"
            @paste="onPaste"
       >
         <label class="target" for="uploader"></label>
-        <input id="uploader" @change="onFileChange" type="file">
-        <h3 v-if="!previewImg">将图片拖至此处，或点击上传</h3>
+        <input id="uploader" type="file" @change="onFileChange">
+        <div class="tips" v-if="!previewImg">
+          <i class="icon el-icon-upload"></i>
+          <div class="text">将图片拖至此处，或点击此处</div>
+        </div>
         <img v-if="previewImg" class="target" :src="previewImg">
       </div>
-    </div>
+    </el-row>
 
-    <div class="upload-tools">
-      <UploadTools
-        @is-set-max-size="onSetMaxSizeChane"
-        @is-rename="onRenameChange"
-        @max-size="onMaxSizeChange"
-        @upload-reset="uploadReset"
-        @upload-file="uploadFile"
-      />
-    </div>
+    <!-- 上传状态 -->
+    <el-row class="row-item"
+            v-if="previewImg"
+    >
+      <div class="upload-progress">
+        <div class="filename"
+        >{{ fileName }}
+        </div>
 
+        <div class="upload-tips wait-upload" v-if="!uploading">
+          等待上传 <i class="el-icon-upload2"></i>
+        </div>
+
+        <div class="upload-tips uploading" v-if="uploading && uploadProgress !== 100">
+          正在上传 <i class="el-icon-loading"></i>
+        </div>
+
+        <div class="upload-tips uploaded" v-if="uploadProgress === 100">
+          上传完成 <i class="el-icon-circle-check"></i>
+        </div>
+      </div>
+    </el-row>
+
+    <!-- 外链 -->
+    <el-row class="row-item">
+      <div class="external-link">
+        <el-input placeholder="复制GitHub外链..."
+                  size="mini"
+                  v-model="GitHubExternalLink"
+                  ref="GitHubExternalLinkInput"
+                  readonly
+        >
+          <template slot="prepend">GitHub外链：</template>
+          <el-button slot="append"
+                     icon="el-icon-copy-document"
+                     @click="copyLink('github')"
+          >复制</el-button>
+        </el-input>
+        <el-input placeholder="复制CDN外链..."
+                  size="mini"
+                  v-model="CDNExternalLink"
+                  ref="CDNExternalLinkInput"
+                  readonly
+        >
+          <template slot="prepend">CDN外链：</template>
+          <el-button slot="append"
+                     icon="el-icon-copy-document"
+                     @click="copyLink('cdn')"
+
+          >复制
+          </el-button>
+        </el-input>
+      </div>
+    </el-row>
+
+    <el-row class="row-item">
+      <div class="upload-tools">
+        <UploadTools
+          @is-set-max-size="onSetMaxSizeChane"
+          @is-rename="onRenameChange"
+          @max-size="onMaxSizeChange"
+          @upload-reset="uploadReset"
+          @upload-file="uploadFile"
+        />
+      </div>
+    </el-row>
   </div>
 
 </template>
@@ -36,6 +96,7 @@
   import filenameHandle from "../utils/filenameHandle";
   import Axios from 'axios'
   import uploadUrlHandle from "../utils/uploadUrlHandle";
+  import generateExternalLink from "../utils/generateExternalLink";
 
   export default {
     name: "Upload",
@@ -49,10 +110,18 @@
         previewImg: '',
         imgBase64: '',
         fileName: '',
+        uploadProgress: 0,
+        uploading: false,
         autoUpload: false,
         compressSize: 200,
         setMaxSize: false,
-        renameWithHash: true,
+        renameWithHash: false,
+
+        // GitHub 外链
+        GitHubExternalLink: '',
+
+        // CDN 外链
+        CDNExternalLink: '',
       }
     },
 
@@ -63,7 +132,6 @@
 
       onRenameChange(e) {
         this.renameWithHash = e;
-        console.log(this.renameWithHash);
       },
 
       onMaxSizeChange(e) {
@@ -73,6 +141,11 @@
       uploadReset() {
         this.imgBase64 = ''
         this.previewImg = ''
+        this.fileName = ''
+        this.GitHubExternalLink = ''
+        this.CDNExternalLink = ''
+        this.uploadProgress = 0
+        this.uploading = false
       },
 
       uploadFile() {
@@ -81,6 +154,10 @@
         if (config) {
           config = JSON.parse(config)
           if (this.imgBase64 && this.fileName) {
+
+            this.uploading = true;
+
+
             const data = {
               "message": "upload from PicX",
               "branch": config.branch ? config.branch : 'master',
@@ -104,7 +181,14 @@
               .then(res => {
                 console.log('res', res);
                 if (res.status === 201 && res.statusText === 'Created') {
+                  this.uploadProgress = 100;
                   this.$message.success('上传成功！')
+
+
+                  // 生成外链
+                  this.GitHubExternalLink = generateExternalLink('github', res.data.content, config)
+                  this.CDNExternalLink = generateExternalLink('cdn', res.data.content, config)
+
                 }
               })
               .catch(error => {
@@ -121,6 +205,22 @@
           this.$router.push('/config')
         }
 
+      },
+
+      copyLink(type) {
+
+        switch (type) {
+
+          case 'cdn':
+            this.$refs.CDNExternalLinkInput.select()
+            break;
+
+          case 'github':
+            this.$refs.GitHubExternalLinkInput.select()
+            break;
+        }
+        document.execCommand('copy')
+        this.$message.success('复制成功！')
       },
 
       getImage(url, fileName) {
@@ -172,26 +272,35 @@
 
 <style scoped lang="scss">
 
-  .upload-container {
+  $color: #0077b8;
 
+  .upload-page-container {
+
+    width: 100%;
+    height: 100%;
     position: relative;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
 
-    /*background: skyblue;*/
+    .row-item {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
 
     .upload-area {
       position: relative;
       width: 600px;
       height: 300px;
-      border: 2px dashed #666;
+      border: 4px dashed #999;
       display: flex;
       align-items: center;
       justify-content: center;
 
       &:hover {
-        border-color: #0080ef;
+        border-color: $color;
         cursor: pointer;
       }
 
@@ -210,11 +319,21 @@
         top: -9999px;
       }
 
-      h3 {
+
+      .tips {
         text-align: center;
-        cursor: default;
-        color: #C0C4CC;
+        color: #aaa;
+
+        .icon {
+          font-size: 100px;
+          margin-bottom: 10px;
+        }
+
+        .text {
+          font-size: 20px;
+        }
       }
+
 
       img {
         object-fit: cover;
@@ -224,13 +343,53 @@
 
     }
 
+    .upload-progress {
+      width: 600px;
+      padding: 5px;
+      background: #f1f1f1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #666;
 
-  }
+      .upload-tips {
 
-  .upload-tools {
-    position: relative;
-    display: flex;
-    padding: 20px;
+        display: flex;
+        align-items: center;
+
+        font-size: 14px;
+
+        i {
+          margin-left: 2px;
+          font-size: 20px;
+        }
+      }
+
+      .wait-upload {
+        color: #409EFF;
+      }
+
+      .uploading {
+        color: #E6A23C;
+      }
+
+      .uploaded {
+        color: #67C23A;
+      }
+
+    }
+
+    .external-link {
+      width: 600px;
+    }
+
+    .upload-tools {
+      position: relative;
+      width: 600px;
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+
   }
 
 
