@@ -1,47 +1,49 @@
 <template>
-  <el-form :model="ruleForm"
-           :rules="rules"
-           ref="ruleForm"
-           label-width="100px"
-           label-position="right"
-           class="demo-ruleForm"
-  >
-    <el-form-item label="Token" prop="token">
-      <el-input v-model="ruleForm.token"></el-input>
-    </el-form-item>
+  <div class="config-page-container">
+    <el-form :model="ruleForm"
+             :rules="rules"
+             ref="ruleForm"
+             label-width="100px"
+             label-position="right"
+             class="config-form"
+    >
+      <el-form-item label="Token" prop="token">
+        <el-input v-model="ruleForm.token"></el-input>
+      </el-form-item>
 
-    <el-form-item label="用户名" prop="username">
-      <el-input v-model="ruleForm.username"></el-input>
-    </el-form-item>
+      <el-form-item label="用户名" prop="username">
+        <el-input v-model="ruleForm.username"></el-input>
+      </el-form-item>
 
-    <el-form-item label="邮箱" prop="email">
-      <el-input v-model="ruleForm.email"></el-input>
-    </el-form-item>
+      <el-form-item label="邮箱" prop="email">
+        <el-input v-model="ruleForm.email"></el-input>
+      </el-form-item>
 
-    <el-form-item label="仓库名" prop="repository">
-      <el-input v-model="ruleForm.repository"></el-input>
-    </el-form-item>
+      <el-form-item label="仓库名" prop="repository">
+        <el-input v-model="ruleForm.repository"></el-input>
+      </el-form-item>
 
-    <el-form-item label="路径" prop="path">
-      <el-input v-model="ruleForm.path"></el-input>
-    </el-form-item>
+      <el-form-item label="路径" prop="path">
+        <el-input v-model="ruleForm.path"></el-input>
+      </el-form-item>
 
-    <el-form-item label="分支" prop="branch">
-      <el-input v-model="ruleForm.branch"></el-input>
-    </el-form-item>
+      <el-form-item label="分支" prop="branch">
+        <el-input v-model="ruleForm.branch"></el-input>
+      </el-form-item>
 
-    <el-form-item>
-      <el-button type="primary"
-                 @click="submitForm('ruleForm')"
-      >
-        保存
-      </el-button>
-      <el-button @click="resetForm('ruleForm')"
-      >
-        重置
-      </el-button>
-    </el-form-item>
-  </el-form>
+      <el-form-item>
+        <el-button type="primary"
+                   @click="submitForm('ruleForm')"
+        >
+          保存
+        </el-button>
+        <el-button @click="resetForm('ruleForm')"
+        >
+          重置
+        </el-button>
+      </el-form-item>
+    </el-form>
+  </div>
 </template>
 
 <script>
@@ -110,6 +112,9 @@
   }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+  .config-page-container {
+    padding: 20px;
+  }
 
 </style>
