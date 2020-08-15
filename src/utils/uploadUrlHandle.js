@@ -2,18 +2,18 @@ const uploadUrlHandle = (config, filename) => {
 
   const baseUrl = 'https://api.github.com/repos'
 
-  let path = config.path
+  let dir = config.selectedDir
 
-  if (!config.path) {
+  if (!config.selectedDir) {
 
     const now = new Date()
     const y = now.getFullYear()
     const m = now.getMonth() + 1
     const d = now.getDate()
-    path = `${y}${m < 10 ? '0' + m : m}${d < 10 ? '0' + d : d}`;
+    dir = `${y}${m < 10 ? '0' + m : m}${d < 10 ? '0' + d : d}`;
   }
 
-  return `${baseUrl}/${config.username}/${config.repository}/contents/${path}/${filename}`
+  return `${baseUrl}/${config.username}/${config.selectedRepos}/contents/${dir}/${filename}`
 
 }
 

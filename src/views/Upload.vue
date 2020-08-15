@@ -97,6 +97,7 @@
   import Axios from 'axios'
   import uploadUrlHandle from "../utils/uploadUrlHandle";
   import generateExternalLink from "../utils/generateExternalLink";
+  import {picx_key} from "../utils/localStorage";
 
   export default {
     name: "Upload",
@@ -150,17 +151,14 @@
 
       uploadFile() {
 
-        let config = localStorage.getItem('PICX')
+        let config = localStorage.getItem(picx_key)
         if (config) {
           config = JSON.parse(config)
           if (this.imgBase64 && this.fileName) {
-
             this.uploading = true;
-
-
             const data = {
               "message": "upload from PicX",
-              "branch": config.branch ? config.branch : 'master',
+              "branch": "master",
               "committer": {
                 "name": config.username,
                 "email": config.email,
@@ -202,7 +200,7 @@
 
         } else {
           this.$message.info('请先进行图床配置！')
-          this.$router.push('/config')
+          this.$router.push('config')
         }
 
       },
@@ -276,8 +274,9 @@
 
   .upload-page-container {
 
-    width: 100%;
-    height: 100%;
+    padding: 20px;
+
+
     position: relative;
 
     .row-item {
