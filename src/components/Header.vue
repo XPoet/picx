@@ -28,7 +28,7 @@
 </template>
 
 <script>
-  import Axios from "axios";
+  import { picx_key } from "../utils/localStorage";
 
   export default {
     name: "Header",
@@ -62,24 +62,11 @@
 
       getUserInfo() {
 
-        let config = localStorage.getItem('PICX')
+        let config = localStorage.getItem(picx_key)
         if (config) {
           config = JSON.parse(config)
-          Axios.get(
-            'https://api.github.com/user',
-            {
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `token ${config.token}`
-              }
-            }
-          ).then(res => {
-            console.log('res', res);
-            if (res.status === 200) {
-              this.avatarUrl = res.data['avatar_url']
-              this.username = res.data['name']
-            }
-          })
+          this.username = config.nickname
+          this.avatarUrl = config.avatar_url
         }
 
       },
