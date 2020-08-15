@@ -219,14 +219,21 @@
       },
 
       resetToken() {
-        this.token = ''
-        this.ruleForm.token = ''
-        this.ruleForm.username = ''
-        this.ruleForm.nickname = ''
-        this.ruleForm.email = ''
-        this.ruleForm.avatar_url = ''
-        this.ruleForm.selectedRepos = ''
-        this.ruleForm.reposList = []
+        for (let ruleFormKey in this.ruleForm) {
+
+          const type = Object.prototype.toString.call(this.ruleForm[ruleFormKey]).split(' ')[1]
+
+          const targetType = type.substring(0, type.length - 1)
+
+          if (targetType === 'String') {
+            this.ruleForm[ruleFormKey] = ''
+          }
+
+          if (targetType === 'Array') {
+            this.ruleForm[ruleFormKey] = []
+          }
+
+        }
         this.persistUserInfo()
       },
     }
