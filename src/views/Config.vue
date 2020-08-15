@@ -1,47 +1,32 @@
 <template>
   <div class="config-page-container">
-    <el-form label-width="100px"
+    <el-form label-width="70px"
              label-position="right"
+             class="config-form"
     >
       <el-form-item label="Token" prop="token">
         <el-input v-model="token"></el-input>
       </el-form-item>
 
-      <el-form-item>
-        <el-button type="primary"
-                   @click="getUserInfo()"
-        >
-          确认Token
-        </el-button>
-        <el-button @click="resetToken('ruleForm')"
-        >
-          重置Token
-        </el-button>
-      </el-form-item>
-    </el-form>
-
-    <el-form :model="ruleForm"
-             ref="ruleForm"
-             label-width="100px"
-             label-position="right"
-    >
-      <el-form-item label="Token" prop="token" v-show="0">
-        <el-input v-model="ruleForm.token" readonly></el-input>
-      </el-form-item>
-
-      <el-form-item label="用户名" prop="username">
+      <el-form-item
+        v-if="ruleForm.username"
+        label="用户名" prop="username">
         <el-input v-model="ruleForm.username" readonly></el-input>
       </el-form-item>
 
-      <el-form-item label="邮箱" prop="email">
+      <el-form-item
+        v-if="ruleForm.email"
+        label="邮箱" prop="email">
         <el-input v-model="ruleForm.email" readonly></el-input>
       </el-form-item>
 
-      <el-form-item label="仓库名" prop="repository">
+      <el-form-item
+        v-if="ruleForm.reposList.length"
+        label="选择仓库" prop="repository">
         <el-select v-model="ruleForm.selectedRepos"
                    filterable
                    style="width: 100%"
-                   placeholder="请选择仓库..."
+                   placeholder="请选择图床仓库..."
                    @change="selectRepos"
         >
           <el-option
@@ -55,6 +40,17 @@
 
       </el-form-item>
 
+      <el-form-item class="operation-btns">
+        <el-button @click="resetToken('ruleForm')"
+        >
+          重置
+        </el-button>
+        <el-button type="primary"
+                   @click="getUserInfo()"
+        >
+          绑定
+        </el-button>
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -69,15 +65,15 @@
 
     data() {
       return {
-        token: '3745038ae476c8adf8905f31a13525759d242146',
+        token: '',
         ruleForm: {
           token: '',
           username: '',
           email: '',
-          selectedRepos: '',
           nickname: '',
           avatar_url: '',
-          reposList: []
+          reposList: [],
+          selectedRepos: ''
         },
       };
     },
@@ -153,8 +149,7 @@
           })
       },
 
-      selectRepos(repos) {
-        this.ruleForm.selectedRepos = repos
+      selectRepos() {
         this.persistUserInfo()
       },
 
@@ -189,6 +184,17 @@
 <style scoped lang="scss">
   .config-page-container {
     padding: 20px;
+
+    .config-form {
+
+      .operation-btns {
+        float: right;
+
+        .el-button {
+          margin-left: 20px;
+        }
+      }
+    }
   }
 
 </style>
