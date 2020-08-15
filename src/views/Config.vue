@@ -94,6 +94,8 @@
           this.ruleForm.email = config.email
           this.ruleForm.selectedRepos = config.selectedRepos
           this.ruleForm.reposList = config.reposList
+          this.ruleForm.nickname = config.nickname
+          this.ruleForm.avatar_url = config.avatar_url
         }
 
       },
@@ -122,8 +124,6 @@
         } else {
           this.$message.warning('Token 不能为空！')
         }
-
-
       },
 
       getReposList(repos_url) {
