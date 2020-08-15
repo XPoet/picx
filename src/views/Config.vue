@@ -4,25 +4,28 @@
              label-position="right"
              class="config-form"
     >
-      <el-form-item label="Token" prop="token">
+      <el-form-item label="Token">
         <el-input v-model="token"></el-input>
       </el-form-item>
 
       <el-form-item
         v-if="ruleForm.username"
-        label="用户名" prop="username">
+        label="用户名"
+      >
         <el-input v-model="ruleForm.username" readonly></el-input>
       </el-form-item>
 
       <el-form-item
         v-if="ruleForm.email"
-        label="邮箱" prop="email">
+        label="邮箱"
+      >
         <el-input v-model="ruleForm.email" readonly></el-input>
       </el-form-item>
 
       <el-form-item
         v-if="ruleForm.reposList.length"
-        label="选择仓库" prop="repository">
+        label="选择仓库"
+      >
         <el-select v-model="ruleForm.selectedRepos"
                    filterable
                    style="width: 100%"
@@ -31,6 +34,28 @@
         >
           <el-option
             v-for="repos in ruleForm.reposList"
+            :key="repos.value"
+            :label="repos.label"
+            :value="repos.value"
+          >
+          </el-option>
+        </el-select>
+
+      </el-form-item>
+
+      <el-form-item
+        v-if="ruleForm.dirList.length"
+        label="选择目录"
+      >
+        <el-select v-model="ruleForm.selectedDir"
+                   filterable
+                   style="width: 100%"
+                   placeholder="请选择目录..."
+                   :clearable="true"
+                   @change="selectDir"
+        >
+          <el-option
+            v-for="repos in ruleForm.dirList"
             :key="repos.value"
             :label="repos.label"
             :value="repos.value"
@@ -72,8 +97,10 @@
           email: '',
           nickname: '',
           avatar_url: '',
+          selectedRepos: '',
           reposList: [],
-          selectedRepos: ''
+          selectedDir: '',
+          dirList: []
         },
       };
     },
@@ -89,13 +116,10 @@
         if (config) {
           config = JSON.parse(config)
           this.token = config.token
-          this.ruleForm.token = config.token
-          this.ruleForm.username = config.username
-          this.ruleForm.email = config.email
-          this.ruleForm.selectedRepos = config.selectedRepos
-          this.ruleForm.reposList = config.reposList
-          this.ruleForm.nickname = config.nickname
-          this.ruleForm.avatar_url = config.avatar_url
+
+          for (let configKey in config) {
+            this.ruleForm[configKey] = config[configKey]
+          }
         }
 
       },
@@ -149,7 +173,35 @@
           })
       },
 
-      selectRepos() {
+      selectRepos(repos) {
+        this.persistUserInfo()
+        this.getDirList(repos)
+      },
+
+      getDirList(repos) {
+        Axios.get(`https://api.github.com/repos/${this.ruleForm.username}/${repos}/contents`)
+          .then(res => {
+            if (res.status === 200) {
+              this.ruleForm.dirList = []
+              for (const item of res.data) {
+                if (item.type === 'dir') {
+                  this.ruleForm.dirList.push({
+                    value: item.name,
+                    label: item.name
+                  })
+                }
+              }
+              this.persistUserInfo()
+            }
+          })
+          .catch(err => {
+            console.log('err', err);
+          })
+
+      },
+
+
+      selectDir() {
         this.persistUserInfo()
       },
 
