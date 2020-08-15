@@ -17,6 +17,7 @@
           </span>
         </span>
         <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item command="upload">图片上传</el-dropdown-item>
           <el-dropdown-item command="config">图床配置</el-dropdown-item>
           <el-dropdown-item command="management">图片管理</el-dropdown-item>
           <el-dropdown-item command="logout">退出登录</el-dropdown-item>
@@ -47,6 +48,10 @@
     methods: {
       handleCommand(command) {
         switch (command) {
+          case 'upload':
+            this.$router.push('/')
+            break;
+
           case 'config':
             this.$router.push('config')
             break;
