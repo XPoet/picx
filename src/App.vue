@@ -51,6 +51,11 @@
 
       .header-container {
         width: 1000px;
+
+        @media (max-width: 1200px) {
+          width: 80%;
+        }
+
         height: 100%;
       }
     }
@@ -63,22 +68,14 @@
 
       .main-container {
         width: 1000px;
+
+        @media (max-width: 1200px) {
+          width: 80%;
+        }
+
         height: 100%;
         background: #fff;
       }
-
-
-      @media (max-width: 1200px) {
-
-        .header-container {
-          width: 80%;
-        }
-
-        .main-container {
-          width: 80%;
-        }
-      }
-
     }
   }
 </style>
