@@ -8,6 +8,18 @@
         <el-input v-model="token"></el-input>
       </el-form-item>
 
+      <el-form-item class="operation-btns">
+        <el-button @click="resetToken()"
+        >
+          重置
+        </el-button>
+        <el-button type="primary"
+                   @click="getUserInfo()"
+        >
+          确认Token
+        </el-button>
+      </el-form-item>
+
       <el-form-item
         v-if="ruleForm.username"
         label="用户名"
@@ -44,7 +56,19 @@
       </el-form-item>
 
       <el-form-item
-        v-if="ruleForm.dirList.length"
+        label="目录方式"
+      >
+        <el-radio-group v-model="ruleForm.dirMode"
+                        @change="dirModeChange"
+        >
+          <el-radio label="nonuseDir">不使用目录</el-radio>
+          <el-radio label="newDir">新建目录</el-radio>
+          <el-radio label="autoDir">自动获取【{{ ruleForm.selectedRepos }}】仓库目录</el-radio>
+        </el-radio-group>
+      </el-form-item>
+
+      <el-form-item
+        v-if="ruleForm.dirList.length && ruleForm.dirMode === 'autoDir'"
         label="选择目录"
       >
         <el-select v-model="ruleForm.selectedDir"
@@ -65,16 +89,14 @@
 
       </el-form-item>
 
-      <el-form-item class="operation-btns">
-        <el-button @click="resetToken('ruleForm')"
-        >
-          重置
-        </el-button>
-        <el-button type="primary"
-                   @click="getUserInfo()"
-        >
-          绑定
-        </el-button>
+      <el-form-item
+        v-if="ruleForm.dirMode === 'newDir'"
+        label="新建目录"
+      >
+        <el-input v-model="ruleForm.selectedDir"
+                  @input="persistUserInfo()"
+                  placeholder="请输入新建的目录..."
+        ></el-input>
       </el-form-item>
     </el-form>
   </div>
@@ -99,6 +121,7 @@
           avatar_url: '',
           selectedRepos: '',
           reposList: [],
+          dirMode: 'nonuseDir',
           selectedDir: '',
           dirList: []
         },
@@ -205,6 +228,25 @@
         this.persistUserInfo()
       },
 
+      dirModeChange(dirMode) {
+
+        switch (dirMode) {
+
+          case 'nonuseDir':
+            this.ruleForm.selectedDir = ''
+            break;
+
+          case 'newDir':
+            break;
+
+          case 'autoDir':
+            break;
+
+        }
+
+        this.persistUserInfo()
+      },
+
       saveUserInfo(res) {
         this.ruleForm.token = this.token
         this.ruleForm.username = res.data['login']
@@ -247,7 +289,8 @@
     .config-form {
 
       .operation-btns {
-        float: right;
+        display: flex;
+        justify-content: flex-end;
 
         .el-button {
           margin-left: 20px;
