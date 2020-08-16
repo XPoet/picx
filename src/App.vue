@@ -31,10 +31,6 @@
 </script>
 
 <style lang="scss">
-
-  /*$width: 1000px;*/
-  $width: 80%;
-
   #app-container {
     position: absolute;
     top: 0;
@@ -54,7 +50,7 @@
       background: rgb(84, 92, 100);
 
       .header-container {
-        width: $width;
+        width: 1000px;
         height: 100%;
       }
     }
@@ -66,10 +62,23 @@
       padding: 20px 0 0;
 
       .main-container {
-        width: $width;
+        width: 1000px;
         height: 100%;
         background: #fff;
       }
+
+
+      @media (max-width: 1200px) {
+
+        .header-container {
+          width: 80%;
+        }
+
+        .main-container {
+          width: 80%;
+        }
+      }
+
     }
   }
 </style>
