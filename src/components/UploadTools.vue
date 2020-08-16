@@ -26,17 +26,15 @@
       >
       </el-switch>
     </div>
-    <div class="tool-item">
+    <div class="tool-item operation-btn">
       <el-button type="primary"
                  icon="el-icon-refresh"
-                 size="mini"
                  @click="uploadReset"
       >重置
       </el-button>
 
       <el-button type="primary"
-                 icon="el-icon-refresh"
-                 size="mini"
+                 icon="el-icon-upload"
                  @click="uploadFile"
       >上传
       </el-button>
@@ -96,7 +94,15 @@
     width: 100%;
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .operation-btn {
+    justify-content: flex-end;
   }
 
 </style>

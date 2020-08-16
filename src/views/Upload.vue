@@ -13,7 +13,7 @@
         <input id="uploader" type="file" @change="onFileChange">
         <div class="tips" v-if="!previewImg">
           <i class="icon el-icon-upload"></i>
-          <div class="text">将图片拖至此处，或点击此处</div>
+          <div class="text">拖拽、粘贴、或点击此处上传</div>
         </div>
         <img v-if="previewImg" class="target" :src="previewImg">
       </div>
@@ -23,47 +23,55 @@
     <el-row class="row-item"
             v-if="previewImg"
     >
-      <div class="upload-progress">
-        <div class="filename"
-        >{{ fileName }}
-        </div>
+      <div class="upload-status">
+        <div class="file-status">
+          <div class="filename"
+          >{{ fileName }}
+          </div>
 
-        <div class="upload-tips wait-upload" v-if="!uploading">
-          等待上传 <i class="el-icon-upload2"></i>
-        </div>
+          <div class="upload-tips wait-upload" v-if="!uploading">
+            等待上传 <i class="el-icon-upload2"></i>
+          </div>
 
-        <div class="upload-tips uploading" v-if="uploading && uploadProgress !== 100">
-          正在上传 <i class="el-icon-loading"></i>
-        </div>
+          <div class="upload-tips uploading" v-if="uploading && uploadProgress !== 100">
+            正在上传 <i class="el-icon-loading"></i>
+          </div>
 
-        <div class="upload-tips uploaded" v-if="uploadProgress === 100">
-          上传完成 <i class="el-icon-circle-check"></i>
+          <div class="upload-tips uploaded" v-if="uploadProgress === 100">
+            上传完成 <i class="el-icon-circle-check"></i>
+          </div>
         </div>
       </div>
     </el-row>
 
     <!-- 外链 -->
-    <el-row class="row-item">
+    <el-row class="row-item"
+            v-if="uploadProgress === 100"
+    >
       <div class="external-link">
-        <el-input placeholder="复制GitHub外链..."
+
+        <el-input class="external-link-input"
+                  placeholder="复制GitHub外链..."
                   size="mini"
                   v-model="GitHubExternalLink"
                   ref="GitHubExternalLinkInput"
                   readonly
         >
-          <template slot="prepend">GitHub外链：</template>
+          <template slot="prepend">GitHub外链</template>
           <el-button slot="append"
                      icon="el-icon-copy-document"
                      @click="copyLink('github')"
-          >复制</el-button>
+          >复制
+          </el-button>
         </el-input>
-        <el-input placeholder="复制CDN外链..."
+        <el-input class="external-link-input"
+                  placeholder="复制CDN外链..."
                   size="mini"
                   v-model="CDNExternalLink"
                   ref="CDNExternalLinkInput"
                   readonly
         >
-          <template slot="prepend">CDN外链：</template>
+          <template slot="prepend">CDN外链</template>
           <el-button slot="append"
                      icon="el-icon-copy-document"
                      @click="copyLink('cdn')"
@@ -74,8 +82,15 @@
       </div>
     </el-row>
 
+    <!-- 上传操作 -->
     <el-row class="row-item">
+
       <div class="upload-tools">
+        <div class="repos-dir-info" v-if="previewImg">
+          <el-tag class="repos-dir-info-item">上传仓库：{{ config.selectedRepos }}</el-tag>
+          <el-tag class="repos-dir-info-item">目录：{{ config.selectedDir }}</el-tag>
+        </div>
+
         <UploadTools
           @is-set-max-size="onSetMaxSizeChane"
           @is-rename="onRenameChange"
@@ -117,16 +132,35 @@
         compressSize: 200,
         setMaxSize: false,
         renameWithHash: false,
+        config: '',
 
         // GitHub 外链
         GitHubExternalLink: '',
 
         // CDN 外链
         CDNExternalLink: '',
+
+        // 选择的外链
+        selectedExternalLink: '',
+        selectedExternalLinkType: ''
       }
     },
 
+    mounted() {
+
+      this.getUserInfo()
+
+    },
+
+
     methods: {
+      getUserInfo() {
+        const config = localStorage.getItem(picx_key)
+        if (config) {
+          this.config = JSON.parse(config)
+        }
+      },
+
       onSetMaxSizeChane(e) {
         this.setMaxSize = e;
       },
@@ -268,21 +302,19 @@
   }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 
   $color: #0077b8;
 
   .upload-page-container {
 
-    padding: 20px;
-
-
-    position: relative;
+    padding: 30px;
+    box-sizing: border-box;
 
     .row-item {
       display: flex;
       justify-content: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
 
       &:last-child {
         margin-bottom: 0;
@@ -291,16 +323,20 @@
 
     .upload-area {
       position: relative;
-      width: 600px;
+      width: 100%;
       height: 300px;
-      border: 4px dashed #999;
+      border: 2px dashed #999;
       display: flex;
       align-items: center;
       justify-content: center;
 
       &:hover {
-        border-color: $color;
         cursor: pointer;
+        border-color: $color;
+
+        .tips {
+          color: $color;
+        }
       }
 
       label {
@@ -318,7 +354,6 @@
         top: -9999px;
       }
 
-
       .tips {
         text-align: center;
         color: #aaa;
@@ -333,7 +368,6 @@
         }
       }
 
-
       img {
         object-fit: cover;
         width: 100%;
@@ -342,14 +376,17 @@
 
     }
 
-    .upload-progress {
-      width: 600px;
-      padding: 5px;
+    .upload-status {
+      width: 100%;
+      padding: 10px;
       background: #f1f1f1;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
       color: #666;
+
+      .file-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
 
       .upload-tips {
 
@@ -365,11 +402,11 @@
       }
 
       .wait-upload {
-        color: #409EFF;
+        color: #E6A23C;
       }
 
       .uploading {
-        color: #E6A23C;
+        color: #409EFF;
       }
 
       .uploaded {
@@ -379,15 +416,41 @@
     }
 
     .external-link {
-      width: 600px;
+      width: 100%;
+
+      .external-link-input {
+        margin-bottom: 10px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .el-input-group__prepend {
+          width: 66px;
+          text-align-last: justify;
+        }
+      }
     }
 
     .upload-tools {
-      position: relative;
-      width: 600px;
-      border: 1px solid #ccc;
-      padding: 20px;
+      width: 100%;
+
+      .repos-dir-info {
+
+        margin-bottom: 20px;
+
+        .repos-dir-info-item {
+          margin-right: 10px;
+
+          &:last-child {
+            margin-right: 0;
+          }
+        }
+
+
+      }
     }
+
 
   }
 
