@@ -29,16 +29,36 @@
 </template>
 
 <script>
-  import { picx_key } from "../utils/localStorage";
+  import {picx_key} from "../utils/localStorage";
+  import {mapGetters} from "vuex";
 
   export default {
     name: "Header",
 
     data() {
       return {
-        username: '未登录',
-        avatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png'
+        username: '',
+        defaultUsername: '未登录',
+        avatarUrl: '',
+        defaultAvatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
       }
+    },
+
+    watch: {
+      getUserAvatar(avatarUrl) {
+        this.avatarUrl = avatarUrl ? avatarUrl : this.defaultAvatarUrl
+      },
+
+      getUserNickname(nickname) {
+        this.username = nickname ? nickname : this.defaultUsername
+      },
+    },
+
+    computed: {
+      ...mapGetters([
+        'getUserAvatar',
+        'getUserNickname',
+      ]),
     },
 
     mounted() {
@@ -61,20 +81,23 @@
             break;
 
           case 'logout':
+            this.logout()
             break;
         }
       },
 
       getUserInfo() {
-
         let config = localStorage.getItem(picx_key)
         if (config) {
           config = JSON.parse(config)
-          this.username = config.nickname
-          this.avatarUrl = config.avatar_url
+          this.username = config.nickname ? config.nickname : this.defaultUsername
+          this.avatarUrl = config.avatar_url ? config.avatar_url : this.defaultAvatarUrl
         }
-
       },
+
+      logout() {
+        this.$store.commit('REMOVE_USER_CONFIG_INFO')
+      }
     }
   }
 </script>
