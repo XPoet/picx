@@ -43,12 +43,13 @@ export default new Vuex.Store({
 
 
     // 持久化用户配置信息
-    PERSIST_USER_CONFIG_INFO(state) {
+    PERSIST_USER_CONFIG_INFO(state, configInfo) {
+      this.commit('SET_USER_CONFIG_INFO', configInfo)
       localStorage.setItem(picx_key, JSON.stringify(state.userConfigInfo))
     },
 
-    // 删除用户配置信息
-    REMOVE_USER_CONFIG_INFO(state) {
+    // 重置用户配置信息
+    RESET_USER_CONFIG_INFO(state) {
       for (let key in state.userConfigInfo) {
         const type = Object.prototype.toString.call(state.userConfigInfo[key]).split(' ')[1]
         const targetType = type.substring(0, type.length - 1)
@@ -59,6 +60,13 @@ export default new Vuex.Store({
           state.userConfigInfo[key] = []
         }
       }
+    },
+
+    // 删除用户配置信息
+    REMOVE_USER_CONFIG_INFO() {
+      this.commit('RESET_USER_CONFIG_INFO')
+      // 删除 localStorage 所有信息
+      localStorage.removeItem(picx_key)
     }
 
 
