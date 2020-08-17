@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {picx_key} from "../utils/localStorage";
+import {userConfigInfoModel} from "../views/Config/model";
 
 Vue.use(Vuex)
 
@@ -11,18 +12,7 @@ const initUserConfigInfo = () => {
     return JSON.parse(config)
   }
 
-  return {
-    token: '',
-    username: '',
-    email: '',
-    nickname: '',
-    avatar_url: '',
-    selectedRepos: '',
-    reposList: [],
-    dirMode: '',
-    selectedDir: '',
-    dirList: []
-  }
+  return userConfigInfoModel
 
 }
 

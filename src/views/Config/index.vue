@@ -101,7 +101,9 @@
       </el-form-item>
 
 
-      <el-form-item style="float: right">
+      <el-form-item style="float: right"
+                    v-if="userConfigInfo.selectedRepos"
+      >
         <el-button type="success" @click="$router.push('/')">上传图片 Go~</el-button>
       </el-form-item>
     </el-form>
@@ -110,7 +112,8 @@
 
 <script>
   import Axios from "axios";
-  import {picx_key} from "../utils/localStorage";
+  import {picx_key} from "../../utils/localStorage";
+  import {userConfigInfoModel} from "./model";
 
   export default {
 
@@ -119,18 +122,7 @@
     data() {
       return {
         token: '',
-        userConfigInfo: {
-          token: '',
-          username: '',
-          email: '',
-          nickname: '',
-          avatar_url: '',
-          selectedRepos: '',
-          reposList: [],
-          dirMode: '',
-          selectedDir: '',
-          dirList: []
-        }
+        userConfigInfo: userConfigInfoModel
       };
     },
 
@@ -260,20 +252,16 @@
       },
 
       resetToken() {
+        this.token = ''
         for (let ruleFormKey in this.userConfigInfo) {
-
           const type = Object.prototype.toString.call(this.userConfigInfo[ruleFormKey]).split(' ')[1]
-
           const targetType = type.substring(0, type.length - 1)
-
           if (targetType === 'String') {
             this.userConfigInfo[ruleFormKey] = ''
           }
-
           if (targetType === 'Array') {
             this.userConfigInfo[ruleFormKey] = []
           }
-
         }
 
         this.persistUserConfigInfo()
