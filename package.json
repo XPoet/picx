@@ -2,6 +2,12 @@
   "name": "picx",
   "version": "0.1.0",
   "private": true,
+  "author": "XPoet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/XPoet/picx/issues"
+  },
+  "homepage": "https://github.com/XPoet/picx#readme",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build"
