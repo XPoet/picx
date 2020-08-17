@@ -21,31 +21,31 @@
       </el-form-item>
 
       <el-form-item
-        v-if="ruleForm.username"
+        v-if="userConfigInfo.username"
         label="用户名"
       >
-        <el-input v-model="ruleForm.username" readonly></el-input>
+        <el-input v-model="userConfigInfo.username" readonly></el-input>
       </el-form-item>
 
       <el-form-item
-        v-if="ruleForm.email"
+        v-if="userConfigInfo.email"
         label="邮箱"
       >
-        <el-input v-model="ruleForm.email" readonly></el-input>
+        <el-input v-model="userConfigInfo.email" readonly></el-input>
       </el-form-item>
 
       <el-form-item
-        v-if="ruleForm.reposList.length"
+        v-if="userConfigInfo.reposList.length"
         label="选择仓库"
       >
-        <el-select v-model="ruleForm.selectedRepos"
+        <el-select v-model="userConfigInfo.selectedRepos"
                    filterable
                    style="width: 100%"
                    placeholder="请选择图床仓库..."
                    @change="selectRepos"
         >
           <el-option
-            v-for="repos in ruleForm.reposList"
+            v-for="repos in userConfigInfo.reposList"
             :key="repos.value"
             :label="repos.label"
             :value="repos.value"
@@ -56,30 +56,31 @@
       </el-form-item>
 
       <el-form-item
+        v-if="userConfigInfo.reposList.length"
         label="目录方式"
       >
-        <el-radio-group v-model="ruleForm.dirMode"
+        <el-radio-group v-model="userConfigInfo.dirMode"
                         @change="dirModeChange"
         >
           <el-radio label="nonuseDir">不使用目录</el-radio>
           <el-radio label="newDir">新建目录</el-radio>
-          <el-radio label="autoDir">自动获取【{{ ruleForm.selectedRepos }}】仓库目录</el-radio>
+          <el-radio label="autoDir">自动获取【{{ userConfigInfo.selectedRepos }}】仓库目录</el-radio>
         </el-radio-group>
       </el-form-item>
 
       <el-form-item
-        v-if="ruleForm.dirList.length && ruleForm.dirMode === 'autoDir'"
+        v-if="userConfigInfo.dirList.length && userConfigInfo.dirMode === 'autoDir'"
         label="选择目录"
       >
-        <el-select v-model="ruleForm.selectedDir"
+        <el-select v-model="userConfigInfo.selectedDir"
                    filterable
                    style="width: 100%"
                    placeholder="请选择目录..."
                    :clearable="true"
-                   @change="selectDir"
+                   @change="persistUserConfigInfo"
         >
           <el-option
-            v-for="repos in ruleForm.dirList"
+            v-for="repos in userConfigInfo.dirList"
             :key="repos.value"
             :label="repos.label"
             :value="repos.value"
@@ -90,11 +91,11 @@
       </el-form-item>
 
       <el-form-item
-        v-if="ruleForm.dirMode === 'newDir'"
+        v-if="userConfigInfo.dirMode === 'newDir'"
         label="新建目录"
       >
-        <el-input v-model="ruleForm.selectedDir"
-                  @input="persistUserInfo()"
+        <el-input v-model="userConfigInfo.selectedDir"
+                  @input="persistUserConfigInfo()"
                   placeholder="请输入新建的目录..."
         ></el-input>
       </el-form-item>
@@ -113,7 +114,7 @@
     data() {
       return {
         token: '',
-        ruleForm: {
+        userConfigInfo: {
           token: '',
           username: '',
           email: '',
@@ -121,32 +122,30 @@
           avatar_url: '',
           selectedRepos: '',
           reposList: [],
-          dirMode: 'nonuseDir',
+          dirMode: '',
           selectedDir: '',
           dirList: []
-        },
+        }
       };
     },
 
     mounted() {
-      this.initForm()
+      this.initUserConfigInfo()
     },
 
     methods: {
 
-      initForm() {
+      initUserConfigInfo() {
         let config = localStorage.getItem(picx_key)
         if (config) {
           config = JSON.parse(config)
           this.token = config.token
-
           for (let configKey in config) {
-            this.ruleForm[configKey] = config[configKey]
+            this.userConfigInfo[configKey] = config[configKey]
           }
         }
 
       },
-
 
       getUserInfo() {
         if (this.token) {
@@ -173,22 +172,31 @@
         }
       },
 
-      getReposList(repos_url) {
+      saveUserInfo(res) {
+        this.userConfigInfo.token = this.token
+        this.userConfigInfo.username = res.data['login']
+        this.userConfigInfo.nickname = res.data['name']
+        this.userConfigInfo.email = res.data['email']
+        this.userConfigInfo.avatar_url = res.data['avatar_url']
 
+        this.persistUserConfigInfo()
+      },
+
+      getReposList(repos_url) {
         Axios.get(repos_url)
           .then(res => {
             if (res.status === 200) {
-              this.ruleForm.reposList = []
+              this.userConfigInfo.reposList = []
               for (const repos of res.data) {
                 if (!repos.fork) {
-                  this.ruleForm.reposList.push({
+                  this.userConfigInfo.reposList.push({
                     value: repos.name,
                     label: repos.name,
                     desc: repos.description
                   })
                 }
               }
-              this.persistUserInfo()
+              this.persistUserConfigInfo()
             }
           })
           .catch(err => {
@@ -197,24 +205,24 @@
       },
 
       selectRepos(repos) {
-        this.persistUserInfo()
+        this.persistUserConfigInfo()
         this.getDirList(repos)
       },
 
       getDirList(repos) {
-        Axios.get(`https://api.github.com/repos/${this.ruleForm.username}/${repos}/contents`)
+        Axios.get(`https://api.github.com/repos/${this.userConfigInfo.username}/${repos}/contents`)
           .then(res => {
             if (res.status === 200) {
-              this.ruleForm.dirList = []
+              this.userConfigInfo.dirList = []
               for (const item of res.data) {
                 if (item.type === 'dir') {
-                  this.ruleForm.dirList.push({
+                  this.userConfigInfo.dirList.push({
                     value: item.name,
                     label: item.name
                   })
                 }
               }
-              this.persistUserInfo()
+              this.persistUserConfigInfo()
             }
           })
           .catch(err => {
@@ -223,17 +231,12 @@
 
       },
 
-
-      selectDir() {
-        this.persistUserInfo()
-      },
-
       dirModeChange(dirMode) {
 
         switch (dirMode) {
 
           case 'nonuseDir':
-            this.ruleForm.selectedDir = ''
+            this.userConfigInfo.selectedDir = ''
             break;
 
           case 'newDir':
@@ -244,39 +247,32 @@
 
         }
 
-        this.persistUserInfo()
+        this.persistUserConfigInfo()
       },
 
-      saveUserInfo(res) {
-        this.ruleForm.token = this.token
-        this.ruleForm.username = res.data['login']
-        this.ruleForm.nickname = res.data['name']
-        this.ruleForm.email = res.data['email']
-        this.ruleForm.avatar_url = res.data['avatar_url']
-        this.persistUserInfo()
-      },
-
-      persistUserInfo() {
-        localStorage.setItem(picx_key, JSON.stringify(this.ruleForm))
+      persistUserConfigInfo() {
+        this.$store.commit('SET_USER_CONFIG_INFO', this.userConfigInfo)
+        this.$store.commit('PERSIST_USER_CONFIG_INFO')
       },
 
       resetToken() {
-        for (let ruleFormKey in this.ruleForm) {
+        for (let ruleFormKey in this.userConfigInfo) {
 
-          const type = Object.prototype.toString.call(this.ruleForm[ruleFormKey]).split(' ')[1]
+          const type = Object.prototype.toString.call(this.userConfigInfo[ruleFormKey]).split(' ')[1]
 
           const targetType = type.substring(0, type.length - 1)
 
           if (targetType === 'String') {
-            this.ruleForm[ruleFormKey] = ''
+            this.userConfigInfo[ruleFormKey] = ''
           }
 
           if (targetType === 'Array') {
-            this.ruleForm[ruleFormKey] = []
+            this.userConfigInfo[ruleFormKey] = []
           }
 
         }
-        this.persistUserInfo()
+
+        this.persistUserConfigInfo()
       },
     }
   }
