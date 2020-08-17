@@ -102,7 +102,7 @@
 
 
       <el-form-item style="float: right">
-        <el-button type="success">上传图片 Go~</el-button>
+        <el-button type="success" @click="$router.push('/')">上传图片 Go~</el-button>
       </el-form-item>
     </el-form>
   </div>
