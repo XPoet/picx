@@ -1,5 +1,4 @@
 <template>
-
   <div class="upload-page-container">
 
     <!-- 上传区域 -->
@@ -86,9 +85,9 @@
     <el-row class="row-item">
 
       <div class="upload-tools">
-        <div class="repos-dir-info" v-if="previewImg">
-          <el-tag class="repos-dir-info-item">上传仓库：{{ config.selectedRepos }}</el-tag>
-          <el-tag class="repos-dir-info-item">目录：{{ config.selectedDir }}</el-tag>
+        <div class="repos-dir-info" v-if="config.selectedRepos">
+          <el-tag class="repos-dir-info-item">仓库：{{ config.selectedRepos }}</el-tag>
+          <el-tag class="repos-dir-info-item">目录：{{ config.selectedDir ? config.selectedDir : '无' }}</el-tag>
         </div>
 
         <UploadTools
@@ -325,7 +324,7 @@
       position: relative;
       width: 100%;
       height: 300px;
-      border: 2px dashed #999;
+      border: 4px dashed #999;
       display: flex;
       align-items: center;
       justify-content: center;
