@@ -92,6 +92,9 @@
           config = JSON.parse(config)
           this.username = config.nickname ? config.nickname : this.defaultUsername
           this.avatarUrl = config.avatar_url ? config.avatar_url : this.defaultAvatarUrl
+        } else {
+          this.username = this.defaultUsername
+          this.avatarUrl = this.defaultAvatarUrl
         }
       },
 
