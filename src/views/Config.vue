@@ -99,6 +99,11 @@
                   placeholder="请输入新建的目录..."
         ></el-input>
       </el-form-item>
+
+
+      <el-form-item style="float: right">
+        <el-button type="success">上传图片 Go~</el-button>
+      </el-form-item>
     </el-form>
   </div>
 </template>
@@ -251,8 +256,7 @@
       },
 
       persistUserConfigInfo() {
-        this.$store.commit('SET_USER_CONFIG_INFO', this.userConfigInfo)
-        this.$store.commit('PERSIST_USER_CONFIG_INFO')
+        this.$store.commit('PERSIST_USER_CONFIG_INFO', this.userConfigInfo)
       },
 
       resetToken() {
