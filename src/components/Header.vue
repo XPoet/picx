@@ -99,7 +99,7 @@
       },
 
       logout() {
-        this.$store.commit('REMOVE_USER_CONFIG_INFO')
+        this.$store.dispatch('LOGOUT')
       }
     }
   }
