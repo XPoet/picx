@@ -104,6 +104,7 @@
       >
         <el-input v-model="userConfigInfo.selectedDir"
                   @input="persistUserConfigInfo()"
+                  clearable
                   placeholder="请输入新建的目录..."
         ></el-input>
       </el-form-item>
@@ -260,6 +261,7 @@
             break;
 
           case 'newDir':
+            this.userConfigInfo.selectedDir = ''
             break;
 
           case 'autoDir':
