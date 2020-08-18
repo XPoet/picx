@@ -62,9 +62,17 @@
         <el-radio-group v-model="userConfigInfo.dirMode"
                         @change="dirModeChange"
         >
-          <el-radio label="nonuseDir">不使用目录</el-radio>
-          <el-radio label="newDir">新建目录</el-radio>
-          <el-radio label="autoDir">自动获取【{{ userConfigInfo.selectedRepos }}】仓库目录</el-radio>
+
+          <el-tooltip content="按照日期，自动创建格式 yyyyMM 的目录" placement="top">
+            <el-radio label="nonuseDir">自动目录</el-radio>
+          </el-tooltip>
+          <el-tooltip content="手动输入一个新目录" placement="top">
+            <el-radio label="newDir">新建目录</el-radio>
+          </el-tooltip>
+          <el-tooltip :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个目录'" placement="top">
+            <el-radio label="autoDir">选择 {{userConfigInfo.selectedRepos }} 仓库目录</el-radio>
+          </el-tooltip>
+
         </el-radio-group>
       </el-form-item>
 
@@ -104,7 +112,7 @@
       <el-form-item style="float: right"
                     v-if="userConfigInfo.selectedRepos"
       >
-        <el-button type="success" @click="$router.push('/')">上传图片 Go~</el-button>
+        <el-button type="success" @click="goUpload">上传图片 Go~</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -274,6 +282,24 @@
       resetUserConfigInfo() {
         this.token = ''
         cleanObject(this.userConfigInfo)
+      },
+
+      goUpload() {
+        if (this.userConfigInfo.selectedDir === '') {
+
+          if (this.userConfigInfo.dirMode === 'autoDir') {
+
+            this.$message.warning(`请选择 ${this.userConfigInfo.selectedRepos} 仓库下的一个目录！`)
+
+          } else if (this.userConfigInfo.dirMode === 'newDir') {
+
+            this.$message.warning(`请在输入框输入一个新目录！`)
+
+          } else {
+            this.$router.push('/')
+          }
+        }
+
       }
 
     }
