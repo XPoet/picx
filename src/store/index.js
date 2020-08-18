@@ -2,23 +2,19 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import {picx_key} from "../utils/localStorage";
 import {userConfigInfoModel} from "../views/Config/model";
+import cleanObject from "../utils/cleanObject";
 
 Vue.use(Vuex)
 
 const initUserConfigInfo = () => {
   let config = localStorage.getItem(picx_key)
-
-  if (config) {
-    return JSON.parse(config)
-  }
-
-  return userConfigInfoModel
-
+  return config ? JSON.parse(config) : userConfigInfoModel
 }
 
 export default new Vuex.Store({
   state: {
     userConfigInfo: initUserConfigInfo(),
+    isLogout: false
   },
   mutations: {
 
@@ -38,33 +34,27 @@ export default new Vuex.Store({
       localStorage.setItem(picx_key, JSON.stringify(state.userConfigInfo))
     },
 
-    // 重置用户配置信息
+    // 重置用户配置信息 clean state.userConfigInfo all value
     RESET_USER_CONFIG_INFO(state) {
-      for (let key in state.userConfigInfo) {
-        const type = Object.prototype.toString.call(state.userConfigInfo[key]).split(' ')[1]
-        const targetType = type.substring(0, type.length - 1)
-        if (targetType === 'String') {
-          state.userConfigInfo[key] = ''
-        }
-        if (targetType === 'Array') {
-          state.userConfigInfo[key] = []
-        }
-      }
+      cleanObject(state.userConfigInfo)
     },
 
-    // 删除用户配置信息
-    REMOVE_USER_CONFIG_INFO() {
-      this.commit('RESET_USER_CONFIG_INFO')
-      // 删除 localStorage 所有信息
+  },
+
+  getters: {
+    getUserConfigInfo: state => JSON.parse(JSON.stringify(state.userConfigInfo)),
+    getUserAvatar: state => state.userConfigInfo.avatar_url,
+    getUserNickname: state => state.userConfigInfo.nickname,
+    getLogoutStatus: state => state.isLogout,
+  },
+
+  actions: {
+    // 退出登录 action
+    LOGOUT({commit, state}) {
+      commit('RESET_USER_CONFIG_INFO')
+      state.isLogout = true
       localStorage.removeItem(picx_key)
     }
-
-
   },
-  getters: {
-    getUserAvatar: state => state.userConfigInfo.avatar_url,
-    getUserNickname: state => state.userConfigInfo.nickname
-  },
-  actions: {},
   modules: {}
 })

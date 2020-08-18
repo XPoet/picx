@@ -9,7 +9,7 @@
       </el-form-item>
 
       <el-form-item class="operation-btns">
-        <el-button @click="resetToken()"
+        <el-button @click="reset()"
         >
           重置
         </el-button>
@@ -114,6 +114,8 @@
   import Axios from "axios";
   import {picx_key} from "../../utils/localStorage";
   import {userConfigInfoModel} from "./model";
+  import {mapGetters} from "vuex";
+  import cleanObject from "../../utils/cleanObject";
 
   export default {
 
@@ -128,6 +130,19 @@
 
     mounted() {
       this.initUserConfigInfo()
+    },
+
+    watch: {
+      logoutStatus(e) {
+        if (e) this.resetUserConfigInfo()
+      },
+
+    },
+
+    computed: {
+      ...mapGetters({
+        logoutStatus: 'getLogoutStatus'
+      })
     },
 
     methods: {
@@ -251,40 +266,20 @@
         this.$store.commit('PERSIST_USER_CONFIG_INFO', this.userConfigInfo)
       },
 
-      resetToken() {
-        this.token = ''
-        for (let ruleFormKey in this.userConfigInfo) {
-          const type = Object.prototype.toString.call(this.userConfigInfo[ruleFormKey]).split(' ')[1]
-          const targetType = type.substring(0, type.length - 1)
-          if (targetType === 'String') {
-            this.userConfigInfo[ruleFormKey] = ''
-          }
-          if (targetType === 'Array') {
-            this.userConfigInfo[ruleFormKey] = []
-          }
-        }
-
+      reset() {
+        this.resetUserConfigInfo()
         this.persistUserConfigInfo()
       },
+
+      resetUserConfigInfo() {
+        this.token = ''
+        cleanObject(this.userConfigInfo)
+      }
+
     }
   }
 </script>
 
 <style scoped lang="scss">
-  .config-page-container {
-    padding: 20px;
-
-    .config-form {
-
-      .operation-btns {
-        display: flex;
-        justify-content: flex-end;
-
-        .el-button {
-          margin-left: 20px;
-        }
-      }
-    }
-  }
-
+  @import "index";
 </style>
