@@ -59,7 +59,7 @@
           <template slot="prepend">GitHub外链</template>
           <el-button slot="append"
                      icon="el-icon-copy-document"
-                     @click="copyLink('github')"
+                     @click="copyLink('GitHub')"
           >复制
           </el-button>
         </el-input>
@@ -73,7 +73,7 @@
           <template slot="prepend">CDN外链</template>
           <el-button slot="append"
                      icon="el-icon-copy-document"
-                     @click="copyLink('cdn')"
+                     @click="copyLink('CDN')"
 
           >复制
           </el-button>
@@ -242,16 +242,16 @@
 
         switch (type) {
 
-          case 'cdn':
+          case 'CDN':
             this.$refs.CDNExternalLinkInput.select()
             break;
 
-          case 'github':
+          case 'GitHub':
             this.$refs.GitHubExternalLinkInput.select()
             break;
         }
         document.execCommand('copy')
-        this.$message.success('复制成功！')
+        this.$message.success(`${type}外链复制成功！`)
       },
 
       getImage(url, fileName) {
