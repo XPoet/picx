@@ -4,7 +4,7 @@ import Config from "../views/Config/";
 import Upload from "../views/Upload";
 import Management from "../views/Management";
 
-// 阻止重复点击同一路由报错
+// 阻止重复点击同一路由时的报错
 const originalPush = VueRouter.prototype.push;
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
@@ -16,22 +16,38 @@ const routes = [
   {
     path: '/',
     name: 'Upload',
-    component: Upload
+    component: Upload,
+    meta: {
+      title: '图片上传 | PicX 图床神器'
+    }
   },
   {
     path: '/config',
     name: 'Config',
-    component: Config
+    component: Config,
+    meta: {
+      title: '图床配置 | PicX 图床神器'
+    }
   },
   {
     path: '/management',
     name: 'Management',
-    component: Management
+    component: Management,
+    meta: {
+      title: '图片管理 | PicX 图床神器'
+    }
   },
 ]
 
 const router = new VueRouter({
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = to.meta.title
+  }
+  next()
 })
 
 export default router
