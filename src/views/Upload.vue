@@ -124,13 +124,13 @@
 <script>
   import UploadTools from "../components/UploadTools";
   import UploadedList from "../components/UploadedList";
-  import chooseImg from "../utils/chooseImg";
-  import paste from "../utils/paste";
-  import filenameHandle from "../utils/filenameHandle";
+  import chooseImg from "../common/utils/chooseImg";
+  import paste from "../common/utils/paste";
+  import filenameHandle from "../common/utils/filenameHandle";
   import Axios from 'axios'
-  import uploadUrlHandle from "../utils/uploadUrlHandle";
-  import generateExternalLink from "../utils/generateExternalLink";
-  import {picx_key} from "../utils/localStorage";
+  import uploadUrlHandle from "../common/utils/uploadUrlHandle";
+  import generateExternalLink from "../common/utils/generateExternalLink";
+  import {PICX_KEY} from "../common/model/localStorage";
 
   export default {
     name: "Upload",
@@ -170,7 +170,7 @@
     mounted() {
       this.getUserConfigInfo()
 
-      let uploaded = sessionStorage.getItem(picx_key)
+      let uploaded = sessionStorage.getItem(PICX_KEY)
       if (uploaded) {
         this.uploadedList = JSON.parse(uploaded)
       }
@@ -180,7 +180,7 @@
 
     methods: {
       getUserConfigInfo() {
-        const config = localStorage.getItem(picx_key)
+        const config = localStorage.getItem(PICX_KEY)
         if (config) {
           this.userConfigInfo = JSON.parse(config)
         }
@@ -272,7 +272,7 @@
           cdn_url: this.CDNExternalLink,
           deleting: false
         })
-        sessionStorage.setItem(picx_key, JSON.stringify(this.uploadedList))
+        sessionStorage.setItem(PICX_KEY, JSON.stringify(this.uploadedList))
       },
 
       copyLink(type) {

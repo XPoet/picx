@@ -121,11 +121,11 @@
 
 <script>
   import Axios from "axios";
-  import {picx_key} from "../../utils/localStorage";
+  import {PICX_KEY} from "../../common/model/localStorage";
   import {userConfigInfoModel} from "./model";
   import {mapGetters} from "vuex";
-  import cleanObject from "../../utils/cleanObject";
-  import timeHelper from "../../utils/timeHelper";
+  import cleanObject from "../../common/utils/cleanObject";
+  import timeHelper from "../../common/utils/timeHelper";
 
   export default {
 
@@ -158,7 +158,7 @@
     methods: {
 
       initUserConfigInfo() {
-        let config = localStorage.getItem(picx_key)
+        let config = localStorage.getItem(PICX_KEY)
         if (config) {
           config = JSON.parse(config)
           this.token = config.token

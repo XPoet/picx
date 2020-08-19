@@ -29,7 +29,7 @@
 </template>
 
 <script>
-  import {picx_key} from "../utils/localStorage";
+  import {PICX_KEY} from "../common/model/localStorage";
   import {mapGetters} from "vuex";
 
   export default {
@@ -87,7 +87,7 @@
       },
 
       getUserInfo() {
-        let config = localStorage.getItem(picx_key)
+        let config = localStorage.getItem(PICX_KEY)
         if (config) {
           config = JSON.parse(config)
           this.username = config.nickname ? config.nickname : this.defaultUsername

@@ -6,7 +6,7 @@
 
 <script>
   import Axios from 'axios'
-  import {picx_key} from "../utils/localStorage";
+  import {PICX_KEY} from "../common/model/localStorage";
 
   export default {
     name: "Management",
@@ -24,7 +24,7 @@
     methods: {
 
       getUserConfigInfo() {
-        let config = localStorage.getItem(picx_key)
+        let config = localStorage.getItem(PICX_KEY)
         if (config) {
           this.userConfigInfo = JSON.parse(config)
         }
