@@ -267,6 +267,7 @@
           html_url: res.data.content.html_url,
           github_url: this.GitHubExternalLink,
           cdn_url: this.CDNExternalLink,
+          deleting: false
         })
         sessionStorage.setItem(picx_key, JSON.stringify(this.uploadedList))
       },

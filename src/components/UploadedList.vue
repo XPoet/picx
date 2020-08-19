@@ -3,6 +3,9 @@
     <el-card class="uploaded-image"
              :body-style="{ padding: '0' }"
              v-for="item in uploadedList"
+             v-loading="item.deleting"
+             element-loading-text="删除中..."
+             element-loading-background="rgba(0, 0, 0, 0.6)"
     >
       <img class="image" :src="item.cdn_url">
       <div class="image-info">
@@ -55,6 +58,7 @@
       deleteImage(imageObj) {
 
         console.log('imageObj', imageObj);
+        imageObj.deleting = true
 
         this.$axios.delete(
           `https://api.github.com/repos/${this.userConfigInfo?.username}/${this.userConfigInfo?.selectedRepos}/contents/${imageObj.path}`,
@@ -74,6 +78,7 @@
         ).then(res => {
           console.log('delete res: ', res);
           if (res.status === 200) {
+            imageObj.deleting = false
             const list = this.$parent.$data.uploadedList
             const rmIndex = list.findIndex(v => v.sha === imageObj.sha)
             list.splice(rmIndex, 1)
