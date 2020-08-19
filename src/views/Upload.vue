@@ -21,6 +21,9 @@
              @dragover.prevent
              @drop.stop.prevent="onDrop"
              @paste="onPaste"
+             v-loading="uploading && uploadProgress !== 100"
+             element-loading-text="上传中..."
+             element-loading-background="rgba(0, 0, 0, 0.5)"
         >
           <label class="target" for="uploader"></label>
           <input id="uploader" type="file" @change="onFileChange">
