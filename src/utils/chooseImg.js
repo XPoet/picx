@@ -1,3 +1,4 @@
+import ElementUI from 'element-ui'
 function toPreviewer (dataUrl, fileName, cb) {
   cb && cb(dataUrl, fileName)
 }
@@ -31,6 +32,7 @@ function chooseImg (file, cb, maxsize = 0) {
   }
 
   if (!/\/(?:jpeg|jpg|png|gif)/i.test(file.type)) {
+    ElementUI.Message.error('该文件不是图片格式！')
     return
   }
 
