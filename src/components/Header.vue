@@ -142,6 +142,9 @@
           width: 38px;
           height: 38px;
           border-radius: 50%;
+          border: 1px solid #ccc;
+          padding: 1px;
+          box-sizing: border-box;
         }
 
       }
