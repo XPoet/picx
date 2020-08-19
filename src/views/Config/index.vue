@@ -63,21 +63,21 @@
                         @change="dirModeChange"
         >
 
-          <el-tooltip content="按照日期，自动创建格式 yyyyMM 的目录" placement="top">
-            <el-radio label="nonuseDir">自动目录</el-radio>
+          <el-tooltip :content="'根据日期自动创建格式 YYYYMMDD 的目录'" placement="top">
+            <el-radio label="autoDir">自动目录</el-radio>
           </el-tooltip>
           <el-tooltip content="手动输入一个新目录" placement="top">
             <el-radio label="newDir">新建目录</el-radio>
           </el-tooltip>
           <el-tooltip :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个目录'" placement="top">
-            <el-radio label="autoDir">选择 {{userConfigInfo.selectedRepos }} 仓库目录</el-radio>
+            <el-radio label="reposDir">选择{{userConfigInfo.selectedRepos }}仓库目录</el-radio>
           </el-tooltip>
 
         </el-radio-group>
       </el-form-item>
 
       <el-form-item
-        v-if="userConfigInfo.dirList.length && userConfigInfo.dirMode === 'autoDir'"
+        v-if="userConfigInfo.dirList.length && userConfigInfo.dirMode === 'reposDir'"
         label="选择目录"
       >
         <el-select v-model="userConfigInfo.selectedDir"
@@ -125,6 +125,7 @@
   import {userConfigInfoModel} from "./model";
   import {mapGetters} from "vuex";
   import cleanObject from "../../utils/cleanObject";
+  import timeHelper from "../../utils/timeHelper";
 
   export default {
 
@@ -256,15 +257,16 @@
 
         switch (dirMode) {
 
-          case 'nonuseDir':
-            this.userConfigInfo.selectedDir = ''
+          case 'autoDir':
+            // 自动目录，根据当天日期自动生成
+            this.userConfigInfo.selectedDir = timeHelper.getYYYYMMDD()
             break;
 
           case 'newDir':
             this.userConfigInfo.selectedDir = ''
             break;
 
-          case 'autoDir':
+          case 'reposDir':
             break;
 
         }
