@@ -6,7 +6,7 @@
     >
       <img class="image" :src="item.cdn_url">
       <div class="image-info">
-        <div class="filename">{{item.filename}}</div>
+        <div class="filename">{{item.name}}</div>
         <div class="image-operation">
           <el-tooltip content="删除该图片" placement="top">
             <i class="el-icon-delete" @click="deleteImage(item)"></i>
@@ -24,8 +24,16 @@
 </template>
 
 <script>
+  import {picx_key} from "../utils/localStorage";
+
   export default {
     name: "UploadedList",
+
+    data() {
+      return {
+        userConfigInfo: {}
+      }
+    },
 
     props: {
       uploadedList: {
@@ -34,8 +42,49 @@
       }
     },
 
+    mounted() {
+      this.getUserConfigInfo()
+    },
+
     methods: {
+      getUserConfigInfo() {
+        let config = localStorage.getItem(picx_key)
+        if (config) this.userConfigInfo = JSON.parse(config)
+      },
+
       deleteImage(imageObj) {
+
+        console.log('imageObj', imageObj);
+
+        this.$axios.delete(
+          `https://api.github.com/repos/${this.userConfigInfo?.username}/${this.userConfigInfo?.selectedRepos}/contents/${imageObj.path}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `token ${this.userConfigInfo.token}`
+            },
+            data: {
+              owner: this.userConfigInfo?.username,
+              repo: this.userConfigInfo?.selectedRepos,
+              path: imageObj.path,
+              message: "delete from PicX",
+              sha: imageObj.sha
+            }
+          }
+        ).then(res => {
+          console.log('delete res: ', res);
+          if (res.status === 200) {
+            const list = this.$parent.$data.uploadedList
+            const rmIndex = list.findIndex(v => v.sha === imageObj.sha)
+            list.splice(rmIndex, 1)
+            sessionStorage.setItem(picx_key, JSON.stringify(list))
+            this.$message.success('删除成功！')
+          }
+
+        }).catch(err => {
+          console.log('err: ', err);
+        })
+
       },
 
       copyExternalLink(type, imageObj) {

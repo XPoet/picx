@@ -234,8 +234,8 @@
                 console.log('res', res);
                 if (res.status === 201 && res.statusText === 'Created') {
                   this.uploadProgress = 100;
-                  this.$message.success('上传成功！')
                   this.uploadedHandle(res)
+                  this.$message.success('上传成功！')
                 }
               })
               .catch(error => {
@@ -260,7 +260,11 @@
         this.CDNExternalLink = generateExternalLink('cdn', res.data.content, this.userConfigInfo)
 
         this.uploadedList.unshift({
-          filename: res.data.content.name,
+          name: res.data.content.name,
+          path: res.data.content.path,
+          sha: res.data.content.sha,
+          api_url: res.data.content.url,
+          html_url: res.data.content.html_url,
           github_url: this.GitHubExternalLink,
           cdn_url: this.CDNExternalLink,
         })
