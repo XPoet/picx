@@ -371,6 +371,22 @@
       border-right: 1px solid #ccc;
       box-sizing: border-box;
       padding: 20px;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        height: 5px;
+        width: 5px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0.25)
+      }
+
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
     }
 
     .upload-page-right {
