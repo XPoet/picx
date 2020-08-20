@@ -15,6 +15,13 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    name: 'Index',
+    redirect: {
+      name: 'Upload'
+    }
+  },
+  {
+    path: '/upload',
     name: 'Upload',
     component: Upload,
     meta: {
@@ -35,6 +42,12 @@ const routes = [
     component: Management,
     meta: {
       title: '图片管理 | PicX 图床神器'
+    }
+  },
+  {
+    path: '*',
+    redirect: {
+      name: 'Upload'
     }
   },
 ]
