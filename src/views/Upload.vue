@@ -21,7 +21,7 @@
              @dragover.prevent
              @drop.stop.prevent="onDrop"
              @paste="onPaste"
-             v-loading="uploading && uploadProgress !== 100"
+             v-loading="uploadStatus.uploading && uploadStatus.progress !== 100"
              element-loading-text="上传中..."
              element-loading-background="rgba(0, 0, 0, 0.5)"
         >
@@ -41,19 +41,26 @@
       >
         <div class="upload-status">
           <div class="file-status">
+
             <div class="filename"
-            >{{ fileName }}
+            >{{ filename.now }}
             </div>
 
-            <div class="upload-tips wait-upload" v-if="!uploading">
+            <div class="upload-tips wait-upload"
+                 v-if="!uploadStatus.uploading && uploadStatus.progress !== 100"
+            >
               等待上传 <i class="el-icon-upload2"></i>
             </div>
 
-            <div class="upload-tips uploading" v-if="uploading && uploadProgress !== 100">
+            <div class="upload-tips uploading"
+                 v-if="uploadStatus.uploading && uploadStatus.progress !== 100"
+            >
               正在上传 <i class="el-icon-loading"></i>
             </div>
 
-            <div class="upload-tips uploaded" v-if="uploadProgress === 100">
+            <div class="upload-tips uploaded"
+                 v-if="!uploadStatus.uploading && uploadStatus.progress === 100"
+            >
               上传完成 <i class="el-icon-circle-check"></i>
             </div>
           </div>
@@ -62,14 +69,13 @@
 
       <!-- 外链 -->
       <el-row class="row-item"
-              v-if="uploadProgress === 100"
+              v-if="uploadStatus.progress === 100"
       >
         <div class="external-link">
-
           <el-input class="external-link-input"
                     placeholder="复制GitHub外链..."
                     size="mini"
-                    v-model="GitHubExternalLink"
+                    v-model="externalLink.github"
                     ref="GitHubExternalLinkInput"
                     readonly
           >
@@ -83,7 +89,7 @@
           <el-input class="external-link-input"
                     placeholder="复制CDN外链..."
                     size="mini"
-                    v-model="CDNExternalLink"
+                    v-model="externalLink.cdn"
                     ref="CDNExternalLinkInput"
                     readonly
           >
@@ -127,10 +133,10 @@
   import chooseImg from "../common/utils/chooseImg";
   import paste from "../common/utils/paste";
   import filenameHandle from "../common/utils/filenameHandle";
-  import Axios from 'axios'
   import uploadUrlHandle from "../common/utils/uploadUrlHandle";
   import generateExternalLink from "../common/utils/generateExternalLink";
   import {PICX_KEY} from "../common/model/localStorage";
+  import cleanObject from "../common/utils/cleanObject";
 
   export default {
     name: "Upload",
@@ -142,21 +148,36 @@
 
     data() {
       return {
+        // 图片压缩大小
+        compressSize: 200,
+
         previewImg: '',
         imgBase64: '',
-        fileName: '',
-        uploadProgress: 0,
-        uploading: false,
-        autoUpload: false,
-        compressSize: 200,
+
+        filename: {
+          prev: '',
+          now: '',
+          normalName: '',
+          hashName: '',
+        },
+
         setMaxSize: false,
         renameWithHash: false,
 
-        // GitHub 外链
-        GitHubExternalLink: '',
+        // 上传状态
+        uploadStatus: {
+          progress: 0,
+          uploading: false,
+        },
 
-        // CDN 外链
-        CDNExternalLink: '',
+        // 是否自动上传，在图片选择完成后触发
+        autoUpload: false,
+
+        // 外链
+        externalLink: {
+          github: '',
+          cdn: '',
+        },
 
         // 用户配置信息
         userConfigInfo: {},
@@ -169,14 +190,11 @@
 
     mounted() {
       this.getUserConfigInfo()
-
       let uploaded = sessionStorage.getItem(PICX_KEY)
       if (uploaded) {
         this.uploadedList = JSON.parse(uploaded)
       }
-
     },
-
 
     methods: {
       getUserConfigInfo() {
@@ -191,7 +209,8 @@
       },
 
       onRenameChange(e) {
-        this.renameWithHash = e;
+        this.filename.now = e ? this.filename.hashName : this.filename.normalName
+        this.renameWithHash = e
       },
 
       onMaxSizeChange(e) {
@@ -201,66 +220,70 @@
       uploadReset() {
         this.imgBase64 = ''
         this.previewImg = ''
-        this.fileName = ''
-        this.GitHubExternalLink = ''
-        this.CDNExternalLink = ''
-        this.uploadProgress = 0
-        this.uploading = false
+        cleanObject(this.uploadStatus)
+        cleanObject(this.filename)
+        cleanObject(this.externalLink)
       },
 
       uploadFile() {
 
-        if (this.userConfigInfo) {
-          if (this.imgBase64 && this.fileName) {
-            this.uploading = true;
-            const data = {
-              "message": "upload from PicX",
-              "branch": "master",
-              "committer": {
-                "name": this.userConfigInfo.username,
-                "email": this.userConfigInfo.email,
-              },
-              "content": this.imgBase64
-            }
-
-            Axios.put(
-              uploadUrlHandle(this.userConfigInfo, this.fileName),
-              data,
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `token ${this.userConfigInfo.token}`
-                }
-              }
-            )
-              .then(res => {
-                console.log('res', res);
-                if (res.status === 201 && res.statusText === 'Created') {
-                  this.uploadProgress = 100;
-                  this.uploadedHandle(res)
-                  this.$message.success('上传成功！')
-                }
-              })
-              .catch(error => {
-                this.$message.error('上传失败！')
-                console.log('error', error);
-              })
-
-          } else {
-            this.$message.error('内容不能为空！')
-          }
-
-        } else {
-          this.$message.info('请先进行图床配置！')
+        if (!this.userConfigInfo) {
+          this.$message.error('请先进行图床配置！')
           this.$router.push('config')
+          return
         }
 
+        if (!this.imgBase64 || !this.filename.now) {
+          this.$message.error('内容不能为空！')
+          return
+        }
+
+        if (this.filename.now === this.filename.prev) {
+          this.$message.error('该文件已上传！')
+          return
+        }
+
+        this.uploadStatus.uploading = true;
+        const data = {
+          "message": "upload from PicX",
+          "branch": "master",
+          "committer": {
+            "name": this.userConfigInfo.username,
+            "email": this.userConfigInfo.email,
+          },
+          "content": this.imgBase64
+        }
+
+        this.$axios.put(
+          uploadUrlHandle(this.userConfigInfo, this.filename.now),
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `token ${this.userConfigInfo.token}`
+            }
+          }
+        )
+          .then(res => {
+            console.log('res', res);
+            if (res.status === 201 && res.statusText === 'Created') {
+              this.uploadStatus.progress = 100
+              this.uploadStatus.uploading = false
+              this.filename.prev = this.filename.now
+              this.uploadedHandle(res)
+              this.$message.success('上传成功！')
+            }
+          })
+          .catch(error => {
+            this.$message.error('上传失败！')
+            console.log('error', error);
+          })
       },
 
       uploadedHandle(res) {
         // 生成外链
-        this.GitHubExternalLink = generateExternalLink('github', res.data.content, this.userConfigInfo)
-        this.CDNExternalLink = generateExternalLink('cdn', res.data.content, this.userConfigInfo)
+        this.externalLink.github = generateExternalLink('github', res.data.content, this.userConfigInfo)
+        this.externalLink.cdn = generateExternalLink('cdn', res.data.content, this.userConfigInfo)
 
         this.uploadedList.unshift({
           name: res.data.content.name,
@@ -268,17 +291,15 @@
           sha: res.data.content.sha,
           api_url: res.data.content.url,
           html_url: res.data.content.html_url,
-          github_url: this.GitHubExternalLink,
-          cdn_url: this.CDNExternalLink,
+          github_url: this.externalLink.github,
+          cdn_url: this.externalLink.cdn,
           deleting: false
         })
         sessionStorage.setItem(PICX_KEY, JSON.stringify(this.uploadedList))
       },
 
       copyLink(type) {
-
         switch (type) {
-
           case 'CDN':
             this.$refs.CDNExternalLinkInput.select()
             break;
@@ -294,18 +315,17 @@
       getImage(url, fileName) {
         this.previewImg = url
         this.imgBase64 = url.split(',')[1]
-        this.fileName = this.renameWithHash ? filenameHandle(fileName) : fileName
-
+        cleanObject(this.uploadStatus)
+        this.filename.normalName = fileName
+        this.filename.hashName = filenameHandle(fileName)
+        this.filename.now = this.renameWithHash ? this.filename.hashName : fileName
         if (this.autoUpload) {
           this.uploadFile()
         }
       },
 
-
       onFileChange(e) {
-
         const targetFile = e.target.files[0];
-
         chooseImg(
           targetFile,
           (url, fileName) => {
@@ -316,9 +336,7 @@
       },
 
       onDrop(e) {
-
         const targetFile = e.dataTransfer.files[0];
-
         chooseImg(
           targetFile,
           (url, fileName) => {

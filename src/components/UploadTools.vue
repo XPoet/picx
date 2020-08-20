@@ -1,9 +1,9 @@
 <template>
   <div>
-    <div class="tool-item">
+    <!--<div class="tool-item">
       <el-switch
         v-model="setMaxSize"
-        inactive-text="设置上传图片大小"
+        inactive-text="设置上传图片大小(kb)"
         @change="setMaxSizeChange"
         style="margin-right: 20px"
       >
@@ -17,7 +17,7 @@
                        @change="maxSizeChange"
                        label="图片大小"
       ></el-input-number>
-    </div>
+    </div>-->
     <div class="tool-item">
       <el-switch
         v-model="rename"
@@ -83,8 +83,6 @@
       }
 
     },
-
-    props: {}
   }
 </script>
 
