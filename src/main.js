@@ -6,8 +6,11 @@ import store from './store'
 // 导入 ElementUI
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
-
 Vue.use(ElementUI);
+
+// 导入 Axios
+import Axios from "axios";
+Vue.prototype.$axios = Axios
 
 Vue.config.productionTip = false
 
