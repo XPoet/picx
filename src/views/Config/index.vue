@@ -21,10 +21,10 @@
       </el-form-item>
 
       <el-form-item
-        v-if="userConfigInfo.username"
+        v-if="userConfigInfo.owner"
         label="用户名"
       >
-        <el-input v-model="userConfigInfo.username" readonly></el-input>
+        <el-input v-model="userConfigInfo.owner" readonly></el-input>
       </el-form-item>
 
       <el-form-item
@@ -143,15 +143,15 @@
     },
 
     watch: {
-      logoutStatus(e) {
-        if (e) this.resetUserConfigInfo()
+      loggingStatus(e) {
+        if (!e) this.resetUserConfigInfo()
       },
 
     },
 
     computed: {
       ...mapGetters({
-        logoutStatus: 'getLogoutStatus'
+        loggingStatus: 'getUserLoggingStatus'
       })
     },
 
@@ -195,9 +195,10 @@
       },
 
       saveUserInfo(res) {
+        this.userConfigInfo.loggingStatus = true
         this.userConfigInfo.token = this.token
-        this.userConfigInfo.username = res.data['login']
-        this.userConfigInfo.nickname = res.data['name']
+        this.userConfigInfo.owner = res.data['login']
+        this.userConfigInfo.name = res.data['name']
         this.userConfigInfo.email = res.data['email']
         this.userConfigInfo.avatar_url = res.data['avatar_url']
 
@@ -232,7 +233,7 @@
       },
 
       getDirList(repos) {
-        Axios.get(`https://api.github.com/repos/${this.userConfigInfo.username}/${repos}/contents`)
+        Axios.get(`https://api.github.com/repos/${this.userConfigInfo.owner}/${repos}/contents`)
           .then(res => {
             if (res.status === 200) {
               this.userConfigInfo.dirList = []
@@ -275,7 +276,8 @@
       },
 
       persistUserConfigInfo() {
-        this.$store.commit('PERSIST_USER_CONFIG_INFO', this.userConfigInfo)
+        this.$store.commit('SET_USER_CONFIG_INFO', this.userConfigInfo)
+        this.$store.commit('PERSIST_USER_CONFIG_INFO')
       },
 
       reset() {

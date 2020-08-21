@@ -20,6 +20,10 @@ const cleanObject = (object) => {
       case 'number':
         object[key] = 0
         break
+
+      case 'boolean':
+        object[key] = false
+        break
     }
   }
 }

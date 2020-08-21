@@ -8,7 +8,7 @@ const uploadUrlHandle = (config, filename) => {
     path = ''
   }
 
-  return `${baseUrl}/${config.username}/${config.selectedRepos}/contents/${path}${filename}`
+  return `${baseUrl}/${config.owner}/${config.selectedRepos}/contents/${path}${filename}`
 
 }
 

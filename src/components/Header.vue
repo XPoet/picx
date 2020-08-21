@@ -20,9 +20,10 @@
           <el-dropdown-item command="config">图床配置</el-dropdown-item>
           <!--<el-dropdown-item command="management">图片管理</el-dropdown-item>-->
           <el-dropdown-item
-            v-if="!logoutStatus"
+            v-if="userConfigInfo.loggingStatus"
             command="logout"
-          >退出登录</el-dropdown-item>
+          >退出登录
+          </el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -44,7 +45,6 @@
         defaultUsername: '未登录',
         avatarUrl: '',
         defaultAvatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
-        logoutStatus: true
       }
     },
 
@@ -53,9 +53,12 @@
         this.avatarUrl = avatarUrl ? avatarUrl : this.defaultAvatarUrl
       },
 
-      getUserNickname(nickname) {
-        this.username = nickname ? nickname : this.defaultUsername
-        this.logoutStatus = false
+      getUserName(name) {
+        this.username = name ? name : this.defaultUsername
+      },
+
+      getUserLoggingStatus(loggingStatus) {
+        this.userConfigInfo.loggingStatus = loggingStatus
       },
 
     },
@@ -63,7 +66,8 @@
     computed: {
       ...mapGetters([
         'getUserAvatar',
-        'getUserNickname'
+        'getUserName',
+        'getUserLoggingStatus',
       ]),
     },
 
@@ -96,18 +100,15 @@
         let config = localStorage.getItem(PICX_KEY)
         if (config) {
           this.userConfigInfo = JSON.parse(config)
-          this.username = this.userConfigInfo.nickname ? this.userConfigInfo.nickname : this.defaultUsername
+          this.username = this.userConfigInfo.name ? this.userConfigInfo.name : this.defaultUsername
           this.avatarUrl = this.userConfigInfo.avatar_url ? this.userConfigInfo.avatar_url : this.defaultAvatarUrl
-          this.logoutStatus = false
         } else {
           this.username = this.defaultUsername
           this.avatarUrl = this.defaultAvatarUrl
-          this.logoutStatus = true
         }
       },
 
       logout() {
-        this.logoutStatus = false
         this.$store.dispatch('LOGOUT')
       }
     }

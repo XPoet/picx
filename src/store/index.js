@@ -29,8 +29,7 @@ export default new Vuex.Store({
 
 
     // 持久化用户配置信息
-    PERSIST_USER_CONFIG_INFO(state, configInfo) {
-      this.commit('SET_USER_CONFIG_INFO', configInfo)
+    PERSIST_USER_CONFIG_INFO(state) {
       localStorage.setItem(PICX_KEY, JSON.stringify(state.userConfigInfo))
     },
 
@@ -44,15 +43,15 @@ export default new Vuex.Store({
   getters: {
     getUserConfigInfo: state => JSON.parse(JSON.stringify(state.userConfigInfo)),
     getUserAvatar: state => state.userConfigInfo.avatar_url,
-    getUserNickname: state => state.userConfigInfo.nickname,
-    getLogoutStatus: state => state.isLogout,
+    getUserName: state => state.userConfigInfo.name,
+    getUserLoggingStatus: state => state.userConfigInfo.loggingStatus,
   },
 
   actions: {
     // 退出登录 action
     LOGOUT({commit, state}) {
       commit('RESET_USER_CONFIG_INFO')
-      state.isLogout = true
+      state.userConfigInfo.loggingStatus = false
       localStorage.removeItem(PICX_KEY)
     }
   },

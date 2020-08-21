@@ -1,12 +1,13 @@
 export const userConfigInfoModel = {
   token: '',
-  username: '',
+  owner: '',
   email: '',
-  nickname: '',
+  name: '',
   avatar_url: '',
   selectedRepos: '',
   reposList: [],
   dirMode: '',
   selectedDir: '',
-  dirList: []
+  dirList: [],
+  loggingStatus: false
 }

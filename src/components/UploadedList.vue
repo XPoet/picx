@@ -57,18 +57,17 @@
 
       deleteImage(imageObj) {
 
-        console.log('imageObj', imageObj);
         imageObj.deleting = true
 
         this.$axios.delete(
-          `https://api.github.com/repos/${this.userConfigInfo?.username}/${this.userConfigInfo?.selectedRepos}/contents/${imageObj.path}`,
+          `https://api.github.com/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${imageObj.path}`,
           {
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `token ${this.userConfigInfo.token}`
+              "Authorization": `token ${this.userConfigInfo?.token}`
             },
             data: {
-              owner: this.userConfigInfo?.username,
+              owner: this.userConfigInfo?.owner,
               repo: this.userConfigInfo?.selectedRepos,
               path: imageObj.path,
               message: "delete from PicX",

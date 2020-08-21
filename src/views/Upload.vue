@@ -210,7 +210,7 @@
 
     watch: {
       logoutStatus(e) {
-        if (e) {
+        if (!e) { // 如果退出登录，清空信息
           this.resetUploadInfo()
           this.uploadedList = []
           this.userConfigInfo = {}
@@ -221,7 +221,7 @@
 
     computed: {
       ...mapGetters({
-        logoutStatus: 'getLogoutStatus'
+        logoutStatus: 'getUserLoggingStatus'
       })
     },
 
@@ -295,7 +295,7 @@
           "message": "upload from PicX",
           "branch": "master",
           "committer": {
-            "name": this.userConfigInfo.username,
+            "name": this.userConfigInfo.owner,
             "email": this.userConfigInfo.email,
           },
           "content": this.imgData.base64Content

@@ -6,7 +6,7 @@ const generateExternalLink = (type, content, config) => {
       return content['download_url']
 
     case 'cdn':
-      return `https://cdn.jsdelivr.net/gh/${config.username}/${config.selectedRepos}/${content['path']}`
+      return `https://cdn.jsdelivr.net/gh/${config.owner}/${config.selectedRepos}/${content['path']}`
   }
 }
 
