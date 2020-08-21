@@ -25,19 +25,19 @@
              element-loading-text="上传中..."
              element-loading-background="rgba(0, 0, 0, 0.5)"
         >
-          <label class="target" for="uploader"></label>
+          <label for="uploader"></label>
           <input id="uploader" type="file" @change="onFileChange">
-          <div class="tips" v-if="!previewImg">
+          <div class="tips" v-if="!imgData.base64Url">
             <i class="icon el-icon-upload"></i>
             <div class="text">拖拽、粘贴、或点击此处上传</div>
           </div>
-          <img v-if="previewImg" class="target" :src="previewImg">
+          <img v-if="imgData.base64Url" :src="imgData.base64Url">
         </div>
       </el-row>
 
       <!-- 上传状态 -->
       <el-row class="row-item"
-              v-if="previewImg"
+              v-if="imgData.base64Url"
       >
         <div class="upload-status">
           <div class="file-status">
@@ -118,9 +118,9 @@
             @max-size="onMaxSizeChange"
             @rename="rename"
             @hash-named="hashRename"
-            @upload-reset="uploadReset"
-            @upload-file="uploadFile"
-            :is-show-rename="previewImg !== '' && uploadStatus.progress !== 100"
+            @upload-reset="resetUploadInfo"
+            @upload-file="uploadImage"
+            :is-show-rename="imgData.base64Url !== '' && uploadStatus.progress !== 100"
           />
         </div>
       </el-row>
@@ -154,8 +154,10 @@
         // 图片压缩大小
         compressSize: 200,
 
-        previewImg: '',
-        imgBase64: '',
+        imgData: {
+          base64Content: '',
+          base64Url: '',
+        },
 
         filename: {
           initName: '',
@@ -209,8 +211,9 @@
     watch: {
       logoutStatus(e) {
         if (e) {
-          this.uploadReset()
+          this.resetUploadInfo()
           this.uploadedList = []
+          this.userConfigInfo = {}
           sessionStorage.removeItem(PICX_KEY)
         }
       },
@@ -263,28 +266,27 @@
         this.compressSize = e;
       },
 
-      uploadReset() {
-        this.imgBase64 = ''
-        this.previewImg = ''
+      resetUploadInfo() {
+        cleanObject(this.imgData)
         cleanObject(this.uploadStatus)
         cleanObject(this.filename)
         cleanObject(this.externalLink)
       },
 
-      uploadFile() {
+      uploadImage() {
         if (!Object.keys(this.userConfigInfo).length) {
           this.$message.error('请先进行图床配置！')
           this.$router.push('config')
           return
         }
 
-        if (!this.imgBase64 || !this.filename.now) {
+        if (!this.imgData.base64Content || !this.filename.now) {
           this.$message.error('内容不能为空！')
           return
         }
 
         if (this.filename.now === this.filename.prev) {
-          this.$message.error('该文件已上传！')
+          this.$message.error('该图片已上传！')
           return
         }
 
@@ -296,7 +298,7 @@
             "name": this.userConfigInfo.username,
             "email": this.userConfigInfo.email,
           },
-          "content": this.imgBase64
+          "content": this.imgData.base64Content
         }
 
         this.$axios.put(
@@ -312,11 +314,8 @@
           .then(res => {
             console.log('res', res);
             if (res.status === 201 && res.statusText === 'Created') {
-              this.uploadStatus.progress = 100
-              this.uploadStatus.uploading = false
-              this.filename.prev = this.filename.now
-              this.uploadedHandle(res)
               this.$message.success('上传成功！')
+              this.uploadedHandle(res)
             }
           })
           .catch(error => {
@@ -326,6 +325,12 @@
       },
 
       uploadedHandle(res) {
+        // 上传状态处理
+        this.uploadStatus.progress = 100
+        this.uploadStatus.uploading = false
+
+        this.filename.prev = this.filename.now
+
         // 生成外链
         this.externalLink.github = generateExternalLink('github', res.data.content, this.userConfigInfo)
         this.externalLink.cdn = generateExternalLink('cdn', res.data.content, this.userConfigInfo)
@@ -358,8 +363,8 @@
       },
 
       getImage(url, fileName) {
-        this.previewImg = url
-        this.imgBase64 = url.split(',')[1]
+        this.imgData.base64Url = url
+        this.imgData.base64Content = url.split(',')[1]
         cleanObject(this.uploadStatus)
         const {name, hash, suffix} = filenameHandle(fileName)
         this.filename.name = name
@@ -369,7 +374,7 @@
         this.filename.now = this.isHashRename ? `${name}.${hash}${suffix}` : fileName
         this.filename.initName = this.filename.name
         if (this.autoUpload) {
-          this.uploadFile()
+          this.uploadImage()
         }
       },
 

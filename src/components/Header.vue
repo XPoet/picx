@@ -58,18 +58,12 @@
         this.logoutStatus = false
       },
 
-      getLogoutStatus(logoutStatus) {
-        if (logoutStatus) {
-          this.logoutStatus = logoutStatus
-        }
-      },
     },
 
     computed: {
       ...mapGetters([
         'getUserAvatar',
-        'getUserNickname',
-        'getLogoutStatus',
+        'getUserNickname'
       ]),
     },
 
@@ -113,6 +107,7 @@
       },
 
       logout() {
+        this.logoutStatus = false
         this.$store.dispatch('LOGOUT')
       }
     }
