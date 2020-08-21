@@ -115,10 +115,12 @@
 
           <UploadTools
             @is-set-max-size="onSetMaxSizeChane"
-            @is-rename="onRenameChange"
             @max-size="onMaxSizeChange"
+            @rename="rename"
+            @hash-named="hashRename"
             @upload-reset="uploadReset"
             @upload-file="uploadFile"
+            :is-show-rename="previewImg !== '' && uploadStatus.progress !== 100"
           />
         </div>
       </el-row>
@@ -156,14 +158,21 @@
         imgBase64: '',
 
         filename: {
+          initName: '',
           prev: '',
           now: '',
-          normalName: '',
-          hashName: '',
+          name: '',
+          hash: '',
+          suffix: '',
         },
 
         setMaxSize: false,
-        renameWithHash: false,
+
+        // 哈希重命名
+        isHashRename: false,
+
+        // 重命名
+        isRename: false,
 
         // 上传状态
         uploadStatus: {
@@ -225,9 +234,29 @@
         this.setMaxSize = e;
       },
 
-      onRenameChange(e) {
-        this.filename.now = e ? this.filename.hashName : this.filename.normalName
-        this.renameWithHash = e
+      hashRename(e) {
+        this.isHashRename = e
+        if (this.isHashRename) {
+          this.filename.now = `${this.filename.name}.${this.filename.hash}${this.filename.suffix}`
+        } else {
+          this.filename.now = `${this.filename.name}${this.filename.suffix}`
+        }
+      },
+
+      rename(e) {
+        const {isRename, newName} = e
+
+        if (isRename) {
+          this.filename.name = newName
+        } else {
+          this.filename.name = this.filename.initName
+        }
+
+        if (this.isHashRename) {
+          this.filename.now = `${this.filename.name}.${this.filename.hash}${this.filename.suffix}`
+        } else {
+          this.filename.now = `${this.filename.name}${this.filename.suffix}`
+        }
       },
 
       onMaxSizeChange(e) {
@@ -332,9 +361,13 @@
         this.previewImg = url
         this.imgBase64 = url.split(',')[1]
         cleanObject(this.uploadStatus)
-        this.filename.normalName = fileName
-        this.filename.hashName = filenameHandle(fileName)
-        this.filename.now = this.renameWithHash ? this.filename.hashName : fileName
+        const {name, hash, suffix} = filenameHandle(fileName)
+        this.filename.name = name
+        this.filename.hash = hash
+        this.filename.suffix = suffix
+
+        this.filename.now = this.isHashRename ? `${name}.${hash}${suffix}` : fileName
+        this.filename.initName = this.filename.name
         if (this.autoUpload) {
           this.uploadFile()
         }
