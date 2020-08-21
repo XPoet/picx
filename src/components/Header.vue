@@ -1,6 +1,5 @@
 <template>
   <header class="header">
-
     <div class="logo" @click="$router.push('/')">
       <i class="el-icon-picture-outline logo-icon"></i>
       PicX
@@ -20,7 +19,10 @@
           <el-dropdown-item command="upload">图片上传</el-dropdown-item>
           <el-dropdown-item command="config">图床配置</el-dropdown-item>
           <!--<el-dropdown-item command="management">图片管理</el-dropdown-item>-->
-          <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+          <el-dropdown-item
+            v-if="!logoutStatus"
+            command="logout"
+          >退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -37,10 +39,12 @@
 
     data() {
       return {
+        userConfigInfo: {},
         username: '',
         defaultUsername: '未登录',
         avatarUrl: '',
         defaultAvatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+        logoutStatus: true
       }
     },
 
@@ -51,6 +55,13 @@
 
       getUserNickname(nickname) {
         this.username = nickname ? nickname : this.defaultUsername
+        this.logoutStatus = false
+      },
+
+      getLogoutStatus(logoutStatus) {
+        if (logoutStatus) {
+          this.logoutStatus = logoutStatus
+        }
       },
     },
 
@@ -58,6 +69,7 @@
       ...mapGetters([
         'getUserAvatar',
         'getUserNickname',
+        'getLogoutStatus',
       ]),
     },
 
@@ -89,12 +101,14 @@
       getUserInfo() {
         let config = localStorage.getItem(PICX_KEY)
         if (config) {
-          config = JSON.parse(config)
-          this.username = config.nickname ? config.nickname : this.defaultUsername
-          this.avatarUrl = config.avatar_url ? config.avatar_url : this.defaultAvatarUrl
+          this.userConfigInfo = JSON.parse(config)
+          this.username = this.userConfigInfo.nickname ? this.userConfigInfo.nickname : this.defaultUsername
+          this.avatarUrl = this.userConfigInfo.avatar_url ? this.userConfigInfo.avatar_url : this.defaultAvatarUrl
+          this.logoutStatus = false
         } else {
           this.username = this.defaultUsername
           this.avatarUrl = this.defaultAvatarUrl
+          this.logoutStatus = true
         }
       },
 

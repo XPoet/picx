@@ -137,6 +137,7 @@
   import generateExternalLink from "../common/utils/generateExternalLink";
   import {PICX_KEY} from "../common/model/localStorage";
   import cleanObject from "../common/utils/cleanObject";
+  import {mapGetters} from "vuex";
 
   export default {
     name: "Upload",
@@ -196,6 +197,22 @@
       }
     },
 
+    watch: {
+      logoutStatus(e) {
+        if (e) {
+          this.uploadReset()
+          this.uploadedList = []
+          sessionStorage.removeItem(PICX_KEY)
+        }
+      },
+    },
+
+    computed: {
+      ...mapGetters({
+        logoutStatus: 'getLogoutStatus'
+      })
+    },
+
     methods: {
       getUserConfigInfo() {
         const config = localStorage.getItem(PICX_KEY)
@@ -226,8 +243,7 @@
       },
 
       uploadFile() {
-
-        if (!this.userConfigInfo) {
+        if (!Object.keys(this.userConfigInfo).length) {
           this.$message.error('请先进行图床配置！')
           this.$router.push('config')
           return
@@ -351,7 +367,7 @@
         this.getImage(url, fileName)
       },
 
-    }
+    },
 
   }
 </script>
