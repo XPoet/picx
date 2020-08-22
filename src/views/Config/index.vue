@@ -56,7 +56,7 @@
       </el-form-item>
 
       <el-form-item
-        v-if="userConfigInfo.reposList.length"
+        v-if="userConfigInfo.reposList.length && userConfigInfo.selectedRepos"
         label="目录方式"
       >
         <el-radio-group v-model="userConfigInfo.dirMode"
@@ -69,11 +69,31 @@
           <el-tooltip content="手动输入一个新目录" placement="top">
             <el-radio label="newDir">新建目录</el-radio>
           </el-tooltip>
-          <el-tooltip :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个目录'" placement="top">
+          <el-tooltip v-if="userConfigInfo.dirList.length"
+                      :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个目录'" placement="top">
             <el-radio label="reposDir">选择{{userConfigInfo.selectedRepos }}仓库目录</el-radio>
           </el-tooltip>
-
         </el-radio-group>
+      </el-form-item>
+
+      <el-form-item
+        v-if="userConfigInfo.dirMode === 'autoDir'"
+        label="自动目录"
+      >
+        <el-input v-model="userConfigInfo.selectedDir"
+                  readonly
+        ></el-input>
+      </el-form-item>
+
+      <el-form-item
+        v-if="userConfigInfo.dirMode === 'newDir'"
+        label="新建目录"
+      >
+        <el-input v-model="userConfigInfo.selectedDir"
+                  @input="persistUserConfigInfo()"
+                  clearable
+                  placeholder="请输入新建的目录..."
+        ></el-input>
       </el-form-item>
 
       <el-form-item
@@ -97,18 +117,6 @@
         </el-select>
 
       </el-form-item>
-
-      <el-form-item
-        v-if="userConfigInfo.dirMode === 'newDir'"
-        label="新建目录"
-      >
-        <el-input v-model="userConfigInfo.selectedDir"
-                  @input="persistUserConfigInfo()"
-                  clearable
-                  placeholder="请输入新建的目录..."
-        ></el-input>
-      </el-form-item>
-
 
       <el-form-item style="float: right"
                     v-if="userConfigInfo.selectedRepos"
