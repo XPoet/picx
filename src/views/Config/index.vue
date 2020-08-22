@@ -171,8 +171,8 @@
 
       getUserInfo() {
         if (this.token) {
-          Axios.get(
-            'https://api.github.com/user',
+          this.$axios.get(
+            '/user',
             {
               headers: {
                 "Content-Type": "application/json",
@@ -185,9 +185,6 @@
               this.getReposList(res.data['repos_url'])
             }
           })
-            .catch(err => {
-              console.log('err', err);
-            })
 
         } else {
           this.$message.warning('Token 不能为空！')

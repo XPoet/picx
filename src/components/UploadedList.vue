@@ -60,7 +60,7 @@
         imageObj.deleting = true
 
         this.$axios.delete(
-          `https://api.github.com/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${imageObj.path}`,
+          `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${imageObj.path}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -84,11 +84,7 @@
             sessionStorage.setItem(PICX_KEY, JSON.stringify(list))
             this.$message.success('删除成功！')
           }
-
-        }).catch(err => {
-          console.log('err: ', err);
         })
-
       },
 
       copyExternalLink(type, imageObj) {
