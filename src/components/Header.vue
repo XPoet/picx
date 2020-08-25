@@ -6,19 +6,30 @@
     </div>
 
     <div class="user-info">
-      <span class="username">{{ username }}</span>
+      <span class="username">{{ userConfigInfo.name ? userConfigInfo.name : defaultUsername }}</span>
       <el-dropdown trigger="click"
                    @command="handleCommand"
       >
         <span class="el-dropdown-link">
           <span class="avatar">
-            <img :src="avatarUrl">
+            <img :src="userConfigInfo.avatarUrl ? userConfigInfo.avatarUrl : defaultAvatarUrl">
           </span>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="upload">图片上传</el-dropdown-item>
           <el-dropdown-item command="config">图床配置</el-dropdown-item>
-          <!--<el-dropdown-item command="management">图片管理</el-dropdown-item>-->
+
+          <el-dropdown-item
+            command="upload"
+            v-if="userConfigInfo.loggingStatus"
+          >图片上传
+          </el-dropdown-item>
+
+          <el-dropdown-item
+            v-if="userConfigInfo.loggingStatus"
+            command="management"
+          >图床管理
+          </el-dropdown-item>
+
           <el-dropdown-item
             v-if="userConfigInfo.loggingStatus"
             command="logout"
@@ -27,12 +38,10 @@
         </el-dropdown-menu>
       </el-dropdown>
     </div>
-
   </header>
 </template>
 
 <script>
-  import {PICX_KEY} from "../common/model/localStorage";
   import {mapGetters} from "vuex";
 
   export default {
@@ -40,39 +49,20 @@
 
     data() {
       return {
-        userConfigInfo: {},
-        username: '',
         defaultUsername: '未登录',
-        avatarUrl: '',
         defaultAvatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
       }
     },
 
-    watch: {
-      getUserAvatar(avatarUrl) {
-        this.avatarUrl = avatarUrl ? avatarUrl : this.defaultAvatarUrl
-      },
-
-      getUserName(name) {
-        this.username = name ? name : this.defaultUsername
-      },
-
-      getUserLoggingStatus(loggingStatus) {
-        this.userConfigInfo.loggingStatus = loggingStatus
-      },
-
-    },
+    watch: {},
 
     computed: {
-      ...mapGetters([
-        'getUserAvatar',
-        'getUserName',
-        'getUserLoggingStatus',
-      ]),
+      ...mapGetters({
+        userConfigInfo: 'getUserConfigInfo'
+      }),
     },
 
     mounted() {
-      this.getUserInfo();
     },
 
     methods: {
@@ -93,18 +83,6 @@
           case 'logout':
             this.logout()
             break;
-        }
-      },
-
-      getUserInfo() {
-        let config = localStorage.getItem(PICX_KEY)
-        if (config) {
-          this.userConfigInfo = JSON.parse(config)
-          this.username = this.userConfigInfo.name ? this.userConfigInfo.name : this.defaultUsername
-          this.avatarUrl = this.userConfigInfo.avatar_url ? this.userConfigInfo.avatar_url : this.defaultAvatarUrl
-        } else {
-          this.username = this.defaultUsername
-          this.avatarUrl = this.defaultAvatarUrl
         }
       },
 

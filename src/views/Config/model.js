@@ -3,7 +3,7 @@ export const userConfigInfoModel = {
   owner: '',
   email: '',
   name: '',
-  avatar_url: '',
+  avatarUrl: '',
   selectedRepos: '',
   reposList: [],
   dirMode: '',

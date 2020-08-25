@@ -62,7 +62,9 @@
         <el-radio-group v-model="userConfigInfo.dirMode"
                         @change="dirModeChange"
         >
-
+          <el-tooltip :content="'图片存储在 Master 分支的根目录下'" placement="top">
+            <el-radio label="nonuseDir">不使用目录</el-radio>
+          </el-tooltip>
           <el-tooltip :content="'根据日期自动创建格式 YYYYMMDD 的目录'" placement="top">
             <el-radio label="autoDir">自动目录</el-radio>
           </el-tooltip>
@@ -104,7 +106,6 @@
                    filterable
                    style="width: 100%"
                    placeholder="请选择目录..."
-                   :clearable="true"
                    @change="persistUserConfigInfo"
         >
           <el-option
@@ -128,8 +129,7 @@
 </template>
 
 <script>
-  import Axios from "axios";
-  import {PICX_KEY} from "../../common/model/localStorage";
+  import {PICX_CONFIG} from "../../common/model/localStorage";
   import {userConfigInfoModel} from "./model";
   import {mapGetters} from "vuex";
   import cleanObject from "../../common/utils/cleanObject";
@@ -166,7 +166,7 @@
     methods: {
 
       initUserConfigInfo() {
-        let config = localStorage.getItem(PICX_KEY)
+        let config = localStorage.getItem(PICX_CONFIG)
         if (config) {
           config = JSON.parse(config)
           this.token = config.token
@@ -205,31 +205,35 @@
         this.userConfigInfo.owner = res.data['login']
         this.userConfigInfo.name = res.data['name']
         this.userConfigInfo.email = res.data['email']
-        this.userConfigInfo.avatar_url = res.data['avatar_url']
+        this.userConfigInfo.avatarUrl = res.data['avatar_url']
 
         this.persistUserConfigInfo()
       },
 
       getReposList(repos_url) {
-        Axios.get(repos_url)
-          .then(res => {
-            if (res.status === 200) {
-              this.userConfigInfo.reposList = []
-              for (const repos of res.data) {
-                if (!repos.fork) {
-                  this.userConfigInfo.reposList.push({
-                    value: repos.name,
-                    label: repos.name,
-                    desc: repos.description
-                  })
-                }
-              }
-              this.persistUserConfigInfo()
+        this.$axios.get(
+          repos_url,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `token ${this.userConfigInfo.token}`
             }
-          })
-          .catch(err => {
-            console.log('err', err);
-          })
+          }
+        ).then(res => {
+          if (res.status === 200) {
+            this.userConfigInfo.reposList = []
+            for (const repos of res.data) {
+              if (!repos.fork) {
+                this.userConfigInfo.reposList.push({
+                  value: repos.name,
+                  label: repos.name,
+                  desc: repos.description
+                })
+              }
+            }
+            this.persistUserConfigInfo()
+          }
+        })
       },
 
       selectRepos(repos) {
@@ -238,30 +242,37 @@
       },
 
       getDirList(repos) {
-        Axios.get(`https://api.github.com/repos/${this.userConfigInfo.owner}/${repos}/contents`)
-          .then(res => {
-            if (res.status === 200) {
-              this.userConfigInfo.dirList = []
-              for (const item of res.data) {
-                if (item.type === 'dir') {
-                  this.userConfigInfo.dirList.push({
-                    value: item.name,
-                    label: item.name
-                  })
-                }
-              }
-              this.persistUserConfigInfo()
+        this.$axios.get(
+          `https://api.github.com/repos/${this.userConfigInfo.owner}/${repos}/contents`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `token ${this.userConfigInfo.token}`
             }
-          })
-          .catch(err => {
-            console.log('err', err);
-          })
-
+          }
+        ).then(res => {
+          if (res.status === 200) {
+            this.userConfigInfo.dirList = []
+            for (const item of res.data) {
+              if (item.type === 'dir') {
+                this.userConfigInfo.dirList.push({
+                  value: item.name,
+                  label: item.name
+                })
+              }
+            }
+            this.persistUserConfigInfo()
+          }
+        })
       },
 
       dirModeChange(dirMode) {
 
         switch (dirMode) {
+
+          case 'nonuseDir':
+            this.userConfigInfo.selectedDir = '/'
+            break;
 
           case 'autoDir':
             // 自动目录，根据当天日期自动生成
@@ -298,7 +309,7 @@
       goUpload() {
         if (this.userConfigInfo.selectedDir === '') {
 
-          if (this.userConfigInfo.dirMode === 'autoDir') {
+          if (this.userConfigInfo.dirMode === 'reposDir') {
 
             this.$message.warning(`请选择 ${this.userConfigInfo.selectedRepos} 仓库下的一个目录！`)
 

@@ -2,17 +2,24 @@
   <div class="upload-page-container">
 
     <div class="upload-page-left"
-         v-if="uploadedList.length"
+         v-if="uploadedImageList.length"
          :style="{
             'width': '30%'
          }"
     >
-      <UploadedList :uploadedList="uploadedList"></UploadedList>
+      <div class="uploaded-item"
+           v-for="item in uploadedImageList"
+      >
+        <ImageCard :image-obj="item"
+                   :is-uploaded="true"
+        />
+      </div>
+
     </div>
 
     <div class="upload-page-right"
          :style="{
-            'width': uploadedList.length ? '70%' : '100%'
+            'width': uploadedImageList.length ? '70%' : '100%'
          }"
     >
       <!-- 上传区域 -->
@@ -131,22 +138,21 @@
 
 <script>
   import UploadTools from "../components/UploadTools";
-  import UploadedList from "../components/UploadedList";
   import chooseImg from "../common/utils/chooseImg";
   import paste from "../common/utils/paste";
-  import filenameHandle from "../common/utils/filenameHandle";
+  import {filenameHandle} from "../common/utils/filenameHandle";
   import uploadUrlHandle from "../common/utils/uploadUrlHandle";
   import generateExternalLink from "../common/utils/generateExternalLink";
-  import {PICX_KEY} from "../common/model/localStorage";
   import cleanObject from "../common/utils/cleanObject";
   import {mapGetters} from "vuex";
+  import ImageCard from "../components/ImageCard";
 
   export default {
     name: "Upload",
 
     components: {
+      ImageCard,
       UploadTools,
-      UploadedList,
     },
 
     data() {
@@ -191,47 +197,30 @@
           cdn: '',
         },
 
-        // 用户配置信息
-        userConfigInfo: {},
-
-        // 保存已上传的图片
-        uploadedList: []
-
       }
     },
 
     mounted() {
-      this.getUserConfigInfo()
-      let uploaded = sessionStorage.getItem(PICX_KEY)
-      if (uploaded) {
-        this.uploadedList = JSON.parse(uploaded)
-      }
+
     },
 
     watch: {
       logoutStatus(e) {
         if (!e) { // 如果退出登录，清空信息
           this.resetUploadInfo()
-          this.uploadedList = []
-          this.userConfigInfo = {}
-          sessionStorage.removeItem(PICX_KEY)
         }
       },
     },
 
     computed: {
       ...mapGetters({
-        logoutStatus: 'getUserLoggingStatus'
+        userConfigInfo: 'getUserConfigInfo',
+        logoutStatus: 'getUserLoggingStatus',
+        uploadedImageList: 'getUploadedImageList',
       })
     },
 
     methods: {
-      getUserConfigInfo() {
-        const config = localStorage.getItem(PICX_KEY)
-        if (config) {
-          this.userConfigInfo = JSON.parse(config)
-        }
-      },
 
       onSetMaxSizeChane(e) {
         this.setMaxSize = e;
@@ -240,9 +229,9 @@
       hashRename(e) {
         this.isHashRename = e
         if (this.isHashRename) {
-          this.filename.now = `${this.filename.name}.${this.filename.hash}${this.filename.suffix}`
+          this.filename.now = `${this.filename.name}.${this.filename.hash}.${this.filename.suffix}`
         } else {
-          this.filename.now = `${this.filename.name}${this.filename.suffix}`
+          this.filename.now = `${this.filename.name}.${this.filename.suffix}`
         }
       },
 
@@ -256,9 +245,9 @@
         }
 
         if (this.isHashRename) {
-          this.filename.now = `${this.filename.name}.${this.filename.hash}${this.filename.suffix}`
+          this.filename.now = `${this.filename.name}.${this.filename.hash}.${this.filename.suffix}`
         } else {
-          this.filename.now = `${this.filename.name}${this.filename.suffix}`
+          this.filename.now = `${this.filename.name}.${this.filename.suffix}`
         }
       },
 
@@ -274,7 +263,7 @@
       },
 
       uploadImage() {
-        if (!Object.keys(this.userConfigInfo).length) {
+        if (this.userConfigInfo.token === '') {
           this.$message.error('请先进行图床配置！')
           this.$router.push('config')
           return
@@ -310,18 +299,13 @@
               "Authorization": `token ${this.userConfigInfo.token}`
             }
           }
-        )
-          .then(res => {
-            console.log('res', res);
-            if (res.status === 201 && res.statusText === 'Created') {
-              this.$message.success('上传成功！')
-              this.uploadedHandle(res)
-            }
-          })
-          .catch(error => {
-            this.$message.error('上传失败！')
-            console.log('error', error);
-          })
+        ).then(res => {
+          console.log('res', res);
+          if (res.status === 201 && res.statusText === 'Created') {
+            this.$message.success('上传成功！')
+            this.uploadedHandle(res)
+          }
+        })
       },
 
       uploadedHandle(res) {
@@ -335,17 +319,19 @@
         this.externalLink.github = generateExternalLink('github', res.data.content, this.userConfigInfo)
         this.externalLink.cdn = generateExternalLink('cdn', res.data.content, this.userConfigInfo)
 
-        this.uploadedList.unshift({
+        const item = {
+          dir: this.userConfigInfo.selectedDir,
           name: res.data.content.name,
           path: res.data.content.path,
           sha: res.data.content.sha,
-          api_url: res.data.content.url,
           html_url: res.data.content.html_url,
-          github_url: this.externalLink.github,
+          github_url: res.data.content['download_url'],
           cdn_url: this.externalLink.cdn,
           deleting: false
-        })
-        sessionStorage.setItem(PICX_KEY, JSON.stringify(this.uploadedList))
+        }
+
+        this.$store.dispatch('UPLOADED_LIST_ADD', item)
+        this.$store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', item)
       },
 
       copyLink(type) {
@@ -371,7 +357,7 @@
         this.filename.hash = hash
         this.filename.suffix = suffix
 
-        this.filename.now = this.isHashRename ? `${name}.${hash}${suffix}` : fileName
+        this.filename.now = this.isHashRename ? `${name}.${hash}.${suffix}` : fileName
         this.filename.initName = this.filename.name
         if (this.autoUpload) {
           this.uploadImage()
@@ -404,9 +390,7 @@
         const {url, fileName} = await paste(e, this.setMaxSize ? this.compressSize * 1024 : null)
         this.getImage(url, fileName)
       },
-
     },
-
   }
 </script>
 
@@ -427,20 +411,14 @@
       padding: 20px;
       overflow-y: auto;
 
-      &::-webkit-scrollbar {
-        height: 5px;
-        width: 5px;
-      }
+      .uploaded-item {
+        margin-bottom: 20px;
 
-      &::-webkit-scrollbar-thumb {
-        border-radius: 5px;
-        background: rgba(0, 0, 0, 0.25)
-      }
+        &:last-child {
+          margin-bottom: 0;
+        }
 
-      &::-webkit-scrollbar-track {
-        background: transparent;
       }
-
     }
 
     .upload-page-right {
