@@ -5,8 +5,12 @@
       <div class="top">
         <div class="status-info-bar">
           <div class="repos-dir">
-            当前仓库：<span class="selected">{{ userConfigInfo.selectedRepos }}</span>
-            当前目录：<span class="selected">{{ userConfigInfo.selectedDir ? userConfigInfo.selectedDir : '/'}}</span>
+            <span class="info-item">
+              当前仓库：<span class="selected">{{ userConfigInfo.selectedRepos }}</span>
+            </span>
+            <span class="info-item">
+              当前目录：<span class="selected">{{ userConfigInfo.selectedDir ? userConfigInfo.selectedDir : '/'}}</span>
+            </span>
           </div>
           <div class="change-dir">
             切换目录：
@@ -247,6 +251,10 @@
           font-size: 14px;
 
           .repos-dir {
+
+            .info-item {
+              margin-right: 10px;
+            }
 
             .selected {
               padding: 2px 4px;
