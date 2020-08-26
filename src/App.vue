@@ -82,8 +82,6 @@
             width: 88%;
           }
           height: 100%;
-          background: #fff;
-          box-shadow: 0 0 10px #ccc;
         }
       }
     }

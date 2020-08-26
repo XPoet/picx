@@ -1,14 +1,27 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {PICX_CONFIG, PICX_MANAGEMENT, PICX_UPLOADED} from "../common/model/localStorage";
-import {userConfigInfoModel} from "../views/Config/model";
 import cleanObject from "../common/utils/cleanObject";
 
 Vue.use(Vuex)
 
 const initUserConfigInfo = () => {
   let config = localStorage.getItem(PICX_CONFIG)
-  return config ? JSON.parse(config) : userConfigInfoModel
+  return config
+    ? JSON.parse(config)
+    : {
+      token: '',
+      owner: '',
+      email: '',
+      name: '',
+      avatarUrl: '',
+      selectedRepos: '',
+      reposList: [],
+      dirMode: '',
+      selectedDir: '',
+      dirList: [],
+      loggingStatus: false
+    }
 }
 
 const initDirImageList = () => {
@@ -38,16 +51,15 @@ export default new Vuex.Store({
       }
     },
 
-    // 持久化用户配置信息
-    PERSIST_USER_CONFIG_INFO(state) {
-      localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
-    },
-
     // 重置用户配置信息 clean state.userConfigInfo all value
     RESET_USER_CONFIG_INFO(state) {
       cleanObject(state.userConfigInfo)
     },
 
+    // 持久化用户配置信息
+    PERSIST_USER_CONFIG_INFO(state) {
+      localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
+    },
   },
 
   getters: {
@@ -101,14 +113,8 @@ export default new Vuex.Store({
     DIR_IMAGE_LIST_REMOVE({state, dispatch}, item) {
       if (state.dirImageList.length > 0) {
         const temp = state.dirImageList.find(v => v.dir === item.dir)
-        console.log('temp: ', temp);
         if (temp) {
-
-          console.log('temp.imageList: ', temp.imageList);
           const rmIndex = temp.imageList.findIndex(v => v.sha === item.sha)
-
-          console.log('rmIndex: ', rmIndex);
-
           if (rmIndex !== -1) {
             temp.imageList.splice(rmIndex, 1)
             dispatch('DIR_IMAGE_LIST_PERSIST')

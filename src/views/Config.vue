@@ -1,11 +1,11 @@
 <template>
-  <div class="config-page-container">
+  <div class="picx-container config-page-container">
     <el-form label-width="70px"
              label-position="right"
              class="config-form"
     >
       <el-form-item label="Token">
-        <el-input v-model="token"></el-input>
+        <el-input v-model="userConfigInfo.token"></el-input>
       </el-form-item>
 
       <el-form-item class="operation-btns">
@@ -129,62 +129,38 @@
 </template>
 
 <script>
-  import {PICX_CONFIG} from "../../common/model/localStorage";
-  import {userConfigInfoModel} from "./model";
   import {mapGetters} from "vuex";
-  import cleanObject from "../../common/utils/cleanObject";
-  import timeHelper from "../../common/utils/timeHelper";
+  import timeHelper from "../common/utils/timeHelper";
 
   export default {
 
     name: "Config",
 
     data() {
-      return {
-        token: '',
-        userConfigInfo: userConfigInfoModel
-      };
+      return {}
     },
 
     mounted() {
-      this.initUserConfigInfo()
-    },
-
-    watch: {
-      loggingStatus(e) {
-        if (!e) this.resetUserConfigInfo()
-      },
 
     },
+
+    watch: {},
 
     computed: {
       ...mapGetters({
-        loggingStatus: 'getUserLoggingStatus'
+        userConfigInfo: 'getUserConfigInfo',
       })
     },
 
     methods: {
-
-      initUserConfigInfo() {
-        let config = localStorage.getItem(PICX_CONFIG)
-        if (config) {
-          config = JSON.parse(config)
-          this.token = config.token
-          for (let configKey in config) {
-            this.userConfigInfo[configKey] = config[configKey]
-          }
-        }
-
-      },
-
       getUserInfo() {
-        if (this.token) {
+        if (this.userConfigInfo.token) {
           this.$axios.get(
             '/user',
             {
               headers: {
                 "Content-Type": "application/json",
-                "Authorization": `token ${this.token}`
+                "Authorization": `token ${this.userConfigInfo.token}`
               }
             }
           ).then(res => {
@@ -195,18 +171,16 @@
           })
 
         } else {
-          this.$message.warning('Token 不能为空！')
+          this.$message.warning('Token不能为空！')
         }
       },
 
       saveUserInfo(res) {
         this.userConfigInfo.loggingStatus = true
-        this.userConfigInfo.token = this.token
         this.userConfigInfo.owner = res.data['login']
         this.userConfigInfo.name = res.data['name']
         this.userConfigInfo.email = res.data['email']
         this.userConfigInfo.avatarUrl = res.data['avatar_url']
-
         this.persistUserConfigInfo()
       },
 
@@ -267,7 +241,6 @@
       },
 
       dirModeChange(dirMode) {
-
         switch (dirMode) {
 
           case 'nonuseDir':
@@ -284,26 +257,20 @@
             break;
 
           case 'reposDir':
+            this.userConfigInfo.selectedDir = ''
             break;
 
         }
-
         this.persistUserConfigInfo()
       },
 
       persistUserConfigInfo() {
-        this.$store.commit('SET_USER_CONFIG_INFO', this.userConfigInfo)
         this.$store.commit('PERSIST_USER_CONFIG_INFO')
       },
 
       reset() {
-        this.resetUserConfigInfo()
-        this.persistUserConfigInfo()
-      },
-
-      resetUserConfigInfo() {
-        this.token = ''
-        cleanObject(this.userConfigInfo)
+        this.$store.commit('RESET_USER_CONFIG_INFO')
+        this.$store.commit('PERSIST_USER_CONFIG_INFO')
       },
 
       goUpload() {
@@ -331,5 +298,22 @@
 </script>
 
 <style scoped lang="scss">
-  @import "index";
+  .config-page-container {
+    padding: 20px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+
+    .config-form {
+
+      .operation-btns {
+        display: flex;
+        justify-content: flex-end;
+
+        .el-button {
+          margin-left: 20px;
+        }
+      }
+    }
+  }
 </style>

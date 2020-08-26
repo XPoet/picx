@@ -1,5 +1,5 @@
 <template>
-  <div class="management-page-container">
+  <div class="picx-container management-page-container">
     <div class="content-container">
       <div class="top">
         <div class="status-info-bar">

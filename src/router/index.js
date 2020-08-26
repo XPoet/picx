@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Config from "../views/Config/";
+import Config from "../views/Config";
 import Upload from "../views/Upload";
 import Management from "../views/Management";
 

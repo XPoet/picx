@@ -1,7 +1,7 @@
 <template>
   <div class="upload-page-container">
 
-    <div class="upload-page-left"
+    <div class="upload-page-left picx-container"
          v-if="uploadedImageList.length"
          :style="{
             'width': '30%'
@@ -17,7 +17,7 @@
 
     </div>
 
-    <div class="upload-page-right"
+    <div class="upload-page-right picx-container"
          :style="{
             'width': uploadedImageList.length ? '70%' : '100%'
          }"
@@ -133,7 +133,6 @@
       </el-row>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -403,13 +402,14 @@
     height: 100%;
     display: flex;
     justify-content: space-between;
+    background: #f2f2f2;
 
     .upload-page-left {
       height: 100%;
-      border-right: 1px solid #ccc;
       box-sizing: border-box;
       padding: 20px;
       overflow-y: auto;
+      margin-right: 20px;
 
       .uploaded-item {
         margin-bottom: 20px;
@@ -424,7 +424,6 @@
     .upload-page-right {
       height: 100%;
       padding: 30px;
-      box-sizing: border-box;
 
       .row-item {
         display: flex;
