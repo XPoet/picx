@@ -114,7 +114,7 @@ export default new Vuex.Store({
       if (state.dirImageList.length > 0) {
         const temp = state.dirImageList.find(v => v.dir === item.dir)
         if (temp) {
-          const rmIndex = temp.imageList.findIndex(v => v.sha === item.sha)
+          const rmIndex = temp.imageList.findIndex(v => v.uuid === item.uuid)
           if (rmIndex !== -1) {
             temp.imageList.splice(rmIndex, 1)
             dispatch('DIR_IMAGE_LIST_PERSIST')
@@ -138,7 +138,7 @@ export default new Vuex.Store({
     // 上传完成的图片列表 - 删除
     UPLOADED_LIST_REMOVE({state, dispatch}, item) {
       if (state.uploadedImageList.length > 0) {
-        const rmIndex = state.uploadedImageList.findIndex(v => v.sha === item.sha)
+        const rmIndex = state.uploadedImageList.findIndex(v => v.uuid === item.uuid)
         if (rmIndex !== -1) {
           state.uploadedImageList.splice(rmIndex, 1)
           dispatch('UPLOADED_LIST_PERSIST')

@@ -1,6 +1,7 @@
 <template>
   <div class="picx-container management-page-container">
     <div class="content-container">
+
       <div class="top">
         <div class="status-info-bar">
           <div class="repos-dir">
@@ -26,7 +27,11 @@
       </div>
 
       <div class="bottom">
-        <ul class="image-list">
+        <ul class="image-list"
+            v-loading="loadingImageList"
+            element-loading-text="加载中..."
+            element-loading-background="rgba(0, 0, 0, 0.6)"
+        >
           <li class="image-item"
               v-for="image in currentDirImageList"
               :style="{
@@ -48,6 +53,7 @@
   import {filenameHandle, isImage} from "../common/utils/filenameHandle";
   import ImageCard from "../components/ImageCard";
   import {mapGetters} from "vuex";
+  import getUuid from "../common/utils/getUuid";
 
   export default {
     name: "Management",
@@ -59,12 +65,12 @@
     data() {
       return {
         currentDirImageList: [],
+        loadingImageList: false
       }
     },
 
     watch: {
       loggingStatus(loggingStatus) {
-        // 监听退出登录的行为，跳转至配置页
         !loggingStatus && this.$router.push('config')
       },
 
@@ -94,95 +100,95 @@
 
       initDirImageList() {
 
-        const selectedDir = this.userConfigInfo.selectedDir
-
-        if (this.dirImageList.length > 0) {
-
-          const selectedDirObj = this.dirImageList.find(v => v.dir === selectedDir)
-
-          if (selectedDirObj) {
-
-            if (selectedDirObj.imageList.length > 0) {
-              this.currentDirImageList = selectedDirObj.imageList
-            } else {
-              // 请求该目录内容
-              this.getDirContent(selectedDirObj)
-            }
-
-          } else {
-            // 往 store 的 dirImageList 添加 dirObj，同时请求该目录内容，显示出来
-            const dirObj = {dir: selectedDir, imageList: []}
-            this.getDirContent(dirObj)
-          }
-
-        } else {
+        if (!this.dirImageList.length) {
           this.getReposContent()
+          return
         }
+
+
+        const selectedDir = this.userConfigInfo.selectedDir
+        const targetDirObj = this.dirImageList.find(v => v.dir === selectedDir)
+
+        if (!targetDirObj) {
+          this.getDirContent(selectedDir)
+          return
+        }
+
+        if (targetDirObj.imageList.length > 0) {
+          this.currentDirImageList = targetDirObj.imageList
+        } else {
+          // 请求该目录内容
+          this.getDirContent(selectedDir)
+        }
+
       },
 
       getReposContent() {
-        if (this.userConfigInfo) {
-          this.$axios.get(
-            `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents`,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `token ${this.userConfigInfo.token}`
-              }
-            }
-          ).then(res => {
-            console.log('res: ', res);
-            if (res && res.status === 200 && res.data.length > 0) {
-
-              this.$store.dispatch('DIR_IMAGE_LIST_ADD_DIR', {dir: '/', imageList: []})
-
-              for (const item of res.data) {
-                if (item.type === 'dir') {
-
-                  this.$store.dispatch('DIR_IMAGE_LIST_ADD_DIR', {dir: item.name, imageList: []})
-
-                } else if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
-
-                  this.$store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', this.getImageObject(item))
-                }
-              }
-
-            }
-          })
-        }
-      },
-
-      // 获取指定目录的内容
-      getDirContent(dirObj) {
-
         this.$axios.get(
-          `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${this.userConfigInfo?.selectedDir}`,
+          `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents`,
           {
             headers: {
               "Content-Type": "application/json",
               "Authorization": `token ${this.userConfigInfo.token}`
             }
           }
-        )
-          .then(res => {
-            if (res && res.status === 200 && res.data.length > 0) {
-              const tempImageList = []
-              for (const item of res.data) {
-                if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
-                  tempImageList.push(this.getImageObject(item))
-                }
+        ).then(res => {
+          console.log('res: ', res);
+          if (res && res.status === 200 && res.data.length > 0) {
+
+            this.$store.dispatch('DIR_IMAGE_LIST_ADD_DIR', {dir: '/', imageList: []})
+
+            for (const item of res.data) {
+              if (item.type === 'dir') {
+
+                this.$store.dispatch('DIR_IMAGE_LIST_ADD_DIR', {dir: item.name, imageList: []})
+
+              } else if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
+
+                this.$store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', this.getImageObject(item))
               }
-              dirObj.imageList = tempImageList
-              this.currentDirImageList = tempImageList
-              this.$store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE_LIST', dirObj)
             }
-          })
+
+            this.getDirContent(this.userConfigInfo.selectedDir)
+          }
+        })
+      },
+
+      // 获取指定目录的内容
+      getDirContent(selectedDir) {
+
+        this.loadingImageList = true
+
+        const temp = {dir: selectedDir, imageList: []}
+
+        this.$axios.get(
+          `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${selectedDir}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `token ${this.userConfigInfo.token}`
+            }
+          }
+        ).then(res => {
+          if (res && res.status === 200 && res.data.length > 0) {
+            const tempImageList = []
+            for (const item of res.data) {
+              if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
+                tempImageList.push(this.getImageObject(item))
+              }
+            }
+            temp.imageList = tempImageList
+            this.$store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE_LIST', temp)
+            this.loadingImageList = false
+          }
+        })
 
       },
 
       getImageObject(item) {
         if (isImage(filenameHandle(item.name).suffix)) {
           return {
+            uuid: getUuid(),
             dir: this.userConfigInfo.selectedDir,
             name: item.name,
             path: item.path,
@@ -195,16 +201,15 @@
         }
       },
 
-      dirChange(e) {
-        const selectedDir = this.dirImageList.find(v => v.dir === e)
-        if (selectedDir.imageList.length > 0) {
-          this.currentDirImageList = selectedDir.imageList
-        } else {
-          this.getDirContent(selectedDir)
+      dirChange(dir) {
+        const targetDirObj = this.dirImageList.find(v => v.dir === dir)
+        if (!targetDirObj.imageList.length) {
+          this.getDirContent(dir)
+          return
         }
+        this.currentDirImageList = targetDirObj.imageList
       }
-
-    },
+    }
   }
 </script>
 

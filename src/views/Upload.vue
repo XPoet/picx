@@ -145,6 +145,7 @@
   import cleanObject from "../common/utils/cleanObject";
   import {mapGetters} from "vuex";
   import ImageCard from "../components/ImageCard";
+  import getUuid from "../common/utils/getUuid";
 
   export default {
     name: "Upload",
@@ -319,6 +320,7 @@
         this.externalLink.cdn = generateExternalLink('cdn', res.data.content, this.userConfigInfo)
 
         const item = {
+          uuid: getUuid(),
           dir: this.userConfigInfo.selectedDir,
           name: res.data.content.name,
           path: res.data.content.path,
