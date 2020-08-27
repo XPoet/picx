@@ -20,9 +20,9 @@
                        @change="dirChange"
             >
               <el-option
-                v-for="item in dirImageList"
-                :label="item.dir"
-                :value="item.dir"
+                v-for="item in userConfigInfo.dirList"
+                :label="item.label"
+                :value="item.value"
               >
               </el-option>
             </el-select>
@@ -78,10 +78,12 @@
         !loggingStatus && this.$router.push('config')
       },
 
-
       dirImageList: {
         handler: function (e) {
-          this.currentDirImageList = e.find(v => v.dir === this.userConfigInfo.selectedDir).imageList
+          const temp = e.find(v => v.dir === this.userConfigInfo.selectedDir)
+          if (temp) {
+            this.currentDirImageList = temp.imageList
+          }
         },
         deep: true
       }
@@ -109,12 +111,13 @@
           return
         }
 
-
         const selectedDir = this.userConfigInfo.selectedDir
         const targetDirObj = this.dirImageList.find(v => v.dir === selectedDir)
 
         if (!targetDirObj) {
-          this.getDirContent(selectedDir)
+          if (this.isHasDir(selectedDir)) {
+            this.getDirContent(selectedDir)
+          }
           return
         }
 
@@ -140,22 +143,31 @@
           console.log('res: ', res);
           if (res && res.status === 200 && res.data.length > 0) {
 
-            this.$store.dispatch('DIR_IMAGE_LIST_ADD_DIR', {dir: '/', imageList: []})
+            this.$store.dispatch('DIR_IMAGE_LIST_ADD_DIR', '/')
 
             for (const item of res.data) {
               if (item.type === 'dir') {
 
-                this.$store.dispatch('DIR_IMAGE_LIST_ADD_DIR', {dir: item.name, imageList: []})
+                this.$store.dispatch('DIR_IMAGE_LIST_ADD_DIR', item.name)
 
               } else if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
 
-                this.$store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', this.getImageObject(item))
+                this.$store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', this.getImageObject(item, '/'))
               }
             }
 
-            this.getDirContent(this.userConfigInfo.selectedDir)
+            // 如果 userConfig.dirList 无 selectedDir，则切换显示根目录下（ / ）图片
+            if (!this.isHasDir(this.userConfigInfo.selectedDir)) {
+              this.userConfigInfo.selectedDir = '/'
+            }
+            this.dirChange(this.userConfigInfo.selectedDir)
+
           }
         })
+      },
+
+      isHasDir(selectedDir) {
+        return this.userConfigInfo.dirList.some(v => v.value === selectedDir)
       },
 
       // 获取指定目录的内容
@@ -178,7 +190,7 @@
             const tempImageList = []
             for (const item of res.data) {
               if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
-                tempImageList.push(this.getImageObject(item))
+                tempImageList.push(this.getImageObject(item, selectedDir))
               }
             }
             temp.imageList = tempImageList
@@ -186,14 +198,13 @@
             this.loadingImageList = false
           }
         })
-
       },
 
-      getImageObject(item) {
+      getImageObject(item, selectedDir) {
         if (isImage(filenameHandle(item.name).suffix)) {
           return {
             uuid: getUuid(),
-            dir: this.userConfigInfo.selectedDir,
+            dir: selectedDir,
             name: item.name,
             path: item.path,
             sha: item.sha,
@@ -207,7 +218,7 @@
 
       dirChange(dir) {
         const targetDirObj = this.dirImageList.find(v => v.dir === dir)
-        if (!targetDirObj.imageList.length) {
+        if (!targetDirObj || !targetDirObj.imageList.length) {
           this.getDirContent(dir)
           return
         }

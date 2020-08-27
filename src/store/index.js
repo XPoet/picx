@@ -56,6 +56,24 @@ export default new Vuex.Store({
       cleanObject(state.userConfigInfo)
     },
 
+    // 用户配置信息 - 增加目录
+    USER_CONFIG_INFO_ADD_DIR(state, dir) {
+      if (!state.userConfigInfo.dirList.some(v => v.value === dir)) {
+        state.userConfigInfo.dirList.push({label: dir, value: dir})
+        this.commit('PERSIST_USER_CONFIG_INFO')
+      }
+    },
+
+    // 用户配置信息 - 删除目录列表的某个目录
+    USER_CONFIG_INFO_REMOVE_DIR(state, dir) {
+      const dirList = state.userConfigInfo.dirList
+      if (dirList.some(v => v.value === dir)) {
+        const rmIndex = dirList.findIndex(v => v.value === dir)
+        dirList.splice(rmIndex, 1)
+        this.commit('PERSIST_USER_CONFIG_INFO')
+      }
+    },
+
     // 持久化用户配置信息
     PERSIST_USER_CONFIG_INFO(state) {
       localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
@@ -86,37 +104,74 @@ export default new Vuex.Store({
     // =========================================================
     // 图床管理 - 增加图片
     DIR_IMAGE_LIST_ADD_IMAGE({state, dispatch}, item) {
-      if (state.dirImageList.length > 0) {
-        state.dirImageList.find(v => v.dir === item.dir).imageList.push(item)
+      const temp = state.dirImageList.find(v => v.dir === item.dir)
+      if (temp) {
+        temp.imageList.push(item)
         dispatch('DIR_IMAGE_LIST_PERSIST')
       }
     },
 
     // 图床管理 - 往指定目录增加图片列表
     DIR_IMAGE_LIST_ADD_IMAGE_LIST({state, dispatch}, dirImageItem) {
-      state.dirImageList.find(v => v.dir === dirImageItem.dir).imageList = dirImageItem.imageList
+
+      const temp = state.dirImageList.find(v => v.dir === dirImageItem.dir)
+
+      if (temp) {
+        temp.imageList = dirImageItem.imageList
+      } else {
+        state.dirImageList.push(dirImageItem)
+      }
+
       dispatch('DIR_IMAGE_LIST_PERSIST')
+
     },
 
     // 图床管理 - 增加目录
-    DIR_IMAGE_LIST_ADD_DIR({state, dispatch}, dirItem) {
-      if (dirItem.dir === '/') {
-        state.dirImageList.unshift(dirItem)
-      } else {
-        state.dirImageList.push(dirItem)
+    DIR_IMAGE_LIST_ADD_DIR({state, dispatch}, dir) {
+      if (!state.dirImageList.some(v => v.dir === dir)) {
+        const dirObj = {dir: dir, imageList: []}
+
+        if (dir === '/') {
+          state.dirImageList.unshift(dirObj)
+        } else {
+          state.dirImageList.push(dirObj)
+        }
+        dispatch('DIR_IMAGE_LIST_PERSIST')
       }
-      dispatch('DIR_IMAGE_LIST_PERSIST')
+    },
+
+    // 图床管理 - 删除目录
+    DIR_IMAGE_LIST_REMOVE_DIR({state, dispatch}, dir) {
+      if (state.dirImageList.some(v => v.dir === dir)) {
+        const rmIndex = state.dirImageList.findIndex(v => v.dir === dir)
+        // 删除目录
+        state.dirImageList.splice(rmIndex, 1)
+        dispatch('DIR_IMAGE_LIST_PERSIST')
+      }
     },
 
 
     // 图床管理 - 删除指定目录里的指定图片
-    DIR_IMAGE_LIST_REMOVE({state, dispatch}, item) {
+    DIR_IMAGE_LIST_REMOVE({state, dispatch, commit}, item) {
       if (state.dirImageList.length > 0) {
         const temp = state.dirImageList.find(v => v.dir === item.dir)
         if (temp) {
           const rmIndex = temp.imageList.findIndex(v => v.uuid === item.uuid)
           if (rmIndex !== -1) {
+
+            // 删除图片
             temp.imageList.splice(rmIndex, 1)
+
+            // 如果 imageList.length 为 0，需删除该目录
+            if (temp.imageList.length === 0) {
+
+              // userConfigInfo.dirList 中删除目录
+              dispatch('DIR_IMAGE_LIST_REMOVE_DIR', temp.dir)
+
+              // dirImageList 中删除目录
+              commit('USER_CONFIG_INFO_REMOVE_DIR', temp.dir)
+            }
+
             dispatch('DIR_IMAGE_LIST_PERSIST')
           }
         }

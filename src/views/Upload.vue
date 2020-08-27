@@ -331,7 +331,22 @@
           deleting: false
         }
 
+
+        // 如果 userConfigInfo.dirList 不存在该目录，则增加
+        if (!this.userConfigInfo.dirList.some(v => v.value === item.dir)) {
+
+          // userConfigInfo 增加目录
+          this.$store.commit('USER_CONFIG_INFO_ADD_DIR', item.dir)
+
+          // dirImageList 增加目录
+          this.$store.dispatch('DIR_IMAGE_LIST_ADD_DIR', item.dir)
+
+        }
+
+        // uploadedList 增加图片
         this.$store.dispatch('UPLOADED_LIST_ADD', item)
+
+        // dirImageList 增加图片
         this.$store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', item)
       },
 
