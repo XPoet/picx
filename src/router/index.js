@@ -10,6 +10,8 @@ VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
 }
 
+const titleSuffix = ' | PicX 图床神器，免费、稳定、高效。'
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -25,7 +27,7 @@ const routes = [
     name: 'Upload',
     component: Upload,
     meta: {
-      title: '图片上传 | PicX 图床神器'
+      title: '图片上传' + titleSuffix
     }
   },
   {
@@ -33,7 +35,7 @@ const routes = [
     name: 'Config',
     component: Config,
     meta: {
-      title: '图床配置 | PicX 图床神器'
+      title: '图床配置' + titleSuffix
     }
   },
   {
@@ -41,7 +43,7 @@ const routes = [
     name: 'Management',
     component: Management,
     meta: {
-      title: '图片管理 | PicX 图床神器'
+      title: '图片管理' + titleSuffix
     }
   },
   {
