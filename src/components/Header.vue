@@ -12,10 +12,15 @@
     <div class="user-info">
 
       <div class="github-stars">
-        <img alt="PicX stars"
-             src="https://img.shields.io/github/stars/XPoet/picx?style=social"
-             @click="goGitHubRepo"
+        <el-tooltip effect="light"
+                    content="支持开源，点个Star鼓励一下吧~"
+                    placement="bottom"
         >
+          <img alt="PicX stars"
+               src="https://img.shields.io/github/stars/XPoet/picx?style=social"
+               @click="goGitHubRepo"
+          >
+        </el-tooltip>
       </div>
 
       <span class="username">{{ userConfigInfo.name ? userConfigInfo.name : defaultUsername }}</span>
