@@ -9,11 +9,13 @@
       </el-form-item>
 
       <el-form-item class="operation-btns">
-        <el-button @click="reset()"
+        <el-button plain
+                   @click="reset()"
         >
           重置
         </el-button>
-        <el-button type="primary"
+        <el-button plain
+                   type="primary"
                    @click="getUserInfo()"
         >
           确认Token
@@ -62,15 +64,18 @@
         <el-radio-group v-model="userConfigInfo.dirMode"
                         @change="dirModeChange"
         >
-          <el-tooltip :content="'图片存储在 Master 分支的根目录下'" placement="top">
-            <el-radio label="nonuseDir">不使用目录</el-radio>
-          </el-tooltip>
-          <el-tooltip :content="'根据日期自动创建格式 YYYYMMDD 的目录'" placement="top">
-            <el-radio label="autoDir">自动目录</el-radio>
-          </el-tooltip>
           <el-tooltip content="手动输入一个新目录" placement="top">
             <el-radio label="newDir">新建目录</el-radio>
           </el-tooltip>
+
+          <el-tooltip :content="'图片存储在 Master 分支的根目录下'" placement="top">
+            <el-radio label="rootDir">根目录</el-radio>
+          </el-tooltip>
+
+          <el-tooltip :content="'根据日期自动创建格式 YYYYMMDD 的目录'" placement="top">
+            <el-radio label="autoDir">自动目录</el-radio>
+          </el-tooltip>
+
           <el-tooltip v-if="userConfigInfo.dirList.length"
                       :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个目录'" placement="top">
             <el-radio label="reposDir">选择{{userConfigInfo.selectedRepos }}仓库目录</el-radio>
@@ -81,6 +86,15 @@
       <el-form-item
         v-if="userConfigInfo.dirMode === 'autoDir'"
         label="自动目录"
+      >
+        <el-input v-model="userConfigInfo.selectedDir"
+                  readonly
+        ></el-input>
+      </el-form-item>
+
+      <el-form-item
+        v-if="userConfigInfo.dirMode === 'rootDir'"
+        label="根目录"
       >
         <el-input v-model="userConfigInfo.selectedDir"
                   readonly
@@ -122,7 +136,7 @@
       <el-form-item style="float: right"
                     v-if="userConfigInfo.selectedRepos"
       >
-        <el-button type="success" @click="goUpload">上传图片 Go~</el-button>
+        <el-button plain type="success" @click="goUpload">上传图片</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -226,7 +240,7 @@
           }
         ).then(res => {
           if (res.status === 200) {
-            this.userConfigInfo.dirList = []
+            this.userConfigInfo.dirList = [{value: '/', label: '/'}]
             for (const item of res.data) {
               if (item.type === 'dir') {
                 this.userConfigInfo.dirList.push({
@@ -243,7 +257,7 @@
       dirModeChange(dirMode) {
         switch (dirMode) {
 
-          case 'nonuseDir':
+          case 'rootDir':
             this.userConfigInfo.selectedDir = '/'
             break;
 
