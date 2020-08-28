@@ -1,7 +1,10 @@
-* {
-
+html,
+body {
   font-size: 14px;
+}
 
+
+* {
   &::-webkit-scrollbar {
     height: 5px;
     width: 5px;
@@ -14,6 +17,14 @@
   &::-webkit-scrollbar-track {
     background: transparent;
   }
+}
+
+ul,
+li,
+ol {
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 .picx-container {

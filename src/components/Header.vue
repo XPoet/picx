@@ -1,11 +1,23 @@
 <template>
   <header class="header">
-    <div class="logo" @click="$router.push('/')">
-      <i class="el-icon-picture-outline logo-icon"></i>
-      PicX
+    <div class="brand" @click="$router.push('/')">
+      <div class="logo">
+        <img :src="logoImage">
+      </div>
+      <span class="name">
+        PicX
+      </span>
     </div>
 
     <div class="user-info">
+
+      <div class="github-stars">
+        <img alt="PicX stars"
+             src="https://img.shields.io/github/stars/XPoet/picx?style=social"
+             @click="goGitHubRepo"
+        >
+      </div>
+
       <span class="username">{{ userConfigInfo.name ? userConfigInfo.name : defaultUsername }}</span>
       <el-dropdown trigger="click"
                    @command="handleCommand"
@@ -49,6 +61,7 @@
 
     data() {
       return {
+        logoImage: require('@/assets/images/logo.png'),
         defaultUsername: '未登录',
         defaultAvatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
       }
@@ -88,6 +101,10 @@
 
       logout() {
         this.$store.dispatch('LOGOUT')
+      },
+
+      goGitHubRepo() {
+        window.open('https://github.com/XPoet/picx');
       }
     }
   }
@@ -100,27 +117,42 @@
     height: 100%;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+
     color: #f2f2f2;
 
-    .logo {
+    .brand {
       display: flex;
       align-items: center;
-      font-size: 30px;
       cursor: pointer;
 
-      i {
-        font-size: 30px;
+      .logo {
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+
+        img {
+          width: 100%;
+        }
       }
 
-      .logo-icon {
-        margin-right: 6px;
+      .name {
+        font-size: 30px;
+        margin-right: 10px;
       }
+
     }
 
     .user-info {
       display: flex;
       align-items: center;
       cursor: pointer;
+
+      .github-stars {
+        margin-right: 28px;
+        display: flex;
+        align-items: center;
+      }
 
       .username {
         font-size: 16px;
