@@ -6,10 +6,10 @@
         <div class="status-info-bar">
           <div class="repos-dir">
             <span class="info-item">
-              当前仓库：<span class="selected">{{ userConfigInfo.selectedRepos }}</span>
+              当前仓库：<el-tag>{{ userConfigInfo.selectedRepos }}</el-tag>
             </span>
             <span class="info-item">
-              当前目录：<span class="selected">{{ userConfigInfo.selectedDir ? userConfigInfo.selectedDir : '/'}}</span>
+              当前目录：<el-tag>{{ userConfigInfo.selectedDir }}</el-tag>
             </span>
           </div>
           <div class="change-dir">
@@ -259,18 +259,15 @@
           align-items: center;
           justify-content: space-between;
           color: #555;
-          font-size: 14px;
 
           .repos-dir {
 
             .info-item {
               margin-right: 10px;
-            }
 
-            .selected {
-              padding: 2px 4px;
-              border: 1px solid #ddd;
-              border-radius: 5px;
+              &:last-child {
+                margin-right: 0;
+              }
             }
 
           }
@@ -291,8 +288,9 @@
           margin: 0;
           padding: 0;
           list-style: none;
-          border: 1px solid #ccc;
+          border: 1px solid #ddd;
           overflow-y: auto;
+          box-sizing: border-box;
 
           li.image-item {
             float: left;

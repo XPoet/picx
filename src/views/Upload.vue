@@ -116,8 +116,14 @@
 
         <div class="upload-tools">
           <div class="repos-dir-info" v-if="userConfigInfo.selectedRepos">
-            <el-tag class="repos-dir-info-item">仓库：{{ userConfigInfo.selectedRepos }}</el-tag>
-            <el-tag class="repos-dir-info-item">目录：{{ userConfigInfo.selectedDir }}</el-tag>
+            <span class="repos-dir-info-item">
+               仓库：<el-tag>{{ userConfigInfo.selectedRepos }}</el-tag>
+            </span>
+            <span class="repos-dir-info-item">
+               目录：<el-tag>{{ userConfigInfo.selectedDir }}</el-tag>
+            </span>
+
+
           </div>
 
           <UploadTools
@@ -567,10 +573,9 @@
         width: 100%;
 
         .repos-dir-info {
-
           margin-bottom: 20px;
-
           .repos-dir-info-item {
+
             margin-right: 10px;
 
             &:last-child {

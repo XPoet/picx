@@ -108,6 +108,10 @@
       font-size: 30px;
       cursor: pointer;
 
+      i {
+        font-size: 30px;
+      }
+
       .logo-icon {
         margin-right: 6px;
       }
