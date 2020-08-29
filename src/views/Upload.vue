@@ -307,7 +307,7 @@
           }
         ).then(res => {
           console.log('res', res);
-          if (res.status === 201 && res.statusText === 'Created') {
+          if (res && res.status === 201 && res.statusText === 'Created') {
             this.$message.success('上传成功！')
             this.uploadedHandle(res)
           }

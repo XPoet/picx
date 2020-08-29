@@ -5,7 +5,9 @@
        element-loading-background="rgba(0, 0, 0, 0.6)"
   >
     <div class="image-box">
-      <img :src="imageObj.cdn_url">
+      <img :src="imageObj.cdn_url"
+           @click="imageView(imageObj)"
+      >
     </div>
     <div class="info-box">
       <div class="image-info">
@@ -34,7 +36,6 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -125,6 +126,15 @@
         // ...
 
       },
+
+      imageView(imgObj) {
+        // console.log('imgObj', imgObj);
+        // TODO: 点击图片查看大图
+        this.$store.commit('IMAGE_VIEWER', {
+          isShow: true,
+          url: imgObj.cdn_url
+        })
+      }
     },
   }
 </script>
@@ -137,7 +147,7 @@
     position: relative;
     width: 100%;
     height: 100%;
-    box-shadow: 0 0 3px #ccc;
+    box-shadow: 3px 2px 5px #ccc;
     box-sizing: border-box;
     padding-bottom: $infoBoxHeight;
 
@@ -145,6 +155,7 @@
       position: relative;
       width: 100%;
       height: 100%;
+      cursor: pointer;
 
       img {
         width: 100%;

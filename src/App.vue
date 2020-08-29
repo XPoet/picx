@@ -1,5 +1,6 @@
 <template>
   <div id="layout-container">
+
     <div class="app-container">
       <div class="app-header-container">
         <div class="header-content">
@@ -12,16 +13,21 @@
         </div>
       </div>
     </div>
+
+    <ImageViewer></ImageViewer>
+
   </div>
 </template>
 
 <script>
 
   import Header from "./components/Header";
+  import ImageViewer from "./components/ImageViewer";
 
   export default {
     components: {
       Header,
+      ImageViewer,
     }
 
   }
@@ -38,6 +44,9 @@
     bottom: 0;
     left: 0;
     right: 0;
+
+    transition: all .3s ease;
+
 
     .app-container {
       position: relative;

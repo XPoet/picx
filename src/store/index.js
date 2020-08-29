@@ -39,6 +39,10 @@ export default new Vuex.Store({
     userConfigInfo: initUserConfigInfo(),
     dirImageList: initDirImageList(),
     uploadedImageList: initUploadedImageList(),
+    imageViewer: {
+      url: '',
+      isShow: false
+    },
   },
   mutations: {
 
@@ -78,6 +82,12 @@ export default new Vuex.Store({
     PERSIST_USER_CONFIG_INFO(state) {
       localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
     },
+
+    // 大图查看
+    IMAGE_VIEWER(state, {url, isShow}) {
+      state.imageViewer.url = url
+      state.imageViewer.isShow = isShow
+    },
   },
 
   getters: {
@@ -87,6 +97,7 @@ export default new Vuex.Store({
     getUserLoggingStatus: state => state.userConfigInfo.loggingStatus,
     getDirImageList: state => state.dirImageList,
     getUploadedImageList: state => state.uploadedImageList,
+    getImageViewer: state => state.imageViewer,
   },
 
   actions: {
@@ -149,7 +160,6 @@ export default new Vuex.Store({
         dispatch('DIR_IMAGE_LIST_PERSIST')
       }
     },
-
 
     // 图床管理 - 删除指定目录里的指定图片
     DIR_IMAGE_LIST_REMOVE({state, dispatch, commit}, item) {
