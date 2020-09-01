@@ -35,8 +35,8 @@
 
 <style lang="scss">
   $headerHeight: 60px;
-  $maxWidth: 1200px;
-  $mediaMaxWidth: 1400px;
+  $maxWidth: 1024px;
+  $mediaMaxWidth: 1200px;
 
   #layout-container {
     position: absolute;
@@ -44,9 +44,6 @@
     bottom: 0;
     left: 0;
     right: 0;
-
-    transition: all .3s ease;
-
 
     .app-container {
       position: relative;
