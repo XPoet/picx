@@ -13,6 +13,7 @@ Axios.interceptors.request.use(config => {
 Axios.interceptors.response.use(response => {
     return response;
   }, error => {
+
     if (error.response && error.response.data) {
       const code = error.response.status
       const msg = error.response.data.message
@@ -21,6 +22,11 @@ Axios.interceptors.response.use(response => {
         duration: 4000
       })
       console.error(error.response)
+    } else {
+      ElementUI.Message.error({
+        message: error,
+        duration: 4000
+      })
     }
 
     return error.response;

@@ -178,7 +178,7 @@
               }
             }
           ).then(res => {
-            if (res.status === 200) {
+            if (res && res.status === 200) {
               this.saveUserInfo(res)
               this.getReposList(res.data['repos_url'])
             }
