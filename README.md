@@ -3,7 +3,6 @@
 [![Github Author](https://img.shields.io/badge/author-XPoet-orange.svg)](https://github.com/XPoet)
 [![Github Release](https://img.shields.io/github/release/XPoet/picx.svg)](https://github.com/XPoet/picx/releases)
 [![Github License](https://img.shields.io/github/license/XPoet/picx.svg)](https://github.com/XPoet/picx/blob/master/LICENSE)
-[![Node.js Version](https://img.shields.io/badge/node-%3E=12-green.svg?logo=Node.js&longCache=true)](https://nodejs.org/)
 
 **你曾经为图床问题烦恼过吗？** 
 
@@ -45,6 +44,10 @@ _PicX，基于 GitHub API 的图床神器，使用 jsDelivr 进行 CDN 加速，
 
 - [x] 图床管理（仓库图片的增删改查）
 
+- [ ] 图片压缩
+
+- [ ] 批量上传
+
 ## How to use 如何使用
 
 1. 创建一个用来存储图片的 GitHub 仓库 
@@ -82,6 +85,9 @@ _PicX，基于 GitHub API 的图床神器，使用 jsDelivr 进行 CDN 加速，
 5. 复制图片外链
    ![](https://cdn.jsdelivr.net/gh/XPoet/xpoet-image-hosting/PicX/image.h6b57mhgtbr.png)
 
+## Contribution 贡献
+
+欢迎各种形式的贡献，包括但不限于：美化界面、增加功能、改进代码、 修复 Bug 等。
 
 ## Feedback 反馈
 
