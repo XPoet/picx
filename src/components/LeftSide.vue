@@ -45,6 +45,12 @@ export default {
           isActive: false,
           path: '/management'
         },
+        {
+          title: '帮助',
+          icon: 'el-icon-info',
+          isActive: false,
+          path: '/help'
+        },
       ]
     }
   },
@@ -100,6 +106,7 @@ export default {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
+  box-shadow: 0 0 6px $shadowColor;
 
   .menu-list {
 

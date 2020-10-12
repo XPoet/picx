@@ -1,6 +1,16 @@
+$headerHeight: 60px;
+$leftSideWidth: 58px;
+$maxWidth: 1024px;
+$mediaMaxWidth: 1200px;
+$primaryColor: #4c555b;
+$backgroundColor: #f1f1f1;
+$fontColor: #f6f6f6;
+$shadowColor: #ccc;
+
 html,
 body {
   font-size: 14px;
+  color: #323232;
 }
 
 * {
@@ -29,13 +39,5 @@ ol {
 .picx-container {
   box-sizing: border-box;
   background: #fff;
-  box-shadow: 0 0 10px #ccc;
+  box-shadow: 0 0 10px $shadowColor;
 }
-
-$headerHeight: 60px;
-$leftSideWidth: 58px;
-$maxWidth: 1024px;
-$mediaMaxWidth: 1200px;
-$primaryColor: #4c555b;
-$backgroundColor: #f1f1f1;
-$fontColor: #f6f6f6;

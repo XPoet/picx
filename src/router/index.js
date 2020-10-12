@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Config from "../views/Config";
 import Upload from "../views/Upload";
 import Management from "../views/Management";
+import Help from "../views/Help";
 
 // 阻止重复点击同一路由时的报错
 const originalPush = VueRouter.prototype.push;
@@ -44,6 +45,14 @@ const routes = [
     component: Management,
     meta: {
       title: '图片管理' + titleSuffix
+    }
+  },
+  {
+    path: '/help',
+    name: 'Help',
+    component: Help,
+    meta: {
+      title: '帮助反馈' + titleSuffix
     }
   },
   {

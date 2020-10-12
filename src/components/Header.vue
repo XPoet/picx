@@ -13,7 +13,7 @@
 
       <div class="github-stars">
         <el-tooltip effect="light"
-                    content="支持开源，点个Star鼓励一下吧~"
+                    content="开源项目，维护不易，点个Star鼓励一下吧 (*￣︶￣)"
                     placement="bottom"
         >
           <img alt="PicX stars"
@@ -33,7 +33,6 @@
           </span>
         </span>
         <el-dropdown-menu slot="dropdown">
-
           <el-dropdown-item
             v-if="userConfigInfo.loggingStatus"
             command="logout"
