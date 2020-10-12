@@ -86,11 +86,9 @@
                     ref="GitHubExternalLinkInput"
                     readonly
           >
-            <template slot="prepend">GitHub外链</template>
             <el-button slot="append"
-                       icon="el-icon-copy-document"
                        @click="copyLink('GitHub')"
-            >复制
+            >复制GitHub外链
             </el-button>
           </el-input>
           <el-input class="external-link-input"
@@ -100,12 +98,10 @@
                     ref="CDNExternalLinkInput"
                     readonly
           >
-            <template slot="prepend">CDN外链</template>
             <el-button slot="append"
-                       icon="el-icon-copy-document"
                        @click="copyLink('CDN')"
 
-            >复制
+            >复制CDN外链
             </el-button>
           </el-input>
         </div>
@@ -310,6 +306,9 @@
           if (res && res.status === 201 && res.statusText === 'Created') {
             this.$message.success('上传成功！')
             this.uploadedHandle(res)
+          } else {
+            this.$message.error('上传失败！')
+            this.uploadStatus.uploading = false
           }
         })
       },
@@ -562,8 +561,8 @@
             margin-bottom: 0;
           }
 
-          .el-input-group__prepend {
-            width: 66px;
+          .el-input-group__append {
+            width: 100px;
             text-align-last: justify;
           }
         }

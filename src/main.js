@@ -8,11 +8,10 @@ import './style.scss'
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
-Vue.use(ElementUI);
-
 // 导入 Axios
 import Axios from "axios";
 
+Vue.use(ElementUI);
 Vue.prototype.$axios = Axios
 
 // Axios 全局拦截

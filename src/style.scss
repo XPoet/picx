@@ -3,7 +3,6 @@ body {
   font-size: 14px;
 }
 
-
 * {
   &::-webkit-scrollbar {
     height: 5px;
@@ -32,3 +31,11 @@ ol {
   background: #fff;
   box-shadow: 0 0 10px #ccc;
 }
+
+$headerHeight: 60px;
+$leftSideWidth: 58px;
+$maxWidth: 1024px;
+$mediaMaxWidth: 1200px;
+$primaryColor: #4c555b;
+$backgroundColor: #f1f1f1;
+$fontColor: #f6f6f6;

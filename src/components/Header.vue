@@ -33,19 +33,6 @@
           </span>
         </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="config">图床配置</el-dropdown-item>
-
-          <el-dropdown-item
-            command="upload"
-            v-if="userConfigInfo.loggingStatus"
-          >图片上传
-          </el-dropdown-item>
-
-          <el-dropdown-item
-            v-if="userConfigInfo.loggingStatus"
-            command="management"
-          >图床管理
-          </el-dropdown-item>
 
           <el-dropdown-item
             v-if="userConfigInfo.loggingStatus"
@@ -59,126 +46,127 @@
 </template>
 
 <script>
-  import {mapGetters} from "vuex";
+import {mapGetters} from "vuex";
 
-  export default {
-    name: "Header",
+export default {
+  name: "Header",
 
-    data() {
-      return {
-        logoImage: require('@/assets/images/logo.png'),
-        defaultUsername: '未登录',
-        defaultAvatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+  data() {
+    return {
+      logoImage: require('@/assets/images/logo.png'),
+      defaultUsername: '未登录',
+      defaultAvatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
+    }
+  },
+
+  watch: {},
+
+  computed: {
+    ...mapGetters({
+      userConfigInfo: 'getUserConfigInfo'
+    }),
+  },
+
+  mounted() {
+  },
+
+  methods: {
+    handleCommand(command) {
+      switch (command) {
+        case 'upload':
+          this.$router.push('/')
+          break;
+
+        case 'config':
+          this.$router.push('config')
+          break;
+
+        case 'management':
+          this.$router.push('management')
+          break;
+
+        case 'logout':
+          this.logout()
+          break;
       }
     },
 
-    watch: {},
-
-    computed: {
-      ...mapGetters({
-        userConfigInfo: 'getUserConfigInfo'
-      }),
+    logout() {
+      this.$router.push('config')
+      this.$store.dispatch('LOGOUT')
     },
 
-    mounted() {
-    },
-
-    methods: {
-      handleCommand(command) {
-        switch (command) {
-          case 'upload':
-            this.$router.push('/')
-            break;
-
-          case 'config':
-            this.$router.push('config')
-            break;
-
-          case 'management':
-            this.$router.push('management')
-            break;
-
-          case 'logout':
-            this.logout()
-            break;
-        }
-      },
-
-      logout() {
-        this.$store.dispatch('LOGOUT')
-      },
-
-      goGitHubRepo() {
-        window.open('https://github.com/XPoet/picx');
-      }
+    goGitHubRepo() {
+      window.open('https://github.com/XPoet/picx');
     }
   }
+}
 </script>
 
 <style scoped lang="scss">
 
-  .header {
-    width: 100%;
-    height: 100%;
+.header {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  color: #f2f2f2;
+
+  .brand {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    cursor: pointer;
 
-    color: #f2f2f2;
+    .logo {
+      width: 50px;
+      height: 50px;
+      margin-right: 10px;
 
-    .brand {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
-
-      .logo {
-        width: 50px;
-        height: 50px;
-        margin-right: 10px;
-
-        img {
-          width: 100%;
-        }
+      img {
+        width: 100%;
       }
-
-      .name {
-        font-size: 30px;
-        margin-right: 10px;
-      }
-
     }
 
-    .user-info {
+    .name {
+      font-size: 30px;
+      margin-right: 10px;
+    }
+
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+
+    .github-stars {
+      margin-right: 28px;
       display: flex;
       align-items: center;
-      cursor: pointer;
+    }
 
-      .github-stars {
-        margin-right: 28px;
-        display: flex;
-        align-items: center;
-      }
+    .username {
+      font-size: 16px;
+    }
 
-      .username {
-        font-size: 16px;
-      }
+    .avatar {
 
-      .avatar {
+      margin-left: 10px;
 
-        margin-left: 10px;
-
-        img {
-          width: 38px;
-          height: 38px;
-          border-radius: 50%;
-          border: 1px solid #ccc;
-          padding: 1px;
-          box-sizing: border-box;
-        }
-
+      img {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        border: 1px solid #ccc;
+        padding: 1px;
+        box-sizing: border-box;
       }
 
     }
 
   }
+
+}
 </style>
