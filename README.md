@@ -4,39 +4,47 @@
 [![Github Release](https://img.shields.io/github/release/XPoet/picx.svg)](https://github.com/XPoet/picx/releases)
 [![Github License](https://img.shields.io/github/license/XPoet/picx.svg)](https://github.com/XPoet/picx/blob/master/LICENSE)
 
+**一款你想要的图床管理神器，轻松解决所有图床难题！**  
+
+---
+
 **你曾经为图床问题烦恼过吗？** 
 
-作者采访了几位经常写博客的小姐姐
+> 在网上复制了一个心仪的图片链接，用着用着某一天就失效了，烦~
 
-> A：在网上复制了一个心仪的图片链接，用着用着某一天就失效了，烦~
+> 特意租个云服务器托管图片好奢侈，而且上传操作好繁琐，烦~
 
-> B：特意租个云服务器托管图片好奢侈，而且上传操作好繁琐，烦~
+> 有使用过某公司的免费图床，但都有期限，速度又慢，存储空间小，还限流量，烦~
 
-> C：有用过某公司的免费图床，但都有期限，速度又慢，还限量，烦~
+> 想白嫖免费好用的图床，找了N久找不到，烦~
 
-> D：想白嫖免费好用的图床，找了N久找不到，烦~
+**难道就没有一款免费的，稳定的，访问快的，还不限量的的图床管理工具吗？┭┮﹏┭┮**
 
-> E：巴拉巴拉巴拉，烦~
+<h1>有！</h1>
+<h2>有！！</h2>
+<h3>有！！！</h3>
 
-**难道就没有一款真正免费的，稳定的，不限量的的图床吗？┭┮﹏┭┮**
+**PicX，基于 GitHub API + jsDelivr 搭建的图床神器，免费、稳定、极速、高效，免下载，免安装，打开[网站](https://picx.xpoet.cn/)即可使用。。**
 
-**有！不仅免费、稳定、速度快（CDN 加速）、还不限容量和流量，而且操作简单，免下载，免安装，打开网站即可使用。**
+PicX
+
+**有！不仅免费、稳定、速度快（全球 CDN 加速）、还不限容量和流量，而且操作简单，免下载，免安装，打开[网站](https://picx.xpoet.cn/)即可使用。**
 
 你只需注册一个 GitHub 账号，当然，我相信你早就有 GitHub 账号了。
 
-_PicX，基于 GitHub API 的图床神器，使用 jsDelivr 进行 CDN 加速，免费、稳定、高效。_
+
 
 ## Features 功能特性
 
-- [x] **拖拽**图片进行上传
+- [x] **拖拽图片**进行上传。
 
-- [x] **复制粘贴**图片进行上传
+- [x] **复制粘贴图片**进行上传。
 
-- [x] **选择**图片进行上传
+- [x] **选择文件夹图片**进行上传。
 
-- [x] 图片重命名
+- [x] 图片重命名。
 
-- [x] 图片哈希命名
+- [x] 图片哈希命名（保证图片命名不重复）。
 
 - [x] 一键复制 GitHub 和 CDN 图片外链
 
@@ -61,7 +69,7 @@ _PicX，基于 GitHub API 的图床神器，使用 jsDelivr 进行 CDN 加速，
    新生成的 Token 只能显示一次，如有遗失，重新生成即可。
    ![](https://cdn.jsdelivr.net/gh/XPoet/xpoet-image-hosting/PicX/image.krns6rvn9l.png)
 
-3. 进入 [PicX 官网](https://xpoet.cn/picx) ，进行图床配置（绑定GitHub Token 和 仓库）
+3. 进入 [PicX 官网](https://picx.xpoet.cn/) ，进行图床配置（绑定GitHub Token、存储图片的仓库和目录）
 
    1. 填写 Token，自动获取该用户仓库信息
       ![](https://cdn.jsdelivr.net/gh/XPoet/xpoet-image-hosting/PicX/image.g6952hwzk0b.png)
