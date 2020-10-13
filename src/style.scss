@@ -4,6 +4,7 @@ $primaryColor: #4c555b;
 $backgroundColor: #f1f1f1;
 $fontColor: #f6f6f6;
 $shadowColor: #ccc;
+$headerFontColor: #f1f1f1;
 
 html,
 body {
@@ -45,6 +46,10 @@ ol {
 }
 
 .el-dropdown-menu {
+  .el-dropdown-menu__item {
+    padding: 0 20px;
+  }
+
   .popper__arrow {
     display: none !important;
   }

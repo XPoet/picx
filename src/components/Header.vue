@@ -2,7 +2,7 @@
   <header class="header">
     <div class="brand" @click="$router.push('/')">
       <div class="logo">
-        <img :src="logoImage">
+        <img :src="logoImage" alt="PicX"/>
       </div>
       <span class="name">
         PicX
@@ -31,7 +31,11 @@
       >
         <span class="el-dropdown-link">
           <span class="avatar">
-            <img :src="userConfigInfo.avatarUrl ? userConfigInfo.avatarUrl : defaultAvatarUrl">
+            <i class="el-icon-user-solid" v-if="!userConfigInfo.avatarUrl"></i>
+            <img :src="userConfigInfo.avatarUrl"
+                 :alt="userConfigInfo.owner"
+                 v-if="userConfigInfo.avatarUrl"
+            />
           </span>
         </span>
         <el-dropdown-menu slot="dropdown">
@@ -56,7 +60,6 @@ export default {
     return {
       logoImage: require('@/assets/images/logo.png'),
       defaultUsername: '未登录',
-      defaultAvatarUrl: 'https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png',
     }
   },
 
@@ -106,14 +109,15 @@ export default {
 
 <style scoped lang="scss">
 
+@import "src/style";
+
 .header {
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  color: #f2f2f2;
+  color: $headerFontColor;
 
   .brand {
     display: flex;
@@ -140,7 +144,6 @@ export default {
       display: flex;
       align-items: center;
     }
-
   }
 
   .user-info {
@@ -153,18 +156,27 @@ export default {
     }
 
     .avatar {
-
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 38px;
+      height: 38px;
+      color: $headerFontColor;
+      border-radius: 50%;
+      border: 1px solid $headerFontColor;
       margin-left: 10px;
+      padding: 1px;
+      box-sizing: border-box;
 
-      img {
-        width: 38px;
-        height: 38px;
-        border-radius: 50%;
-        border: 1px solid #ccc;
-        padding: 1px;
-        box-sizing: border-box;
+      i {
+        font-size: 28px;
       }
 
+      img {
+        width: 100%;
+        height:  100%;
+        border-radius: 50%;
+      }
     }
 
   }
