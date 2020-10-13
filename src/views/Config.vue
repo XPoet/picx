@@ -353,23 +353,24 @@ export default {
     },
 
     goUpload() {
-      if (this.userConfigInfo.selectedDir === '') {
+      const dir = this.userConfigInfo.selectedDir
+      const dirMode = this.userConfigInfo.dirMode
+      let warningMessage = '目录不能为空！'
 
-        if (this.userConfigInfo.dirMode === 'reposDir') {
-
-          this.$message.warning(`请选择 ${this.userConfigInfo.selectedRepos} 仓库下的一个目录！`)
-
-        } else if (this.userConfigInfo.dirMode === 'newDir') {
-
-          this.$message.warning(`请在输入框输入一个新目录！`)
-
-        } else {
-          this.$router.push('/')
+      if (!dir) {
+        switch (dirMode) {
+          case 'newDir':
+            warningMessage = '请在输入框输入一个新目录！'
+            break
+          case 'reposDir':
+            warningMessage = `请选择 ${this.userConfigInfo.selectedRepos} 仓库下的一个目录！`
+            break
         }
-      } else {
-        this.$router.push('/')
+        this.$message.warning(warningMessage)
+        return
       }
 
+      this.$router.push('/upload')
     }
 
   }
