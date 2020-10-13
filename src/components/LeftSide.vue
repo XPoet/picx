@@ -84,7 +84,7 @@ export default {
         }
 
         if (!this.userConfigInfo.selectedDir) {
-          this.$message.warning('请选择一个目录！')
+          this.$message.warning('目录不能为空！')
           return
         }
       }
