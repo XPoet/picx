@@ -23,6 +23,7 @@
       </el-form-item>
     </el-form>
 
+    <!-- 基本信息 -->
     <el-form label-width="70px"
              label-position="right"
              v-if="userConfigInfo.token"
@@ -66,6 +67,7 @@
       </el-form-item>
     </el-form>
 
+    <!-- 目录 -->
     <el-form label-width="70px"
              label-position="right"
              v-if="userConfigInfo.selectedRepos"
@@ -235,7 +237,7 @@ export default {
           }
         }
       ).then(res => {
-        if (res.status === 200) {
+        if (res.status === 200 && res.data.length) {
           this.userConfigInfo.reposList = []
           for (const repos of res.data) {
             if (!repos.fork) {
@@ -254,7 +256,37 @@ export default {
 
     selectRepos(repos) {
       this.persistUserConfigInfo()
-      this.getDirList(repos)
+      this.getBranchList(repos)
+    },
+
+    getBranchList(repos) {
+      this.$axios.get(
+        `https://api.github.com/repos/${this.userConfigInfo.owner}/${repos}/branches`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `token ${this.userConfigInfo.token}`
+          }
+        }
+      ).then(res => {
+
+        if (res.status === 200) {
+
+          const MASTER = 'master'
+          const MAIN = 'main'
+
+          if (res.data.length) {
+            if (res.data.some(v => v.name === MASTER)) {
+              this.userConfigInfo.selectedBranch = MASTER
+            } else if (res.data.some(v => v.name === MAIN)) {
+              this.userConfigInfo.selectedBranch = MAIN
+            }
+            this.getDirList(repos)
+          } else {
+            this.userConfigInfo.selectedBranch = MASTER
+          }
+        }
+      })
     },
 
     getDirList(repos) {
@@ -268,7 +300,8 @@ export default {
           }
         }
       ).then(res => {
-        if (res.status === 200) {
+
+        if (res.status === 200 && res.data.length) {
           this.userConfigInfo.dirList = [{value: '/', label: '/'}]
           for (const item of res.data) {
             if (item.type === 'dir') {
@@ -278,9 +311,10 @@ export default {
               })
             }
           }
-          this.dirLoading = false
           this.persistUserConfigInfo()
         }
+        this.dirLoading = false
+
       })
     },
 
@@ -313,10 +347,9 @@ export default {
     },
 
     reset() {
-      this.$store.commit('RESET_USER_CONFIG_INFO')
-      this.$store.commit('PERSIST_USER_CONFIG_INFO')
       this.loading = false
       this.dirLoading = false
+      this.$store.dispatch('LOGOUT')
     },
 
     goUpload() {

@@ -17,6 +17,7 @@ const initUserConfigInfo = () => {
       avatarUrl: '',
       selectedRepos: '',
       reposList: [],
+      selectedBranch: '',
       dirMode: '',
       selectedDir: '',
       dirList: [],
