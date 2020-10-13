@@ -1,5 +1,5 @@
 <template>
-  <div class="picx-container management-page-container">
+  <div class="page-container management-page-container">
     <div class="content-container">
 
       <div class="top">
@@ -233,11 +233,6 @@
   $infoBarHeight: 50px;
 
   .management-page-container {
-    position: relative;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    padding: 20px;
 
     .content-container {
       position: relative;

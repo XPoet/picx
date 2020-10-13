@@ -1,5 +1,5 @@
 <template>
-  <div class="picx-container feedback-page-container">
+  <div class="page-container feedback-page-container">
 
     <div class="help-info-item description">
       PicX，基于 GitHub API 搭建的图床神器，图片外链自动使用 jsDelivr 进行 CDN 加速，免费、稳定、高效。
@@ -53,13 +53,7 @@ export default {
 
 <style scoped lang="scss">
 
-
 .feedback-page-container {
-  position: relative;
-  box-sizing: border-box;
-  width: 100%;
-  height: 100%;
-  padding: 20px;
 
   .help-info-item {
     font-size: 15.8px;

@@ -1,5 +1,5 @@
 <template>
-  <div class="picx-container config-page-container">
+  <div class="page-container config-page-container">
     <el-form label-width="70px"
              label-position="right"
              class="config-form"
@@ -313,9 +313,6 @@
 
 <style scoped lang="scss">
   .config-page-container {
-    padding: 20px;
-    width: 100%;
-    height: 100%;
     overflow-y: auto;
 
     .config-form {

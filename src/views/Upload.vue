@@ -1,7 +1,7 @@
 <template>
   <div class="upload-page-container">
 
-    <div class="upload-page-left picx-container"
+    <div class="upload-page-left page-container"
          v-if="uploadedImageList.length"
          :style="{
             'width': '30%'
@@ -17,7 +17,7 @@
 
     </div>
 
-    <div class="upload-page-right picx-container"
+    <div class="upload-page-right page-container"
          :style="{
             'width': uploadedImageList.length ? '70%' : '100%'
          }"
@@ -424,7 +424,6 @@
     height: 100%;
     display: flex;
     justify-content: space-between;
-    background: #f2f2f2;
 
     .upload-page-left {
       height: 100%;

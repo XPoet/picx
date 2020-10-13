@@ -88,10 +88,18 @@ export default {
         position: relative;
         height: 100%;
         width: 100%;
-        padding: 20px 15% 0 15%;
+        padding: 20px 16% 0 16%;
         box-sizing: border-box;
 
-        @media (max-width: $mediaMaxWidth) {
+        @media (max-width: 1600px) {
+          padding: 20px 12% 0 12%;
+        }
+
+        @media (max-width: 1400px) {
+          padding: 20px 8% 0 8%;
+        }
+
+        @media (max-width: 1200px) {
           padding: 20px 20px 0 20px;
         }
       }

@@ -1,7 +1,5 @@
 $headerHeight: 60px;
 $leftSideWidth: 58px;
-$maxWidth: 1024px;
-$mediaMaxWidth: 1200px;
 $primaryColor: #4c555b;
 $backgroundColor: #f1f1f1;
 $fontColor: #f6f6f6;
@@ -36,7 +34,11 @@ ol {
   list-style: none;
 }
 
-.picx-container {
+.page-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding: 20px;
   box-sizing: border-box;
   background: #fff;
   box-shadow: 0 0 10px $shadowColor;
