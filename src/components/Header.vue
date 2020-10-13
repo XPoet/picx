@@ -7,13 +7,9 @@
       <span class="name">
         PicX
       </span>
-    </div>
-
-    <div class="user-info">
-
       <div class="github-stars">
         <el-tooltip effect="light"
-                    content="开源项目，维护不易，点个Star鼓励一下吧 (*￣︶￣)"
+                    content="点个Star支持一下吧 (*￣︶￣)"
                     placement="bottom"
         >
           <img alt="PicX stars"
@@ -22,8 +18,14 @@
           >
         </el-tooltip>
       </div>
+    </div>
 
-      <span class="username">{{ userConfigInfo.name ? userConfigInfo.name : defaultUsername }}</span>
+    <div class="user-info">
+
+      <div class="username">
+        {{ userConfigInfo.owner ? userConfigInfo.owner : defaultUsername }}
+      </div>
+
       <el-dropdown trigger="click"
                    @command="handleCommand"
       >
@@ -133,18 +135,18 @@ export default {
       margin-right: 10px;
     }
 
+    .github-stars {
+      margin-left: 18px;
+      display: flex;
+      align-items: center;
+    }
+
   }
 
   .user-info {
     display: flex;
     align-items: center;
     cursor: pointer;
-
-    .github-stars {
-      margin-right: 28px;
-      display: flex;
-      align-items: center;
-    }
 
     .username {
       font-size: 16px;
