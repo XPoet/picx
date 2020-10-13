@@ -41,3 +41,9 @@ ol {
   background: #fff;
   box-shadow: 0 0 10px $shadowColor;
 }
+
+.el-dropdown-menu {
+  .popper__arrow {
+    display: none !important;
+  }
+}
