@@ -8,7 +8,7 @@
         <el-input v-model="userConfigInfo.token"></el-input>
       </el-form-item>
 
-      <el-form-item class="operation-btns">
+      <el-form-item class="operation">
         <el-button plain
                    @click="reset()"
         >
@@ -21,6 +21,14 @@
           确认Token
         </el-button>
       </el-form-item>
+    </el-form>
+
+    <el-form label-width="70px"
+             label-position="right"
+             v-if="userConfigInfo.token"
+             v-loading="loading"
+             element-loading-text="加载中..."
+    >
 
       <el-form-item
         v-if="userConfigInfo.owner"
@@ -56,7 +64,14 @@
         </el-select>
 
       </el-form-item>
+    </el-form>
 
+    <el-form label-width="70px"
+             label-position="right"
+             v-if="userConfigInfo.selectedRepos"
+             v-loading="dirLoading"
+             element-loading-text="加载中..."
+    >
       <el-form-item
         v-if="userConfigInfo.reposList.length && userConfigInfo.selectedRepos"
         label="目录方式"
@@ -78,7 +93,7 @@
 
           <el-tooltip v-if="userConfigInfo.dirList.length"
                       :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个目录'" placement="top">
-            <el-radio label="reposDir">选择{{userConfigInfo.selectedRepos }}仓库目录</el-radio>
+            <el-radio label="reposDir">选择{{ userConfigInfo.selectedRepos }}仓库目录</el-radio>
           </el-tooltip>
         </el-radio-group>
       </el-form-item>
@@ -143,188 +158,205 @@
 </template>
 
 <script>
-  import {mapGetters} from "vuex";
-  import timeHelper from "../common/utils/timeHelper";
+import {mapGetters} from "vuex";
+import timeHelper from "../common/utils/timeHelper";
 
-  export default {
+export default {
 
-    name: "Config",
+  name: "Config",
 
-    data() {
-      return {}
+  data() {
+    return {
+      loading: false,
+      dirLoading: false,
+    }
+  },
+
+  mounted() {
+
+  },
+
+  watch: {
+    loggingStatus(e) {
+      if (!e) {
+        this.loading = false
+        this.dirLoading = false
+      }
+    }
+  },
+
+  computed: {
+    ...mapGetters({
+      userConfigInfo: 'getUserConfigInfo',
+      loggingStatus: 'getUserLoggingStatus',
+    })
+  },
+
+  methods: {
+    getUserInfo() {
+      if (this.userConfigInfo.token) {
+        this.loading = true
+        this.$axios.get(
+          '/user',
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `token ${this.userConfigInfo.token}`
+            }
+          }
+        ).then(res => {
+          if (res && res.status === 200) {
+            this.saveUserInfo(res)
+            this.getReposList(res.data['repos_url'])
+          }
+        })
+
+      } else {
+        this.$message.warning('Token不能为空！')
+      }
     },
 
-    mounted() {
-
+    saveUserInfo(res) {
+      this.userConfigInfo.loggingStatus = true
+      this.userConfigInfo.owner = res.data['login']
+      this.userConfigInfo.name = res.data['name']
+      this.userConfigInfo.email = res.data['email']
+      this.userConfigInfo.avatarUrl = res.data['avatar_url']
+      this.persistUserConfigInfo()
     },
 
-    watch: {},
-
-    computed: {
-      ...mapGetters({
-        userConfigInfo: 'getUserConfigInfo',
+    getReposList(repos_url) {
+      this.$axios.get(
+        repos_url,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `token ${this.userConfigInfo.token}`
+          }
+        }
+      ).then(res => {
+        if (res.status === 200) {
+          this.userConfigInfo.reposList = []
+          for (const repos of res.data) {
+            if (!repos.fork) {
+              this.userConfigInfo.reposList.push({
+                value: repos.name,
+                label: repos.name,
+                desc: repos.description
+              })
+            }
+          }
+          this.loading = false
+          this.persistUserConfigInfo()
+        }
       })
     },
 
-    methods: {
-      getUserInfo() {
-        if (this.userConfigInfo.token) {
-          this.$axios.get(
-            '/user',
-            {
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `token ${this.userConfigInfo.token}`
-              }
-            }
-          ).then(res => {
-            if (res && res.status === 200) {
-              this.saveUserInfo(res)
-              this.getReposList(res.data['repos_url'])
-            }
-          })
+    selectRepos(repos) {
+      this.persistUserConfigInfo()
+      this.getDirList(repos)
+    },
 
-        } else {
-          this.$message.warning('Token不能为空！')
+    getDirList(repos) {
+      this.dirLoading = true
+      this.$axios.get(
+        `https://api.github.com/repos/${this.userConfigInfo.owner}/${repos}/contents`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `token ${this.userConfigInfo.token}`
+          }
         }
-      },
-
-      saveUserInfo(res) {
-        this.userConfigInfo.loggingStatus = true
-        this.userConfigInfo.owner = res.data['login']
-        this.userConfigInfo.name = res.data['name']
-        this.userConfigInfo.email = res.data['email']
-        this.userConfigInfo.avatarUrl = res.data['avatar_url']
-        this.persistUserConfigInfo()
-      },
-
-      getReposList(repos_url) {
-        this.$axios.get(
-          repos_url,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `token ${this.userConfigInfo.token}`
+      ).then(res => {
+        if (res.status === 200) {
+          this.userConfigInfo.dirList = [{value: '/', label: '/'}]
+          for (const item of res.data) {
+            if (item.type === 'dir') {
+              this.userConfigInfo.dirList.push({
+                value: item.name,
+                label: item.name
+              })
             }
           }
-        ).then(res => {
-          if (res.status === 200) {
-            this.userConfigInfo.reposList = []
-            for (const repos of res.data) {
-              if (!repos.fork) {
-                this.userConfigInfo.reposList.push({
-                  value: repos.name,
-                  label: repos.name,
-                  desc: repos.description
-                })
-              }
-            }
-            this.persistUserConfigInfo()
-          }
-        })
-      },
-
-      selectRepos(repos) {
-        this.persistUserConfigInfo()
-        this.getDirList(repos)
-      },
-
-      getDirList(repos) {
-        this.$axios.get(
-          `https://api.github.com/repos/${this.userConfigInfo.owner}/${repos}/contents`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `token ${this.userConfigInfo.token}`
-            }
-          }
-        ).then(res => {
-          if (res.status === 200) {
-            this.userConfigInfo.dirList = [{value: '/', label: '/'}]
-            for (const item of res.data) {
-              if (item.type === 'dir') {
-                this.userConfigInfo.dirList.push({
-                  value: item.name,
-                  label: item.name
-                })
-              }
-            }
-            this.persistUserConfigInfo()
-          }
-        })
-      },
-
-      dirModeChange(dirMode) {
-        switch (dirMode) {
-
-          case 'rootDir':
-            this.userConfigInfo.selectedDir = '/'
-            break;
-
-          case 'autoDir':
-            // 自动目录，根据当天日期自动生成
-            this.userConfigInfo.selectedDir = timeHelper.getYYYYMMDD()
-            break;
-
-          case 'newDir':
-            this.userConfigInfo.selectedDir = ''
-            break;
-
-          case 'reposDir':
-            this.userConfigInfo.selectedDir = ''
-            break;
-
+          this.dirLoading = false
+          this.persistUserConfigInfo()
         }
-        this.persistUserConfigInfo()
-      },
+      })
+    },
 
-      persistUserConfigInfo() {
-        this.$store.commit('PERSIST_USER_CONFIG_INFO')
-      },
+    dirModeChange(dirMode) {
+      switch (dirMode) {
 
-      reset() {
-        this.$store.commit('RESET_USER_CONFIG_INFO')
-        this.$store.commit('PERSIST_USER_CONFIG_INFO')
-      },
+        case 'rootDir':
+          this.userConfigInfo.selectedDir = '/'
+          break;
 
-      goUpload() {
-        if (this.userConfigInfo.selectedDir === '') {
+        case 'autoDir':
+          // 自动目录，根据当天日期自动生成
+          this.userConfigInfo.selectedDir = timeHelper.getYYYYMMDD()
+          break;
 
-          if (this.userConfigInfo.dirMode === 'reposDir') {
+        case 'newDir':
+          this.userConfigInfo.selectedDir = ''
+          break;
 
-            this.$message.warning(`请选择 ${this.userConfigInfo.selectedRepos} 仓库下的一个目录！`)
+        case 'reposDir':
+          this.userConfigInfo.selectedDir = ''
+          break;
 
-          } else if (this.userConfigInfo.dirMode === 'newDir') {
+      }
+      this.persistUserConfigInfo()
+    },
 
-            this.$message.warning(`请在输入框输入一个新目录！`)
+    persistUserConfigInfo() {
+      this.$store.commit('PERSIST_USER_CONFIG_INFO')
+    },
 
-          } else {
-            this.$router.push('/')
-          }
+    reset() {
+      this.$store.commit('RESET_USER_CONFIG_INFO')
+      this.$store.commit('PERSIST_USER_CONFIG_INFO')
+      this.loading = false
+      this.dirLoading = false
+    },
+
+    goUpload() {
+      if (this.userConfigInfo.selectedDir === '') {
+
+        if (this.userConfigInfo.dirMode === 'reposDir') {
+
+          this.$message.warning(`请选择 ${this.userConfigInfo.selectedRepos} 仓库下的一个目录！`)
+
+        } else if (this.userConfigInfo.dirMode === 'newDir') {
+
+          this.$message.warning(`请在输入框输入一个新目录！`)
+
         } else {
           this.$router.push('/')
         }
-
+      } else {
+        this.$router.push('/')
       }
 
     }
+
   }
+}
 </script>
 
 <style scoped lang="scss">
-  .config-page-container {
-    overflow-y: auto;
+.config-page-container {
+  overflow-y: auto;
 
-    .config-form {
+  .config-form {
 
-      .operation-btns {
-        display: flex;
-        justify-content: flex-end;
+    .operation {
+      display: flex;
+      justify-content: flex-end;
 
-        .el-button {
-          margin-left: 20px;
-        }
+      .el-button {
+        margin-left: 20px;
       }
     }
   }
+}
 </style>
