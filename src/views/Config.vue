@@ -85,7 +85,7 @@
             <el-radio label="newDir">新建目录</el-radio>
           </el-tooltip>
 
-          <el-tooltip :content="'图片存储在 Master 分支的根目录下'" placement="top">
+          <el-tooltip :content="'图片存储在 ' + userConfigInfo.selectedBranch + ' 分支的根目录下'" placement="top">
             <el-radio label="rootDir">根目录</el-radio>
           </el-tooltip>
 
