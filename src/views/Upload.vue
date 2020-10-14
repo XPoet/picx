@@ -317,14 +317,18 @@ export default {
       }
 
       this.uploadStatus.uploading = true;
+
       const data = {
         "message": "Upload pictures via PicX[picx.xpoet.cn]",
         "branch": selectedBranch,
-        "committer": {
-          "name": this.userConfigInfo.owner,
-          "email": this.userConfigInfo.email,
-        },
         "content": this.imgData.base64Content
+      }
+
+      if (this.userConfigInfo.email) {
+        data.committer = {
+          name: this.userConfigInfo.owner,
+          email: this.userConfigInfo.email,
+        }
       }
 
       this.$axios.put(
