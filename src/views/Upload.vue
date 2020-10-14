@@ -115,10 +115,14 @@
             <span class="repos-dir-info-item">
                仓库：<el-tag size="small">{{ userConfigInfo.selectedRepos }}</el-tag>
             </span>
-            <span class="repos-dir-info-item">
+            <span class="repos-dir-info-item"
+                  v-if="userConfigInfo.selectedBranch"
+            >
                分支：<el-tag size="small">{{ userConfigInfo.selectedBranch }}</el-tag>
             </span>
-            <span class="repos-dir-info-item">
+            <span class="repos-dir-info-item"
+                  v-if="userConfigInfo.selectedDir"
+            >
                目录：<el-tag size="small">{{ userConfigInfo.selectedDir }}</el-tag>
             </span>
 
@@ -268,8 +272,23 @@ export default {
     },
 
     uploadImage() {
-      if (this.userConfigInfo.token === '') {
-        this.$message.error('请先进行图床配置！')
+
+      const {token, selectedRepos, selectedBranch, selectedDir} = this.userConfigInfo
+
+      if (!token) {
+        this.$message.error('请先完成图床配置！')
+        this.$router.push('config')
+        return
+      }
+
+      if (!selectedRepos) {
+        this.$message.error('请选择一个仓库！')
+        this.$router.push('config')
+        return
+      }
+
+      if (!selectedDir) {
+        this.$message.error('目录不能为空！')
         this.$router.push('config')
         return
       }
@@ -287,7 +306,7 @@ export default {
       this.uploadStatus.uploading = true;
       const data = {
         "message": "Upload pictures via PicX[picx.xpoet.cn]",
-        "branch": this.userConfigInfo.selectedBranch,
+        "branch": selectedBranch,
         "committer": {
           "name": this.userConfigInfo.owner,
           "email": this.userConfigInfo.email,
@@ -301,7 +320,7 @@ export default {
         {
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `token ${this.userConfigInfo.token}`
+            "Authorization": `token ${token}`
           }
         }
       ).then(res => {
