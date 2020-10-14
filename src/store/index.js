@@ -44,6 +44,7 @@ export default new Vuex.Store({
       url: '',
       isShow: false
     },
+    uploadAreaActive: false
   },
   mutations: {
 
@@ -89,6 +90,12 @@ export default new Vuex.Store({
       state.imageViewer.url = url
       state.imageViewer.isShow = isShow
     },
+
+    // 修改上传区域激活状态
+    CHANGE_UPLOAD_AREA_ACTIVE(state, isActive) {
+      state.uploadAreaActive = isActive
+    }
+
   },
 
   getters: {
@@ -99,6 +106,7 @@ export default new Vuex.Store({
     getDirImageList: state => state.dirImageList,
     getUploadedImageList: state => state.uploadedImageList,
     getImageViewer: state => state.imageViewer,
+    getUploadAreaActive: state => state.uploadAreaActive,
   },
 
   actions: {

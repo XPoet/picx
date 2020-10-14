@@ -24,7 +24,8 @@
     >
       <!-- 上传区域 -->
       <el-row class="row-item">
-        <div class="upload-area"
+        <div class="upload-area active-upload"
+             :class="{'focus': uploadAreaActive}"
              @dragover.prevent
              @drop.stop.prevent="onDrop"
              @paste="onPaste"
@@ -32,13 +33,23 @@
              element-loading-text="上传中..."
              element-loading-background="rgba(0, 0, 0, 0.5)"
         >
-          <label for="uploader"></label>
-          <input id="uploader" type="file" @change="onFileChange">
-          <div class="tips" v-if="!imgData.base64Url">
-            <i class="icon el-icon-upload"></i>
-            <div class="text">拖拽、粘贴、或点击此处上传</div>
+          <label for="uploader"
+                 class="active-upload"
+                 v-if="uploadAreaActive"
+          ></label>
+          <input id="uploader"
+                 type="file"
+                 @change="onFileChange"
+          >
+          <div class="tips active-upload" v-if="!imgData.base64Url">
+            <i class="icon el-icon-upload active-upload"></i>
+            <div class="text active-upload">拖拽、粘贴、或点击此处上传</div>
           </div>
-          <img v-if="imgData.base64Url" :src="imgData.base64Url">
+          <img class="active-upload"
+               v-if="imgData.base64Url"
+               :src="imgData.base64Url"
+               alt="Pictures to be uploaded"
+          >
         </div>
       </el-row>
 
@@ -226,8 +237,10 @@ export default {
       userConfigInfo: 'getUserConfigInfo',
       logoutStatus: 'getUserLoggingStatus',
       uploadedImageList: 'getUploadedImageList',
+      uploadAreaActive: 'getUploadAreaActive',
     })
   },
+
 
   methods: {
 
@@ -407,7 +420,7 @@ export default {
     },
 
     onFileChange(e) {
-      const targetFile = e.target.files[0];
+      const targetFile = e.target.files[0]
       chooseImg(
         targetFile,
         (url, fileName) => {
@@ -415,10 +428,11 @@ export default {
         },
         this.setMaxSize ? this.compressSize * 1024 : null
       )
+      this.$store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
     },
 
     onDrop(e) {
-      const targetFile = e.dataTransfer.files[0];
+      const targetFile = e.dataTransfer.files[0]
       chooseImg(
         targetFile,
         (url, fileName) => {
@@ -426,6 +440,7 @@ export default {
         },
         this.setMaxSize ? this.compressSize * 1024 : null
       )
+      this.$store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
     },
 
     async onPaste(e) {
@@ -436,7 +451,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 $color: #0077b8;
 
@@ -465,7 +480,6 @@ $color: #0077b8;
 
   .upload-page-right {
     height: 100%;
-    padding: 30px;
 
     .row-item {
       display: flex;
@@ -485,14 +499,14 @@ $color: #0077b8;
       display: flex;
       align-items: center;
       justify-content: center;
+      z-index: 999;
+
+      &.focus {
+        border-color: $color;
+      }
 
       &:hover {
-        cursor: pointer;
         border-color: $color;
-
-        .tips {
-          color: $color;
-        }
       }
 
       label {
@@ -500,7 +514,7 @@ $color: #0077b8;
         position: absolute;
         width: 100%;
         height: 100%;
-        z-index: 100;
+        z-index: 1000;
         cursor: pointer;
       }
 
@@ -520,6 +534,7 @@ $color: #0077b8;
         }
 
         .text {
+          cursor: default;
           font-size: 20px;
         }
       }
