@@ -20,7 +20,7 @@
       </div>
     </div>
 
-    <div class="user-info">
+    <div class="user-info" @click="onUserInfoClick">
 
       <div class="username">
         {{ userConfigInfo.owner ? userConfigInfo.owner : defaultUsername }}
@@ -63,8 +63,6 @@ export default {
     }
   },
 
-  watch: {},
-
   computed: {
     ...mapGetters({
       userConfigInfo: 'getUserConfigInfo'
@@ -75,6 +73,12 @@ export default {
   },
 
   methods: {
+    onUserInfoClick() {
+      if (!this.userConfigInfo.loggingStatus && this.$router.currentRoute.path !== '/config') {
+        this.$router.push('/config')
+      }
+    },
+
     handleCommand(command) {
       switch (command) {
         case 'upload':
@@ -174,7 +178,7 @@ export default {
 
       img {
         width: 100%;
-        height:  100%;
+        height: 100%;
         border-radius: 50%;
       }
     }
