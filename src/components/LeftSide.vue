@@ -141,7 +141,7 @@ export default {
 
       &.active {
         background: $backgroundColor;
-        color: #555;
+        color: $primaryColor;
         position: relative;
         font-weight: bold;
 
