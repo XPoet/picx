@@ -3,19 +3,13 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import './style.scss'
-
-// 导入 ElementUI
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
-
-// 导入 Axios
-import Axios from "axios";
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import Axios from "axios"
+import './axios'
 
 Vue.use(ElementUI);
 Vue.prototype.$axios = Axios
-
-// Axios 全局拦截
-import './axios'
 
 Vue.config.productionTip = false
 
