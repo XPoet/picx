@@ -53,6 +53,8 @@
 
 - [ ] 接入 Gitee & coding 仓库。 
 
+- [ ] 语言国际化。 
+
 ## How to use 如何使用
 
 1. 创建一个用来存储图片的 [GitHub 仓库](https://github.com/new) 。
