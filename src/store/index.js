@@ -82,6 +82,7 @@ export default new Vuex.Store({
 
     // 持久化用户配置信息
     PERSIST_USER_CONFIG_INFO(state) {
+      state.userConfigInfo.selectedDir = state.userConfigInfo.selectedDir.replace(/\s+/g, '-')
       localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
     },
 
