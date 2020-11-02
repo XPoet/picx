@@ -1,5 +1,5 @@
 /**
- * 获取一串不会重复的字符（UUId）
+ * 获取一串不会重复的字符（UUID）
  * @returns uuid {string}
  */
 const getUuid = () => {

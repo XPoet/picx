@@ -129,9 +129,9 @@ export default {
     cursor: pointer;
 
     .logo {
-      width: 50px;
-      height: 50px;
-      margin-right: 10px;
+      width: 48px;
+      height: 48px;
+      margin-right: 8px;
 
       img {
         width: 100%;
