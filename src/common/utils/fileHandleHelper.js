@@ -14,3 +14,8 @@ export const filenameHandle = (filename) => {
 export const isImage = (suffix) => {
   return /(png|jpg|gif|jpeg|webp)$/.test(suffix)
 }
+
+
+export const getFileSize = (size) => {
+  return (size / 1024).toFixed(2) + ' KB'
+}

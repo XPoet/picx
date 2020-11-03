@@ -10,8 +10,8 @@ const onPaste = (e, maxsize = 200 * 1024) => {
       const item = e.clipboardData.items[i]
       if (item.kind === 'file') {
         const pasteFile = item.getAsFile()
-        chooseImg(pasteFile, (url, fileName) => {
-          resolve({ url, fileName })
+        chooseImg(pasteFile, (url, file) => {
+          resolve({ url, file })
         }, maxsize)
       }
     }

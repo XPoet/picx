@@ -53,11 +53,11 @@
 </template>
 
 <script>
-  import generateExternalLink from "../common/utils/generateExternalLink";
-  import {filenameHandle, isImage} from "../common/utils/filenameHandle";
-  import ImageCard from "../components/ImageCard";
+  import generateExternalLink from "@/common/utils/generateExternalLink";
+  import {filenameHandle, isImage} from "@/common/utils/fileHandleHelper";
+  import ImageCard from "@/components/ImageCard";
   import {mapGetters} from "vuex";
-  import getUuid from "../common/utils/getUuid";
+  import getUuid from "@/common/utils/getUuid";
 
   export default {
     name: "Management",

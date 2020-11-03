@@ -58,6 +58,7 @@
               v-if="imgData.base64Url"
       >
         <div class="upload-status">
+
           <div class="file-status">
 
             <div class="filename"
@@ -81,6 +82,14 @@
             >
               上传完成 <i class="el-icon-circle-check"></i>
             </div>
+          </div>
+
+          <div class="file-size info-item">
+            图片大小：{{ getFileSize(fileInfo.size) }}
+          </div>
+
+          <div class="file-last-modified info-item">
+            最后修改：{{ formatLastModified(fileInfo.lastModified) }}
           </div>
         </div>
       </el-row>
@@ -156,16 +165,17 @@
 </template>
 
 <script>
-import UploadTools from "../components/UploadTools";
-import chooseImg from "../common/utils/chooseImg";
-import paste from "../common/utils/paste";
-import {filenameHandle} from "../common/utils/filenameHandle";
-import uploadUrlHandle from "../common/utils/uploadUrlHandle";
-import generateExternalLink from "../common/utils/generateExternalLink";
-import cleanObject from "../common/utils/cleanObject";
+import UploadTools from "@/components/UploadTools";
+import chooseImg from "@/common/utils/chooseImg";
+import paste from "@/common/utils/paste";
+import {filenameHandle, getFileSize} from "@/common/utils/fileHandleHelper";
+import uploadUrlHandle from "@/common/utils/uploadUrlHandle";
+import generateExternalLink from "@/common/utils/generateExternalLink";
+import cleanObject from "@/common/utils/cleanObject";
 import {mapGetters} from "vuex";
-import ImageCard from "../components/ImageCard";
-import getUuid from "../common/utils/getUuid";
+import ImageCard from "@/components/ImageCard";
+import getUuid from "@/common/utils/getUuid";
+import timeHelper from "@/common/utils/timeHelper";
 
 export default {
   name: "Upload",
@@ -192,6 +202,11 @@ export default {
         name: '',
         hash: '',
         suffix: '',
+      },
+
+      fileInfo: {
+        size: 0,
+        lastModified: 0
       },
 
       setMaxSize: false,
@@ -407,17 +422,23 @@ export default {
       this.$message.success(`${type}外链复制成功！`)
     },
 
-    getImage(url, fileName) {
+    getImage(url, file) {
       this.imgData.base64Url = url
       this.imgData.base64Content = url.split(',')[1]
+
       cleanObject(this.uploadStatus)
-      const {name, hash, suffix} = filenameHandle(fileName)
+
+      const {name, hash, suffix} = filenameHandle(file.name)
       this.filename.name = name
       this.filename.hash = hash
       this.filename.suffix = suffix
 
-      this.filename.now = this.isHashRename ? `${name}.${hash}.${suffix}` : fileName
+      this.filename.now = this.isHashRename ? `${name}.${hash}.${suffix}` : file.name
       this.filename.initName = this.filename.name
+
+      this.fileInfo.size = file.size
+      this.fileInfo.lastModified = file.lastModified
+
       if (this.autoUpload) {
         this.uploadImage()
       }
@@ -427,8 +448,8 @@ export default {
       const targetFile = e.target.files[0]
       chooseImg(
         targetFile,
-        (url, fileName) => {
-          this.getImage(url, fileName)
+        (url, file) => {
+          this.getImage(url, file)
         },
         this.setMaxSize ? this.compressSize * 1024 : null
       )
@@ -439,8 +460,8 @@ export default {
       const targetFile = e.dataTransfer.files[0]
       chooseImg(
         targetFile,
-        (url, fileName) => {
-          this.getImage(url, fileName)
+        (url, file) => {
+          this.getImage(url, file)
         },
         this.setMaxSize ? this.compressSize * 1024 : null
       )
@@ -448,9 +469,17 @@ export default {
     },
 
     async onPaste(e) {
-      const {url, fileName} = await paste(e, this.setMaxSize ? this.compressSize * 1024 : null)
-      this.getImage(url, fileName)
+      const {url, file} = await paste(e, this.setMaxSize ? this.compressSize * 1024 : null)
+      this.getImage(url, file)
     },
+
+    getFileSize(size) {
+      return getFileSize(size)
+    },
+
+    formatLastModified(t) {
+      return timeHelper.formatTimestamp(t)
+    }
   },
 }
 </script>
@@ -556,6 +585,11 @@ $color: #0077b8;
       padding: 10px;
       background: #f1f1f1;
       color: #666;
+      font-size: 14px;
+
+      .info-item {
+        margin-top: 4px;
+      }
 
       .file-status {
         display: flex;
@@ -567,8 +601,6 @@ $color: #0077b8;
 
         display: flex;
         align-items: center;
-
-        font-size: 14px;
 
         i {
           margin-left: 2px;
