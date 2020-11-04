@@ -37,7 +37,6 @@
 
 <style scoped lang="scss">
   .image-viewer {
-
     position: absolute;
     top: 0;
     bottom: 0;
@@ -51,14 +50,20 @@
     z-index: 1000;
 
     .image-box {
+      position: relative;
       width: 60%;
+      height: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
 
-      img {
+      @media (max-width: 1200px) {
+        width: 80%;
+      }
+
+      .img {
         max-width: 100%;
-        object-fit: cover;
+        max-height: 100%;
       }
 
     }
