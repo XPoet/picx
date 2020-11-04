@@ -4,28 +4,27 @@
 [![Github Release](https://img.shields.io/github/release/XPoet/picx.svg)](https://github.com/XPoet/picx/releases)
 [![Github License](https://img.shields.io/github/license/XPoet/picx.svg)](https://github.com/XPoet/picx/blob/master/LICENSE)
 
-**一款你想要的图床神器，轻松解决所有图床难题！**
+**一款基于 GitHub API 的免费、稳定且高效的图床管理神器。**
 
 ---
 
-**你曾经为图床问题烦恼过吗❓**
+**灵魂拷问，你曾经为图床问题烦恼过吗 ❓**
 
-> 在网上复制了一个心仪的图片链接，用着用着某一天就失效了，烦~
+> 在用静态博客网站写文章，正愁图片不知怎么保存，烦~
 
-> 特意租个云服务器托管图片好奢侈，而且上传操作好繁琐，烦~
+> 网上复制的心仪图片链接，用着用着某一天就失效了，烦~
 
-> 有使用过某公司的免费图床，但都有期限，速度又慢，存储空间小，还限流量，烦~
+> 特意花钱租个云服务器托管图片，划不来，而且上传操作好繁琐，烦~
 
-> 想白嫖免费好用的图床，找了 N 久找不到，烦~
+> 曾经用过某某公司的免费图床，但都有时间期限，速度又慢，存储空间小，还限流量，烦~
 
-**难道就没有一款免费的，稳定的，访问快的，还不限量的的图床管理工具吗？┭┮﹏┭┮**
+**难道就没有一款真正免费的，稳定的，不限量的，访问速度还很快的图床管理工具吗？┭┮﹏┭┮**
 
 <h2>有！</h2>
-<h3>有！！</h3>
 
-**PicX，基于 GitHub API + jsDelivr 搭建的图床神器，免费、稳定、极速、高效，免下载，免安装，打开[网站](https://picx.xpoet.cn/)即可使用。**
+**PicX，基于 GitHub API 搭建的图床管理神器，免费、稳定、极速、高效，免下载，免安装，打开 [PicX 网站](https://picx.xpoet.cn/) 即可使用。**
 
-只需注册一个 GitHub 账号，当然，我相信你早就有 GitHub 账号了。
+你只需注册 GitHub 账号，创建一个仓库来作为你的图床，当然，我相信你早就有 GitHub 账号了。
 
 ## Features 功能特性
 
@@ -45,13 +44,13 @@
 
 - [x] 图床管理（仓库图片的增删改查）。
 
-- [ ] 图片压缩。 
+- [ ] 图片压缩。
 
 - [ ] 批量上传。
 
-- [ ] 接入 Gitee & coding 仓库。 
+- [ ] 接入 Gitee & coding 仓库。
 
-- [ ] 语言国际化。 
+- [ ] 语言国际化。
 
 ## How to use 如何使用
 
@@ -77,36 +76,48 @@
 
       ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/17961602582378_.pic.7955twzzcmc0.jpg)
 
-   2. 在已有仓库的下拉列表中，选择一个作为图床的仓库。
+   2. 在仓库的下拉列表中，选择一个作为图床的仓库。
 
       ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/17971602582459_.pic.236arf47qso0.jpg)
 
-   3. 选择一种目录方式（目录为在仓库中存放图片的文件夹）。
+   3. 选择一种目录方式（目录即仓库里存放图片的文件夹）。
 
       ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/dirModel.2mnglli43fk0.jpg)
 
       - 新建目录：需手动输入一个新目录。
+
       - 根目录：图片将直接存储在仓库根目录下。
+
       - 自动目录：自动生成日期格式 `YYYYMMDD` 的目录。例如：`20200909`。
+
       - 选择仓库目录：自动获取仓库下所有目录，选择一个即可。
 
-   4. 完成图床配置，现在就可以开始上传图片了，快去试试吧~
+      完成图床配置，现在就可以开始上传图片了，快去试试吧~
 
 <br>
 
-4. 上传图片，可通过拖拽图片、复制粘贴，选择图片等方式进行上传。上传中，可自定义修改图片名和加上哈希码。
-   ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/upload-area.3h6t7zf2v8c0.png)
+4. 上传图片。
 
-   ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/test.7a7k9k9kvr40.png)
+   - 可通过**拖拽图片**到上传区域进行上传。
+
+   - 可通过**复制粘贴图片**到上传区域进行上传。粘贴图片时，需先点击激活上传区域，如下图，**上传区域的虚线边框变成墨蓝色，表示已激活**。支持通过键盘快捷键粘贴（`ctrl + v` / `command + v`）。
+
+     ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.6wfw84e4xlw0.png)
+
+   - 可通过**选择图片**到上传区域进行上传。
+
+    选择图片完成后，会显示出图片详细信息，你可以**自定义修改图片名称**和**给图片加上哈希吗（确保图片名不重复）。**
+
+    ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.3ibdn25rjfe0.png)
 
 <br>
 
-5. 复制图片外链。
+5. 图片上传成功后，即可复制图片外链。
    ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/18031602583963_.pic_hd.70kvd1kgb880.jpg)
 
 <br>
 
-6. 图床管理，对仓库图片进行管理。
+6. 图床管理，对仓库里保存的图片进行管理。
    ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/ihm.3nr0yt9vrtk0.png)
 
 ## Contribution 贡献
