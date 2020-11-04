@@ -210,6 +210,8 @@ export default {
           if (res && res.status === 200) {
             this.saveUserInfo(res)
             this.getReposList(res.data['repos_url'])
+          } else {
+            this.loading = false
           }
         })
 
