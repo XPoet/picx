@@ -1,8 +1,8 @@
 # PicX
 
-[![Github Author](https://img.shields.io/badge/author-XPoet-orange.svg)](https://github.com/XPoet)
-[![Github Release](https://img.shields.io/github/release/XPoet/picx.svg)](https://github.com/XPoet/picx/releases)
-[![Github License](https://img.shields.io/github/license/XPoet/picx.svg)](https://github.com/XPoet/picx/blob/master/LICENSE)
+[![Author](https://img.shields.io/badge/author-XPoet-orange.svg)](https://github.com/XPoet)
+[![Release](https://img.shields.io/github/release/XPoet/picx.svg)](https://github.com/XPoet/picx/releases)
+[![License](https://img.shields.io/github/license/XPoet/picx.svg)](https://github.com/XPoet/picx/blob/master/LICENSE)
 
 **一款基于 GitHub API 的免费、稳定且高效的图床管理神器。**
 
