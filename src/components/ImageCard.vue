@@ -53,7 +53,7 @@
 <script>
 
 import {mapGetters} from "vuex";
-import { hashFilenameHandle} from "@/common/utils/fileHandleHelper";
+import {hashFilenameHandle} from "@/common/utils/fileHandleHelper";
 
 export default {
   name: "ImageCard",
@@ -215,13 +215,13 @@ $infoBoxHeight: 56px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        cursor: pointer;
         margin-top: 5px;
 
         .delete {
           display: flex;
           justify-content: center;
           align-items: center;
+          cursor: pointer;
 
           i {
             font-size: 16px;
@@ -237,6 +237,7 @@ $infoBoxHeight: 56px;
             font-size: 12px;
             margin-left: 5px;
             color: $fontColor_dark;
+            cursor: pointer;
 
             &:hover {
               transition: all 0.3s ease;
