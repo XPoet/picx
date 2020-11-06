@@ -9,7 +9,7 @@
   },
   "homepage": "https://github.com/XPoet/picx#readme",
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build"
   },
   "dependencies": {
