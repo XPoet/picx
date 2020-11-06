@@ -30,12 +30,12 @@
         </div>
       </div>
 
-      <div class="bottom">
-        <ul class="image-list"
-            v-loading="loadingImageList"
-            element-loading-text="加载中..."
-            element-loading-background="rgba(0, 0, 0, 0.6)"
-        >
+      <div class="bottom"
+           v-loading="loadingImageList"
+           element-loading-text="加载中..."
+           element-loading-background="rgba(0, 0, 0, 0.6)"
+      >
+        <ul class="image-list">
           <li class="image-item"
               v-for="image in currentDirImageList"
               :style="{
