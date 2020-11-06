@@ -18,15 +18,16 @@
                        label="图片大小"
       ></el-input-number>
     </div>-->
+
+    <!-- 重命名 -->
     <div class="tool-item" v-if="isShowRename">
       <el-switch
         v-model="isRename"
-        inactive-text="重命名"
+        active-text="重命名"
         @change="rename()"
       >
       </el-switch>
     </div>
-
     <div class="tool-item" v-if="isShowRename && isRename">
       <el-input placeholder="请输入新的名字"
                 v-model="newName"
@@ -37,14 +38,26 @@
       </el-input>
     </div>
 
-    <div class="tool-item">
+    <!-- 哈希命名 -->
+    <div class="tool-item" v-if="isShowHashName">
       <el-switch
         v-model="isHashRename"
-        inactive-text="哈希命名"
+        active-text="哈希命名"
         @change="hashRename"
       >
       </el-switch>
     </div>
+
+    <!-- Markdown -->
+    <div class="tool-item" v-if="isShowTransformMarkdown">
+      <el-switch
+        v-model="isTransformMarkdown"
+        active-text="外链转换Markdown格式"
+        @change="transformMarkdown"
+      >
+      </el-switch>
+    </div>
+
     <div class="tool-item operation-btn">
       <el-button plain
                  icon="el-icon-refresh"
@@ -69,12 +82,21 @@
         maxSize: 200,
         isRename: false,
         isHashRename: true,
+        isTransformMarkdown: false,
         newName: '',
       }
     },
 
     props: {
       isShowRename: {
+        type: Boolean,
+        default: false
+      },
+      isShowHashName: {
+        type: Boolean,
+        default: false
+      },
+      isShowTransformMarkdown: {
         type: Boolean,
         default: false
       }
@@ -110,6 +132,11 @@
         this.$emit('hash-named', e)
       },
 
+      // transform markdown
+      transformMarkdown(e) {
+        this.$emit('transform-markdown', e)
+      },
+
       setMaxSizeChange(e) {
         this.$emit('is-set-max-size', e)
       },
@@ -138,7 +165,7 @@
     width: 100%;
     display: flex;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 
     &:last-child {
       margin-bottom: 0;

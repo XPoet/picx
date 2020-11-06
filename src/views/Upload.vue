@@ -100,9 +100,8 @@
       >
         <div class="external-link">
           <el-input class="external-link-input"
-                    placeholder="复制GitHub外链..."
                     size="mini"
-                    v-model="externalLink.github"
+                    v-model="externalLink.input_github"
                     ref="GitHubExternalLinkInput"
                     readonly
           >
@@ -112,9 +111,8 @@
             </el-button>
           </el-input>
           <el-input class="external-link-input"
-                    placeholder="复制CDN外链..."
                     size="mini"
-                    v-model="externalLink.cdn"
+                    v-model="externalLink.input_cdn"
                     ref="CDNExternalLinkInput"
                     readonly
           >
@@ -156,7 +154,10 @@
             @hash-named="hashRename"
             @upload-reset="resetUploadInfo"
             @upload-file="uploadImage"
+            @transform-markdown="transformMarkdown"
             :is-show-rename="imgData.base64Url !== '' && uploadStatus.progress !== 100"
+            :is-show-hash-name="imgData.base64Url !== '' && uploadStatus.progress !== 100"
+            :is-show-transform-markdown="!uploadStatus.uploading && uploadStatus.progress === 100"
           />
         </div>
       </el-row>
@@ -228,15 +229,17 @@ export default {
 
       // 外链
       externalLink: {
+        input_github: '',
+        input_cdn: '',
         github: '',
         cdn: '',
+        markdown_gh: '',
+        markdown_cdn: '',
       },
 
+      isTransformMarkdown: false,
+
     }
-  },
-
-  mounted() {
-
   },
 
   watch: {
@@ -334,9 +337,9 @@ export default {
       this.uploadStatus.uploading = true;
 
       const data = {
-        "message": "Upload pictures via PicX[picx.xpoet.cn]",
-        "branch": selectedBranch,
-        "content": this.imgData.base64Content
+        'message': 'Upload pictures via PicX[picx.xpoet.cn]',
+        'branch': selectedBranch,
+        'content': this.imgData.base64Content
       }
 
       if (this.userConfigInfo.email) {
@@ -351,8 +354,8 @@ export default {
         data,
         {
           headers: {
-            "Content-Type": "application/json",
-            "Authorization": `token ${token}`
+            'Content-Type': 'application/json',
+            'Authorization': `token ${token}`
           }
         }
       ).then(res => {
@@ -376,6 +379,11 @@ export default {
       // 生成外链
       this.externalLink.github = generateExternalLink('github', res.data.content, this.userConfigInfo)
       this.externalLink.cdn = generateExternalLink('cdn', res.data.content, this.userConfigInfo)
+      this.externalLink.markdown_gh = generateExternalLink('markdown_gh', res.data.content, this.userConfigInfo)
+      this.externalLink.markdown_cdn = generateExternalLink('markdown_cdn', res.data.content, this.userConfigInfo)
+
+      this.externalLink.input_github = this.isTransformMarkdown ? this.externalLink.markdown_gh : this.externalLink.github
+      this.externalLink.input_cdn = this.isTransformMarkdown ? this.externalLink.markdown_cdn : this.externalLink.cdn
 
       const item = {
         uuid: getUuid(),
@@ -383,9 +391,10 @@ export default {
         name: res.data.content.name,
         path: res.data.content.path,
         sha: res.data.content.sha,
-        html_url: res.data.content.html_url,
-        github_url: res.data.content['download_url'],
+        github_url: this.externalLink.github,
         cdn_url: this.externalLink.cdn,
+        markdown_gh: this.externalLink.markdown_gh,
+        markdown_cdn: this.externalLink.markdown_cdn,
         deleting: false
       }
 
@@ -406,6 +415,12 @@ export default {
 
       // dirImageList 增加图片
       this.$store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', item)
+    },
+
+    transformMarkdown(e) {
+      this.isTransformMarkdown = e
+      this.externalLink.input_github = e ? this.externalLink.markdown_gh : this.externalLink.github
+      this.externalLink.input_cdn = e ? this.externalLink.markdown_cdn : this.externalLink.cdn
     },
 
     copyLink(type) {
@@ -484,7 +499,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 
 $color: #0077b8;
 
@@ -493,6 +508,7 @@ $color: #0077b8;
   height: 100%;
   display: flex;
   justify-content: space-between;
+
 
   .upload-page-left {
     height: 100%;
@@ -513,6 +529,7 @@ $color: #0077b8;
 
   .upload-page-right {
     height: 100%;
+    overflow-y: auto;
 
     .row-item {
       display: flex;
@@ -660,6 +677,5 @@ $color: #0077b8;
   }
 
 }
-
 
 </style>

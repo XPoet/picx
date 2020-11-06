@@ -208,9 +208,10 @@
             name: item.name,
             path: item.path,
             sha: item.sha,
-            html_url: item.html_url,
-            github_url: item['download_url'],
+            github_url: generateExternalLink('github', item, this.userConfigInfo),
             cdn_url: generateExternalLink('cdn', item, this.userConfigInfo),
+            markdown_gh: generateExternalLink('markdown_gh', item, this.userConfigInfo),
+            markdown_cdn: generateExternalLink('markdown_cdn', item, this.userConfigInfo),
             deleting: false,
           }
         }

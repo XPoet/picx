@@ -53,7 +53,6 @@
 <script>
 
 import {mapGetters} from "vuex";
-import {hashFilenameHandle} from "@/common/utils/fileHandleHelper";
 
 export default {
   name: "ImageCard",
@@ -100,7 +99,7 @@ export default {
             owner: this.userConfigInfo?.owner,
             repo: this.userConfigInfo?.selectedRepos,
             path: imageObj.path,
-            message: `delete from PicX`,
+            message: 'delete pictures via PicX[picx.xpoet.cn]',
             sha: imageObj.sha
           }
         }
@@ -111,6 +110,8 @@ export default {
           this.$message.success('删除成功！')
           this.$store.dispatch('UPLOADED_LIST_REMOVE', imageObj)
           this.$store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
+        } else {
+          imageObj.deleting = false
         }
       })
     },
@@ -128,7 +129,7 @@ export default {
           successInfo = type
           break
         case 'Markdown':
-          externalLink = `![${hashFilenameHandle(imageObj.name)}](${imageObj.cdn_url})`
+          externalLink = imageObj.markdown_cdn
           successInfo = 'Markdown格式的CDN'
           break
       }
