@@ -18,7 +18,7 @@ export const hashFilenameHandle = (hashFilename) => {
 }
 
 export const isImage = (suffix) => {
-  return /(png|jpg|gif|jpeg|webp)$/.test(suffix)
+  return /(png|jpg|gif|jpeg|webp|svg\+xml)$/.test(suffix)
 }
 
 
