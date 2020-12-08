@@ -1,7 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {PICX_CONFIG, PICX_MANAGEMENT, PICX_UPLOADED} from "../common/model/localStorage";
-import cleanObject from "../common/utils/cleanObject";
+import {
+  PICX_CONFIG,
+  PICX_MANAGEMENT,
+  PICX_UPLOADED
+} from "@/common/model/localStorage";
+import cleanObject from "@/common/utils/cleanObject";
 
 Vue.use(Vuex)
 
