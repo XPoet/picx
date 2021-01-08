@@ -128,6 +128,6 @@
 
 使用过程中，如果遇到问题，请给作者提 `Issue`。
 
-## Licence 许可
+## License 许可
 
 [MIT](https://github.com/XPoet/picx/blob/master/LICENSE) Copyright (c) 2020 XPoet
