@@ -359,7 +359,7 @@ export default {
           }
         }
       ).then(res => {
-        if (res && res.status === 201 && res.statusText === 'Created') {
+        if (res && res.status === 201) {
           this.$message.success('上传成功！')
           this.uploadedHandle(res)
         } else {
