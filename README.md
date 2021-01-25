@@ -78,7 +78,7 @@
 
    2. 在仓库的下拉列表中，选择一个作为图床的仓库。
 
-      ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/17971602582459_.pic.236arf47qso0.jpg)
+      ![image](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.a24pdwe6b5.png)
 
    3. 选择一种目录方式（目录即仓库里存放图片的文件夹）。
 
@@ -128,6 +128,6 @@
 
 使用过程中，如果遇到问题，请给作者提 `Issue`。
 
-## Licence 许可
+## License 许可
 
 [MIT](https://github.com/XPoet/picx/blob/master/LICENSE) Copyright (c) 2020 XPoet
