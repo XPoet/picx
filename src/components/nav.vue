@@ -5,7 +5,13 @@
           v-for="nav in navList"
           :class="{'active': nav.isActive}"
           @click="navClick(nav)"
-      >{{ nav.name }}
+      >
+        <div class="nav-content">
+          <i class="nav-icon"
+             :class="nav.icon"
+          ></i>
+          <span class="nav-name">{{ nav.name }}</span>
+        </div>
       </li>
     </ul>
   </aside>
@@ -26,19 +32,28 @@ export default defineComponent({
       {
         navList: [
           {
-            name: 'Home',
+            name: '上传',
+            icon: 'el-icon-upload2',
             isActive: false,
-            path: '/'
+            path: '/upload'
           },
           {
-            name: 'Vuex',
+            name: '配置',
+            icon: 'el-icon-edit-outline',
             isActive: false,
-            path: '/vuex'
+            path: '/config'
           },
           {
-            name: 'Axios',
+            name: '管理',
+            icon: 'el-icon-setting',
             isActive: false,
-            path: '/axios'
+            path: '/management'
+          },
+          {
+            name: '帮助',
+            icon: 'el-icon-chat-dot-round',
+            isActive: false,
+            path: '/help'
           }
         ],
 
@@ -87,12 +102,28 @@ export default defineComponent({
     .nav-item {
       box-sizing border-box
       width 100%
-      height 60px
+      height 68px
       cursor pointer
 
       &.active {
         font-weight bold
         background $second-background-color
+      }
+
+      .nav-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        .nav-icon {
+          font-size: 26px;
+        }
+
+        .nav-name {
+          margin-top: 2px;
+          font-size: 12px;
+        }
       }
 
     }
