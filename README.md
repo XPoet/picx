@@ -1,6 +1,6 @@
-# Vite-Vue3.x-TypeScript-ElementPlus-Starter 
+# Picx 
 
-![demo](./src/assets/demo.png)
+> refactor Picx using Vue3.x and Vite2.x
 
 ## Technology stack
 - [x] TypeScript
