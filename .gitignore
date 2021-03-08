@@ -1,23 +1,49 @@
-.DS_Store
-node_modules
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
 /dist
+/dist-ssr
+/tmp
+/out-tsc
 
+# dependencies
+/node_modules
+yarn.lock
+package-lock.json
 
-# local env files
-.env.local
-.env.*.local
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# Log files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
+# IDE - VSCode
+.vscode/*
+# !.vscode/settings.json
+# !.vscode/tasks.json
+# !.vscode/launch.json
+# !.vscode/extensions.json
 
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# misc
+/.sass-cache
+/connect.lock
+/coverage
+/libpeerconnection.log
+npm-debug.log
+testem.log
+/typings
+
+# e2e
+/e2e/src/*.js
+/e2e/src/*.map
+/cypress/screenshots
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Other
+*.local
