@@ -1,5 +1,7 @@
-export interface NavItem {
-  path: string;
-  name: string;
-  isActive: boolean;
-}
+const PICX_PREFIX = 'PICX_';
+
+export const PICX_CONFIG = PICX_PREFIX + 'CONFIG'
+
+export const PICX_UPLOADED = PICX_PREFIX + 'UPLOADED'
+
+export const PICX_MANAGEMENT = PICX_PREFIX + 'MANAGEMENT'

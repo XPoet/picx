@@ -44,25 +44,20 @@ $left-side-width = 80px
 
 .main-container {
   position absolute
-  left 0
-  right 0
-  top 0
-  bottom 0
+  box-sizing border-box
   width 100%
   height 100%
   background $second-background-color
-  box-sizing border-box
-  display flex
-  flex-direction column
-  justify-content space-between
+  padding-top $top-height
 
 
   .top {
-    position relative
+    position absolute
+    top 0
+    left 0
     box-sizing border-box
     width 100%
     height $top-height
-    margin-bottom 10px
   }
 
 
@@ -73,6 +68,7 @@ $left-side-width = 80px
     height 100%
     display flex
     justify-content space-between
+    padding-top $component-interval
 
 
     .left {
@@ -88,22 +84,20 @@ $left-side-width = 80px
       width 100%
       height 100%
       box-sizing border-box
-      padding 0 10px 10px 10px
+      padding 0 $component-interval $component-interval $component-interval
 
       .content {
         position relative
+        box-sizing border-box
         width 100%
         height 100%
         background $background-color
         border-radius 5px
-        box-sizing border-box
-        padding 10px
+        overflow-y auto
       }
     }
   }
 }
-
-
 
 
 .page-links {

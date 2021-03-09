@@ -15,7 +15,7 @@ export default defineComponent({
   name: 'Vuex',
 
   setup() {
-    const store = useStore();
+    const store = useStore()
 
     const reactiveData = reactive({
       count: computed(() => store.state.count),
