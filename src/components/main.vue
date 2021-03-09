@@ -1,12 +1,11 @@
 <template>
-  <main class="main-container">
+  <main class="main-container" @click="changeUploadAreaActive">
 
     <div class="top">
       <Header/>
     </div>
 
     <div class="bottom">
-
       <div class="left">
         <Nav/>
       </div>
@@ -19,20 +18,19 @@
     </div>
 
   </main>
+  <ImageViewer></ImageViewer>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
+<script lang="ts" setup>
 import Header from '@/components/header.vue'
 import Nav from '@/components/nav.vue'
+import ImageViewer from '@/components/image-viewer.vue'
+import { useStore } from 'vuex'
 
-export default defineComponent({
-  name: 'App',
-  components: {
-    Header,
-    Nav
-  }
-})
+const store = useStore()
+const changeUploadAreaActive = (e: any) => {
+  store.commit('CHANGE_UPLOAD_AREA_ACTIVE', e.target.classList.contains('active-upload'))
+}
 </script>
 
 <style scoped lang="stylus">
@@ -91,21 +89,8 @@ $left-side-width = 80px
         box-sizing border-box
         width 100%
         height 100%
-        background $background-color
-        border-radius 5px
-        overflow-y auto
       }
     }
   }
 }
-
-
-.page-links {
-  a {
-    font-weight: bold;
-    margin: 0 20px;
-  }
-}
-
-
 </style>

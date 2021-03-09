@@ -2,9 +2,9 @@
   <header class="header">
     <div class="brand" @click="router.push('/')">
       <div class="logo">
-        <img src="../assets/logo.png" alt="Picx">
+        <img src="../assets/logo.png" alt="PicX">
       </div>
-      <div class="title">Picx</div>
+      <div class="title">PicX</div>
     </div>
 
     <div class="user-info" @click="onUserInfoClick">
@@ -19,12 +19,12 @@
 
       <el-dropdown trigger="click"
                    @command="handleCommand"
-                   v-if="userConfigInfo?.loggingStatus"
+                   v-if="userConfigInfo?.avatarUrl"
       >
         <span class="el-dropdown-link">
           <span class="avatar">
-            <img :src="userConfigInfo.avatarUrl"
-                 :alt="userConfigInfo.owner"
+            <img :src="userConfigInfo?.avatarUrl"
+                 :alt="userConfigInfo?.owner"
             />
           </span>
         </span>
@@ -157,9 +157,9 @@ export default defineComponent({
       align-items: center;
       width: 38px;
       height: 38px;
-      color: $header-font-color;
+      color: $font-color;
       border-radius: 50%;
-      border: 1px solid $header-font-color;
+      border: 1px solid $font-color;
       margin-left: 10px;
       padding: 1px;
       box-sizing: border-box;

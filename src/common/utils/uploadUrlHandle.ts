@@ -1,4 +1,4 @@
-const uploadUrlHandle = (config, filename) => {
+const uploadUrlHandle = (config: any, filename: any): string => {
   let path = ''
   if (config.selectedDir !== '/') {
     path = config.selectedDir + '/'

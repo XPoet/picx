@@ -1,14 +1,13 @@
 import { ElMessage } from 'element-plus'
-
 import { isImage } from "./fileHandleHelper";
 
-function toPreviewer(dataUrl, fileName, cb) {
+function toPreviewer(dataUrl: any, fileName: any, cb: any) {
   cb && cb(dataUrl, fileName)
 }
 
-function compress(img, fileType, maxWidth) {
-  let canvas = document.createElement('canvas')
-  let ctx = canvas.getContext('2d')
+function compress(img: any, fileType: any, maxWidth: any) {
+  let canvas: any = document.createElement('canvas')
+  let ctx: any = canvas.getContext('2d')
 
   const proportion = img.width / img.height
   const width = maxWidth
@@ -28,7 +27,7 @@ function compress(img, fileType, maxWidth) {
   return base64data
 }
 
-function chooseImg(file, cb, maxsize = 0) {
+const chooseImg = (file: any, cb: any, maxsize = 0) => {
 
   if (!file) {
     return
@@ -47,7 +46,7 @@ function chooseImg(file, cb, maxsize = 0) {
 
     // this.result 为 base64 图片编码
     // this 指向 reader 对象
-    const result = this.result
+    const result: any = this.result
 
     // 如果不判断图片大小 或 图片小于设置的大小，则不压缩，直接在上传区域预览
     if (maxsize === null || result.length <= maxsize) {
@@ -57,7 +56,7 @@ function chooseImg(file, cb, maxsize = 0) {
     }
 
     // 否则，压缩图片
-    let img = new Image()
+    let img: any = new Image()
 
     img.src = result
 

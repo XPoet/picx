@@ -1,6 +1,6 @@
-import chooseImg from './chooseImg.js'
+import chooseImg from './chooseImg'
 
-const onPaste = (e, maxsize = 200 * 1024) => {
+const onPaste = (e: any, maxsize = 200 * 1024): any => {
   if (!(e.clipboardData && e.clipboardData.items)) {
     return
   }
@@ -10,8 +10,8 @@ const onPaste = (e, maxsize = 200 * 1024) => {
       const item = e.clipboardData.items[i]
       if (item.kind === 'file') {
         const pasteFile = item.getAsFile()
-        chooseImg(pasteFile, (url, file) => {
-          resolve({ url, file })
+        chooseImg(pasteFile, (url: any, file: any) => {
+          resolve({url, file})
         }, maxsize)
       }
     }

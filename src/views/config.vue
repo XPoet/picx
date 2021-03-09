@@ -158,13 +158,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import {defineComponent, reactive, computed, toRefs, watch} from 'vue'
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
-import axios from '../utils/axios/index'
+import axios from '../common/utils/axios/index'
+import TimeHelper from "../common/utils/TimeHelper";
 import {ElMessage} from 'element-plus'
-import timeHelper from "../common/utils/timeHelper";
+import {UserConfigInfoModel} from '../common/model/model'
 
 export default defineComponent({
   name: 'Config',
@@ -187,7 +188,7 @@ export default defineComponent({
 
     const reactiveData = reactive({
 
-      userConfigInfo: computed(() => store.getters.getUserConfigInfo),
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo),
       loggingStatus: computed(() => store.getters.getUserConfigInfo),
 
       loading: false,
@@ -205,28 +206,25 @@ export default defineComponent({
               }
             }
           ).then(res => {
-            if (res) {
+            if (res && res.status === 200) {
               this.saveUserInfo(res)
-              this.getReposList(res['repos_url'])
+              this.getReposList(res.data['repos_url'])
             } else {
               this.loading = false
             }
-          }).catch(err => {
-            this.loading = false
-            console.log('err: ', err);
           })
 
         } else {
-          ElMessage.warning('Token不能为空！')
+          this.$message.warning('Token不能为空！')
         }
       },
 
       saveUserInfo(res) {
         this.userConfigInfo.loggingStatus = true
-        this.userConfigInfo.owner = res['login']
-        this.userConfigInfo.name = res['name']
-        this.userConfigInfo.email = res['email']
-        this.userConfigInfo.avatarUrl = res['avatar_url']
+        this.userConfigInfo.owner = res.data['login']
+        this.userConfigInfo.name = res.data['name']
+        this.userConfigInfo.email = res.data['email']
+        this.userConfigInfo.avatarUrl = res.data['avatar_url']
         this.persistUserConfigInfo()
       },
 
@@ -240,9 +238,9 @@ export default defineComponent({
             }
           }
         ).then(res => {
-          if (res && res.length) {
+          if (res.status === 200 && res.data.length) {
             this.userConfigInfo.reposList = []
-            for (const repos of res) {
+            for (const repos of res.data) {
               if (!repos.fork) {
                 this.userConfigInfo.reposList.push({
                   value: repos.name,
@@ -272,15 +270,16 @@ export default defineComponent({
             }
           }
         ).then(res => {
-          if (res) {
+
+          if (res.status === 200) {
 
             const MASTER = 'master'
             const MAIN = 'main'
 
-            if (res.length) {
-              if (res.some(v => v.name === MASTER)) {
+            if (res.data.length) {
+              if (res.data.some(v => v.name === MASTER)) {
                 this.userConfigInfo.selectedBranch = MASTER
-              } else if (res.some(v => v.name === MAIN)) {
+              } else if (res.data.some(v => v.name === MAIN)) {
                 this.userConfigInfo.selectedBranch = MAIN
               }
               this.getDirList(repos)
@@ -303,9 +302,9 @@ export default defineComponent({
           }
         ).then(res => {
 
-          if (res && res.length) {
+          if (res.status === 200 && res.data.length) {
             this.userConfigInfo.dirList = [{value: '/', label: '/'}]
-            for (const item of res) {
+            for (const item of res.data) {
               if (item.type === 'dir') {
                 this.userConfigInfo.dirList.push({
                   value: item.name,
@@ -329,7 +328,7 @@ export default defineComponent({
 
           case 'autoDir':
             // 自动目录，根据当天日期自动生成
-            this.userConfigInfo.selectedDir = timeHelper.getYYYYMMDD()
+            this.userConfigInfo.selectedDir = TimeHelper.getYYYYMMDD()
             break;
 
           case 'newDir':
