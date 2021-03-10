@@ -174,10 +174,10 @@
 import { defineComponent, reactive, computed, toRefs, watch } from 'vue'
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import axios from '../common/utils/axios/index'
-import TimeHelper from '../common/utils/TimeHelper'
+import axios from '@/common/utils/axios/index'
+import TimeHelper from '@/common/utils/TimeHelper'
 import { ElMessage } from 'element-plus'
-import { DirModeEnum, UserConfigInfoModel } from '../common/model/model'
+import { DirModeEnum, UserConfigInfoModel } from '@/common/model/model'
 
 export default defineComponent({
   name: 'Config',

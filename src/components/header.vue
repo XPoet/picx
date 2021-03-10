@@ -9,7 +9,7 @@
       </div>
       <div class="website-count" @click="goGitHubRepo">
         <el-tooltip effect="light"
-                    content="维护不易，点个 Star 支持作者！"
+                    content="点个 Star 支持一下作者吧(*￣︶￣)"
                     placement="bottom"
         >
           <i class=""> 有

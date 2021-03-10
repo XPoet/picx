@@ -2,7 +2,7 @@ export default class TimeHelper {
 
   private static now: number = Date.now()
 
-  static zerofill(n: number) {
+  private static zerofill(n: number) {
     return n < 10 ? '0' + n : n
   }
 
