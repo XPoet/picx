@@ -28,4 +28,4 @@ jobs:
           github_token: ${{ secrets.GH_PAGES_DEPLOY }}
           user_name: ${{ secrets.MY_USER_NAME }}
           user_email: ${{ secrets.MY_USER_EMAIL }}
-          commit_message: Update Vite-Vue 3.x-TypeScript-Element Plus-Starter Template
+          commit_message: Update PicX
