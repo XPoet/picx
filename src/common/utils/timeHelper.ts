@@ -6,7 +6,7 @@ class TimeHelper {
     return n < 10 ? '0' + n : n
   }
 
-  static getYYYYMMDD(now: number = this.now) {
+  static getYyyyMmDd(now: number = this.now) {
     const _now: Date = new Date(now)
     const yyyy = _now.getFullYear()
     const MM = _now.getMonth() + 1

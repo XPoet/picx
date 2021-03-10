@@ -6,6 +6,7 @@ $upload-area-focus-color = #2066bb
 $scrollbar-color = #dfdfdf
 $component-interval = 16px
 $box-border-radius = 6px
+$content-max-width = 888px
 
 html, body {
   position relative
@@ -13,7 +14,7 @@ html, body {
   margin 0
   width 100%
   height 100%
-  color $font-color
+  color $default-font-color
 }
 
 
@@ -55,4 +56,11 @@ li {
   border-top-left-radius $box-border-radius
   border-top-right-radius $box-border-radius
   overflow-y auto
+}
+
+.content-box {
+  width 100%
+  max-width $content-max-width
+  margin 0 auto
+  box-sizing border-box
 }

@@ -596,12 +596,6 @@ export default defineComponent({
       &:last-child {
         margin-bottom 0
       }
-
-      .content-box {
-        max-width 880px
-        width 100%
-        box-sizing border-box
-      }
     }
 
 

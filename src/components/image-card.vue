@@ -202,7 +202,7 @@ $infoBoxHeight = 56px;
       width: 100%;
       height: 100%;
       padding: 5px;
-      color: $font-color;
+      color: $default-font-color;
       box-sizing: border-box;
       display: flex;
       flex-direction: column;
@@ -236,18 +236,18 @@ $infoBoxHeight = 56px;
         .copy {
           .copy-url {
             padding: 1px 2px
-            border: 1px solid $font-color
+            border: 1px solid $default-font-color
             border-radius: 5px
             font-size: 12px
             margin-left: 5px
-            color: $font-color
+            color: $default-font-color
             cursor: pointer
 
             &:hover {
               transition: all 0.3s ease
-              background: $font-color
+              background: $default-font-color
               color: $background-color
-              border-color: $font-color
+              border-color: $default-font-color
             }
           }
         }

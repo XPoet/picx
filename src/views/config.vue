@@ -1,5 +1,6 @@
 <template>
   <div class="page-container config-page-container">
+    <!-- Token -->
     <el-form label-width="70px"
              label-position="right"
              class="config-form"
@@ -10,15 +11,11 @@
 
       <el-form-item class="operation">
         <el-button plain
-                   @click="reset()"
-        >
-          重置
-        </el-button>
-        <el-button plain
+                   size="small"
                    type="primary"
                    @click="getUserInfo()"
         >
-          确认Token
+          确认 Token
         </el-button>
       </el-form-item>
     </el-form>
@@ -94,7 +91,7 @@
 
           <el-tooltip v-if="userConfigInfo.dirList.length"
                       :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个目录'" placement="top">
-            <el-radio label="reposDir">选择{{ userConfigInfo.selectedRepos }}仓库目录</el-radio>
+            <el-radio label="reposDir">选择 {{ userConfigInfo.selectedRepos }} 仓库目录</el-radio>
           </el-tooltip>
         </el-radio-group>
       </el-form-item>
@@ -149,47 +146,50 @@
 
       </el-form-item>
 
-      <el-form-item class="operation"
-                    v-if="userConfigInfo.selectedRepos"
-      >
-        <el-button plain type="success" @click="goUpload">上传图片</el-button>
+    </el-form>
+
+    <!-- 操作 -->
+    <el-form label-width="70px">
+      <el-form-item class="operation">
+        <el-button plain
+                   size="small"
+                   @click="reset()"
+                   v-if="userConfigInfo.owner"
+        >
+          重置
+        </el-button>
+        <el-button plain
+                   size="small"
+                   type="success"
+                   @click="goUpload"
+                   v-if="userConfigInfo.selectedRepos"
+        >完成配置
+        </el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive, computed, toRefs, watch} from 'vue'
-import {useRouter} from "vue-router";
-import {useStore} from "vuex";
+import { defineComponent, reactive, computed, toRefs, watch } from 'vue'
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import axios from '../common/utils/axios/index'
 import TimeHelper from "../common/utils/TimeHelper";
-import {ElMessage} from 'element-plus'
-import {UserConfigInfoModel} from '../common/model/model'
+import { ElMessage } from 'element-plus'
+import { UserConfigInfoModel } from '../common/model/model'
 
 export default defineComponent({
   name: 'Config',
 
-  setup(props, context) {
+  setup() {
     const router = useRouter()
     const store = useStore()
 
-    const selectRepos = (repos) => {
-      reactiveData.innerSelectRepos(repos)
-    }
-
-    const dirModeChange = (dirMode) => {
-      reactiveData.innerDirModeChange(dirMode)
-    }
-
-    const goUpload = () => {
-      reactiveData.innerGoUpload()
-    }
-
     const reactiveData = reactive({
 
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo),
-      loggingStatus: computed(() => store.getters.getUserConfigInfo),
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
+      loggingStatus: computed(() => store.getters.getUserConfigInfo).value,
 
       loading: false,
       dirLoading: false,
@@ -215,11 +215,11 @@ export default defineComponent({
           })
 
         } else {
-          this.$message.warning('Token不能为空！')
+          ElMessage.warning('Token 不能为空！')
         }
       },
 
-      saveUserInfo(res) {
+      saveUserInfo(res: any) {
         this.userConfigInfo.loggingStatus = true
         this.userConfigInfo.owner = res.data['login']
         this.userConfigInfo.name = res.data['name']
@@ -228,7 +228,7 @@ export default defineComponent({
         this.persistUserConfigInfo()
       },
 
-      getReposList(repos_url) {
+      getReposList(repos_url: string) {
         axios.get(
           repos_url,
           {
@@ -238,7 +238,7 @@ export default defineComponent({
             }
           }
         ).then(res => {
-          if (res.status === 200 && res.data.length) {
+          if (res.status === 200 && res.data.length > 0) {
             this.userConfigInfo.reposList = []
             for (const repos of res.data) {
               if (!repos.fork) {
@@ -255,12 +255,12 @@ export default defineComponent({
         })
       },
 
-      innerSelectRepos(repos) {
+      innerSelectRepos(repos: string) {
         reactiveData.persistUserConfigInfo()
         reactiveData.getBranchList(repos)
       },
 
-      getBranchList(repos) {
+      getBranchList(repos: string) {
         axios.get(
           `https://api.github.com/repos/${this.userConfigInfo.owner}/${repos}/branches`,
           {
@@ -270,16 +270,15 @@ export default defineComponent({
             }
           }
         ).then(res => {
-
           if (res.status === 200) {
 
             const MASTER = 'master'
             const MAIN = 'main'
 
-            if (res.data.length) {
-              if (res.data.some(v => v.name === MASTER)) {
+            if (res.data.length > 0) {
+              if (res.data.some((v: any) => v.name === MASTER)) {
                 this.userConfigInfo.selectedBranch = MASTER
-              } else if (res.data.some(v => v.name === MAIN)) {
+              } else if (res.data.some((v: any) => v.name === MAIN)) {
                 this.userConfigInfo.selectedBranch = MAIN
               }
               this.getDirList(repos)
@@ -290,7 +289,7 @@ export default defineComponent({
         })
       },
 
-      getDirList(repos) {
+      getDirList(repos: string) {
         this.dirLoading = true
         axios.get(
           `https://api.github.com/repos/${this.userConfigInfo.owner}/${repos}/contents`,
@@ -301,8 +300,7 @@ export default defineComponent({
             }
           }
         ).then(res => {
-
-          if (res.status === 200 && res.data.length) {
+          if (res.status === 200 && res.data.length > 0) {
             this.userConfigInfo.dirList = [{value: '/', label: '/'}]
             for (const item of res.data) {
               if (item.type === 'dir') {
@@ -319,23 +317,25 @@ export default defineComponent({
         })
       },
 
-      innerDirModeChange(dirMode) {
+      innerDirModeChange(dirMode: string) {
         switch (dirMode) {
-
           case 'rootDir':
+            // 根目录
             this.userConfigInfo.selectedDir = '/'
             break;
 
           case 'autoDir':
             // 自动目录，根据当天日期自动生成
-            this.userConfigInfo.selectedDir = TimeHelper.getYYYYMMDD()
+            this.userConfigInfo.selectedDir = TimeHelper.getYyyyMmDd()
             break;
 
           case 'newDir':
+            // 手动输入的新建目录
             this.userConfigInfo.selectedDir = ''
             break;
 
           case 'reposDir':
+            // 仓库目录
             this.userConfigInfo.selectedDir = ''
             break;
 
@@ -354,11 +354,11 @@ export default defineComponent({
       },
 
       innerGoUpload() {
-        const dir = this.userConfigInfo.selectedDir
-        const dirMode = this.userConfigInfo.dirMode
-        let warningMessage = '目录不能为空！'
+        const dir: string = this.userConfigInfo.selectedDir
+        const dirMode: string = this.userConfigInfo.dirMode
+        let warningMessage: string = '目录不能为空！'
 
-        if (!dir) {
+        if (dir === '') {
           switch (dirMode) {
             case 'newDir':
               warningMessage = '请在输入框输入一个新目录！'
@@ -375,6 +375,18 @@ export default defineComponent({
       }
 
     })
+
+    const selectRepos = (repos: string) => {
+      reactiveData.innerSelectRepos(repos)
+    }
+
+    const dirModeChange = (dirMode: string) => {
+      reactiveData.innerDirModeChange(dirMode)
+    }
+
+    const goUpload = () => {
+      reactiveData.innerGoUpload()
+    }
 
     watch(() => reactiveData.loggingStatus, (_n, _o) => {
       if (!_n) {
@@ -396,8 +408,9 @@ export default defineComponent({
 
 <style scoped lang="stylus">
 
-.config-page-container {
+@import "../style.styl"
 
+.config-page-container {
   .operation {
     text-align right
 

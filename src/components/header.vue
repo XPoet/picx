@@ -157,9 +157,9 @@ export default defineComponent({
       align-items: center;
       width: 38px;
       height: 38px;
-      color: $font-color;
+      color: $default-font-color;
       border-radius: 50%;
-      border: 1px solid $font-color;
+      border: 1px solid $default-font-color;
       margin-left: 10px;
       padding: 1px;
       box-sizing: border-box;
