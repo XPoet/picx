@@ -1,6 +1,5 @@
 <template>
   <div class="upload-page-container">
-
     <div class="upload-page-left page-container"
          v-if="uploadedImageList.length"
          :style="{
@@ -22,140 +21,151 @@
             'width': uploadedImageList.length ? '70%' : '100%'
          }"
     >
+
       <!-- 上传区域 -->
-      <el-row class="row-item">
-        <div class="upload-area active-upload"
-             :class="{'focus': uploadAreaActive}"
-             @dragover.prevent
-             @drop.stop.prevent="onDrop"
-             @paste="onPaste"
-             v-loading="uploadStatus.uploading && uploadStatus.progress !== 100"
-             element-loading-text="上传中..."
-             element-loading-background="rgba(0, 0, 0, 0.5)"
-        >
-          <label for="uploader"
-                 class="active-upload"
-                 v-if="uploadAreaActive"
-          ></label>
-          <input id="uploader"
-                 type="file"
-                 @change="onFileChange"
+      <div class="row-item">
+        <div class="content-box">
+          <div class="upload-area active-upload"
+               :class="{'focus': uploadAreaActive}"
+               @dragover.prevent
+               @drop.stop.prevent="onDrop"
+               @paste="onPaste"
+               v-loading="uploadStatus.uploading && uploadStatus.progress !== 100"
+               element-loading-text="上传中..."
+               element-loading-background="rgba(0, 0, 0, 0.5)"
           >
-          <div class="tips active-upload" v-if="!imgData.base64Url">
-            <i class="icon el-icon-upload active-upload"></i>
-            <div class="text active-upload">拖拽、粘贴、或点击此处上传</div>
+            <label for="uploader"
+                   class="active-upload"
+                   v-if="uploadAreaActive"
+            ></label>
+            <input id="uploader"
+                   type="file"
+                   @change="onFileChange"
+            >
+            <div class="tips active-upload" v-if="!imgData.base64Url">
+              <i class="icon el-icon-upload active-upload"></i>
+              <div class="text active-upload">拖拽、粘贴、或点击此处上传</div>
+            </div>
+            <img class="active-upload"
+                 v-if="imgData.base64Url"
+                 :src="imgData.base64Url"
+                 alt="Pictures to be uploaded"
+            >
           </div>
-          <img class="active-upload"
-               v-if="imgData.base64Url"
-               :src="imgData.base64Url"
-               alt="Pictures to be uploaded"
-          >
         </div>
-      </el-row>
+
+      </div>
+
 
       <!-- 上传状态 -->
-      <el-row class="row-item"
-              v-if="imgData.base64Url"
+      <div class="row-item"
+           v-if="imgData.base64Url"
       >
-        <div class="upload-status">
+        <div class="content-box">
+          <div class="upload-status">
 
-          <div class="file-status">
+            <div class="file-status">
 
-            <div class="filename"
-            >{{ filename.now }}
+              <div class="filename"
+              >{{ filename.now }}
+              </div>
+
+              <div class="upload-tips wait-upload"
+                   v-if="!uploadStatus.uploading && uploadStatus.progress !== 100"
+              >
+                等待上传 <i class="el-icon-upload2"></i>
+              </div>
+
+              <div class="upload-tips uploading"
+                   v-if="uploadStatus.uploading && uploadStatus.progress !== 100"
+              >
+                正在上传 <i class="el-icon-loading"></i>
+              </div>
+
+              <div class="upload-tips uploaded"
+                   v-if="!uploadStatus.uploading && uploadStatus.progress === 100"
+              >
+                上传完成 <i class="el-icon-circle-check"></i>
+              </div>
             </div>
 
-            <div class="upload-tips wait-upload"
-                 v-if="!uploadStatus.uploading && uploadStatus.progress !== 100"
-            >
-              等待上传 <i class="el-icon-upload2"></i>
+            <div class="file-size info-item">
+              图片大小：{{ getFileSize(fileInfo.size) }}
             </div>
 
-            <div class="upload-tips uploading"
-                 v-if="uploadStatus.uploading && uploadStatus.progress !== 100"
-            >
-              正在上传 <i class="el-icon-loading"></i>
+            <div class="file-last-modified info-item">
+              最后修改：{{ formatLastModified(fileInfo.lastModified) }}
             </div>
-
-            <div class="upload-tips uploaded"
-                 v-if="!uploadStatus.uploading && uploadStatus.progress === 100"
-            >
-              上传完成 <i class="el-icon-circle-check"></i>
-            </div>
-          </div>
-
-          <div class="file-size info-item">
-            图片大小：{{ getFileSize(fileInfo.size) }}
-          </div>
-
-          <div class="file-last-modified info-item">
-            最后修改：{{ formatLastModified(fileInfo.lastModified) }}
           </div>
         </div>
-      </el-row>
+      </div>
 
       <!-- 外链 -->
-      <el-row class="row-item"
-              v-if="uploadStatus.progress === 100"
+      <div class="row-item"
+           v-if="uploadStatus.progress === 100"
       >
-        <div class="external-link">
-          <el-input class="external-link-input"
-                    size="mini"
-                    v-model="externalLink.input_github"
-                    ref="GitHubExternalLinkInput"
-                    readonly
-          >
-            <template #append>
-              <el-button @click="copyLink('GitHub')">复制GitHub外链</el-button>
-            </template>
-          </el-input>
-          <el-input class="external-link-input"
-                    size="mini"
-                    v-model="externalLink.input_cdn"
-                    ref="CDNExternalLinkInput"
-                    readonly
-          >
-            <template #append>
-              <el-button @click="copyLink('CDN')">复制CDN外链
-              </el-button>
-            </template>
-          </el-input>
+        <div class="content-box">
+          <div class="external-link">
+            <el-input class="external-link-input"
+                      size="mini"
+                      v-model="externalLink.input_github"
+                      ref="GitHubExternalLinkInput"
+                      readonly
+            >
+              <template #append>
+                <el-button @click="copyLink('GitHub')">复制GitHub外链</el-button>
+              </template>
+            </el-input>
+            <el-input class="external-link-input"
+                      size="mini"
+                      v-model="externalLink.input_cdn"
+                      ref="CDNExternalLinkInput"
+                      readonly
+            >
+              <template #append>
+                <el-button @click="copyLink('CDN')">复制CDN外链
+                </el-button>
+              </template>
+            </el-input>
+          </div>
         </div>
-      </el-row>
+      </div>
 
       <!-- 上传操作 -->
-      <el-row class="row-item">
-        <div class="upload-tools">
-          <div class="repos-dir-info" v-if="userConfigInfo.selectedRepos">
+      <div class="row-item">
+        <div class="content-box">
+          <div class="upload-tools">
+            <div class="repos-dir-info" v-if="userConfigInfo.selectedRepos">
             <span class="repos-dir-info-item">
                仓库：<el-tag size="small">{{ userConfigInfo.selectedRepos }}</el-tag>
             </span>
-            <span class="repos-dir-info-item"
-                  v-if="userConfigInfo.selectedBranch"
-            >
+              <span class="repos-dir-info-item"
+                    v-if="userConfigInfo.selectedBranch"
+              >
                分支：<el-tag size="small">{{ userConfigInfo.selectedBranch }}</el-tag>
             </span>
-            <span class="repos-dir-info-item"
-                  v-if="userConfigInfo.selectedDir"
-            >
+              <span class="repos-dir-info-item"
+                    v-if="userConfigInfo.selectedDir"
+              >
                目录：<el-tag size="small">{{ userConfigInfo.selectedDir }}</el-tag>
             </span>
-          </div>
+            </div>
 
-          <UploadTools
-            @is-set-max-size="onSetMaxSizeChane"
-            @max-size="onMaxSizeChange"
-            @rename="rename"
-            @hash-named="hashRename"
-            @upload-reset="resetUploadInfo"
-            @upload-file="uploadImage"
-            @transform-markdown="transformMarkdown"
-            :is-show-rename="imgData.base64Url !== '' && uploadStatus.progress !== 100"
-            :is-show-hash-name="imgData.base64Url !== '' && uploadStatus.progress !== 100"
-            :is-show-transform-markdown="!uploadStatus.uploading && uploadStatus.progress === 100"
-          />
+            <UploadTools
+              @is-set-max-size="onSetMaxSizeChane"
+              @max-size="onMaxSizeChange"
+              @rename="rename"
+              @hash-named="hashRename"
+              @upload-reset="resetUploadInfo"
+              @upload-file="uploadImage"
+              @transform-markdown="transformMarkdown"
+              :is-show-rename="imgData.base64Url !== '' && uploadStatus.progress !== 100"
+              :is-show-hash-name="imgData.base64Url !== '' && uploadStatus.progress !== 100"
+              :is-show-transform-markdown="!uploadStatus.uploading && uploadStatus.progress === 100"
+            />
+          </div>
         </div>
-      </el-row>
+      </div>
     </div>
   </div>
 </template>
@@ -195,8 +205,6 @@ export default defineComponent({
 
     const GitHubExternalLinkInput: Ref<any> = ref<null | HTMLElement>(null)
     const CDNExternalLinkInput: Ref<any> = ref<null | HTMLElement>(null)
-
-    // const userConfigInfo: Ref<any> = computed(() => store.getters.getUserConfigInfo)
 
     const reactiveData = reactive({
 
@@ -550,25 +558,23 @@ export default defineComponent({
 
 @import "../style.styl"
 
-$color = #0077b8;
-
 .upload-page-container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: space-between;
+  width 100%
+  height 100%
+  display flex
+  justify-content space-between
 
 
   .upload-page-left {
-    height: 100%;
-    box-sizing: border-box;
+    height 100%
+    box-sizing border-box
     margin-right $component-interval
 
     .uploaded-item {
-      margin-bottom: 20px;
+      margin-bottom 20px
 
       &:last-child {
-        margin-bottom: 0;
+        margin-bottom 0
       }
 
     }
@@ -576,16 +582,25 @@ $color = #0077b8;
 
 
   .upload-page-right {
-    height: 100%;
-    overflow-y: auto;
+    box-sizing border-box
+    height 100%
+    overflow-y auto
 
     .row-item {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
+      width 100%
+      display flex
+      justify-content center
+      margin-bottom 10px
+      box-sizing border-box
 
       &:last-child {
-        margin-bottom: 0;
+        margin-bottom 0
+      }
+
+      .content-box {
+        max-width 880px
+        width 100%
+        box-sizing border-box
       }
     }
 
@@ -594,18 +609,19 @@ $color = #0077b8;
       position: relative;
       width: 100%;
       height: 300px;
-      border: 4px dashed #999;
+      border: 3px dashed #999;
+      box-sizing border-box
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 999;
 
       &.focus {
-        border-color: $color;
+        border-color: $upload-area-focus-color;
       }
 
       &:hover {
-        border-color: $color;
+        border-color: $upload-area-focus-color;
       }
 
       label {
@@ -648,11 +664,13 @@ $color = #0077b8;
 
 
     .upload-status {
+      position: relative;
       width: 100%;
       padding: 10px;
-      background: #f1f1f1;
+      background: $second-background-color;
       color: #666;
-      font-size: 14px;
+      font-size: 12px;
+      box-sizing border-box
 
       .info-item {
         margin-top: 4px;
@@ -689,6 +707,7 @@ $color = #0077b8;
 
     }
 
+
     .external-link {
       width: 100%;
 
@@ -706,18 +725,19 @@ $color = #0077b8;
       }
     }
 
+
     .upload-tools {
       width: 100%;
 
       .repos-dir-info {
-        margin-bottom: 20px;
+        margin-bottom 20px
+        font-size 12px
 
         .repos-dir-info-item {
-
-          margin-right: 10px;
+          margin-right 10px
 
           &:last-child {
-            margin-right: 0;
+            margin-right 0
           }
         }
 

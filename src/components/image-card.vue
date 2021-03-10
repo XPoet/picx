@@ -172,7 +172,7 @@ $infoBoxHeight = 56px;
   position: relative;
   width: 100%;
   height: 100%;
-  box-shadow: 1px 2px 3px $shadowColor;
+  box-shadow: 1px 2px 3px $image-card-shadow-color;
   box-sizing: border-box;
   padding-bottom: $infoBoxHeight;
 

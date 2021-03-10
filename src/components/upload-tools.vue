@@ -22,6 +22,7 @@
     <!-- 重命名 -->
     <div class="tool-item" v-if="isShowRename">
       <el-switch
+        size="mini"
         v-model="isRename"
         active-text="重命名"
         @change="rename"
@@ -41,6 +42,7 @@
     <!-- 哈希命名 -->
     <div class="tool-item" v-if="isShowHashName">
       <el-switch
+        size="mini"
         v-model="isHashRename"
         active-text="哈希命名"
         @change="hashRename"
@@ -51,6 +53,7 @@
     <!-- Markdown -->
     <div class="tool-item" v-if="isShowTransformMarkdown">
       <el-switch
+        size="mini"
         v-model="isTransformMarkdown"
         active-text="外链转换Markdown格式"
         @change="transformMarkdown"
@@ -60,13 +63,13 @@
 
     <div class="tool-item operation-btn">
       <el-button plain
-                 icon="el-icon-refresh"
+                 size="small"
                  @click="uploadReset"
       >重置
       </el-button>
       <el-button type="primary"
                  plain
-                 icon="el-icon-upload"
+                 size="small"
                  @click="uploadFile"
       >上传
       </el-button>
