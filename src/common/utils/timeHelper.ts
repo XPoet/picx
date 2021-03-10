@@ -1,4 +1,4 @@
-class TimeHelper {
+export default class TimeHelper {
 
   private static now: number = Date.now()
 
@@ -25,5 +25,3 @@ class TimeHelper {
     return `${YYYY}-${TimeHelper.zerofill(MM)}-${TimeHelper.zerofill(DD)} ${TimeHelper.zerofill(hh)}:${TimeHelper.zerofill(mm)}:${TimeHelper.zerofill(ss)}`
   }
 }
-
-export default TimeHelper
