@@ -82,7 +82,7 @@ $left-side-width = 80px
       width 100%
       height 100%
       box-sizing border-box
-      padding 0 $component-interval $component-interval $component-interval
+      padding 0 $component-interval 0 $component-interval
 
       .content {
         position relative

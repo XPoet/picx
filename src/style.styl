@@ -1,10 +1,10 @@
-$font-color = #2c3e50
+$default-font-color= #2c3e50
 $background-color = #fff
 $second-background-color = #f0f0f0
 $image-card-shadow-color = #ccc
-$upload-area-focus-color = #0077aa
-
-$component-interval = 12px
+$upload-area-focus-color = #2066bb
+$scrollbar-color = #dfdfdf
+$component-interval = 16px
 $box-border-radius = 6px
 
 html, body {
@@ -26,13 +26,12 @@ li {
 
 * {
   &::-webkit-scrollbar {
-    height 6px
-    width 6px
-    border-radius $box-border-radius
+    height 8px
+    width 8px
   }
 
   &::-webkit-scrollbar-thumb {
-    background rgba(0, 0, 0, 0.36)
+    background $scrollbar-color
   }
 
   &::-webkit-scrollbar-track {
@@ -53,18 +52,7 @@ li {
   box-sizing border-box
   padding 30px
   background $background-color
-  border-radius $box-border-radius
+  border-top-left-radius $box-border-radius
+  border-top-right-radius $box-border-radius
   overflow-y auto
-}
-
-
-.page-title {
-  font-size 28px
-  font-weight bold
-  padding 20px
-}
-
-
-.el-dropdown-menu__item {
-  padding 5px 10px
 }
