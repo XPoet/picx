@@ -590,7 +590,7 @@ export default defineComponent({
       width 100%
       display flex
       justify-content center
-      margin-bottom 10px
+      margin-bottom 16px
       box-sizing border-box
 
       &:last-child {
@@ -603,7 +603,7 @@ export default defineComponent({
       position: relative;
       width: 100%;
       height: 300px;
-      border: 3px dashed #999;
+      border: 3.8px dashed $upload-area-border-color
       box-sizing border-box
       display: flex;
       align-items: center;
