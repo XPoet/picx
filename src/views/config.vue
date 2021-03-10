@@ -288,7 +288,6 @@ export default defineComponent({
               this.userConfigInfo.dirMode = DirModeEnum.newDir
               this.userConfigInfo.selectedDir = ''
               this.userConfigInfo.dirList = []
-              this.persistUserConfigInfo()
             }
           }
         })
@@ -305,10 +304,6 @@ export default defineComponent({
             }
           }
         ).then(res => {
-
-          console.log('selectedRepos', this.userConfigInfo.selectedRepos);
-          console.log('selectedBranch', this.userConfigInfo.selectedBranch);
-
           if (res && res.status === 200 && res.data.length > 0) {
             this.userConfigInfo.dirList = [{value: '/', label: '/'}]
             for (const item of res.data) {
@@ -379,7 +374,6 @@ export default defineComponent({
           ElMessage.warning(warningMessage)
           return
         }
-
         router.push('/upload')
       }
 
