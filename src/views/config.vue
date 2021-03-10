@@ -174,10 +174,10 @@
 import { defineComponent, reactive, computed, toRefs, watch } from 'vue'
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
-import axios from '@/common/utils/axios/index'
-import TimeHelper from '@/common/utils/TimeHelper'
+import axios from '../common/utils/axios/index'
+import TimeHelper from '../common/utils/TimeHelper'
 import { ElMessage } from 'element-plus'
-import { DirModeEnum, UserConfigInfoModel } from '@/common/model/model'
+import { DirModeEnum, UserConfigInfoModel } from '../common/model/model'
 
 export default defineComponent({
   name: 'Config',
@@ -205,7 +205,7 @@ export default defineComponent({
                 "Authorization": `token ${this.userConfigInfo.token}`
               }
             }
-          ).then(res => {
+          ).then((res: any) => {
             if (res && res.status === 200) {
               this.saveUserInfo(res)
               this.getReposList(res.data['repos_url'])
@@ -237,7 +237,7 @@ export default defineComponent({
               "Authorization": `token ${this.userConfigInfo.token}`
             }
           }
-        ).then(res => {
+        ).then((res: any) => {
           if (res.status === 200 && res.data.length > 0) {
             this.userConfigInfo.reposList = []
             for (const repos of res.data) {
@@ -270,7 +270,7 @@ export default defineComponent({
               "Authorization": `token ${this.userConfigInfo.token}`
             }
           }
-        ).then(res => {
+        ).then((res: any) => {
           if (res && res.status === 200) {
             this.dirLoading = false
             const MASTER = 'master'
@@ -303,7 +303,7 @@ export default defineComponent({
               "Authorization": `token ${this.userConfigInfo.token}`
             }
           }
-        ).then(res => {
+        ).then((res: any) => {
           if (res && res.status === 200 && res.data.length > 0) {
             this.userConfigInfo.dirList = [{value: '/', label: '/'}]
             for (const item of res.data) {
