@@ -39,16 +39,16 @@ export default defineComponent({
 
         navList: [
           {
-            name: '上传',
-            icon: 'el-icon-upload2',
-            isActive: false,
-            path: '/upload'
-          },
-          {
             name: '配置',
             icon: 'el-icon-edit-outline',
             isActive: false,
             path: '/config'
+          },
+          {
+            name: '上传',
+            icon: 'el-icon-upload2',
+            isActive: false,
+            path: '/upload'
           },
           {
             name: '管理',
