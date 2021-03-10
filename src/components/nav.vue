@@ -52,7 +52,7 @@ export default defineComponent({
           },
           {
             name: '管理',
-            icon: 'el-icon-setting',
+            icon: 'el-icon-box',
             isActive: false,
             path: '/management'
           },
@@ -118,7 +118,7 @@ export default defineComponent({
   width 100%
   height 100%
   box-sizing border-box
-  background: #fff
+  background: $background-color
 
   ul.nav-list {
     padding 0
