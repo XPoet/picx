@@ -1,6 +1,6 @@
 import chooseImg from './chooseImg'
 
-const onPaste = (e: any, maxsize = 200 * 1024): any => {
+const onPaste = (e: any, maxsize: any = 200 * 1024): any => {
   if (!(e.clipboardData && e.clipboardData.items)) {
     return
   }

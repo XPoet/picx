@@ -27,7 +27,7 @@ function compress(img: any, fileType: any, maxWidth: any) {
   return base64data
 }
 
-const chooseImg = (file: any, cb: any, maxsize = 0) => {
+const chooseImg = (file: any, cb: any, maxsize: any = 0) => {
 
   if (!file) {
     return
