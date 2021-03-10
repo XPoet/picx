@@ -5,6 +5,7 @@
           v-for="nav in navList"
           :class="{'active': nav.isActive}"
           @click="navClick(nav)"
+          v-show="nav.path !== '/management' || userConfigInfo.loggingStatus"
       >
         <div class="nav-content">
           <i class="nav-icon"
@@ -18,18 +19,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, watch } from 'vue'
+import { defineComponent, reactive, toRefs, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { NavItem } from "../common/model/model"
+import { useStore } from 'vuex'
+import { UserConfigInfoModel } from "../common/model/model";
+import { ElMessage } from 'element-plus'
 
 export default defineComponent({
   name: "Nav",
 
   setup() {
     const router = useRouter()
+    const store = useStore()
 
     const reactiveData = reactive(
       {
+
+        userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
+
         navList: [
           {
             name: '上传',
@@ -57,8 +64,24 @@ export default defineComponent({
           }
         ],
 
-        navClick(e: NavItem) {
-          router.push(e.path)
+        navClick(e: any) {
+          const path = e.path
+
+          if (path === '/management') {
+
+            if (this.userConfigInfo.selectedRepos === '') {
+              ElMessage.warning('请选择一个仓库！')
+              router.push('/config')
+              return
+            }
+
+            if (this.userConfigInfo.selectedDir === '') {
+              ElMessage.warning('目录不能为空！')
+              router.push('/config')
+              return
+            }
+          }
+          router.push(path)
         },
       }
     )
@@ -97,9 +120,11 @@ export default defineComponent({
   box-sizing border-box
   background: #fff
 
-  .nav-list {
+  ul.nav-list {
+    padding 0
+    margin 0
 
-    .nav-item {
+    li.nav-item {
       box-sizing border-box
       width 100%
       height 68px

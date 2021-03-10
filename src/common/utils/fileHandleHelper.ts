@@ -17,7 +17,7 @@ export const hashFilenameHandle = (hashFilename: any) => {
   return hashFilename.substr(0, splitIndex)
 }
 
-export const isImage = (suffix: string) => {
+export const isImage = (suffix: string): boolean => {
   return /(png|jpg|gif|jpeg|webp|svg\+xml)$/.test(suffix)
 }
 

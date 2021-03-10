@@ -37,7 +37,6 @@ const initUploadedImageList = () => {
 }
 
 const defaultState = {
-  count: 0,
   userConfigInfo: initUserConfigInfo(),
   dirImageList: initDirImageList(),
   uploadedImageList: initUploadedImageList(),
@@ -131,15 +130,12 @@ export default createStore({
 
     // 图床管理 - 往指定目录增加图片列表
     DIR_IMAGE_LIST_ADD_IMAGE_LIST({state, dispatch}, dirImageItem) {
-
       const temp = state.dirImageList.find((v: any) => v.dir === dirImageItem.dir)
-
       if (temp) {
         temp.imageList = dirImageItem.imageList
       } else {
         state.dirImageList.push(dirImageItem)
       }
-
       dispatch('DIR_IMAGE_LIST_PERSIST')
     },
 
@@ -226,9 +222,6 @@ export default createStore({
     },
   },
   getters: {
-    double(state: typeof defaultState) {
-      return 2 * state.count
-    },
     getUserConfigInfo: (state): UserConfigInfoModel => state.userConfigInfo,
     getUserAvatar: state => state.userConfigInfo.avatarUrl,
     getUserName: state => state.userConfigInfo.name,
