@@ -177,7 +177,7 @@ import { useStore } from "vuex";
 import axios from '../common/utils/axios/index'
 import TimeHelper from "../common/utils/TimeHelper";
 import { ElMessage } from 'element-plus'
-import { UserConfigInfoModel } from '../common/model/model'
+import {DirModeEnum, UserConfigInfoModel} from '../common/model/model'
 
 export default defineComponent({
   name: 'Config',
@@ -256,13 +256,14 @@ export default defineComponent({
       },
 
       innerSelectRepos(repos: string) {
-        reactiveData.persistUserConfigInfo()
         reactiveData.getBranchList(repos)
+        reactiveData.persistUserConfigInfo()
       },
 
       getBranchList(repos: string) {
+        this.dirLoading = true
         axios.get(
-          `https://api.github.com/repos/${this.userConfigInfo.owner}/${repos}/branches`,
+          `/repos/${this.userConfigInfo.owner}/${repos}/branches`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -270,8 +271,8 @@ export default defineComponent({
             }
           }
         ).then(res => {
-          if (res.status === 200) {
-
+          if (res && res.status === 200) {
+            this.dirLoading = false
             const MASTER = 'master'
             const MAIN = 'main'
 
@@ -284,6 +285,10 @@ export default defineComponent({
               this.getDirList(repos)
             } else {
               this.userConfigInfo.selectedBranch = MASTER
+              this.userConfigInfo.dirMode = DirModeEnum.newDir
+              this.userConfigInfo.selectedDir = ''
+              this.userConfigInfo.dirList = []
+              this.persistUserConfigInfo()
             }
           }
         })
@@ -292,7 +297,7 @@ export default defineComponent({
       getDirList(repos: string) {
         this.dirLoading = true
         axios.get(
-          `https://api.github.com/repos/${this.userConfigInfo.owner}/${repos}/contents`,
+          `/repos/${this.userConfigInfo.owner}/${repos}/contents`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -300,7 +305,11 @@ export default defineComponent({
             }
           }
         ).then(res => {
-          if (res.status === 200 && res.data.length > 0) {
+
+          console.log('selectedRepos', this.userConfigInfo.selectedRepos);
+          console.log('selectedBranch', this.userConfigInfo.selectedBranch);
+
+          if (res && res.status === 200 && res.data.length > 0) {
             this.userConfigInfo.dirList = [{value: '/', label: '/'}]
             for (const item of res.data) {
               if (item.type === 'dir') {
@@ -317,27 +326,27 @@ export default defineComponent({
         })
       },
 
-      innerDirModeChange(dirMode: string) {
+      innerDirModeChange(dirMode: DirModeEnum) {
         switch (dirMode) {
-          case 'rootDir':
+          case DirModeEnum.rootDir:
             // 根目录
             this.userConfigInfo.selectedDir = '/'
-            break;
+            break
 
-          case 'autoDir':
+          case DirModeEnum.autoDir:
             // 自动目录，根据当天日期自动生成
             this.userConfigInfo.selectedDir = TimeHelper.getYyyyMmDd()
-            break;
+            break
 
-          case 'newDir':
+          case DirModeEnum.newDir:
             // 手动输入的新建目录
             this.userConfigInfo.selectedDir = ''
-            break;
+            break
 
-          case 'reposDir':
+          case DirModeEnum.reposDir:
             // 仓库目录
             this.userConfigInfo.selectedDir = ''
-            break;
+            break
 
         }
         this.persistUserConfigInfo()
@@ -355,15 +364,15 @@ export default defineComponent({
 
       innerGoUpload() {
         const dir: string = this.userConfigInfo.selectedDir
-        const dirMode: string = this.userConfigInfo.dirMode
+        const dirMode: DirModeEnum = this.userConfigInfo.dirMode
         let warningMessage: string = '目录不能为空！'
 
         if (dir === '') {
           switch (dirMode) {
-            case 'newDir':
+            case DirModeEnum.newDir:
               warningMessage = '请在输入框输入一个新目录！'
               break
-            case 'reposDir':
+            case DirModeEnum.reposDir:
               warningMessage = `请选择 ${this.userConfigInfo.selectedRepos} 仓库下的一个目录！`
               break
           }
@@ -380,7 +389,7 @@ export default defineComponent({
       reactiveData.innerSelectRepos(repos)
     }
 
-    const dirModeChange = (dirMode: string) => {
+    const dirModeChange = (dirMode: DirModeEnum) => {
       reactiveData.innerDirModeChange(dirMode)
     }
 

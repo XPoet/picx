@@ -15,8 +15,16 @@ export interface UserConfigInfoModel {
   selectedRepos: string;
   reposList: any[];
   selectedBranch: string;
-  dirMode: string;
+  dirMode: DirModeEnum;
   selectedDir: string;
   dirList: any[];
   loggingStatus: boolean;
+}
+
+
+export enum DirModeEnum {
+  autoDir = 'autoDir',
+  newDir = 'newDir',
+  rootDir = 'rootDir',
+  reposDir = 'reposDir'
 }
