@@ -175,7 +175,7 @@ import { defineComponent, reactive, computed, toRefs, watch } from 'vue'
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import axios from '../common/utils/axios/index'
-import TimeHelper from '../common/utils/timeHelper'
+import TimeHandler from '../common/utils/timeHandler'
 import { ElMessage } from 'element-plus'
 import { DirModeEnum, UserConfigInfoModel } from '../common/model/model'
 
@@ -330,7 +330,7 @@ export default defineComponent({
 
           case DirModeEnum.autoDir:
             // 自动目录，根据当天日期自动生成
-            this.userConfigInfo.selectedDir = TimeHelper.getYyyyMmDd()
+            this.userConfigInfo.selectedDir = TimeHandler.getYyyyMmDd()
             break
 
           case DirModeEnum.newDir:

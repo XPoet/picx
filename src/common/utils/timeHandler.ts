@@ -2,7 +2,7 @@ function zerofill(n: number) {
   return n < 10 ? '0' + n : n
 }
 
-const TimeHelper = {
+const TimeHandler = {
 
   getYyyyMmDd(now: number = Date.now()) {
     const _now: Date = new Date(now)
@@ -25,7 +25,7 @@ const TimeHelper = {
 
 }
 
-export default TimeHelper
+export default TimeHandler
 
 /*export default class TimeHelper {
 

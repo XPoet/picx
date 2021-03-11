@@ -171,25 +171,23 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive, computed, toRefs, watch, ref, Ref} from 'vue'
-import {useRouter} from "vue-router";
-import {useStore} from "vuex";
+import { defineComponent, reactive, computed, toRefs, watch, ref, Ref } from 'vue'
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 import axios from '../common/utils/axios/index'
-import TimeHelper from "../common/utils/TimeHelper"
-import chooseImg from "../common/utils/chooseImg"
+import TimeHandler from '../common/utils/timeHandler'
+import chooseImg from '../common/utils/chooseImg'
 import paste from "../common/utils/paste"
-import {filenameHandle, getFileSize} from "../common/utils/fileHandleHelper"
-import uploadUrlHandle from "../common/utils/uploadUrlHandle"
-import generateExternalLink from "../common/utils/generateExternalLink"
-import cleanObject from "../common/utils/cleanObject"
-import getUuid from "../common/utils/getUuid"
+import { filenameHandle, getFileSize } from '../common/utils/fileHandleHelper'
+import uploadUrlHandle from '../common/utils/uploadUrlHandle'
+import generateExternalLink from '../common/utils/generateExternalLink'
+import cleanObject from '../common/utils/cleanObject'
+import getUuid from '../common/utils/getUuid'
+import { ElMessage } from 'element-plus'
+import { UserConfigInfoModel } from '../common/model/model'
+import UploadTools from '@/components/upload-tools.vue'
+import ImageCard from '@/components/image-card.vue'
 
-import {ElMessage} from 'element-plus'
-
-// component
-import UploadTools from "@/components/upload-tools.vue"
-import ImageCard from "@/components/image-card.vue"
-import {UserConfigInfoModel} from "../common/model/model";
 
 export default defineComponent({
   name: 'Upload',
@@ -496,7 +494,7 @@ export default defineComponent({
       },
 
       formatLastModified(t: any) {
-        return TimeHelper.formatTimestamp(t)
+        return TimeHandler.formatTimestamp(t)
       }
 
     })
