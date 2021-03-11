@@ -162,6 +162,7 @@
               :is-show-rename="imgData.base64Url !== '' && uploadStatus.progress !== 100"
               :is-show-hash-name="imgData.base64Url !== '' && uploadStatus.progress !== 100"
               :is-show-transform-markdown="!uploadStatus.uploading && uploadStatus.progress === 100"
+              :is-show-reset="imgData.base64Url !== ''"
             />
           </div>
         </div>

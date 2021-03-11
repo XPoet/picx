@@ -65,6 +65,7 @@
       <el-button plain
                  size="small"
                  @click="uploadReset"
+                 v-if="isShowReset"
       >重置
       </el-button>
       <el-button type="primary"
@@ -95,6 +96,10 @@ export default defineComponent({
     isShowTransformMarkdown: {
       type: Boolean,
       default: false
+    },
+    isShowReset: {
+      type: Boolean,
+      default: true
     }
   },
 
