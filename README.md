@@ -4,13 +4,13 @@
 [![Release](https://img.shields.io/github/release/XPoet/picx.svg?style=flat-square)](https://github.com/XPoet/picx/releases)
 [![License](https://img.shields.io/github/license/XPoet/picx.svg?style=flat-square)](https://github.com/XPoet/picx/blob/master/LICENSE)
 [![PicX stars](https://img.shields.io/github/stars/XPoet/picx?style=flat-square)](https://github.com/XPoet/picx)
-[![GitHub issues](https://img.shields.io/github/issues-raw/xpoet/picx?style=flat-square)](https://github.com/XPoet/picx/issues)
+[![PicX issues](https://img.shields.io/github/issues-raw/xpoet/picx?style=flat-square)](https://github.com/XPoet/picx/issues)
 
 > 官方网站 https://picx.xpoet.cn/
 
 **基于 GitHub API 开发的图床神器。** 图片外链自动使用 jsDelivr 进行 CDN 加速。免下载、免安装，打开 **[PicX 官网](https://picx.xpoet.cn/)** 即可直接使用。免费、稳定、高效。
 
-只需 **选择** 或 **[创建](https://github.com/new)** 一个 GitHub 仓库来作为你的图床，然后进行[简单配置](https://picx.xpoet.cn/#/config) ，就能享受 **[PicX](https://picx.xpoet.cn/)** 给您带来的美好体验！
+您只需 **选择** 或 **[创建](https://github.com/new)** 一个 GitHub 仓库来作为图床，然后进行[简单配置](https://picx.xpoet.cn/#/config) ，就能开始尽情玩转 **[PicX](https://picx.xpoet.cn/)** 。
 
 ---
 
