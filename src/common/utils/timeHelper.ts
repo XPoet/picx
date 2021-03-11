@@ -1,4 +1,4 @@
-function zerofill(n: number) {
+/*function zerofill(n: number) {
   return n < 10 ? '0' + n : n
 }
 
@@ -25,25 +25,23 @@ const TimeHandler = {
 
 }
 
-export default TimeHandler
+export default TimeHandler*/
 
-/*export default class TimeHelper {
-
-  private static now: number = Date.now()
+export default class TimeHelper {
 
   private static zerofill(n: number) {
     return n < 10 ? '0' + n : n
   }
 
-  static getYyyyMmDd(now: number = this.now) {
+  static getYyyyMmDd(now: number = Date.now()) {
     const _now: Date = new Date(now)
     const yyyy = _now.getFullYear()
     const MM = _now.getMonth() + 1
     const DD = _now.getDate()
-    return `${yyyy}${TimeHelper.zerofill(MM)}${TimeHelper.zerofill(DD)}`
+    return `${yyyy}${this.zerofill(MM)}${this.zerofill(DD)}`
   }
 
-  static formatTimestamp(now: number = TimeHelper.now) {
+  static formatTimestamp(now: number = Date.now()) {
     const _now: Date = new Date(now)
     let YYYY = _now.getFullYear()
     let MM = _now.getMonth() + 1
@@ -51,6 +49,6 @@ export default TimeHandler
     let hh = _now.getHours()
     let mm = _now.getMinutes()
     let ss = _now.getSeconds()
-    return `${YYYY}-${TimeHelper.zerofill(MM)}-${TimeHelper.zerofill(DD)} ${TimeHelper.zerofill(hh)}:${TimeHelper.zerofill(mm)}:${TimeHelper.zerofill(ss)}`
+    return `${YYYY}-${this.zerofill(MM)}-${this.zerofill(DD)} ${this.zerofill(hh)}:${this.zerofill(mm)}:${this.zerofill(ss)}`
   }
-}*/
+}

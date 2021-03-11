@@ -175,7 +175,7 @@ import { defineComponent, reactive, computed, toRefs, watch, ref, Ref } from 'vu
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import axios from '../common/utils/axios/index'
-import TimeHandler from '../common/utils/timeHandler'
+import TimeHelper from '../common/utils/timeHelper'
 import chooseImg from '../common/utils/chooseImg'
 import paste from "../common/utils/paste"
 import { filenameHandle, getFileSize } from '../common/utils/fileHandleHelper'
@@ -494,7 +494,7 @@ export default defineComponent({
       },
 
       formatLastModified(t: any) {
-        return TimeHandler.formatTimestamp(t)
+        return TimeHelper.formatTimestamp(t)
       }
 
     })
