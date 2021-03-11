@@ -6,11 +6,11 @@
 [![PicX stars](https://img.shields.io/github/stars/XPoet/picx?style=flat-square)](https://github.com/XPoet/picx)
 [![GitHub issues](https://img.shields.io/github/issues-raw/xpoet/picx?style=flat-square)](https://github.com/XPoet/picx/issues)
 
-> refactor PicX for using Vite2.x and Vue3.x
+> 官方网站 https://picx.xpoet.cn/
 
-**基于 GitHub API 开发图床神器。** 图片外链自动使用 jsDelivr 进行 CDN 加速。免下载、免安装，打开 **[PicX 官网](https://picx.xpoet.cn/)** 即可直接使用。免费、稳定、高效。
+**基于 GitHub API 开发的图床神器。** 图片外链自动使用 jsDelivr 进行 CDN 加速。免下载、免安装，打开 **[PicX 官网](https://picx.xpoet.cn/)** 即可直接使用。免费、稳定、高效。
 
-只需 **选择** 或 **创建** 一个 GitHub 仓库来作为你的图床，然后进行 [简单配置](https://picx.xpoet.cn/#/config) ，就能享受 **[PicX](https://picx.xpoet.cn/)** 给您带来的美好体验！
+只需 **选择** 或 **[创建](https://github.com/new)** 一个 GitHub 仓库来作为你的图床，然后进行[简单配置](https://picx.xpoet.cn/#/config) ，就能享受 **[PicX](https://picx.xpoet.cn/)** 给您带来的美好体验！
 
 ---
 
@@ -21,8 +21,6 @@
 - 花钱租服务器托管图片，划不来，而且上传配置好繁琐...
 - 其他公司的图床，都有时间期限，速度慢，存储空间小，还限流量...
 - 想找一款真正免费、稳定、不限容量、访问速度还很快的图床...
-
-
 
 
 ## 功能特性 | Features 
@@ -49,7 +47,7 @@
 
    ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.lpt1xl9fu.png)
 
-   新生成的 Token 只会显示一次，如有遗失，重新生成即可。
+   新生成的 Token 只会显示一次，请妥善保存，如有遗失，重新生成即可。
 
    ![](https://cdn.jsdelivr.net/gh/XPoet/xpoet-image-hosting/PicX/image.krns6rvn9l.png)
 
@@ -85,7 +83,7 @@
 
    - 可通过 **拖拽图片** 到上传区域进行上传。
 
-   - 可通过 **复制粘贴图片** 到上传区域进行上传。粘贴图片时，需先点击一下**激活**上传区域，如下图，**上传区域的虚线边框变成墨蓝色，表示已激活**。支持通过键盘快捷键粘贴（`ctrl + v` / `command + v`）。
+   - 可通过 **复制粘贴图片** 到上传区域进行上传。粘贴图片时，需先点击一下**激活**上传区域，如下图，**上传区域的虚线边框变成墨蓝色，表示已激活，此时粘贴图片才生效**。支持通过键盘快捷键粘贴（`ctrl + v` / `command + v`）。
 
      ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.6wfw84e4xlw0.png)
 
