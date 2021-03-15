@@ -1,4 +1,6 @@
-const uploadUrlHandle = (config: any, filename: any): string => {
+import { UserConfigInfoModel } from "../model/model";
+
+const uploadUrlHandle = (config: UserConfigInfoModel, filename: string): string => {
   let path = ''
   if (config.selectedDir !== '/') {
     path = config.selectedDir + '/'

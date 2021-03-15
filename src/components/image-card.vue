@@ -13,37 +13,17 @@
       <div class="image-info">
         <div class="filename">{{ imageObj.name }}</div>
         <div class="image-operation">
-          <span class="delete">
+          <div class="delete">
             <el-tooltip content="删除" placement="top">
               <i class="el-icon-delete"
                  @click="deleteImage(imageObj)"
               ></i>
             </el-tooltip>
-          </span>
-          <span class="copy">
-            <el-tooltip content="复制 GitHub 外链" placement="top">
-              <span class="copy-url"
-                    @click="copyExternalLink('GitHub', imageObj)"
-              >
-                GH
-              </span>
-            </el-tooltip>
-            <el-tooltip content="复制 CDN 外链" placement="top">
-              <span class="copy-url"
-                    @click="copyExternalLink('CDN', imageObj)"
-              >
-                CDN
-              </span>
-            </el-tooltip>
-            <el-tooltip content="复制 Markdown 格式的 CDN 外链" placement="top">
-              <span class="copy-url"
-                    @click="copyExternalLink('Markdown', imageObj)"
-              >
-                MD
-              </span>
-            </el-tooltip>
-          </span>
+          </div>
 
+          <div>
+            <copyExternalLink :img-obj="imageObj"></copyExternalLink>
+          </div>
         </div>
       </div>
     </div>
@@ -56,9 +36,14 @@ import { useStore } from "vuex";
 import axios from '../common/utils/axios/index'
 import { ElMessage } from 'element-plus'
 import { UserConfigInfoModel } from '../common/model/model'
+import copyExternalLink from './copy-external-link.vue'
 
 export default defineComponent({
   name: "ImageCard",
+
+  components: {
+    copyExternalLink
+  },
 
   props: {
     imageObj: {
@@ -112,39 +97,7 @@ export default defineComponent({
         })
       },
 
-      copyExternalLink(type: any, imageObj: any) {
-        let externalLink = ''
-        let successInfo = ''
-        switch (type) {
-          case 'GitHub':
-            externalLink = imageObj.github_url
-            successInfo = type
-            break
-          case 'CDN':
-            externalLink = imageObj.cdn_url
-            successInfo = type
-            break
-          case 'Markdown':
-            externalLink = imageObj.markdown_cdn
-            successInfo = 'Markdown格式的CDN'
-            break
-        }
 
-        let externalLinkDom: any = document.querySelector('.temp-external-link')
-        if (!externalLinkDom) {
-          externalLinkDom = document.createElement('textarea')
-          externalLinkDom.setAttribute('class', 'temp-external-link')
-          externalLinkDom.style.position = 'absolute'
-          externalLinkDom.style.top = '-99999px'
-          externalLinkDom.style.left = '-99999px'
-          document.body.appendChild(externalLinkDom)
-        }
-
-        externalLinkDom.value = externalLink
-        externalLinkDom.select()
-        document.execCommand('copy')
-        ElMessage.success(`${successInfo}外链复制成功！`)
-      },
 
       imageView(imgObj: any) {
         store.commit('IMAGE_VIEWER', {
@@ -233,24 +186,6 @@ $infoBoxHeight = 56px;
 
         }
 
-        .copy {
-          .copy-url {
-            padding: 1px 2px
-            border: 1px solid $default-font-color
-            border-radius: 5px
-            font-size: 12px
-            margin-left: 5px
-            color: $default-font-color
-            cursor: pointer
-
-            &:hover {
-              transition: all 0.3s ease
-              background: $default-font-color
-              color: $background-color
-              border-color: $default-font-color
-            }
-          }
-        }
       }
     }
   }

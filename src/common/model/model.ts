@@ -1,4 +1,4 @@
-const PICX_PREFIX = 'PICX_';
+const PICX_PREFIX = 'PICX_'
 
 export const PICX_CONFIG = PICX_PREFIX + 'CONFIG'
 
@@ -20,7 +20,6 @@ export interface UserConfigInfoModel {
   dirList: any[];
   loggingStatus: boolean;
 }
-
 
 export enum DirModeEnum {
   autoDir = 'autoDir',

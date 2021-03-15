@@ -348,7 +348,7 @@ export default defineComponent({
       },
 
       persistUserConfigInfo() {
-        store.commit('PERSIST_USER_CONFIG_INFO')
+        store.dispatch('USER_CONFIG_INFO_PERSIST')
       },
 
       reset() {

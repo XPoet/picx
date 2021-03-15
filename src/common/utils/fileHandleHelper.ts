@@ -1,6 +1,6 @@
 import getUuid from "./getUuid";
 
-export const filenameHandle = (filename: any) => {
+export const filenameHandle = (filename: string) => {
   const splitIndex = filename.lastIndexOf('.')
   const name = filename.substr(0, splitIndex)
   const suffix = filename.substr(splitIndex + 1, filename.length)
@@ -12,7 +12,7 @@ export const filenameHandle = (filename: any) => {
   }
 }
 
-export const hashFilenameHandle = (hashFilename: any) => {
+export const hashFilenameHandle = (hashFilename: string) => {
   const splitIndex = hashFilename.indexOf('.')
   return hashFilename.substr(0, splitIndex)
 }
@@ -22,6 +22,6 @@ export const isImage = (suffix: string): boolean => {
 }
 
 
-export const getFileSize = (size: any) => {
+export const getFileSize = (size: number) => {
   return (size / 1024).toFixed(2) + ' KB'
 }

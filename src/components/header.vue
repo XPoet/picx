@@ -85,8 +85,8 @@ export default defineComponent({
     }
 
     const logout = () => {
-      router.push('/config')
       store.dispatch('LOGOUT')
+      router.push('/config')
     }
 
     const handleCommand = (command: string) => {
@@ -120,7 +120,6 @@ export default defineComponent({
       handleCommand,
       goGitHubRepo
     }
-
   }
 })
 

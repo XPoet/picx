@@ -9,6 +9,10 @@ const cleanObject = (object: any) => {
   for (let key in object) {
     switch (getType(object[key])) {
 
+      case 'object':
+        cleanObject(object[key])
+        break
+
       case 'string':
         object[key] = ''
         break

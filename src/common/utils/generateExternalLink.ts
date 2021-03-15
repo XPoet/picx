@@ -1,21 +1,23 @@
-import { hashFilenameHandle } from "./fileHandleHelper";
+import { hashFilenameHandle } from './fileHandleHelper'
+import { ExternalLinkType } from '../model/external-link.model'
+import { UserConfigInfoModel } from '../model/model'
 
-const generateExternalLink = (type: any, content: any, config: any): any => {
+const generateExternalLink = (type: ExternalLinkType, content: any, config: UserConfigInfoModel): any => {
 
   const cdnLink: string = `https://cdn.jsdelivr.net/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content['path']}`
   const ghLink: string = decodeURI(content['download_url'])
 
   switch (type) {
-    case 'github':
+    case ExternalLinkType.gh:
       return ghLink
 
-    case 'markdown_gh':
+    case ExternalLinkType.md_gh:
       return `![${hashFilenameHandle(content.name)}](${ghLink})`
 
-    case 'cdn':
+    case ExternalLinkType.cdn:
       return cdnLink
 
-    case 'markdown_cdn':
+    case ExternalLinkType.md_cdn:
       return `![${hashFilenameHandle(content.name)}](${cdnLink})`
   }
 }
