@@ -32,10 +32,10 @@ axios.interceptors.response.use(response => {
   if (error.response && error.response.data) {
     const code = error.response.status
     const msg = error.response.data.message
-    ElMessage.error(`Code: ${code}, Message: ${msg}`);
+    ElMessage.error(`Code: ${code}, Message: ${msg}`)
     console.error(error.response)
   } else {
-    ElMessage.error(error);
+    ElMessage.error(`${error}`)
   }
 
   return error.response
