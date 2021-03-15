@@ -15,6 +15,7 @@
     <input id="uploader"
            type="file"
            @change="onSelect"
+           multiple="multiple"
     >
     <div class="tips active-upload" v-if="!toUploadImage.curImgBase64Url">
       <i class="icon el-icon-upload active-upload"></i>
@@ -57,15 +58,16 @@ export default defineComponent({
 
       // 选择图片
       onSelect(e: any) {
-        const targetFile = e.target.files[0]
-        chooseImg(
-          targetFile,
-          (url: any, file: any) => {
-            this.getImage(url, file)
-          },
-          this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize * 1024 : null
-        )
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
+        for (const file of e.target.files) {
+          chooseImg(
+            file,
+            (url: string, file: File) => {
+              this.getImage(url, file)
+            },
+            this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize * 1024 : null
+          )
+        }
       },
 
       // 拖拽图片

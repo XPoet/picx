@@ -352,6 +352,16 @@ $image-width = $info-item-height - ($info-item-border * 2)
     align-items center
     justify-content space-between
     padding-bottom 6px
+
+    .selected-repos-dir {
+      .repos-dir-info-item {
+        margin-right 10px
+
+        &:last-child {
+          margin-right 0
+        }
+      }
+    }
   }
 
   .body {

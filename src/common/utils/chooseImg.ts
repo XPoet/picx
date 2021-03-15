@@ -1,5 +1,5 @@
 import { ElMessage } from 'element-plus'
-import { isImage } from "./fileHandleHelper";
+import { isImage } from './fileHandleHelper'
 
 function toPreviewer(dataUrl: any, fileName: any, cb: any) {
   cb && cb(dataUrl, fileName)
@@ -27,7 +27,7 @@ function compress(img: any, fileType: any, maxWidth: any) {
   return base64data
 }
 
-const chooseImg = (file: any, cb: any, maxsize: any = 0) => {
+const chooseImg = (file: File, cb: Function, maxsize: number = 0) => {
 
   if (!file) {
     return
@@ -66,8 +66,6 @@ const chooseImg = (file: any, cb: any, maxsize: any = 0) => {
       toPreviewer(compressedDataUrl, file, cb)
       img = null
     }
-
-
   }
 }
 
