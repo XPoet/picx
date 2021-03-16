@@ -1,5 +1,5 @@
-import { ToUploadImageModel } from '../../common/model/upload.model'
-import { Store } from 'vuex'
+import {ToUploadImageModel} from '../../common/model/upload.model'
+import {Store} from 'vuex'
 
 export default {
 
@@ -31,6 +31,18 @@ export default {
         const rmIndex = store.state.list.findIndex((v: ToUploadImageModel) => v.uuid === uuid)
         if (rmIndex !== -1) {
           store.state.list.splice(rmIndex, 1)
+        }
+      }
+    },
+
+    // 要上传的图片列表 - 上传失败时，在列表中移除已上传的图片
+    TO_UPLOAD_IMAGE_LIST_FAIL(store: Store<any>) {
+      if (store.state.list.length > 0) {
+        const temp: ToUploadImageModel[] = store.state.list.filter((v: ToUploadImageModel) => v.uploadStatus.progress !== 100)
+        if (temp.length > 0) {
+          store.state.list = temp
+          store.state.uploadedNumber = 0
+          store.state.curImgBase64Url = temp[0].imgData.base64Url
         }
       }
     },

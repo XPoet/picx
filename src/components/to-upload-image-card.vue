@@ -248,13 +248,9 @@ export default defineComponent({
           ).then(res => {
             if (res && res.status === 201) {
               ElMessage.success('上传成功！')
-
               this.uploadedHandle(res, img, userConfigInfo)
-
               store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
-
               resolve(true)
-
               this.uploadIndex++
             } else {
               ElMessage.error('上传失败！')
@@ -367,7 +363,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
   .body {
     width 100%
     height 100%
-    max-height 170px
+    max-height 162px
     overflow-y auto
     box-sizing border-box
     padding 10px
@@ -378,7 +374,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
     }
 
     &::-webkit-scrollbar-thumb {
-      border-radius 10px
+      border-radius 2px
     }
 
     .image-uploading-info-box {

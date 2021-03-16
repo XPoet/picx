@@ -1,7 +1,7 @@
 import { ElMessage } from 'element-plus'
 import { isImage } from './fileHandleHelper'
 
-function toPreviewer(dataUrl: any, fileName: any, cb: any) {
+function toPreviewer(dataUrl: string, fileName: any, cb: Function) {
   cb && cb(dataUrl, fileName)
 }
 

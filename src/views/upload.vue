@@ -44,6 +44,7 @@
           <el-button plain
                      size="small"
                      @click="resetUploadInfo"
+                     v-if="toUploadImage.list.length"
           >重置
           </el-button>
           <el-button type="primary"
@@ -139,9 +140,15 @@ export default defineComponent({
       toUploadImageCard_dom.value.uploadImage_all(reactiveData.userConfigInfo)
         .then((v: UploadStatusEnum) => {
           if (v === UploadStatusEnum.allUploaded || v === UploadStatusEnum.uploaded) {
-            // 上传完成，清空状态
+            // 上传成功
             reactiveData.imageLoading = false
             store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
+          }
+
+          if(v === UploadStatusEnum.uploadFail) {
+            // 上传失败（遇到网络错误等原因）
+            reactiveData.imageLoading = false
+            store.dispatch('TO_UPLOAD_IMAGE_LIST_FAIL')
           }
         })
         .catch((e: any) => {
