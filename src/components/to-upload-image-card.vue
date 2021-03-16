@@ -4,21 +4,7 @@
   >
     <div class="header">
       <div>
-        <div class="selected-repos-dir" v-if="userConfigInfo.selectedRepos">
-          <span class="repos-dir-info-item">
-             仓库：<el-tag size="mini">{{ userConfigInfo.selectedRepos }}</el-tag>
-          </span>
-          <span class="repos-dir-info-item"
-                v-if="userConfigInfo.selectedBranch"
-          >
-            分支：<el-tag size="mini">{{ userConfigInfo.selectedBranch }}</el-tag>
-          </span>
-          <span class="repos-dir-info-item"
-                v-if="userConfigInfo.selectedDir"
-          >
-           目录：<el-tag size="mini">{{ userConfigInfo.selectedDir }}</el-tag>
-          </span>
-        </div>
+        <selectedInfoBar></selectedInfoBar>
       </div>
       <div>
         <span v-if="toUploadImage.list.length">已上传：{{ toUploadImage.uploadedNumber }} / {{ toUploadImage.list.length }}</span>
@@ -133,14 +119,16 @@ import uploadUrlHandle from '../common/utils/uploadUrlHandle'
 import { useStore } from 'vuex'
 import generateExternalLink from '../common/utils/generateExternalLink'
 import { UploadStatusEnum } from '../common/model/upload.model'
-import copyExternalLink from './copy-external-link.vue'
 import { ExternalLinkType } from '../common/model/externalLink.model'
+import copyExternalLink from './copy-external-link.vue'
+import selectedInfoBar from './selected-info-bar.vue'
 
 export default defineComponent({
   name: 'to-upload-image-card',
 
   components: {
-    copyExternalLink
+    copyExternalLink,
+    selectedInfoBar
   },
 
   props: {
@@ -325,10 +313,12 @@ export default defineComponent({
 </script>
 
 <style lang="stylus">
+
+@import "../style.styl"
+
 $info-item-height = 68px
 $info-item-border = 1px
 $info-item-padding = 5px
-$info-item-border-color = #ccc
 $file-info-background-color = #f1f1f1
 $image-width = $info-item-height - ($info-item-border * 2)
 
@@ -346,16 +336,6 @@ $image-width = $info-item-height - ($info-item-border * 2)
     align-items center
     justify-content space-between
     padding-bottom 6px
-
-    .selected-repos-dir {
-      .repos-dir-info-item {
-        margin-right 10px
-
-        &:last-child {
-          margin-right 0
-        }
-      }
-    }
   }
 
   .body {
@@ -365,7 +345,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
     overflow-y auto
     box-sizing border-box
     padding 10px
-    border 1px solid $info-item-border-color
+    border 1px solid $image-list-border-color
 
     &::-webkit-scrollbar {
       width 5px
@@ -387,7 +367,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
         box-sizing border-box
         width 100%
         height $info-item-height
-        border $info-item-border solid $info-item-border-color
+        border $info-item-border solid $image-list-border-color
         border-radius 5px
         margin-bottom 10px
         overflow hidden
@@ -421,7 +401,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
           .image-box {
             width 100%
             height 100%
-            border 1px solid $info-item-border-color
+            border 1px solid $image-list-border-color
             border-radius 5px
             box-sizing border-box
             overflow hidden
@@ -514,7 +494,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
           height: 26px;
           text-align: center;
           transform: rotate(45deg);
-          box-shadow: 0 1px 1px $info-item-border-color;
+          box-shadow: 0 1px 1px $image-list-border-color;
 
           &.wait-upload {
             background: #E6A23C;

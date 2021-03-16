@@ -3,30 +3,24 @@
     <div class="content-container">
 
       <div class="top">
-        <div class="status-info-bar">
-          <div class="repos-dir">
-            <span class="info-item">
-              当前仓库：<el-tag>{{ userConfigInfo.selectedRepos }}</el-tag>
-            </span>
-            <span class="info-item">
-              当前目录：<el-tag>{{ userConfigInfo.selectedDir }}</el-tag>
-            </span>
-          </div>
-          <div class="change-dir">
-            切换目录：
-            <el-select v-model="userConfigInfo.selectedDir"
-                       placeholder="请选择"
-                       size="small"
-                       @change="dirChange"
+        <div class="left">
+          <selectedInfoBar></selectedInfoBar>
+        </div>
+
+        <div class="right">
+          切换目录：
+          <el-select v-model="userConfigInfo.selectedDir"
+                     placeholder="请选择"
+                     size="mini"
+                     @change="dirChange"
+          >
+            <el-option
+              v-for="item in userConfigInfo.dirList"
+              :label="item.label"
+              :value="item.value"
             >
-              <el-option
-                v-for="item in userConfigInfo.dirList"
-                :label="item.label"
-                :value="item.value"
-              >
-              </el-option>
-            </el-select>
-          </div>
+            </el-option>
+          </el-select>
         </div>
       </div>
 
@@ -53,22 +47,23 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, reactive, toRefs, watch, computed, onMounted} from 'vue'
+import { defineComponent, reactive, toRefs, watch, computed, onMounted } from 'vue'
 import generateExternalLink from '../common/utils/generateExternalLink'
-import {filenameHandle, isImage} from '../common/utils/fileHandleHelper'
-import ImageCard from '../components/image-card.vue'
-import {useStore} from "vuex";
-import {useRouter} from "vue-router";
+import { filenameHandle, isImage } from '../common/utils/fileHandleHelper'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 import getUuid from '../common/utils/getUuid'
 import axios from '../common/utils/axios/index'
-import {UserConfigInfoModel} from "../common/model/model";
-
+import { UserConfigInfoModel } from '../common/model/userConfigInfo.model'
+import ImageCard from '../components/image-card.vue'
+import selectedInfoBar from '../components/selected-info-bar.vue'
 
 export default defineComponent({
   name: 'Management',
 
   components: {
-    ImageCard
+    ImageCard,
+    selectedInfoBar
   },
 
   setup() {
@@ -262,28 +257,11 @@ $infoBarHeight = 50px;
       width: 100%;
       height: $infoBarHeight;
       box-sizing: border-box;
-
-      .status-info-bar {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        color: #555;
-
-        .repos-dir {
-
-          .info-item {
-            margin-right: 10px;
-
-            &:last-child {
-              margin-right: 0;
-            }
-          }
-
-        }
-
-
-      }
-
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      padding-bottom: 20px;
     }
 
     .bottom {
@@ -297,7 +275,7 @@ $infoBarHeight = 50px;
         margin: 0;
         padding: 0;
         list-style: none;
-        border: 1px solid #ddd;
+        border: 1px solid $image-list-border-color;
         overflow-y: auto;
         box-sizing: border-box;
 
@@ -308,7 +286,6 @@ $infoBarHeight = 50px;
 
           &:last-child {
             margin-right: 0;
-
           }
         }
       }
