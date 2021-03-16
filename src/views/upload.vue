@@ -39,6 +39,7 @@
         </div>
       </div>
 
+      <!-- 重置 & 上传 -->
       <div class="row-item">
         <div class="content-box" style="text-align: right;">
           <el-button plain
@@ -63,7 +64,6 @@
 import { defineComponent, reactive, computed, toRefs, watch, ref, Ref } from 'vue'
 import { useStore } from 'vuex'
 import { UserConfigInfoModel } from '../common/model/userConfigInfo.model'
-import UploadTools from '@/components/upload-tools.vue'
 import ImageCard from '@/components/image-card.vue'
 import ToUploadImageCard from '@/components/to-upload-image-card.vue'
 import UploadArea from '@/components/upload-area.vue'
@@ -77,7 +77,6 @@ export default defineComponent({
 
   components: {
     ImageCard,
-    UploadTools,
     ToUploadImageCard,
     UploadArea
   },
@@ -139,17 +138,24 @@ export default defineComponent({
       reactiveData.imageLoading = true
       toUploadImageCard_dom.value.uploadImage_all(reactiveData.userConfigInfo)
         .then((v: UploadStatusEnum) => {
-          if (v === UploadStatusEnum.allUploaded || v === UploadStatusEnum.uploaded) {
-            // 上传成功
-            reactiveData.imageLoading = false
-            store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
+
+          switch (v) {
+            // 单张图片上传成功
+            case UploadStatusEnum.uploaded:
+
+            // 所有图片上传成功
+            case UploadStatusEnum.allUploaded:
+              reactiveData.imageLoading = false
+              store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
+              break
+
+            // 上传失败（网络错误等原因）
+            case UploadStatusEnum.uploadFail:
+              reactiveData.imageLoading = false
+              store.dispatch('TO_UPLOAD_IMAGE_LIST_FAIL')
+              break
           }
 
-          if(v === UploadStatusEnum.uploadFail) {
-            // 上传失败（遇到网络错误等原因）
-            reactiveData.imageLoading = false
-            store.dispatch('TO_UPLOAD_IMAGE_LIST_FAIL')
-          }
         })
         .catch((e: any) => {
           console.error('upload error: ', e);
