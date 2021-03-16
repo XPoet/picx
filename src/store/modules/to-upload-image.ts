@@ -32,6 +32,10 @@ export default {
         if (rmIndex !== -1) {
           store.state.list.splice(rmIndex, 1)
         }
+        if (store.state.list.length === 0) {
+          store.state.curImgBase64Url = ''
+          store.state.uploadedNumber = 0
+        }
       }
     },
 
