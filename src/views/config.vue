@@ -177,7 +177,8 @@ import { useStore } from "vuex";
 import axios from '../common/utils/axios/index'
 import TimeHelper from '../common/utils/timeHelper'
 import { ElMessage } from 'element-plus'
-import { DirModeEnum, UserConfigInfoModel } from '../common/model/model'
+import { DirModeEnum } from '../common/model/dir.model'
+import { UserConfigInfoModel } from '../common/model/userConfigInfo.model'
 
 export default defineComponent({
   name: 'Config',

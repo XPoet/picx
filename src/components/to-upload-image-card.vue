@@ -125,7 +125,7 @@
 import {computed, defineComponent, reactive, toRefs} from 'vue'
 import {getFileSize} from '../common/utils/fileHandleHelper'
 import TimeHelper from '../common/utils/timeHelper'
-import { UserConfigInfoModel } from '../common/model/model'
+import { UserConfigInfoModel } from '../common/model/userConfigInfo.model'
 import {ToUploadImageModel, UploadedImageModel} from '../common/model/upload.model'
 import {ElMessage} from "element-plus";
 import axios from "../common/utils/axios";
@@ -134,7 +134,7 @@ import {useStore} from "vuex";
 import generateExternalLink from "../common/utils/generateExternalLink";
 import {UploadStatusEnum} from "../common/model/upload.model";
 import copyExternalLink from './copy-external-link.vue'
-import {ExternalLinkType} from "../common/model/external-link.model";
+import {ExternalLinkType} from "../common/model/externalLink.model";
 
 export default defineComponent({
   name: 'to-upload-image-card',

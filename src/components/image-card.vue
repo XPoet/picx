@@ -35,7 +35,7 @@ import { defineComponent, computed, reactive, toRefs } from 'vue'
 import { useStore } from "vuex";
 import axios from '../common/utils/axios/index'
 import { ElMessage } from 'element-plus'
-import { UserConfigInfoModel } from '../common/model/model'
+import { UserConfigInfoModel } from '../common/model/userConfigInfo.model'
 import copyExternalLink from './copy-external-link.vue'
 
 export default defineComponent({

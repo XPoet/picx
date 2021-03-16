@@ -1,4 +1,5 @@
-import { PICX_CONFIG, UserConfigInfoModel } from '../../common/model/model'
+import { UserConfigInfoModel } from '../../common/model/userConfigInfo.model'
+import { PICX_CONFIG } from '../../common/model/localStorage.model'
 import { Store } from 'vuex'
 import cleanObject from '../../common/utils/cleanObject'
 

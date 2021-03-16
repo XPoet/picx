@@ -22,7 +22,7 @@
 import { defineComponent, reactive, toRefs, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
-import { UserConfigInfoModel } from "../common/model/model";
+import { UserConfigInfoModel } from '../common/model/userConfigInfo.model'
 import { ElMessage } from 'element-plus'
 
 export default defineComponent({

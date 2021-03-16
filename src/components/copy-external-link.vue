@@ -34,7 +34,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { ElMessage } from 'element-plus'
-import { ExternalLinkType } from '../common/model/external-link.model'
+import { ExternalLinkType } from '../common/model/externalLink.model'
 
 export default defineComponent({
   name: 'copy-external-link',

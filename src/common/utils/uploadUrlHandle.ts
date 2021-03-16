@@ -1,4 +1,4 @@
-import { UserConfigInfoModel } from "../model/model";
+import { UserConfigInfoModel } from '../model/userConfigInfo.model'
 
 const uploadUrlHandle = (config: UserConfigInfoModel, filename: string): string => {
   let path = ''

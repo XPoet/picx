@@ -1,4 +1,4 @@
-import { PICX_UPLOADED } from '../../common/model/model'
+import { PICX_UPLOADED } from '../../common/model/localStorage.model'
 import { Store } from "vuex";
 
 const initUploadedImageList = () => {

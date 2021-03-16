@@ -62,7 +62,7 @@
 <script lang="ts">
 import { defineComponent, reactive, computed, toRefs, watch, ref, Ref } from 'vue'
 import { useStore } from 'vuex'
-import { UserConfigInfoModel } from '../common/model/model'
+import { UserConfigInfoModel } from '../common/model/userConfigInfo.model'
 import UploadTools from '@/components/upload-tools.vue'
 import ImageCard from '@/components/image-card.vue'
 import ToUploadImageCard from '@/components/to-upload-image-card.vue'

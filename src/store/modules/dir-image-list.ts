@@ -1,6 +1,4 @@
-import {
-  PICX_MANAGEMENT
-} from '../../common/model/model'
+import { PICX_MANAGEMENT } from '../../common/model/localStorage.model'
 import { Store } from "vuex";
 
 const initDirImageList = () => {
