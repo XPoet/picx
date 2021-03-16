@@ -1,4 +1,4 @@
-import getUuid from "./getUuid";
+import getUuid from './getUuid'
 
 export const filenameHandle = (filename: string) => {
   const splitIndex = filename.lastIndexOf('.')

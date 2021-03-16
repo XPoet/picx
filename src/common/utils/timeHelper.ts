@@ -1,32 +1,3 @@
-/*function zerofill(n: number) {
-  return n < 10 ? '0' + n : n
-}
-
-const TimeHandler = {
-
-  getYyyyMmDd(now: number = Date.now()) {
-    const _now: Date = new Date(now)
-    const yyyy = _now.getFullYear()
-    const MM = _now.getMonth() + 1
-    const DD = _now.getDate()
-    return `${yyyy}${zerofill(MM)}${zerofill(DD)}`
-  },
-
-  formatTimestamp(now: number = Date.now()) {
-    const _now: Date = new Date(now)
-    let YYYY = _now.getFullYear()
-    let MM = _now.getMonth() + 1
-    let DD = _now.getDate()
-    let hh = _now.getHours()
-    let mm = _now.getMinutes()
-    let ss = _now.getSeconds()
-    return `${YYYY}-${zerofill(MM)}-${zerofill(DD)} ${zerofill(hh)}:${zerofill(mm)}:${zerofill(ss)}`
-  }
-
-}
-
-export default TimeHandler*/
-
 export default class TimeHelper {
 
   private static zerofill(n: number) {
