@@ -1,10 +1,11 @@
-import {ToUploadImageModel} from '../../common/model/upload.model'
-import {Store} from 'vuex'
+import { ToUploadImageModel } from '../../common/model/upload.model'
+import { Store } from 'vuex'
 
 export default {
 
   state: () => ({
     curImgBase64Url: '',
+    curImgUuid: '',
     list: [],
     uploadedNumber: 0
   }),
@@ -16,8 +17,9 @@ export default {
     },
 
     // 要上传的图片列表 - 设置当前图片的 Base64Url
-    TO_UPLOAD_IMAGE_SET_URL(store: Store<any>, url: string) {
-      store.state.curImgBase64Url = url
+    TO_UPLOAD_IMAGE_SET_CURRENT(store: Store<any>, { uuid, base64Url }) {
+      store.state.curImgUuid = uuid
+      store.state.curImgBase64Url = base64Url
     },
 
     // 要上传的图片列表 - 上传完成的图片数量 +1
@@ -35,6 +37,10 @@ export default {
         if (store.state.list.length === 0) {
           store.state.curImgBase64Url = ''
           store.state.uploadedNumber = 0
+        } else if (store.state.curImgUuid === uuid) {
+          const cur = store.state.list[0]
+          store.state.curImgBase64Url = cur.imgData.base64Url
+          store.state.curImgUuid = cur.uuid
         }
       }
     },

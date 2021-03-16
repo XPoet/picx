@@ -92,7 +92,6 @@ export default defineComponent({
       // 获取图片对象
       getImage(url: any, file: any) {
 
-        store.dispatch('TO_UPLOAD_IMAGE_SET_URL', url)
 
         if (this.toUploadImage.list.length === this.toUploadImage.uploadedNumber) {
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_LIST')
@@ -118,6 +117,7 @@ export default defineComponent({
         curImg.filename.initName = name
 
         store.dispatch('TO_UPLOAD_IMAGE_LIST_ADD', JSON.parse(JSON.stringify(curImg)))
+        store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', { uuid: hash, base64Url: url })
       },
     })
 
