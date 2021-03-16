@@ -1,6 +1,6 @@
 {
   "name": "picx",
-  "version": "2.0.0",
+  "version": "1.1.0",
   "private": false,
   "author": "XPoet",
   "license": "MIT",
@@ -11,7 +11,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "release": "git push --tag && git push -u origin master"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -21,7 +22,6 @@
     "vuex": "^4.0.0"
   },
   "devDependencies": {
-    "@types/node": "^14.14.31",
     "@vitejs/plugin-vue": "^1.1.4",
     "@vue/compiler-sfc": "^3.0.5",
     "stylus": "^0.54.8",
