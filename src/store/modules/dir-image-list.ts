@@ -1,5 +1,5 @@
 import { PICX_MANAGEMENT } from '../../common/model/localStorage.model'
-import { Store } from "vuex";
+import { Store } from 'vuex'
 
 const initDirImageList = () => {
   let dirImageList = localStorage.getItem(PICX_MANAGEMENT)
@@ -30,7 +30,7 @@ export default {
       if (temp) {
         temp.imageList = dirImageItem.imageList
       } else {
-        store.state.dirImageList.push(dirImageItem)
+        store.state.dirImageList.unshift(dirImageItem)
       }
       store.dispatch('DIR_IMAGE_LIST_PERSIST')
     },
