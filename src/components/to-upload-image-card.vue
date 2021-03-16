@@ -105,7 +105,7 @@
           </div>
 
           <div class="remove-to-upload-image"
-               v-if="!(!imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100)"
+               v-if="imgItem.uploadStatus.progress !== 100 && !imgItem.uploadStatus.uploading"
                @click="removeToUploadImage(imgItem)"
           >
             <el-tooltip effect="dark"
@@ -122,19 +122,19 @@
 </template>
 
 <script lang="ts">
-import {computed, defineComponent, reactive, toRefs} from 'vue'
-import {getFileSize} from '../common/utils/fileHandleHelper'
+import { computed, defineComponent, reactive, toRefs } from 'vue'
+import { getFileSize } from '../common/utils/fileHandleHelper'
 import TimeHelper from '../common/utils/timeHelper'
 import { UserConfigInfoModel } from '../common/model/userConfigInfo.model'
-import {ToUploadImageModel, UploadedImageModel} from '../common/model/upload.model'
-import {ElMessage} from "element-plus";
-import axios from "../common/utils/axios";
-import uploadUrlHandle from "../common/utils/uploadUrlHandle";
-import {useStore} from "vuex";
-import generateExternalLink from "../common/utils/generateExternalLink";
-import {UploadStatusEnum} from "../common/model/upload.model";
+import { ToUploadImageModel, UploadedImageModel } from '../common/model/upload.model'
+import { ElMessage } from 'element-plus'
+import axios from '../common/utils/axios'
+import uploadUrlHandle from '../common/utils/uploadUrlHandle'
+import { useStore } from 'vuex'
+import generateExternalLink from '../common/utils/generateExternalLink'
+import { UploadStatusEnum } from '../common/model/upload.model'
 import copyExternalLink from './copy-external-link.vue'
-import {ExternalLinkType} from "../common/model/externalLink.model";
+import { ExternalLinkType } from '../common/model/externalLink.model'
 
 export default defineComponent({
   name: 'to-upload-image-card',
@@ -208,10 +208,7 @@ export default defineComponent({
         }
       },
 
-      uploadImage_single(
-        userConfigInfo: UserConfigInfoModel,
-        img: ToUploadImageModel
-      ): Promise<any> {
+      uploadImage_single(userConfigInfo: UserConfigInfoModel, img: ToUploadImageModel): Promise<any> {
 
         const {
           token,
@@ -288,6 +285,7 @@ export default defineComponent({
           cdn_url: img.externalLink.cdn,
           md_gh_url: img.externalLink.markdown_gh,
           md_cdn_url: img.externalLink.markdown_cdn,
+          is_transform_md: false,
           deleting: false
         }
 
@@ -327,7 +325,7 @@ export default defineComponent({
 </script>
 
 <style lang="stylus">
-$info-item-height = 66px
+$info-item-height = 68px
 $info-item-border = 1px
 $info-item-padding = 5px
 $info-item-border-color = #ccc
@@ -363,7 +361,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
   .body {
     width 100%
     height 100%
-    max-height 162px
+    max-height 170px
     overflow-y auto
     box-sizing border-box
     padding 10px

@@ -56,5 +56,6 @@ export interface UploadedImageModel {
   cdn_url: string,
   md_gh_url: string,
   md_cdn_url: string,
-  deleting: boolean
+  deleting: boolean,
+  is_transform_md: boolean
 }
