@@ -1,11 +1,11 @@
 # PicX
 
-[![Author](https://img.shields.io/badge/author-XPoet-orange.svg?style=flat-square)](https://github.com/XPoet)
-[![Release](https://img.shields.io/github/release/XPoet/picx.svg?style=flat-square)](https://github.com/XPoet/picx/releases)
-[![License](https://img.shields.io/github/license/XPoet/picx.svg?style=flat-square)](https://github.com/XPoet/picx/blob/master/LICENSE)
-[![Stars](https://img.shields.io/github/stars/XPoet/picx?style=flat-square)](https://github.com/XPoet/picx)
-[![Issues](https://img.shields.io/github/issues/xpoet/picx?style=flat-square)](https://github.com/XPoet/picx/issues)
-[![Deploy](https://github.com/XPoet/picx/workflows/deploy/badge.svg?style=flat-square)](https://github.com/XPoet/picx/actions/workflows/deploy.yml)
+[![Author](https://img.shields.io/badge/author-XPoet-orange.svg)](https://github.com/XPoet)
+[![Release](https://img.shields.io/github/release/XPoet/picx.svg)](https://github.com/XPoet/picx/releases)
+[![License](https://img.shields.io/github/license/XPoet/picx.svg)](https://github.com/XPoet/picx/blob/master/LICENSE)
+[![Stars](https://img.shields.io/github/stars/XPoet/picx)](https://github.com/XPoet/picx)
+[![Issues](https://img.shields.io/github/issues/xpoet/picx)](https://github.com/XPoet/picx/issues)
+[![Deploy](https://github.com/XPoet/picx/workflows/deploy/badge.svg)](https://github.com/XPoet/picx/actions/workflows/deploy.yml)
 
 
 > 官方网站 https://picx.xpoet.cn/
