@@ -5,7 +5,7 @@ const baseURL = 'https://api.github.com'
 
 const axios = Axios.create({
   baseURL,
-  timeout: 10000  // request timeout 请求超时 10s
+  timeout: 20000  // request timeout 请求超时 20s
 })
 
 // 发起请求之前的拦截器（前置拦截）
