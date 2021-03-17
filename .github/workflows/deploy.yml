@@ -1,4 +1,4 @@
-name: deploy-gh-pages
+name: deploy
 
 on:
   push:
