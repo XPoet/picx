@@ -147,8 +147,6 @@ export default defineComponent({
       userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
       toUploadImage: computed(() => store.getters.getToUploadImage),
 
-      uploadIndex: 0,
-
       hashRename(e: boolean, img: any) {
         if (e) {
           img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
@@ -182,11 +180,12 @@ export default defineComponent({
 
       async uploadImage_all(userConfigInfo: UserConfigInfoModel) {
 
-        if (this.uploadIndex >= this.toUploadImage.list.length) return UploadStatusEnum.uploaded
-        if (await this.uploadImage_single(userConfigInfo, this.toUploadImage.list[this.uploadIndex]) === true) {
-          if (this.uploadIndex < this.toUploadImage.list.length) {
+        const uploadIndex = this.toUploadImage.uploadedNumber
+
+        if (uploadIndex >= this.toUploadImage.list.length) return UploadStatusEnum.uploaded
+        if (await this.uploadImage_single(userConfigInfo, this.toUploadImage.list[uploadIndex]) === true) {
+          if (uploadIndex < this.toUploadImage.list.length) {
             await this.uploadImage_all(userConfigInfo)
-            this.uploadIndex = 0
             return UploadStatusEnum.allUploaded
           } else {
             return UploadStatusEnum.uploaded
@@ -232,15 +231,16 @@ export default defineComponent({
             }
           ).then(res => {
             if (res && res.status === 201) {
-              ElMessage.success('上传成功！')
               this.uploadedHandle(res, img, userConfigInfo)
               store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
               resolve(true)
-              this.uploadIndex++
+
+              ElMessage.success('上传成功！')
             } else {
-              ElMessage.error('上传失败！')
               img.uploadStatus.uploading = false
               resolve(false)
+
+              ElMessage.error('上传失败！')
             }
           }).catch(error => {
             reject(error)

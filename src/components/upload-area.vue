@@ -92,8 +92,11 @@ export default defineComponent({
       // 获取图片对象
       getImage(url: any, file: any) {
 
-
-        if (this.toUploadImage.list.length === this.toUploadImage.uploadedNumber) {
+        if (
+          this.toUploadImage.list.length === this.toUploadImage.uploadedNumber
+          && this.toUploadImage.list.length > 0
+          && this.toUploadImage.uploadedNumber > 0
+        ) {
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_LIST')
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_UPLOADED_NUMBER')
         }
