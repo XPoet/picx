@@ -5,7 +5,7 @@ const baseURL = 'https://api.github.com'
 
 const axios = Axios.create({
   baseURL,
-  timeout: 30000  // request timeout 请求超时 30s
+  timeout: 60000  // request timeout 请求超时 60s
 })
 
 // 发起请求之前的拦截器（前置拦截）
@@ -33,7 +33,7 @@ axios.interceptors.response.use(response => {
     const code = error.response.status
     const msg = error.response.data.message
     ElMessage.error(`Code: ${code}, Message: ${msg}`)
-    console.error(error.response)
+    console.error(`[PicX Error]`, error.response)
   } else {
     ElMessage.error(`${error}`)
   }
