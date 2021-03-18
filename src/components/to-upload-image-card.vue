@@ -212,7 +212,7 @@ export default defineComponent({
           'content': img.imgData.base64Content
         }
 
-        if (email !== '') {
+        if (email) {
           data.committer = {
             name: owner,
             email: email,
