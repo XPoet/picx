@@ -37,7 +37,7 @@
                 height: '230px',
               }"
           >
-            <ImageCard :image-obj="image"/>
+            <ImageCard :image-obj="image" />
           </li>
         </ul>
       </div>
@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, watch, computed, onMounted } from 'vue'
+import { computed, defineComponent, onMounted, reactive, toRefs, watch } from 'vue'
 import generateExternalLink from '../common/utils/generateExternalLink'
 import { filenameHandle, isImage } from '../common/utils/fileHandleHelper'
 import { useStore } from 'vuex'
@@ -57,6 +57,8 @@ import axios from '../common/utils/axios/index'
 import { UserConfigInfoModel } from '../common/model/userConfigInfo.model'
 import ImageCard from '../components/image-card.vue'
 import selectedInfoBar from '../components/selected-info-bar.vue'
+import { ExternalLinkType } from '../common/model/externalLink.model'
+import { UploadedImageModel } from '../common/model/upload.model'
 
 export default defineComponent({
   name: 'Management',
@@ -112,12 +114,12 @@ export default defineComponent({
           `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents`,
           {
             headers: {
-              "Content-Type": "application/json",
-              "Authorization": `token ${this.userConfigInfo.token}`
+              'Content-Type': 'application/json',
+              'Authorization': `token ${this.userConfigInfo.token}`
             }
           }
         ).then(res => {
-          console.log('res: ', res);
+          console.log('res: ', res)
           if (res && res.status === 200 && res.data.length > 0) {
 
             store.dispatch('DIR_IMAGE_LIST_ADD_DIR', '/')
@@ -152,19 +154,19 @@ export default defineComponent({
 
         this.loadingImageList = true
 
-        const temp: any = {dir: selectedDir, imageList: []}
+        const temp: any = { dir: selectedDir, imageList: [] }
 
         axios.get(
           `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${selectedDir}`,
           {
             headers: {
-              "Content-Type": "application/json",
-              "Authorization": `token ${this.userConfigInfo.token}`
+              'Content-Type': 'application/json',
+              'Authorization': `token ${this.userConfigInfo.token}`
             }
           }
         ).then(res => {
           if (res && res.status === 200 && res.data.length > 0) {
-            const tempImageList = []
+            const tempImageList: UploadedImageModel[] = []
             for (const item of res.data) {
               if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
                 tempImageList.push(this.getImageObject(item, selectedDir))
@@ -177,20 +179,19 @@ export default defineComponent({
         })
       },
 
-      getImageObject(item: any, selectedDir: any) {
-        if (isImage(filenameHandle(item.name).suffix)) {
-          return {
-            uuid: getUuid(),
-            dir: selectedDir,
-            name: item.name,
-            path: item.path,
-            sha: item.sha,
-            github_url: generateExternalLink('github', item, this.userConfigInfo),
-            cdn_url: generateExternalLink('cdn', item, this.userConfigInfo),
-            markdown_gh: generateExternalLink('markdown_gh', item, this.userConfigInfo),
-            markdown_cdn: generateExternalLink('markdown_cdn', item, this.userConfigInfo),
-            deleting: false,
-          }
+      getImageObject(item: any, selectedDir: any): UploadedImageModel {
+        return {
+          uuid: getUuid(),
+          dir: selectedDir,
+          name: item.name,
+          path: item.path,
+          sha: item.sha,
+          github_url: generateExternalLink(ExternalLinkType.gh, item, this.userConfigInfo),
+          cdn_url: generateExternalLink(ExternalLinkType.cdn, item, this.userConfigInfo),
+          md_gh_url: generateExternalLink(ExternalLinkType.md_gh, item, this.userConfigInfo),
+          md_cdn_url: generateExternalLink(ExternalLinkType.md_cdn, item, this.userConfigInfo),
+          deleting: false,
+          is_transform_md: false
         }
       },
 
@@ -223,7 +224,7 @@ export default defineComponent({
           reactiveData.currentDirImageList = temp.imageList
         }
       },
-      {deep: true}
+      { deep: true }
     )
 
     return {
