@@ -39,7 +39,7 @@
     </div>
     <div class="help-info-item">
       <img src="https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/FE-Cheerleaders/FEC-Card.76dbi8n1bkk0.png"
-           style="width: 100%"
+           style="width: 666px"
       />
     </div>
   </div>
