@@ -1,6 +1,6 @@
 <template>
   <div class="image-viewer"
-       v-if="imageViewer.isShow"
+       :class="{'active': imageViewer.isShow}"
        @click="imageViewer.isShow = false"
   >
     <div class="image-box"
@@ -22,39 +22,64 @@ const imageViewer = computed(() => store.getters.getImageViewer)
 </script>
 
 <style scoped lang="stylus">
+
+$transition-duration = 0.3s
+$transition-delay = 0s
+
+
 .image-viewer {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  z-index: 1000;
+  position fixed
+  left 0
+  top 0
+  width 100%
+  height 100%
+  display flex
+  align-items center
+  justify-content center
+  background rgba(0, 0, 0, 0)
+  visibility hidden
+  z-index 1000
+  padding 6%
+  box-sizing border-box
+  transition-property visibility, background
+  transition-delay $transition-delay, $transition-delay
+  transition-duration $transition-duration, $transition-duration
+  transition-timing-function ease, ease
 
-  .image-box {
-    position: relative;
-    width: 60%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  &.active {
+    background rgba(0, 0, 0, 0.5)
+    visibility visible
 
-    @media (max-width: 1200px) {
-      width: 80%;
+    .image-box {
+      cursor zoom-out
+      transform scale(1)
+      padding 2px
     }
-
-    .img {
-      max-width: 100%;
-      max-height: 100%;
-    }
-
   }
 
 
-}
+  .image-box {
+    position relative;
+    width 60%
+    height 100%
+    display flex
+    justify-content center
+    align-items center
+    transform scale(0)
+    transition-property transform
+    transition-delay $transition-delay
+    transition-duration $transition-duration
+    transition-timing-function ease
 
+
+    @media (max-width: 1200px) {
+      width 80%
+    }
+
+    .img {
+      max-width 100%
+      max-height 100%
+    }
+  }
+}
 </style>
