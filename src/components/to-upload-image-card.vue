@@ -18,7 +18,9 @@
             :key="index"
         >
           <div class="left-image-box flex-center">
-            <div class="image-box">
+            <div class="image-box"
+                 @click="imageViewer(imgItem.imgData.base64Url)"
+            >
               <img :src="imgItem.imgData.base64Url">
             </div>
           </div>
@@ -296,6 +298,13 @@ export default defineComponent({
         // dirImageList 增加图片
         store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', item)
       },
+
+      imageViewer(base64Url: string) {
+        store.commit('IMAGE_VIEWER', {
+          isShow: true,
+          url: base64Url
+        })
+      }
     })
 
     const removeToUploadImage = (imgItem: ToUploadImageModel) => {
@@ -405,6 +414,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
             border-radius 5px
             box-sizing border-box
             overflow hidden
+            cursor pointer
           }
 
           img {
