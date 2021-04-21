@@ -42,7 +42,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Help',
     component: () => import('@/views/help.vue'),
     meta: {
-      title: '帮助反馈' + titleSuffix
+      title: '帮助' + titleSuffix
     }
   },
   {
@@ -50,7 +50,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'About',
     component: () => import('@/views/about.vue'),
     meta: {
-      title: '教程' + titleSuffix
+      title: '关于反馈' + titleSuffix
     }
   },
 ]
