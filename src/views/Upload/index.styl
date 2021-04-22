@@ -1,0 +1,134 @@
+@import "../../style.styl"
+
+.upload-page-container {
+  width 100%
+  height 100%
+  display flex
+  justify-content space-between
+
+
+  .upload-page-left {
+    height 100%
+    box-sizing border-box
+    margin-right $component-interval
+
+    .uploaded-item {
+      margin-bottom 20px
+
+      &:last-child {
+        margin-bottom 0
+      }
+
+    }
+  }
+
+
+  .upload-page-right {
+    box-sizing border-box
+    height 100%
+    overflow-y auto
+
+    .row-item {
+      width 100%
+      display flex
+      justify-content center
+      margin-bottom 16px
+      box-sizing border-box
+
+      &:last-child {
+        margin-bottom 0
+      }
+
+      .content-box {
+        width 100%
+        max-width $content-max-width
+        margin 0 auto
+        box-sizing border-box
+      }
+
+    }
+
+    .upload-status {
+      position: relative;
+      width: 100%;
+      padding: 10px;
+      background: $second-background-color;
+      color: #666;
+      font-size: 12px;
+      box-sizing border-box
+
+      .info-item {
+        margin-top: 4px;
+      }
+
+      .file-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .upload-tips {
+
+        display: flex;
+        align-items: center;
+
+        i {
+          margin-left: 2px;
+          font-size: 20px;
+        }
+      }
+
+      .wait-upload {
+        color: #E6A23C;
+      }
+
+      .uploading {
+        color: #409EFF;
+      }
+
+      .uploaded {
+        color: #67C23A;
+      }
+
+    }
+
+
+    .external-link {
+      width: 100%;
+
+      .external-link-input {
+        margin-bottom: 10px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .el-input-group__append {
+          width: 100px;
+          text-align-last: justify;
+        }
+      }
+    }
+
+
+    .upload-tools {
+      width: 100%;
+
+      .repos-dir-info {
+        margin-bottom 20px
+        font-size 12px
+
+        .repos-dir-info-item {
+          margin-right 10px
+
+          &:last-child {
+            margin-right 0
+          }
+        }
+
+
+      }
+    }
+  }
+
+}

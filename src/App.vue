@@ -1,10 +1,10 @@
 <template>
-  <Main/>
+  <Main />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import Main from '@/components/main.vue'
+import Main from '@/components/Main/index.vue'
 
 export default defineComponent({
   name: 'App',

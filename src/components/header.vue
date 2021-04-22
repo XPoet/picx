@@ -3,25 +3,27 @@
     <div class="header-left">
       <div class="brand" @click="router.push('/')">
         <div class="logo">
-          <img src="../assets/logo.png" alt="PicX">
+          <img src="../assets/logo.png" alt="PicX" />
         </div>
         <div class="title">PicX</div>
       </div>
       <div class="website-count" @click="goGitHubRepo">
-        <el-tooltip effect="light"
-                    content="点个 Star 支持一下作者吧(*￣︶￣)"
-                    placement="bottom"
+        <el-tooltip
+          effect="light"
+          content="点个 Star 支持一下作者吧(*￣︶￣)"
+          placement="bottom"
         >
-          <i class=""> 有
-            <siteCount/>
-            位小伙伴使用 PicX 图床神器</i>
+          <i class="">
+            有
+            <siteCount :isuv="false" />
+            位小伙伴使用 PicX 图床神器</i
+          >
         </el-tooltip>
       </div>
     </div>
 
     <div class="header-right">
       <div class="user-info" @click="onUserInfoClick">
-
         <div class="username">
           {{ userConfigInfo.owner ? userConfigInfo.owner : defaultUsername }}
         </div>
@@ -30,24 +32,19 @@
           <i class="el-icon-user-solid"></i>
         </div>
 
-        <el-dropdown trigger="click"
-                     @command="handleCommand"
-                     v-if="userConfigInfo?.avatarUrl"
+        <el-dropdown
+          trigger="click"
+          @command="handleCommand"
+          v-if="userConfigInfo?.avatarUrl"
         >
-        <span class="el-dropdown-link">
-          <span class="avatar">
-            <img :src="userConfigInfo?.avatarUrl"
-                 :alt="userConfigInfo?.owner"
-            />
+          <span class="el-dropdown-link">
+            <span class="avatar">
+              <img :src="userConfigInfo?.avatarUrl" :alt="userConfigInfo?.owner" />
+            </span>
           </span>
-        </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item
-                command="logout"
-              >
-                退出登录
-              </el-dropdown-item>
+              <el-dropdown-item command="logout"> 退出登录 </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -75,11 +72,14 @@ export default defineComponent({
 
     const reactiveData = reactive({
       defaultUsername: '未登录',
-      userConfigInfo: computed(() => store.state.userConfigInfo),
+      userConfigInfo: computed(() => store.state.userConfigInfo)
     })
 
     const onUserInfoClick = () => {
-      if (!reactiveData.userConfigInfo.loggingStatus && router.currentRoute.value.path !== '/config') {
+      if (
+        !reactiveData.userConfigInfo.loggingStatus &&
+        router.currentRoute.value.path !== '/config'
+      ) {
         router.push('/config')
       }
     }
@@ -93,19 +93,19 @@ export default defineComponent({
       switch (command) {
         case 'upload':
           router.push('/')
-          break;
+          break
 
         case 'config':
           router.push('/config')
-          break;
+          break
 
         case 'management':
           router.push('/management')
-          break;
+          break
 
         case 'logout':
           logout()
-          break;
+          break
       }
     }
 
@@ -122,8 +122,6 @@ export default defineComponent({
     }
   }
 })
-
-
 </script>
 
 <style scoped lang="stylus">
@@ -220,5 +218,4 @@ export default defineComponent({
     }
   }
 }
-
 </style>

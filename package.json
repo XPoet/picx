@@ -12,7 +12,12 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "release": "git push --tag && git push -u origin master"
+    "release": "git push --tag && git push -u origin master",
+    "format": "prettier --write",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{vue,js,ts}": "npm run format"
   },
   "dependencies": {
     "axios": "^0.21.1",
@@ -24,6 +29,9 @@
   "devDependencies": {
     "@vitejs/plugin-vue": "^1.1.4",
     "@vue/compiler-sfc": "^3.0.5",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
+    "prettier": "^2.2.1",
     "stylus": "^0.54.8",
     "typescript": "^4.1.3",
     "vite": "^2.0.1"

@@ -1,0 +1,187 @@
+<template>
+  <div class="upload-page-container">
+    <div
+      class="upload-page-left page-container"
+      v-if="uploadedImageList.length"
+      :style="{
+        width: '30%'
+      }"
+    >
+      <div class="uploaded-item" v-for="item in uploadedImageList">
+        <ImageCard :image-obj="item" :is-uploaded="true" />
+      </div>
+    </div>
+
+    <div
+      class="upload-page-right page-container"
+      :style="{
+        width: uploadedImageList.length ? '70%' : '100%'
+      }"
+    >
+      <!-- 上传区域 -->
+      <div class="row-item">
+        <div class="content-box">
+          <UploadArea :image-loading="imageLoading" ref="uploadArea_dom"></UploadArea>
+        </div>
+      </div>
+
+      <!-- 待上传的图片列表 -->
+      <div class="row-item">
+        <div class="content-box">
+          <ToUploadImageCard
+            ref="toUploadImageCard_dom"
+            :loading-all-image="imageLoading"
+          ></ToUploadImageCard>
+        </div>
+      </div>
+
+      <!-- 重置 & 上传 -->
+      <div class="row-item">
+        <div class="content-box" style="text-align: right">
+          <el-button
+            plain
+            size="small"
+            @click="resetUploadInfo"
+            v-if="toUploadImage.list.length"
+            >重置
+          </el-button>
+          <el-button type="primary" plain size="small" @click="uploadImage"
+            >上传
+          </el-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, reactive, computed, toRefs, watch, ref, Ref } from 'vue'
+import { useStore } from 'vuex'
+import { UserConfigInfoModel } from '../../common/model/userConfigInfo.model'
+import ImageCard from '@/components/image-card.vue'
+import ToUploadImageCard from '@/components/to-upload-image-card.vue'
+import UploadArea from '@/components/upload-area.vue'
+import { UploadStatusEnum } from '../../common/model/upload.model'
+import { ElMessage } from 'element-plus'
+import { useRouter } from 'vue-router'
+
+export default defineComponent({
+  name: 'Upload',
+
+  components: {
+    ImageCard,
+    ToUploadImageCard,
+    UploadArea
+  },
+
+  setup() {
+    const store = useStore()
+    const router = useRouter()
+
+    const GitHubExternalLinkInput: Ref = ref<null | HTMLElement>(null)
+    const CDNExternalLinkInput: Ref = ref<null | HTMLElement>(null)
+    const toUploadImageCard_dom: Ref = ref<null | HTMLElement>(null)
+    const uploadArea_dom: Ref = ref<null | HTMLElement>(null)
+
+    const reactiveData = reactive({
+      userConfigInfo: computed(
+        (): UserConfigInfoModel => store.getters.getUserConfigInfo
+      ).value,
+      logoutStatus: computed(() => store.getters.getUserLoggingStatus),
+      uploadedImageList: computed(() => store.getters.getUploadedImageList),
+      toUploadImage: computed(() => store.getters.getToUploadImage),
+      imageLoading: false
+    })
+
+    const uploadImage = () => {
+      const { token, selectedRepos, selectedDir } = reactiveData.userConfigInfo
+
+      if (!token) {
+        ElMessage.error('请先完成图床配置！')
+        router.push('/config')
+        return
+      }
+
+      if (!selectedRepos) {
+        ElMessage.error('请选择一个仓库！')
+        router.push('/config')
+        return
+      }
+
+      if (!selectedDir) {
+        ElMessage.error('目录不能为空！')
+        router.push('/config')
+        return
+      }
+
+      if (reactiveData.toUploadImage.list.length === 0) {
+        ElMessage.error('图片不能为空！')
+        return
+      }
+
+      if (
+        reactiveData.toUploadImage.list.length ===
+        reactiveData.toUploadImage.uploadedNumber
+      ) {
+        ElMessage.error('请选择要上传的图片！')
+        return
+      }
+
+      reactiveData.imageLoading = true
+      toUploadImageCard_dom.value
+        .uploadImage_all(reactiveData.userConfigInfo)
+        .then((v: UploadStatusEnum) => {
+          switch (v) {
+            // 单张图片上传成功
+            case UploadStatusEnum.uploaded:
+
+            // 所有图片上传成功
+            case UploadStatusEnum.allUploaded:
+              reactiveData.imageLoading = false
+              store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
+              break
+
+            // 上传失败（网络错误等原因）
+            case UploadStatusEnum.uploadFail:
+              reactiveData.imageLoading = false
+              store.dispatch('TO_UPLOAD_IMAGE_LIST_FAIL')
+              break
+          }
+        })
+        .catch((e: any) => {
+          console.error('upload error: ', e)
+          reactiveData.imageLoading = false
+        })
+    }
+
+    const resetUploadInfo = () => {
+      reactiveData.imageLoading = false
+      store.dispatch('TO_UPLOAD_IMAGE_LOGOUT')
+    }
+
+    watch(
+      () => reactiveData.logoutStatus,
+      (_n, _o) => {
+        if (!_n) {
+          // 如果退出登录，清空信息
+          resetUploadInfo()
+        }
+      }
+    )
+
+    return {
+      ...toRefs(reactiveData),
+      GitHubExternalLinkInput,
+      CDNExternalLinkInput,
+      toUploadImageCard_dom,
+      uploadArea_dom,
+      resetUploadInfo,
+      uploadImage
+    }
+  }
+})
+</script>
+
+<style scoped lang="stylus">
+@import "index.styl"
+</style>

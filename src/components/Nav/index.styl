@@ -1,0 +1,45 @@
+@import "../../style.styl"
+
+.nav {
+  position relative
+  width 100%
+  height 100%
+  box-sizing border-box
+  background: $background-color
+
+  ul.nav-list {
+    padding 0
+    margin 0
+
+    li.nav-item {
+      box-sizing border-box
+      width 100%
+      height 68px
+      cursor pointer
+
+      &.active {
+        font-weight bold
+        background $second-background-color
+      }
+
+      .nav-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        .nav-icon {
+          font-size: 26px;
+        }
+
+        .nav-name {
+          margin-top: 2px;
+          font-size: 12px;
+        }
+      }
+
+    }
+
+  }
+
+}

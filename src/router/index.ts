@@ -1,7 +1,8 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import Config from '@/views/config.vue'
-import Upload from '@/views/upload.vue'
-import Management from '@/views/management.vue'
+import Config from '@/views/Config/index.vue'
+import Upload from '@/views/Upload/index.vue'
+import Management from '@/views/Management/index.vue'
+import Tutorials from '@/views/Tutorials/index.vue'
 
 const titleSuffix = ' | PicX 图床神器'
 
@@ -38,21 +39,21 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/help',
-    name: 'Help',
-    component: () => import('@/views/help.vue'),
+    path: '/tutorials',
+    name: 'Tutorials',
+    component: Tutorials,
     meta: {
-      title: '帮助' + titleSuffix
+      title: '配置教程' + titleSuffix
     }
   },
   {
     path: '/about',
     name: 'About',
-    component: () => import('@/views/about.vue'),
+    component: () => import('@/views/About/index.vue'),
     meta: {
-      title: '关于反馈' + titleSuffix
+      title: '帮助反馈' + titleSuffix
     }
-  },
+  }
 ]
 
 const router = createRouter({
