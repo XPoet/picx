@@ -10,7 +10,8 @@
       <Step2 v-if="stepNum === 1"></Step2>
       <Step3 v-if="stepNum === 2"></Step3>
       <div v-if="stepNum === 3">
-        <h2>🌟 恭喜你完成图床使用教程 👍 快去试试吧~</h2>
+        <h2>👍 恭喜你完成图床使用教程 🌟 快去试试吧~</h2>
+        <h2>https://github.com/XPoet/picx</h2>
       </div>
     </div>
     <div class="btn-next-prev">
@@ -42,13 +43,15 @@ export default defineComponent({
   setup() {
     const stepNum: Ref<number> = ref(0)
 
-    const step = (step: string) => {
-      if (step === 'prev') {
-        stepNum.value < 0 ? (stepNum.value = 0) : stepNum.value--
+    const step = (type: string) => {
+      if (type === 'prev') {
+        // eslint-disable-next-line no-unused-expressions
+        stepNum.value < 0 ? (stepNum.value = 0) : (stepNum.value -= 1)
       }
 
-      if (step === 'next') {
-        stepNum.value > 3 ? (stepNum.value = 3) : stepNum.value++
+      if (type === 'next') {
+        // eslint-disable-next-line no-unused-expressions
+        stepNum.value > 3 ? (stepNum.value = 3) : (stepNum.value += 1)
       }
     }
 
