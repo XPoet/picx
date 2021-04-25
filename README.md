@@ -6,6 +6,7 @@
 [![Stars](https://img.shields.io/github/stars/XPoet/picx)](https://github.com/XPoet/picx)
 [![Issues](https://img.shields.io/github/issues/xpoet/picx)](https://github.com/XPoet/picx/issues)
 [![Deploy](https://github.com/XPoet/picx/workflows/deploy/badge.svg)](https://github.com/XPoet/picx/actions/workflows/deploy.yml)
+[![JavaScript Style Guide](https://img.shields.io/badge/code_style-Airbnb-hotpink.svg)](https://github.com/lin-123/javascript)
 
 
 > 官方网站 https://picx.xpoet.cn/
