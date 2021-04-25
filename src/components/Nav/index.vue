@@ -56,7 +56,7 @@ export default defineComponent({
           path: '/management'
         },
         {
-          name: '配置教程',
+          name: '使用教程',
           icon: 'el-icon-magic-stick',
           isActive: false,
           path: '/tutorials'

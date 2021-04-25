@@ -10,7 +10,7 @@
       <Step2 v-if="stepNum === 1"></Step2>
       <Step3 v-if="stepNum === 2"></Step3>
       <div v-if="stepNum === 3">
-        <h2>🌟 恭喜完成图床配置教程，快去试试吧~</h2>
+        <h2>🌟 恭喜你完成图床使用教程 👍 快去试试吧~</h2>
       </div>
     </div>
     <div class="btn-next-prev">

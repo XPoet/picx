@@ -43,7 +43,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Tutorials',
     component: Tutorials,
     meta: {
-      title: '配置教程' + titleSuffix
+      title: '使用教程' + titleSuffix
     }
   },
   {
