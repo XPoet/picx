@@ -7,7 +7,7 @@
         width: '30%'
       }"
     >
-      <div class="uploaded-item" v-for="item in uploadedImageList">
+      <div class="uploaded-item" v-for="(item, index) in uploadedImageList" :key="index">
         <ImageCard :image-obj="item" :is-uploaded="true" />
       </div>
     </div>
@@ -21,7 +21,7 @@
       <!-- 上传区域 -->
       <div class="row-item">
         <div class="content-box">
-          <UploadArea :image-loading="imageLoading" ref="uploadArea_dom"></UploadArea>
+          <UploadArea :image-loading="imageLoading" ref="uploadAreaDom"></UploadArea>
         </div>
       </div>
 
@@ -29,7 +29,7 @@
       <div class="row-item">
         <div class="content-box">
           <ToUploadImageCard
-            ref="toUploadImageCard_dom"
+            ref="toUploadImageCardDom"
             :loading-all-image="imageLoading"
           ></ToUploadImageCard>
         </div>
@@ -56,12 +56,12 @@
 
 <script lang="ts">
 import { defineComponent, reactive, computed, toRefs, watch, ref, Ref } from 'vue'
-import { useStore } from 'vuex'
-import { UserConfigInfoModel } from '../../common/model/userConfigInfo.model'
+import { useStore } from '@/store'
+import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import ImageCard from '@/components/image-card.vue'
 import ToUploadImageCard from '@/components/to-upload-image-card.vue'
 import UploadArea from '@/components/upload-area.vue'
-import { UploadStatusEnum } from '../../common/model/upload.model'
+import { UploadStatusEnum } from '@/common/model/upload.model'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 
@@ -80,13 +80,12 @@ export default defineComponent({
 
     const GitHubExternalLinkInput: Ref = ref<null | HTMLElement>(null)
     const CDNExternalLinkInput: Ref = ref<null | HTMLElement>(null)
-    const toUploadImageCard_dom: Ref = ref<null | HTMLElement>(null)
-    const uploadArea_dom: Ref = ref<null | HTMLElement>(null)
+    const toUploadImageCardDom: Ref = ref<null | HTMLElement>(null)
+    const uploadAreaDom: Ref = ref<null | HTMLElement>(null)
 
     const reactiveData = reactive({
-      userConfigInfo: computed(
-        (): UserConfigInfoModel => store.getters.getUserConfigInfo
-      ).value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
+        .value,
       logoutStatus: computed(() => store.getters.getUserLoggingStatus),
       uploadedImageList: computed(() => store.getters.getUploadedImageList),
       toUploadImage: computed(() => store.getters.getToUploadImage),
@@ -128,14 +127,16 @@ export default defineComponent({
       }
 
       reactiveData.imageLoading = true
-      toUploadImageCard_dom.value
+      toUploadImageCardDom.value
         .uploadImage_all(reactiveData.userConfigInfo)
         .then((v: UploadStatusEnum) => {
+          // eslint-disable-next-line default-case
           switch (v) {
             // 单张图片上传成功
             case UploadStatusEnum.uploaded:
 
             // 所有图片上传成功
+            // eslint-disable-next-line no-fallthrough
             case UploadStatusEnum.allUploaded:
               reactiveData.imageLoading = false
               store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
@@ -161,11 +162,10 @@ export default defineComponent({
 
     watch(
       () => reactiveData.logoutStatus,
-      (_n, _o) => {
-        if (!_n) {
-          // 如果退出登录，清空信息
-          resetUploadInfo()
-        }
+      (_n) => {
+        // 如果退出登录，清空信息
+        // eslint-disable-next-line no-unused-expressions
+        !_n && resetUploadInfo()
       }
     )
 
@@ -173,8 +173,8 @@ export default defineComponent({
       ...toRefs(reactiveData),
       GitHubExternalLinkInput,
       CDNExternalLinkInput,
-      toUploadImageCard_dom,
-      uploadArea_dom,
+      toUploadImageCardDom,
+      uploadAreaDom,
       resetUploadInfo,
       uploadImage
     }

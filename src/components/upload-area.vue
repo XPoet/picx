@@ -1,41 +1,36 @@
 <template>
-  <div class="upload-area active-upload"
-       :class="{'focus': uploadAreaActive}"
-       @dragover.prevent
-       @drop.stop.prevent="onDrop"
-       @paste="onPaste"
-       v-loading="imageLoading"
-       element-loading-text="图片上传中..."
-       element-loading-background="rgba(0, 0, 0, 0.5)"
+  <div
+    class="upload-area active-upload"
+    :class="{ focus: uploadAreaActive }"
+    @dragover.prevent
+    @drop.stop.prevent="onDrop"
+    @paste="onPaste"
+    v-loading="imageLoading"
+    element-loading-text="图片上传中..."
+    element-loading-background="rgba(0, 0, 0, 0.5)"
   >
-    <label for="uploader"
-           class="active-upload"
-           v-if="uploadAreaActive"
-    ></label>
-    <input id="uploader"
-           type="file"
-           @change="onSelect"
-           multiple="multiple"
-    >
+    <label for="uploader" class="active-upload" v-if="uploadAreaActive"></label>
+    <input id="uploader" type="file" @change="onSelect" multiple="multiple" />
     <div class="tips active-upload" v-if="!toUploadImage.curImgBase64Url">
       <i class="icon el-icon-upload active-upload"></i>
       <div class="text active-upload">拖拽、粘贴、或点击此处上传</div>
     </div>
-    <img class="active-upload"
-         v-if="toUploadImage.curImgBase64Url"
-         :src="toUploadImage.curImgBase64Url"
-         alt="Pictures to be uploaded"
-    >
+    <img
+      class="active-upload"
+      v-if="toUploadImage.curImgBase64Url"
+      :src="toUploadImage.curImgBase64Url"
+      alt="Pictures to be uploaded"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from 'vue'
-import { filenameHandle } from "../common/utils/fileHandleHelper"
-import chooseImg from "../common/utils/chooseImg"
-import createToUploadImageObject from "../common/utils/createToUploadImageObject"
-import paste from "../common/utils/paste"
-import { useStore } from "vuex"
+import { useStore } from '@/store'
+import { filenameHandle } from '@/common/utils/fileHandleHelper'
+import chooseImg from '@/common/utils/chooseImg'
+import createToUploadImageObject from '@/common/utils/createToUploadImageObject'
+import paste from '@/common/utils/paste'
 
 export default defineComponent({
   name: 'upload-area',
@@ -51,7 +46,6 @@ export default defineComponent({
     const store = useStore()
 
     const reactiveData = reactive({
-
       uploadAreaActive: computed((): boolean => store.getters.getUploadAreaActive),
       uploadSettings: computed(() => store.getters.getUploadSettings).value,
       toUploadImage: computed(() => store.getters.getToUploadImage),
@@ -59,13 +53,17 @@ export default defineComponent({
       // 选择图片
       onSelect(e: any) {
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
+        // eslint-disable-next-line no-restricted-syntax
         for (const file of e.target.files) {
           chooseImg(
             file,
+            // eslint-disable-next-line no-shadow
             (url: string, file: File) => {
               this.getImage(url, file)
             },
-            this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize * 1024 : null
+            this.uploadSettings.isSetMaxSize
+              ? this.uploadSettings.compressSize * 1024
+              : null
           )
         }
       },
@@ -78,24 +76,30 @@ export default defineComponent({
           (url: any, file: any) => {
             this.getImage(url, file)
           },
-          this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize * 1024 : null
+          this.uploadSettings.isSetMaxSize
+            ? this.uploadSettings.compressSize * 1024
+            : null
         )
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
       },
 
       // 复制图片
       async onPaste(e: any) {
-        const {url, file} = await paste(e, this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize * 1024 : null)
+        const { url, file } = await paste(
+          e,
+          this.uploadSettings.isSetMaxSize
+            ? this.uploadSettings.compressSize * 1024
+            : null
+        )
         this.getImage(url, file)
       },
 
       // 获取图片对象
       getImage(url: any, file: any) {
-
         if (
-          this.toUploadImage.list.length === this.toUploadImage.uploadedNumber
-          && this.toUploadImage.list.length > 0
-          && this.toUploadImage.uploadedNumber > 0
+          this.toUploadImage.list.length === this.toUploadImage.uploadedNumber &&
+          this.toUploadImage.list.length > 0 &&
+          this.toUploadImage.uploadedNumber > 0
         ) {
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_LIST')
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_UPLOADED_NUMBER')
@@ -104,9 +108,10 @@ export default defineComponent({
         const curImg = createToUploadImageObject()
 
         curImg.imgData.base64Url = url
+        // eslint-disable-next-line prefer-destructuring
         curImg.imgData.base64Content = url.split(',')[1]
 
-        const {name, hash, suffix} = filenameHandle(file.name)
+        const { name, hash, suffix } = filenameHandle(file.name)
 
         curImg.uuid = hash
 
@@ -121,15 +126,13 @@ export default defineComponent({
 
         store.dispatch('TO_UPLOAD_IMAGE_LIST_ADD', JSON.parse(JSON.stringify(curImg)))
         store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', { uuid: hash, base64Url: url })
-      },
+      }
     })
 
     return {
       ...toRefs(reactiveData)
     }
   }
-
-
 })
 </script>
 

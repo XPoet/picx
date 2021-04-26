@@ -3,7 +3,8 @@
     <ul class="nav-list">
       <li
         class="nav-item flex-center"
-        v-for="navItem in navList"
+        v-for="(navItem, index) in navList"
+        :key="index"
         :class="{ active: navItem.isActive }"
         @click="navClick(navItem)"
         v-show="navItem.path !== '/management' || userConfigInfo.loggingStatus"
@@ -20,8 +21,8 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
-import { UserConfigInfoModel } from '../../common/model/userConfigInfo.model'
+import { useStore } from '@/store'
+import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import { ElMessage } from 'element-plus'
 
 export default defineComponent({
@@ -32,9 +33,8 @@ export default defineComponent({
     const store = useStore()
 
     const reactiveData = reactive({
-      userConfigInfo: computed(
-        (): UserConfigInfoModel => store.getters.getUserConfigInfo
-      ).value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
+        .value,
 
       navList: [
         {
@@ -70,7 +70,7 @@ export default defineComponent({
       ],
 
       navClick(e: any) {
-        const path = e.path
+        const { path } = e
 
         if (path === '/management') {
           if (this.userConfigInfo.selectedRepos === '') {
@@ -90,12 +90,16 @@ export default defineComponent({
     })
 
     const changeNavActive = (currentPath: string) => {
-      reactiveData.navList.forEach((v) => (v.isActive = v.path === currentPath))
+      reactiveData.navList.forEach((v) => {
+        const temp = v
+        temp.isActive = v.path === currentPath
+        return temp
+      })
     }
 
     watch(
       () => router.currentRoute.value,
-      (_n, _o) => {
+      (_n) => {
         changeNavActive(_n.path)
       }
     )

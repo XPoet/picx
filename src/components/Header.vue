@@ -56,7 +56,7 @@
 <script lang="ts">
 import { defineComponent, reactive, computed, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { useStore } from '@/store'
 import siteCount from './site-count.vue'
 
 export default defineComponent({
@@ -72,7 +72,7 @@ export default defineComponent({
 
     const reactiveData = reactive({
       defaultUsername: '未登录',
-      userConfigInfo: computed(() => store.state.userConfigInfo)
+      userConfigInfo: computed(() => store.state.userConfigInfoModule.userConfigInfo)
     })
 
     const onUserInfoClick = () => {
@@ -90,6 +90,7 @@ export default defineComponent({
     }
 
     const handleCommand = (command: string) => {
+      // eslint-disable-next-line default-case
       switch (command) {
         case 'upload':
           router.push('/')

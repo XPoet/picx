@@ -1,13 +1,12 @@
 <template>
-  <div class="image-card"
-       v-loading="imageObj.deleting"
-       element-loading-text="删除中..."
-       element-loading-background="rgba(0, 0, 0, 0.6)"
+  <div
+    class="image-card"
+    v-loading="imageObj.deleting"
+    element-loading-text="删除中..."
+    element-loading-background="rgba(0, 0, 0, 0.6)"
   >
     <div class="image-box">
-      <img :src="imageObj.cdn_url"
-           @click="imageView(imageObj)"
-      >
+      <img :src="imageObj.cdn_url" @click="imageView(imageObj)" />
     </div>
     <div class="info-box">
       <div class="image-info">
@@ -15,9 +14,7 @@
         <div class="image-operation">
           <div class="delete">
             <el-tooltip content="删除" placement="top">
-              <i class="el-icon-delete"
-                 @click="deleteImage(imageObj)"
-              ></i>
+              <i class="el-icon-delete" @click="deleteImage(imageObj)"></i>
             </el-tooltip>
           </div>
 
@@ -32,14 +29,15 @@
 
 <script lang="ts">
 import { defineComponent, computed, reactive, toRefs } from 'vue'
-import { useStore } from "vuex";
-import axios from '../common/utils/axios/index'
+import { useStore } from '@/store'
 import { ElMessage } from 'element-plus'
-import { UserConfigInfoModel } from '../common/model/userConfigInfo.model'
+import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import axios from '@/common/utils/axios/index'
+import { UploadedImageModel } from '@/common/model/upload.model'
 import copyExternalLink from './copy-external-link.vue'
 
 export default defineComponent({
-  name: "ImageCard",
+  name: 'ImageCard',
 
   components: {
     copyExternalLink
@@ -48,8 +46,7 @@ export default defineComponent({
   props: {
     imageObj: {
       type: Object,
-      default: () => {
-      }
+      default: () => {}
     },
     isUploaded: {
       type: Boolean,
@@ -59,45 +56,46 @@ export default defineComponent({
 
   setup() {
     const store = useStore()
-
     const reactiveData = reactive({
       isEnableDeleted: true,
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
+        .value,
 
-
-      deleteImage(imageObj: any) {
-
+      deleteImage(imageObj: UploadedImageModel) {
+        // eslint-disable-next-line no-param-reassign
         imageObj.deleting = true
 
-        axios.delete(
-          `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${imageObj.path}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `token ${this.userConfigInfo?.token}`
-            },
-            data: {
-              owner: this.userConfigInfo?.owner,
-              repo: this.userConfigInfo?.selectedRepos,
-              path: imageObj.path,
-              message: 'delete pictures via PicX(https://github.com/XPoet/picx)',
-              sha: imageObj.sha
+        axios
+          .delete(
+            `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${imageObj.path}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `token ${this.userConfigInfo?.token}`
+              },
+              data: {
+                owner: this.userConfigInfo?.owner,
+                repo: this.userConfigInfo?.selectedRepos,
+                path: imageObj.path,
+                message: 'delete pictures via PicX(https://github.com/XPoet/picx)',
+                sha: imageObj.sha
+              }
             }
-          }
-        ).then(res => {
-          console.log('delete res: ', res);
-          if (res && res.status === 200) {
-            imageObj.deleting = false
-            ElMessage.success('删除成功！')
-            store.dispatch('UPLOADED_LIST_REMOVE', imageObj)
-            store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
-          } else {
-            imageObj.deleting = false
-          }
-        })
+          )
+          .then((res) => {
+            console.log('delete res: ', res)
+            if (res && res.status === 200) {
+              // eslint-disable-next-line no-param-reassign
+              imageObj.deleting = false
+              ElMessage.success('删除成功！')
+              store.dispatch('UPLOADED_LIST_REMOVE', imageObj)
+              store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
+            } else {
+              // eslint-disable-next-line no-param-reassign
+              imageObj.deleting = false
+            }
+          })
       },
-
-
 
       imageView(imgObj: any) {
         store.commit('IMAGE_VIEWER', {
@@ -106,12 +104,10 @@ export default defineComponent({
         })
       }
     })
-
     return {
       ...toRefs(reactiveData)
     }
-
-  },
+  }
 })
 </script>
 

@@ -15,7 +15,8 @@
             @change="dirChange"
           >
             <el-option
-              v-for="item in userConfigInfo.dirList"
+              v-for="(item, index) in userConfigInfo.dirList"
+              :key="index"
               :label="item.label"
               :value="item.value"
             >
@@ -33,7 +34,8 @@
         <ul class="image-list">
           <li
             class="image-item"
-            v-for="image in currentDirImageList"
+            v-for="(image, index) in currentDirImageList"
+            :key="index"
             :style="{
               width: '220px',
               height: '230px'
@@ -49,17 +51,17 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, reactive, toRefs, watch } from 'vue'
-import generateExternalLink from '../../common/utils/generateExternalLink'
-import { filenameHandle, isImage } from '../../common/utils/fileHandleHelper'
-import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
-import getUuid from '../../common/utils/getUuid'
-import axios from '../../common/utils/axios'
-import { UserConfigInfoModel } from '../../common/model/userConfigInfo.model'
-import ImageCard from '../../components/image-card.vue'
-import selectedInfoBar from '../../components/selected-info-bar.vue'
-import { ExternalLinkType } from '../../common/model/externalLink.model'
-import { UploadedImageModel } from '../../common/model/upload.model'
+import { useStore } from '@/store'
+import { filenameHandle, isImage } from '@/common/utils/fileHandleHelper'
+import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import { ExternalLinkType } from '@/common/model/externalLink.model'
+import { UploadedImageModel } from '@/common/model/upload.model'
+import generateExternalLink from '@/common/utils/generateExternalLink'
+import getUuid from '@/common/utils/getUuid'
+import axios from '@/common/utils/axios'
+import ImageCard from '@/components/image-card.vue'
+import selectedInfoBar from '@/components/selected-info-bar.vue'
 
 export default defineComponent({
   name: 'Management',
@@ -74,9 +76,8 @@ export default defineComponent({
     const router = useRouter()
 
     const reactiveData = reactive({
-      userConfigInfo: computed(
-        (): UserConfigInfoModel => store.getters.getUserConfigInfo
-      ).value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
+        .value,
       loggingStatus: computed(() => store.getters.getUserLoggingStatus).value,
       dirImageList: computed(() => store.getters.getDirImageList).value,
 
@@ -89,7 +90,7 @@ export default defineComponent({
           return
         }
 
-        const selectedDir = this.userConfigInfo.selectedDir
+        const { selectedDir } = this.userConfigInfo
         const targetDirObj = this.dirImageList.find((v: any) => v.dir === selectedDir)
 
         if (!targetDirObj) {
@@ -123,6 +124,7 @@ export default defineComponent({
             if (res && res.status === 200 && res.data.length > 0) {
               store.dispatch('DIR_IMAGE_LIST_ADD_DIR', '/')
 
+              // eslint-disable-next-line no-restricted-syntax
               for (const item of res.data) {
                 if (item.type === 'dir') {
                   store.dispatch('DIR_IMAGE_LIST_ADD_DIR', item.name)
@@ -169,6 +171,7 @@ export default defineComponent({
           .then((res) => {
             if (res && res.status === 200 && res.data.length > 0) {
               const tempImageList: UploadedImageModel[] = []
+              // eslint-disable-next-line no-restricted-syntax
               for (const item of res.data) {
                 if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
                   tempImageList.push(this.getImageObject(item, selectedDir))
@@ -193,11 +196,7 @@ export default defineComponent({
             item,
             this.userConfigInfo
           ),
-          cdn_url: generateExternalLink(
-            ExternalLinkType.cdn,
-            item,
-            this.userConfigInfo
-          ),
+          cdn_url: generateExternalLink(ExternalLinkType.cdn, item, this.userConfigInfo),
           md_gh_url: generateExternalLink(
             ExternalLinkType.md_gh,
             item,
@@ -233,7 +232,8 @@ export default defineComponent({
 
     watch(
       () => reactiveData.loggingStatus,
-      (_n) => {
+      (_n: boolean) => {
+        // eslint-disable-next-line no-unused-expressions
         !_n && router.push('/config')
       }
     )

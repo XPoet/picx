@@ -39,7 +39,7 @@
         >
           <el-option
             v-for="(repos, index) in userConfigInfo.reposList"
-            :key="index + '_' + repos.value"
+            :key="index"
             :label="repos.label"
             :value="repos.value"
           >
@@ -149,12 +149,12 @@
 <script lang="ts">
 import { defineComponent, reactive, computed, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
-import axios from '../../common/utils/axios'
-import TimeHelper from '../../common/utils/timeHelper'
+import { useStore } from '@/store'
 import { ElMessage } from 'element-plus'
-import { DirModeEnum } from '../../common/model/dir.model'
-import { UserConfigInfoModel } from '../../common/model/userConfigInfo.model'
+import { DirModeEnum } from '@/common/model/dir.model'
+import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import axios from '@/common/utils/axios'
+import TimeHelper from '@/common/utils/timeHelper'
 
 export default defineComponent({
   name: 'Config',
@@ -164,9 +164,8 @@ export default defineComponent({
     const store = useStore()
 
     const reactiveData = reactive({
-      userConfigInfo: computed(
-        (): UserConfigInfoModel => store.getters.getUserConfigInfo
-      ).value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
+        .value,
       loggingStatus: computed(() => store.getters.getUserConfigInfo).value,
 
       loading: false,
@@ -185,7 +184,7 @@ export default defineComponent({
             .then((res: any) => {
               if (res && res.status === 200) {
                 this.saveUserInfo(res)
-                this.getReposList(res.data['repos_url'])
+                this.getReposList(res.data.repos_url)
               } else {
                 this.loading = false
               }
@@ -197,16 +196,16 @@ export default defineComponent({
 
       saveUserInfo(res: any) {
         this.userConfigInfo.loggingStatus = true
-        this.userConfigInfo.owner = res.data['login']
-        this.userConfigInfo.name = res.data['name']
-        this.userConfigInfo.email = res.data['email']
-        this.userConfigInfo.avatarUrl = res.data['avatar_url']
+        this.userConfigInfo.owner = res.data.login
+        this.userConfigInfo.name = res.data.name
+        this.userConfigInfo.email = res.data.email
+        this.userConfigInfo.avatarUrl = res.data.avatar_url
         this.persistUserConfigInfo()
       },
 
-      getReposList(repos_url: string) {
+      getReposList(reposUrl: string) {
         axios
-          .get(repos_url, {
+          .get(reposUrl, {
             headers: {
               'Content-Type': 'application/json',
               Authorization: `token ${this.userConfigInfo.token}`
@@ -215,6 +214,7 @@ export default defineComponent({
           .then((res: any) => {
             if (res.status === 200 && res.data.length > 0) {
               this.userConfigInfo.reposList = []
+              // eslint-disable-next-line no-restricted-syntax
               for (const repos of res.data) {
                 if (!repos.fork) {
                   this.userConfigInfo.reposList.push({
@@ -279,6 +279,7 @@ export default defineComponent({
           .then((res: any) => {
             if (res && res.status === 200 && res.data.length > 0) {
               this.userConfigInfo.dirList = [{ value: '/', label: '/' }]
+              // eslint-disable-next-line no-restricted-syntax
               for (const item of res.data) {
                 if (item.type === 'dir') {
                   this.userConfigInfo.dirList.push({
@@ -314,6 +315,10 @@ export default defineComponent({
             // 仓库目录
             this.userConfigInfo.selectedDir = ''
             break
+
+          default:
+            this.userConfigInfo.selectedDir = '/'
+            break
         }
         this.persistUserConfigInfo()
       },
@@ -329,11 +334,10 @@ export default defineComponent({
       },
 
       innerGoUpload() {
-        const dir: string = this.userConfigInfo.selectedDir
-        const dirMode: DirModeEnum = this.userConfigInfo.dirMode
+        const { selectedDir, dirMode } = this.userConfigInfo
         let warningMessage: string = '目录不能为空！'
 
-        if (dir === '') {
+        if (selectedDir === '') {
           switch (dirMode) {
             case DirModeEnum.newDir:
               warningMessage = '请在输入框输入一个新目录！'
@@ -341,11 +345,14 @@ export default defineComponent({
             case DirModeEnum.reposDir:
               warningMessage = `请选择 ${this.userConfigInfo.selectedRepos} 仓库下的一个目录！`
               break
+            default:
+              warningMessage = '请在输入框输入一个新目录！'
+              break
           }
           ElMessage.warning(warningMessage)
-          return
+        } else {
+          router.push('/upload')
         }
-        router.push('/upload')
       }
     })
 
@@ -363,7 +370,7 @@ export default defineComponent({
 
     watch(
       () => reactiveData.loggingStatus,
-      (_n, _o) => {
+      (_n) => {
         if (!_n) {
           reactiveData.loading = false
           reactiveData.dirLoading = false
