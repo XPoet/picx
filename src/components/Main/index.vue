@@ -5,13 +5,15 @@
     </div>
 
     <div class="bottom">
-      <div class="left">
-        <Nav />
-      </div>
+      <div class="container">
+        <div class="left">
+          <Nav />
+        </div>
 
-      <div class="right">
-        <div class="content">
-          <router-view />
+        <div class="right">
+          <div class="content">
+            <router-view />
+          </div>
         </div>
       </div>
     </div>

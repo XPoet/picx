@@ -28,32 +28,44 @@ $left-side-width = 80px
     width 100%
     height 100%
     padding-top $component-interval
-    padding-left $left-side-width
 
 
-    .left {
-      position absolute
-      width $left-side-width
-      height 100%
-      top $component-interval
-      left 0
-      box-sizing border-box
-    }
-
-
-    .right {
+    .container {
       position relative
+      box-sizing border-box
       width 100%
       height 100%
-      box-sizing border-box
-      padding 0 $component-interval 0 $component-interval
+      padding-left $left-side-width
 
-      .content {
-        position relative
+
+      .left {
+        position absolute
         box-sizing border-box
+        width $left-side-width
+        height 100%
+        top 0
+        left 0
+      }
+
+
+      .right {
+        position relative
         width 100%
         height 100%
+        box-sizing border-box
+        padding 0 $component-interval 0 $component-interval
+
+
+        .content {
+          position relative
+          box-sizing border-box
+          width 100%
+          height 100%
+        }
       }
+
     }
+
+
   }
 }
