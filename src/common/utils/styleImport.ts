@@ -1,4 +1,4 @@
-import { App } from 'vue'
+import type { App } from 'vue'
 import {
   ElIcon,
   ElLoading,
@@ -22,8 +22,8 @@ import {
   ElFormItem
 } from 'element-plus'
 
-// 按需载入 Element Plus 组件
-export default function importUIFramework(app: App) {
+// Introduces component on demand.
+export default function styleImport(app: App) {
   app
     .use(ElButton)
     .use(ElSelect)

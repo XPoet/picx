@@ -1,9 +1,8 @@
 /* eslint-disable no-restricted-syntax */
-/* eslint-disable import/prefer-default-export */
 import { Recordable, ViteEnv } from '@/common/model/viteConfig.model'
 
 // Read all environment variable configuration files to process.env
-export function wrapperEnv(envConf: Recordable): ViteEnv {
+export default function wrapperEnv(envConf: Recordable): ViteEnv {
   const ret: any = {}
 
   for (const envName of Object.keys(envConf)) {

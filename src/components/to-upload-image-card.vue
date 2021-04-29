@@ -213,8 +213,6 @@ export default defineComponent({
       },
 
       async uploadImage_all(userConfigInfo: UserConfigInfoModel) {
-        console.log('uploadImage_all123')
-
         const uploadIndex = this.toUploadImage.uploadedNumber
 
         if (uploadIndex >= this.toUploadImage.list.length)

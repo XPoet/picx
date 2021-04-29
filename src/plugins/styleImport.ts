@@ -1,13 +1,12 @@
-/* eslint-disable import/prefer-default-export */
 /**
- *  Introduces component library styles on demand.
+ * Introduces component library styles on demand.
  * https://github.com/anncwb/vite-plugin-style-import
  */
 
 import styleImport from 'vite-plugin-style-import'
 
-export function configStyleImportPlugin() {
-  const styleImportPlugin = styleImport({
+export default function configStyleImportPlugin() {
+  return styleImport({
     libs: [
       {
         libraryName: 'element-plus',
@@ -22,5 +21,4 @@ export function configStyleImportPlugin() {
       }
     ]
   })
-  return styleImportPlugin
 }
