@@ -4,7 +4,9 @@ import Upload from '@/views/Upload/index.vue'
 import Management from '@/views/Management/index.vue'
 import Tutorials from '@/views/Tutorials/index.vue'
 
-const titleSuffix = ` | ${import.meta.env.APP_NAME}`
+console.log('env: ', import.meta.env)
+
+const titleSuffix = ` | PicX 图床神器`
 
 const routes: Array<RouteRecordRaw> = [
   {
