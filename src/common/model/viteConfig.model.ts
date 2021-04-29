@@ -6,6 +6,6 @@ export declare interface ViteEnv {
   VITE_PUBLIC_PATH: string
   VITE_GLOB_APP_TITLE: string
   VITE_GLOB_APP_SHORT_NAME: string
-  VITE_OPEN_BROWSER: string
-  VITE_CORS: string
+  VITE_OPEN_BROWSER: boolean
+  VITE_CORS: boolean
 }
