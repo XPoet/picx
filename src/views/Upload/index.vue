@@ -125,6 +125,14 @@ export default defineComponent({
         ElMessage.error('请选择要上传的图片！')
         return
       }
+      if (
+        reactiveData.toUploadImage.list.some(
+          (el) => el.filename.isCompress && !el.imgData.base64Compress
+        )
+      ) {
+        ElMessage.error('请稍候上传，等待压缩完成！')
+        return
+      }
 
       reactiveData.imageLoading = true
       toUploadImageCardDom.value
