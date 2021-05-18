@@ -53,7 +53,7 @@
 
    新生成的 Token 只会显示一次，请妥善保存，如有遗失，重新生成即可。
 
-   ![](https://cdn.jsdelivr.net/gh/XPoet/xpoet-image-hosting/PicX/image.krns6rvn9l.png)
+   ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.pzmcp6b80fk.png)
 
   <br>
 
