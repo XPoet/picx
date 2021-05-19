@@ -3,11 +3,22 @@
     <!-- Token -->
     <el-form label-width="70px" label-position="right" class="config-form">
       <el-form-item label="Token">
-        <el-input v-model="userConfigInfo.token" :clearable="true"></el-input>
+        <el-input
+          v-model="userConfigInfo.token"
+          clearable
+          show-password
+          autofocus
+        ></el-input>
       </el-form-item>
 
       <el-form-item class="operation">
-        <el-button plain size="small" type="primary" @click="getUserInfo()">
+        <el-button
+          plain
+          size="small"
+          type="primary"
+          native-type="submit"
+          @click="getUserInfo()"
+        >
           确认 Token
         </el-button>
       </el-form-item>
