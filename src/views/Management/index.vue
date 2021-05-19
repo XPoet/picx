@@ -6,7 +6,10 @@
           <selectedInfoBar></selectedInfoBar>
         </div>
 
-        <div class="right">
+        <div class="right flex-start">
+          展示类型：
+          <i v-if="listing" class="el-icon-tickets" @click.stop="toggleListing"></i>
+          <i v-else class="el-icon-menu" @click.stop="toggleListing"></i>
           切换目录：
           <el-select
             v-model="userConfigInfo.selectedDir"
@@ -31,17 +34,17 @@
         element-loading-text="加载中..."
         element-loading-background="rgba(0, 0, 0, 0.6)"
       >
-        <ul class="image-list">
+        <ul class="image-list" :class="{ listing: listing === true }">
           <li
             class="image-item"
             v-for="(image, index) in currentDirImageList"
             :key="index"
             :style="{
-              width: '220px',
-              height: '230px'
+              width: listing ? '32%' : '220px',
+              height: listing ? '60px' : '230px'
             }"
           >
-            <ImageCard :image-obj="image" />
+            <ImageCard :image-obj="image" :listing="listing" />
           </li>
         </ul>
       </div>
@@ -83,6 +86,7 @@ export default defineComponent({
 
       currentDirImageList: [],
       loadingImageList: false,
+      listing: false,
 
       initDirImageList() {
         if (!this.dirImageList.length) {
@@ -219,11 +223,19 @@ export default defineComponent({
           return
         }
         this.currentDirImageList = targetDirObj.imageList
+      },
+
+      toggleListing() {
+        this.listing = !this.listing
       }
     })
 
     function dirChange(dir: string) {
       reactiveData.dirChange(dir)
+    }
+
+    function toggleListing() {
+      reactiveData.toggleListing()
     }
 
     onMounted(() => {
@@ -253,12 +265,13 @@ export default defineComponent({
 
     return {
       ...toRefs(reactiveData),
-      dirChange
+      dirChange,
+      toggleListing
     }
   }
 })
 </script>
 
 <style scoped lang="stylus">
-@import "index.styl"
+@import 'index.styl';
 </style>
