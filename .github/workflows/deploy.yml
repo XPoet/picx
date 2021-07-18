@@ -25,7 +25,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           publish_dir: ./dist
-          github_token: ${{ secrets.GH_PAGES_DEPLOY }}
-          user_name: ${{ secrets.MY_USER_NAME }}
-          user_email: ${{ secrets.MY_USER_EMAIL }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          user_name: slblog-github
+          user_email: superxzlove@qq.com
           commit_message: Update PicX
