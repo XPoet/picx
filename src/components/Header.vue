@@ -3,21 +3,10 @@
     <div class="header-left">
       <div class="brand" @click="router.push('/')">
         <div class="logo">
-          <img src="../assets/logo.png" alt="PicX" />
+          <img src="https://cdn.hesiy.cn/pic/logo.png" alt="PicX" />
         </div>
-        <div class="title">PicX</div>
+        <div class="title">Hajeekn自用的PicX</div>
       </div>
-      <div class="website-count" @click="goGitHubRepo">
-        <el-tooltip
-          effect="light"
-          content="点个 Star 支持一下作者吧(*￣︶￣)"
-          placement="bottom"
-        >
-          <i class="">
-            有
-            <siteCount :isuv="false" />
-            位小伙伴使用 PicX 图床神器</i
-          >
         </el-tooltip>
       </div>
     </div>
