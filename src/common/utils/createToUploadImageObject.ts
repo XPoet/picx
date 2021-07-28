@@ -12,11 +12,14 @@ export default function (): ToUploadImageModel {
     imgData: {
       base64Content: '',
       base64Url: '',
+      base64Compress: ''
     },
 
     fileInfo: {
+      compressSize: '0',
+      userSetSize: '0',
       size: 0,
-      lastModified: 0,
+      lastModified: 0
     },
 
     filename: {
@@ -28,14 +31,14 @@ export default function (): ToUploadImageModel {
       newName: 'xxx',
       isHashRename: true,
       isRename: false,
+      isCompress: false
     },
 
     externalLink: {
       github: '',
       cdn: '',
       markdown_gh: '',
-      markdown_cdn: '',
-    },
+      markdown_cdn: ''
+    }
   }
-
 }

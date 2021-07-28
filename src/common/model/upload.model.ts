@@ -7,55 +7,58 @@ export enum UploadStatusEnum {
 }
 
 export interface ToUploadImageModel {
-
-  uuid: string,
+  uuid: string
 
   uploadStatus: {
-    progress: number;
-    uploading: boolean;
-  },
+    progress: number
+    uploading: boolean
+  }
 
   imgData: {
-    base64Content: string;
-    base64Url: string;
-  },
+    base64Content: string
+    base64Url: string
+    base64Compress: string
+  }
 
   fileInfo: {
-    size: number;
-    lastModified: number;
-  },
+    compressSize: string
+    userSetSize: string
+    size: number
+    lastModified: number
+  }
 
   filename: {
-    name: string;
-    hash: string;
-    suffix: string;
-    now: string;
-    initName: string;
-    newName: string;
-    isHashRename: boolean;
-    isRename: boolean;
-  },
+    name: string
+    hash: string
+    suffix: string
+    now: string
+    initName: string
+    newName: string
+    isHashRename: boolean
+    isRename: boolean
+    isCompress: boolean
+  }
 
   externalLink: {
-    github: string;
-    cdn: string;
-    markdown_gh: string;
-    markdown_cdn: string;
-  },
+    github: string
+    cdn: string
+    markdown_gh: string
+    markdown_cdn: string
+  }
 
   uploadedImg?: UploadedImageModel
 }
 
 export interface UploadedImageModel {
-  uuid: string,
-  dir: string,
-  name: string,
-  path: string,
-  sha: string,
-  github_url: string,
-  cdn_url: string,
-  md_gh_url: string,
-  md_cdn_url: string,
-  deleting: boolean,
+  uuid: string
+  dir: string
+  name: string
+  path: string
+  sha: string
+  github_url: string
+  cdn_url: string
+  md_gh_url: string
+  md_cdn_url: string
+  deleting: boolean
   is_transform_md: boolean
 }
