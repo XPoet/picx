@@ -6,8 +6,7 @@
         <el-input
           v-model="userConfigInfo.token"
           clearable
-          show-password
-          autofocus
+          :autofocus="!userConfigInfo.token"
         ></el-input>
       </el-form-item>
 
