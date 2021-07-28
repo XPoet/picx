@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import styleImport from '@/common/utils/styleImport'
+import 'element-plus/lib/theme-chalk/base.css'
 import router from '@/router/index'
 import { key, store } from '@/store/index'
 import App from './App.vue'
