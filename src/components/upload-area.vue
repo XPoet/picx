@@ -57,13 +57,11 @@ export default defineComponent({
         for (const file of e.target.files) {
           chooseImg(
             file,
+            this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize : null,
             // eslint-disable-next-line no-shadow
             (url: string, file: File) => {
               this.getImage(url, file)
-            },
-            this.uploadSettings.isSetMaxSize
-              ? this.uploadSettings.compressSize * 1024
-              : null
+            }
           )
         }
       },
@@ -73,12 +71,10 @@ export default defineComponent({
         const targetFile = e.dataTransfer.files[0]
         chooseImg(
           targetFile,
+          this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize : null,
           (url: any, file: any) => {
             this.getImage(url, file)
-          },
-          this.uploadSettings.isSetMaxSize
-            ? this.uploadSettings.compressSize * 1024
-            : null
+          }
         )
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
       },

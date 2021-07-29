@@ -19,7 +19,8 @@ import {
   ElDropdownItem,
   ElDropdownMenu,
   ElOption,
-  ElFormItem
+  ElFormItem,
+  ElDialog
 } from 'element-plus'
 
 // Introduces component on demand.
@@ -45,5 +46,6 @@ export default function styleImport(app: App) {
     .use(ElDropdownMenu)
     .use(ElOption)
     .use(ElFormItem)
+    .use(ElDialog)
   return app
 }
