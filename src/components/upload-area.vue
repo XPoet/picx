@@ -68,24 +68,25 @@ export default defineComponent({
 
       // 拖拽图片
       onDrop(e: any) {
-        const targetFile = e.dataTransfer.files[0]
-        chooseImg(
-          targetFile,
-          this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize : null,
-          (url: any, file: any) => {
-            this.getImage(url, file)
-          }
-        )
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
+        // eslint-disable-next-line no-restricted-syntax
+        for (const file of e.dataTransfer.files) {
+          chooseImg(
+            file,
+            this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize : null,
+            // eslint-disable-next-line no-shadow
+            (url: any, file: any) => {
+              this.getImage(url, file)
+            }
+          )
+        }
       },
 
       // 复制图片
       async onPaste(e: any) {
         const { url, file } = await paste(
           e,
-          this.uploadSettings.isSetMaxSize
-            ? this.uploadSettings.compressSize * 1024
-            : null
+          this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize : null
         )
         this.getImage(url, file)
       },
