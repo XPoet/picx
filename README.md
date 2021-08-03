@@ -31,8 +31,9 @@
 - [x] 支持 **拖拽**、**复制粘贴**、**选择文件** 等方式进行上传图片
 - [x] 支持图片 **重命名** 和 **哈希化**（保证图片名永不重复）
 - [x] **一键复制** 图片外链（GitHub 和 CDN）
-- [x] **图床管理**（仓库图片的增删改查）
-- [x] 图片**批量上传**
+- [x] **图床管理**（仓库图片的**增删查**）
+- [x] 支持图片 **批量上传**
+- [x] 支持 **PWA**
 - [ ] 图片压缩
 - [ ] i18n
 - [ ] 自由切换 Git 厂商 （例如：Gitee / Coding）
@@ -52,7 +53,7 @@
 
    新生成的 Token 只会显示一次，请妥善保存，如有遗失，重新生成即可。
 
-   ![](https://cdn.jsdelivr.net/gh/XPoet/xpoet-image-hosting/PicX/image.krns6rvn9l.png)
+   ![](https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.pzmcp6b80fk.png)
 
   <br>
 
