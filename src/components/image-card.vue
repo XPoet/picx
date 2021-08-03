@@ -1,6 +1,7 @@
 <template>
   <div
     class="image-card"
+    :class="{ listing: listing }"
     v-loading="imageObj.deleting"
     element-loading-text="删除中..."
     element-loading-background="rgba(0, 0, 0, 0.6)"
@@ -30,7 +31,7 @@
 <script lang="ts">
 import { defineComponent, computed, reactive, toRefs } from 'vue'
 import { useStore } from '@/store'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import axios from '@/common/utils/axios/index'
 import { UploadedImageModel } from '@/common/model/upload.model'
@@ -44,6 +45,10 @@ export default defineComponent({
   },
 
   props: {
+    listing: {
+      type: Boolean,
+      default: false
+    },
     imageObj: {
       type: Object,
       default: () => {}
@@ -62,6 +67,15 @@ export default defineComponent({
         .value,
 
       deleteImage(imageObj: UploadedImageModel) {
+        ElMessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          iconClass: 'el-icon-warning'
+        }).then(() => {
+          this.doDeleteImage(imageObj)
+        })
+      },
+      doDeleteImage(imageObj: UploadedImageModel): void {
         // eslint-disable-next-line no-param-reassign
         imageObj.deleting = true
 
@@ -112,8 +126,7 @@ export default defineComponent({
 </script>
 
 <style scoped lang="stylus">
-
-@import "../style.styl";
+@import '../style.styl';
 
 $infoBoxHeight = 56px;
 
@@ -136,9 +149,7 @@ $infoBoxHeight = 56px;
       height: 100%;
       object-fit: cover;
     }
-
   }
-
 
   .info-box {
     width: 100%;
@@ -181,10 +192,44 @@ $infoBoxHeight = 56px;
           }
 
         }
-
       }
     }
   }
 
+  &.listing {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 5px;
+    padding-bottom: 5px;
+    border-radius: $box-border-radius;
+
+    .image-box {
+      height: 45px;
+      width: 45px;
+    }
+
+    .info-box {
+      position: relative;
+      width: 80%;
+    }
+
+    :deep(.el-loading-mask) {
+      .el-loading-spinner {
+        margin-top: -25px;
+
+        .circular {
+          height: 24px;
+          width: 24px;
+        }
+
+        .el-loading-text {
+          margin: 0;
+        }
+        }
+
+      }
+    }
+  }
 }
 </style>
