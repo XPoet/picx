@@ -1,6 +1,7 @@
 <template>
   <div
     class="image-card"
+    :class="{ listing: listing }"
     v-loading="imageObj.deleting"
     element-loading-text="删除中..."
     element-loading-background="rgba(0, 0, 0, 0.6)"
@@ -44,6 +45,10 @@ export default defineComponent({
   },
 
   props: {
+    listing: {
+      type: Boolean,
+      default: false
+    },
     imageObj: {
       type: Object,
       default: () => {}
@@ -185,7 +190,44 @@ $infoBoxHeight = 56px;
           i {
             font-size: 16px;
           }
+
         }
+      }
+    }
+  }
+
+  &.listing {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 5px;
+    padding-bottom: 5px;
+    border-radius: $box-border-radius;
+
+    .image-box {
+      height: 45px;
+      width: 45px;
+    }
+
+    .info-box {
+      position: relative;
+      width: 80%;
+    }
+
+    :deep(.el-loading-mask) {
+      .el-loading-spinner {
+        margin-top: -25px;
+
+        .circular {
+          height: 24px;
+          width: 24px;
+        }
+
+        .el-loading-text {
+          margin: 0;
+        }
+        }
+
       }
     }
   }
