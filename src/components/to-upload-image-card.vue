@@ -36,7 +36,11 @@
 
               <div class="image-info">
                 <span class="file-size item">
-                  {{ getFileSize(imgItem.fileInfo.size) }}
+                  {{
+                    (imgItem.filename.isCompress &&
+                      imgItem.fileInfo.compressSize + 'kb') ||
+                    getFileSize(imgItem.fileInfo.size)
+                  }}
                 </span>
                 <span class="last-modified item">
                   {{ formatLastModified(imgItem.fileInfo.lastModified) }}
@@ -68,6 +72,21 @@
                 v-if="imgItem.filename.isRename"
                 v-model="imgItem.filename.newName"
                 @input="rename($event, imgItem)"
+                clearable
+              ></el-input>
+              <el-checkbox
+                label="图片压缩"
+                v-model="imgItem.filename.isCompress"
+                @change="initCompress($event, imgItem)"
+              ></el-checkbox>
+              <el-input
+                class="rename-input"
+                type="number"
+                size="mini"
+                placeholder="请输入压缩后最大值 kb,最小可缩小至0.3倍"
+                v-if="imgItem.filename.isCompress"
+                v-model="imgItem.fileInfo.userSetSize"
+                @change="compress($event, imgItem)"
                 clearable
               ></el-input>
             </div>
@@ -134,7 +153,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRefs } from 'vue'
+import { computed, defineComponent, reactive, ref, toRefs } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import { getFileSize } from '@/common/utils/fileHandleHelper'
@@ -149,7 +168,6 @@ import TimeHelper from '@/common/utils/timeHelper'
 import axios from '@/common/utils/axios'
 import uploadUrlHandle from '@/common/utils/uploadUrlHandle'
 import generateExternalLink from '@/common/utils/generateExternalLink'
-
 import copyExternalLink from './copy-external-link.vue'
 import selectedInfoBar from './selected-info-bar.vue'
 
@@ -244,7 +262,9 @@ export default defineComponent({
         const data: any = {
           message: 'Upload pictures via PicX(https://github.com/XPoet/picx)',
           branch: selectedBranch,
-          content: img.imgData.base64Content
+          content:
+            (img.filename.isCompress && img.imgData.base64Compress.split(',')[1]) ||
+            img.imgData.base64Content
         }
 
         if (email) {
@@ -358,6 +378,86 @@ export default defineComponent({
           isShow: true,
           url: base64Url
         })
+      },
+      initCompress(event: boolean, item: any) {
+        // 用户设置压缩大小 item.fileInfo.userSetSize 单位kb
+        // 根据用户设置大小压缩后的大小  item.fileInfo.compressSize  字节数
+        // 根据用户设置大小压缩后的base64  item.imgData.base64Compress 完整base64编码
+        if (event) {
+          item.fileInfo.userSetSize =
+            item.fileInfo.compressSize === '0'
+              ? String(((item.fileInfo.size / 1024) * 0.8).toFixed(2))
+              : String(item.fileInfo.compressSize)
+          if (item.fileInfo.compressSize === '0') {
+            // 初始压缩
+            this.compress(item.fileInfo.userSetSize, item)
+          }
+        }
+      },
+      compress(event: string, item: any) {
+        if (item.fileInfo.compressSize === item.fileInfo.userSetSize) {
+          return
+        }
+        const num = event.replace(/^([0-9]+)(\.[0-9]+)?.*/, '$1$2')
+        const zj = Number(num) * 1024
+
+        if (zj < item.fileInfo.size && zj > item.fileInfo.size * 0.3) {
+          this.compressFn(item, Number(num))
+        }
+      },
+      compressFn(item: any, setSize: number) {
+        // 用原始 base64编码 在canvas 画布画出
+        // 使用 canvas.toDataURL 根据原始大小与设置大小比例压缩
+        let img: any = new Image()
+        img.src = item.imgData.base64Url
+        const that = this
+        img.onload = function () {
+          const { width, height } = this
+          let canvas: any = document.createElement('canvas')
+          let ctx: any = canvas.getContext('2d')
+
+          canvas.width = width
+          canvas.height = height
+
+          ctx.fillStyle = '#fff'
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+          ctx.drawImage(img, 0, 0, width, height)
+
+          // 压缩
+          const fileType = item.imgData.base64Url.split(';')[0].replace(/data:(.*)/, '$1')
+          // console.log(fileType, (0.75 * (setSize * 1024)) / item.fileInfo.size)
+          item.imgData.base64Compress = canvas.toDataURL(
+            fileType,
+            (0.75 * (setSize * 1024)) / item.fileInfo.size
+          )
+          item.fileInfo.compressSize = (
+            that.getImgByteSize(item.imgData.base64Compress) / 1024
+          ).toFixed(2)
+          item.fileInfo.userSetSize = item.fileInfo.compressSize
+          canvas = ctx = null
+          // console.log(item.imgData.base64Url.length)
+          img = null
+        }
+      },
+      getImgByteSize(dataUrl: string): number {
+        let size = 0
+        if (dataUrl) {
+          // 获取base64图片byte大小
+          const equalIndex = dataUrl.indexOf('=') // 获取=号下标
+          if (equalIndex > 0) {
+            const str = dataUrl.substring(0, equalIndex) // 去除=号
+            const strLength = str.length
+            const fileLength = strLength - (strLength / 8) * 2 // 真实的图片byte大小
+            size = Math.floor(fileLength) // 向下取整
+          } else {
+            const strLength = dataUrl.length
+            const fileLength = strLength - (strLength / 8) * 2
+            size = Math.floor(fileLength) // 向下取整
+          }
+        } else {
+          size = 0
+        }
+        return size
       }
     })
 

@@ -31,7 +31,7 @@
 <script lang="ts">
 import { defineComponent, computed, reactive, toRefs } from 'vue'
 import { useStore } from '@/store'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import axios from '@/common/utils/axios/index'
 import { UploadedImageModel } from '@/common/model/upload.model'
@@ -67,6 +67,15 @@ export default defineComponent({
         .value,
 
       deleteImage(imageObj: UploadedImageModel) {
+        ElMessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          iconClass: 'el-icon-warning'
+        }).then(() => {
+          this.doDeleteImage(imageObj)
+        })
+      },
+      doDeleteImage(imageObj: UploadedImageModel): void {
         // eslint-disable-next-line no-param-reassign
         imageObj.deleting = true
 
@@ -181,6 +190,7 @@ $infoBoxHeight = 56px;
           i {
             font-size: 16px;
           }
+
         }
       }
     }
@@ -216,6 +226,8 @@ $infoBoxHeight = 56px;
         .el-loading-text {
           margin: 0;
         }
+        }
+
       }
     }
   }
