@@ -151,6 +151,7 @@ $infoBoxHeight = 56px;
     }
   }
 
+
   .info-box {
     width: 100%;
     height: $infoBoxHeight;
@@ -196,12 +197,12 @@ $infoBoxHeight = 56px;
     }
   }
 
+
   &.listing {
     display: flex;
     justify-content: flex-start;
     align-items: center;
     padding: 5px;
-    padding-bottom: 5px;
     border-radius: $box-border-radius;
 
     .image-box {
@@ -230,6 +231,5 @@ $infoBoxHeight = 56px;
 
       }
     }
-  }
 }
 </style>
