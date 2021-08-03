@@ -1,8 +1,8 @@
 import chooseImg from './chooseImg'
 
-const onPaste = (e: any, maxsize: any = 200 * 1024): Promise<any> => {
+const onPaste = (e: any, maxsize: number): Promise<any> | null => {
   if (!(e.clipboardData && e.clipboardData.items)) {
-    return
+    return null
   }
 
   // eslint-disable-next-line consistent-return
