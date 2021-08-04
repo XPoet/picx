@@ -3,7 +3,7 @@
     <div class="content-container">
       <div class="top">
         <div class="left">
-          <selectedInfoBar></selectedInfoBar>
+          <selected-info-bar />
         </div>
 
         <div class="right flex-start">
@@ -58,7 +58,7 @@ import generateExternalLink from '@/common/utils/generateExternalLink'
 import getUuid from '@/common/utils/getUuid'
 import axios from '@/common/utils/axios'
 import imageCard from '@/components/image-card/image-card.vue'
-import selectedInfoBar from '@/components/selected-info-bar.vue'
+import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 
 export default defineComponent({
   name: 'management',

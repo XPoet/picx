@@ -21,14 +21,14 @@
       <!-- 上传区域 -->
       <div class="row-item">
         <div class="content-box">
-          <UploadArea :image-loading="imageLoading" ref="uploadAreaDom"></UploadArea>
+          <upload-area :image-loading="imageLoading" ref="uploadAreaDom"></upload-area>
         </div>
       </div>
 
       <!-- 待上传的图片列表 -->
       <div class="row-item">
         <div class="content-box">
-          <ToUploadImageCard ref="toUploadImageCardDom" :loading-all-image="imageLoading"></ToUploadImageCard>
+          <to-upload-image-card ref="toUploadImageCardDom" :loading-all-image="imageLoading" />
         </div>
       </div>
 
@@ -48,8 +48,8 @@ import { defineComponent, reactive, computed, toRefs, watch, ref, Ref } from 'vu
 import { useStore } from '@/store'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import imageCard from '@/components/image-card/image-card.vue'
-import ToUploadImageCard from '@/components/to-upload-image-card.vue'
-import UploadArea from '@/components/upload-area.vue'
+import toUploadImageCard from '@/components/to-upload-image-card/to-upload-image-card.vue'
+import uploadArea from '@/components/upload-area/upload-area.vue'
 import { UploadStatusEnum } from '@/common/model/upload.model'
 import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
@@ -59,8 +59,8 @@ export default defineComponent({
 
   components: {
     imageCard,
-    ToUploadImageCard,
-    UploadArea
+    toUploadImageCard,
+    uploadArea
   },
 
   setup() {
@@ -108,10 +108,6 @@ export default defineComponent({
 
       if (reactiveData.toUploadImage.list.length === reactiveData.toUploadImage.uploadedNumber) {
         ElMessage.error('请选择要上传的图片！')
-        return
-      }
-      if (reactiveData.toUploadImage.list.some((el) => el.filename.isCompress && !el.imgData.base64Compress)) {
-        ElMessage.error('请稍候上传，等待压缩完成！')
         return
       }
 

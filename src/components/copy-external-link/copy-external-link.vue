@@ -1,26 +1,15 @@
 <template>
   <div class="copy-external-link-box">
-    <el-tooltip
-      :content="imgObj.is_transform_md ? '已转换 Markdown 格式' : '转换 Markdown 格式'"
-      placement="top"
-    >
-      <span
-        class="btn-item transform-btn"
-        :class="{ 'is-transform': imgObj.is_transform_md }"
-        @click="transformMD()"
-      >
+    <el-tooltip :content="imgObj.is_transform_md ? '已转换 Markdown 格式' : '转换 Markdown 格式'" placement="top">
+      <span class="btn-item transform-btn" :class="{ 'is-transform': imgObj.is_transform_md }" @click="transformMD()">
         MD
       </span>
     </el-tooltip>
     <el-tooltip content="点击复制 GitHub 外链" placement="top">
-      <span class="btn-item copy-url" @click="copyExternalLink(externalLinkType.gh)">
-        GitHub
-      </span>
+      <span class="btn-item copy-url" @click="copyExternalLink(externalLinkType.gh)"> GitHub </span>
     </el-tooltip>
     <el-tooltip content="点击复制 CDN 外链" placement="top">
-      <span class="btn-item copy-url" @click="copyExternalLink(externalLinkType.cdn)">
-        CDN
-      </span>
+      <span class="btn-item copy-url" @click="copyExternalLink(externalLinkType.cdn)"> CDN </span>
     </el-tooltip>
   </div>
 </template>
@@ -101,47 +90,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="stylus">
-
-@import "../style.styl"
-
-.copy-external-link-box {
-
-  .btn-item {
-    box-sizing border-box
-    border-radius 5px
-    font-size 12px
-    margin-right 6px
-    cursor pointer
-    transition all 0.3s ease
-
-    &:last-child {
-      margin-left 0
-    }
-  }
-
-  .transform-btn {
-    border 1px solid $default-font-color
-    color $default-font-color
-    padding 0 1px 0 5px
-
-    &.is-transform {
-      background $default-font-color
-      color $background-color
-    }
-  }
-
-
-  .copy-url {
-    padding 0 2px
-    border 1px solid $default-font-color
-    color $default-font-color
-
-    &:hover {
-      background $default-font-color
-      color $background-color
-    }
-  }
-
-
-}
+@import "copy-external-link.styl"
 </style>

@@ -1,0 +1,42 @@
+@import "../../style.styl"
+
+.copy-external-link-box {
+
+  .btn-item {
+    box-sizing border-box
+    border-radius 5px
+    font-size 12px
+    margin-right 6px
+    cursor pointer
+    transition all 0.3s ease
+
+    &:last-child {
+      margin-left 0
+    }
+  }
+
+  .transform-btn {
+    border 1px solid $default-font-color
+    color $default-font-color
+    padding 0 1px 0 5px
+
+    &.is-transform {
+      background $default-font-color
+      color $background-color
+    }
+  }
+
+
+  .copy-url {
+    padding 0 2px
+    border 1px solid $default-font-color
+    color $default-font-color
+
+    &:hover {
+      background $default-font-color
+      color $background-color
+    }
+  }
+
+
+}

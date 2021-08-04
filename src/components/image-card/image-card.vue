@@ -20,7 +20,7 @@
           </div>
 
           <div>
-            <copyExternalLink :img-obj="imageObj"></copyExternalLink>
+            <copy-externalLink :img-obj="imageObj" />
           </div>
         </div>
       </div>
@@ -35,7 +35,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import axios from '@/common/utils/axios'
 import { UploadedImageModel } from '@/common/model/upload.model'
-import copyExternalLink from '../copy-external-link.vue'
+import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
 
 export default defineComponent({
   name: 'image-card',

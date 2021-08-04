@@ -35,21 +35,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="stylus">
-
-.selected-info-bar-box {
-  height 100%
-  display flex
-  align-items center
-  justify-content flex-start
-  font-size 12px
-  box-sizing border-box
-
-  .info-item {
-    margin-right 8px
-
-    &:last-child {
-      margin-right 0
-    }
-  }
-}
+@import "selected-info-bar.styl"
 </style>
