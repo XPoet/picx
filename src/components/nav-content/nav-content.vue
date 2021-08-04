@@ -26,15 +26,14 @@ import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import { ElMessage } from 'element-plus'
 
 export default defineComponent({
-  name: 'Nav',
+  name: 'nav-content',
 
   setup() {
     const router = useRouter()
     const store = useStore()
 
     const reactiveData = reactive({
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
-        .value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
 
       navList: [
         {
@@ -118,5 +117,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="stylus">
-@import "index.styl"
+@import "nav-content.styl"
 </style>

@@ -8,7 +8,7 @@
       }"
     >
       <div class="uploaded-item" v-for="(item, index) in uploadedImageList" :key="index">
-        <ImageCard :image-obj="item" :is-uploaded="true" />
+        <image-card :image-obj="item" :is-uploaded="true" />
       </div>
     </div>
 
@@ -28,26 +28,15 @@
       <!-- 待上传的图片列表 -->
       <div class="row-item">
         <div class="content-box">
-          <ToUploadImageCard
-            ref="toUploadImageCardDom"
-            :loading-all-image="imageLoading"
-          ></ToUploadImageCard>
+          <ToUploadImageCard ref="toUploadImageCardDom" :loading-all-image="imageLoading"></ToUploadImageCard>
         </div>
       </div>
 
       <!-- 重置 & 上传 -->
       <div class="row-item">
         <div class="content-box" style="text-align: right">
-          <el-button
-            plain
-            size="small"
-            @click="resetUploadInfo"
-            v-if="toUploadImage.list.length"
-            >重置
-          </el-button>
-          <el-button type="primary" plain size="small" @click="uploadImage"
-            >上传
-          </el-button>
+          <el-button plain size="small" @click="resetUploadInfo" v-if="toUploadImage.list.length">重置 </el-button>
+          <el-button type="primary" plain size="small" @click="uploadImage">上传 </el-button>
         </div>
       </div>
     </div>
@@ -58,7 +47,7 @@
 import { defineComponent, reactive, computed, toRefs, watch, ref, Ref } from 'vue'
 import { useStore } from '@/store'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
-import ImageCard from '@/components/image-card.vue'
+import imageCard from '@/components/image-card/image-card.vue'
 import ToUploadImageCard from '@/components/to-upload-image-card.vue'
 import UploadArea from '@/components/upload-area.vue'
 import { UploadStatusEnum } from '@/common/model/upload.model'
@@ -66,10 +55,10 @@ import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
-  name: 'Upload',
+  name: 'upload',
 
   components: {
-    ImageCard,
+    imageCard,
     ToUploadImageCard,
     UploadArea
   },
@@ -84,8 +73,7 @@ export default defineComponent({
     const uploadAreaDom: Ref = ref<null | HTMLElement>(null)
 
     const reactiveData = reactive({
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
-        .value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
       logoutStatus: computed(() => store.getters.getUserLoggingStatus),
       uploadedImageList: computed(() => store.getters.getUploadedImageList),
       toUploadImage: computed(() => store.getters.getToUploadImage),
@@ -118,18 +106,11 @@ export default defineComponent({
         return
       }
 
-      if (
-        reactiveData.toUploadImage.list.length ===
-        reactiveData.toUploadImage.uploadedNumber
-      ) {
+      if (reactiveData.toUploadImage.list.length === reactiveData.toUploadImage.uploadedNumber) {
         ElMessage.error('请选择要上传的图片！')
         return
       }
-      if (
-        reactiveData.toUploadImage.list.some(
-          (el) => el.filename.isCompress && !el.imgData.base64Compress
-        )
-      ) {
+      if (reactiveData.toUploadImage.list.some((el) => el.filename.isCompress && !el.imgData.base64Compress)) {
         ElMessage.error('请稍候上传，等待压缩完成！')
         return
       }
@@ -191,5 +172,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="stylus">
-@import "index.styl"
+@import "upload.styl"
 </style>

@@ -15,24 +15,20 @@
       </div>
     </div>
     <div class="btn-next-prev">
-      <el-button type="primary" @click="step('prev')" v-if="stepNum > 0"
-        >上一步
-      </el-button>
-      <el-button type="primary" @click="step('next')" v-if="stepNum < 3"
-        >下一步
-      </el-button>
+      <el-button type="primary" @click="step('prev')" v-if="stepNum > 0">上一步 </el-button>
+      <el-button type="primary" @click="step('next')" v-if="stepNum < 3">下一步 </el-button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue'
-import Step1 from '@/components/Tutorials-step/step1.vue'
-import Step2 from '@/components/Tutorials-step/step2.vue'
-import Step3 from '@/components/Tutorials-step/step3.vue'
+import Step1 from '@/components/tutorials-step/step1.vue'
+import Step2 from '@/components/tutorials-step/step2.vue'
+import Step3 from '@/components/tutorials-step/step3.vue'
 
 export default defineComponent({
-  name: 'Tutorials',
+  name: 'tutorials',
 
   components: {
     Step1,
@@ -64,5 +60,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="stylus">
-@import "index.styl"
+@import "tutorials.styl"
 </style>

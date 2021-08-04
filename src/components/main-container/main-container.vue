@@ -1,13 +1,13 @@
 <template>
   <main class="main-container" @click="changeUploadAreaActive">
     <div class="top">
-      <Header />
+      <header-content />
     </div>
 
     <div class="bottom">
       <div class="container">
         <div class="left">
-          <Nav />
+          <nav-content />
         </div>
 
         <div class="right">
@@ -18,32 +18,29 @@
       </div>
     </div>
   </main>
-  <ImageViewer></ImageViewer>
+  <image-viewer></image-viewer>
 </template>
 
 <script lang="ts">
-import Header from '@/components/Header.vue'
-import Nav from '@/components/Nav/index.vue'
-import ImageViewer from '@/components/image-viewer.vue'
+import headerContent from '@/components/header-content/header-content.vue'
+import navContent from '@/components/nav-content/nav-content.vue'
+import imageViewer from '@/components/image-viewer/image-viewer.vue'
 import { useStore } from '@/store'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  name: 'Main',
+  name: 'main-container',
 
   components: {
-    Header,
-    Nav,
-    ImageViewer
+    headerContent,
+    navContent,
+    imageViewer
   },
 
   setup() {
     const store = useStore()
     const changeUploadAreaActive = (e: any) => {
-      store.commit(
-        'CHANGE_UPLOAD_AREA_ACTIVE',
-        e.target.classList.contains('active-upload')
-      )
+      store.commit('CHANGE_UPLOAD_AREA_ACTIVE', e.target.classList.contains('active-upload'))
     }
 
     return {
@@ -54,5 +51,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="stylus">
-@import "index.styl"
+@import "main-container.styl"
 </style>

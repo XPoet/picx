@@ -1,0 +1,106 @@
+@import '../../style.styl';
+
+$infoBoxHeight = 56px;
+
+.image-card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  box-shadow: 1px 2px 3px $image-card-shadow-color;
+  box-sizing: border-box;
+  padding-bottom: $infoBoxHeight;
+
+  .image-box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+
+  .info-box {
+    width: 100%;
+    height: $infoBoxHeight;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    .image-info {
+      width: 100%;
+      height: 100%;
+      padding: 5px;
+      color: $default-font-color;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .filename {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 13px;
+      }
+
+      .image-operation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 5px;
+
+        .delete {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+
+          i {
+            font-size: 16px;
+          }
+
+        }
+      }
+    }
+  }
+
+
+  &.listing {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 5px;
+    border-radius: $box-border-radius;
+
+    .image-box {
+      height: 45px;
+      width: 45px;
+    }
+
+    .info-box {
+      position: relative;
+      width: 80%;
+    }
+
+    :deep(.el-loading-mask) {
+      .el-loading-spinner {
+        margin-top: -25px;
+
+        .circular {
+          height: 24px;
+          width: 24px;
+        }
+
+        .el-loading-text {
+          margin: 0;
+        }
+      }
+
+    }
+  }
+}

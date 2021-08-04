@@ -33,12 +33,12 @@ import { defineComponent, computed, reactive, toRefs } from 'vue'
 import { useStore } from '@/store'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
-import axios from '@/common/utils/axios/index'
+import axios from '@/common/utils/axios'
 import { UploadedImageModel } from '@/common/model/upload.model'
-import copyExternalLink from './copy-external-link.vue'
+import copyExternalLink from '../copy-external-link.vue'
 
 export default defineComponent({
-  name: 'ImageCard',
+  name: 'image-card',
 
   components: {
     copyExternalLink
@@ -63,8 +63,7 @@ export default defineComponent({
     const store = useStore()
     const reactiveData = reactive({
       isEnableDeleted: true,
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
-        .value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
 
       deleteImage(imageObj: UploadedImageModel) {
         ElMessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
@@ -126,110 +125,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="stylus">
-@import '../style.styl';
-
-$infoBoxHeight = 56px;
-
-.image-card {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  box-shadow: 1px 2px 3px $image-card-shadow-color;
-  box-sizing: border-box;
-  padding-bottom: $infoBoxHeight;
-
-  .image-box {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-
-  .info-box {
-    width: 100%;
-    height: $infoBoxHeight;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-
-    .image-info {
-      width: 100%;
-      height: 100%;
-      padding: 5px;
-      color: $default-font-color;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-
-      .filename {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 13px;
-      }
-
-      .image-operation {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 5px;
-
-        .delete {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          cursor: pointer;
-
-          i {
-            font-size: 16px;
-          }
-
-        }
-      }
-    }
-  }
-
-
-  &.listing {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 5px;
-    border-radius: $box-border-radius;
-
-    .image-box {
-      height: 45px;
-      width: 45px;
-    }
-
-    .info-box {
-      position: relative;
-      width: 80%;
-    }
-
-    :deep(.el-loading-mask) {
-      .el-loading-spinner {
-        margin-top: -25px;
-
-        .circular {
-          height: 24px;
-          width: 24px;
-        }
-
-        .el-loading-text {
-          margin: 0;
-        }
-        }
-
-      }
-    }
-}
+@import 'image-card.styl';
 </style>

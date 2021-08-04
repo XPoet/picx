@@ -8,15 +8,9 @@
 
         <div class="right flex-start">
           展示类型：
-          <i v-if="listing" class="el-icon-tickets" @click.stop="toggleListing"></i>
-          <i v-else class="el-icon-menu" @click.stop="toggleListing"></i>
+          <i :class="listing ? 'el-icon-tickets' : 'el-icon-menu'" @click.stop="toggleListing"></i>
           切换目录：
-          <el-select
-            v-model="userConfigInfo.selectedDir"
-            placeholder="请选择"
-            size="mini"
-            @change="dirChange"
-          >
+          <el-select v-model="userConfigInfo.selectedDir" placeholder="请选择" size="mini" @change="dirChange">
             <el-option
               v-for="(item, index) in userConfigInfo.dirList"
               :key="index"
@@ -34,17 +28,17 @@
         element-loading-text="加载中..."
         element-loading-background="rgba(0, 0, 0, 0.6)"
       >
-        <ul class="image-list" :class="{ listing: listing === true }">
+        <ul class="image-list">
           <li
             class="image-item"
             v-for="(image, index) in currentDirImageList"
             :key="index"
             :style="{
-              width: listing ? '32%' : '220px',
-              height: listing ? '60px' : '230px'
+              width: listing ? '50%' : '220px',
+              height: listing ? '80px' : '230px'
             }"
           >
-            <ImageCard :image-obj="image" :listing="listing" />
+            <image-card :image-obj="image" :listing="listing" />
           </li>
         </ul>
       </div>
@@ -63,14 +57,14 @@ import { UploadedImageModel } from '@/common/model/upload.model'
 import generateExternalLink from '@/common/utils/generateExternalLink'
 import getUuid from '@/common/utils/getUuid'
 import axios from '@/common/utils/axios'
-import ImageCard from '@/components/image-card.vue'
+import imageCard from '@/components/image-card/image-card.vue'
 import selectedInfoBar from '@/components/selected-info-bar.vue'
 
 export default defineComponent({
-  name: 'Management',
+  name: 'management',
 
   components: {
-    ImageCard,
+    imageCard,
     selectedInfoBar
   },
 
@@ -79,8 +73,7 @@ export default defineComponent({
     const router = useRouter()
 
     const reactiveData = reactive({
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
-        .value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
       loggingStatus: computed(() => store.getters.getUserLoggingStatus).value,
       dirImageList: computed(() => store.getters.getDirImageList).value,
 
@@ -114,15 +107,12 @@ export default defineComponent({
 
       getReposContent() {
         axios
-          .get(
-            `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents`,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `token ${this.userConfigInfo.token}`
-              }
+          .get(`/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents`, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `token ${this.userConfigInfo.token}`
             }
-          )
+          })
           .then((res) => {
             console.log('res: ', res)
             if (res && res.status === 200 && res.data.length > 0) {
@@ -132,14 +122,8 @@ export default defineComponent({
               for (const item of res.data) {
                 if (item.type === 'dir') {
                   store.dispatch('DIR_IMAGE_LIST_ADD_DIR', item.name)
-                } else if (
-                  item.type === 'file' &&
-                  isImage(filenameHandle(item.name).suffix)
-                ) {
-                  store.dispatch(
-                    'DIR_IMAGE_LIST_ADD_IMAGE',
-                    this.getImageObject(item, '/')
-                  )
+                } else if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
+                  store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', this.getImageObject(item, '/'))
                 }
               }
 
@@ -163,15 +147,12 @@ export default defineComponent({
         const temp: any = { dir: selectedDir, imageList: [] }
 
         axios
-          .get(
-            `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${selectedDir}`,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `token ${this.userConfigInfo.token}`
-              }
+          .get(`/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${selectedDir}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `token ${this.userConfigInfo.token}`
             }
-          )
+          })
           .then((res) => {
             if (res && res.status === 200 && res.data.length > 0) {
               const tempImageList: UploadedImageModel[] = []
@@ -195,22 +176,10 @@ export default defineComponent({
           name: item.name,
           path: item.path,
           sha: item.sha,
-          github_url: generateExternalLink(
-            ExternalLinkType.gh,
-            item,
-            this.userConfigInfo
-          ),
+          github_url: generateExternalLink(ExternalLinkType.gh, item, this.userConfigInfo),
           cdn_url: generateExternalLink(ExternalLinkType.cdn, item, this.userConfigInfo),
-          md_gh_url: generateExternalLink(
-            ExternalLinkType.md_gh,
-            item,
-            this.userConfigInfo
-          ),
-          md_cdn_url: generateExternalLink(
-            ExternalLinkType.md_cdn,
-            item,
-            this.userConfigInfo
-          ),
+          md_gh_url: generateExternalLink(ExternalLinkType.md_gh, item, this.userConfigInfo),
+          md_cdn_url: generateExternalLink(ExternalLinkType.md_cdn, item, this.userConfigInfo),
           deleting: false,
           is_transform_md: false
         }
@@ -253,9 +222,7 @@ export default defineComponent({
     watch(
       () => reactiveData.dirImageList,
       (_n: any) => {
-        const temp = _n.find(
-          (v: any) => v.dir === reactiveData.userConfigInfo.selectedDir
-        )
+        const temp = _n.find((v: any) => v.dir === reactiveData.userConfigInfo.selectedDir)
         if (temp) {
           reactiveData.currentDirImageList = temp.imageList
         }
@@ -273,5 +240,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="stylus">
-@import 'index.styl';
+@import 'management.styl';
 </style>

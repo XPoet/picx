@@ -9,10 +9,7 @@
       alt="Create GitHub Token"
     />
     <p>然后点击 Generate token 按钮，即可生成一个token，如下图：</p>
-    <img
-      src="https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.pzmcp6b80fk.png"
-      alt="token-demo"
-    />
+    <img src="https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.pzmcp6b80fk.png" alt="token-demo" />
     <p style="color: red">
       <em>新生成的 Token 只会显示一次，请妥善保存！如有遗失，重新生成即可。</em>
     </p>

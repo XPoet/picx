@@ -1,31 +1,31 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import Config from '@/views/Config/index.vue'
-import Upload from '@/views/Upload/index.vue'
-import Management from '@/views/Management/index.vue'
-import Tutorials from '@/views/Tutorials/index.vue'
+import config from '@/views/config/config.vue'
+import upload from '@/views/upload/upload.vue'
+import management from '@/views/management/management.vue'
+import tutorials from '@/views/tutorials/tutorials.vue'
 
 const titleSuffix = ` | PicX 图床神器`
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'Index',
+    name: 'index',
     redirect: {
-      name: 'Upload'
+      name: 'upload'
     }
   },
   {
     path: '/config',
-    name: 'Config',
-    component: Config,
+    name: 'config',
+    component: config,
     meta: {
       title: `图床配置${titleSuffix}`
     }
   },
   {
     path: '/upload',
-    name: 'Upload',
-    component: Upload,
+    name: 'upload',
+    component: upload,
     meta: {
       title: `图片上传${titleSuffix}`
     }
@@ -33,23 +33,23 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/management',
     name: 'Management',
-    component: Management,
+    component: management,
     meta: {
       title: `图床管理${titleSuffix}`
     }
   },
   {
     path: '/tutorials',
-    name: 'Tutorials',
-    component: Tutorials,
+    name: 'tutorials',
+    component: tutorials,
     meta: {
       title: `使用教程${titleSuffix}`
     }
   },
   {
     path: '/about',
-    name: 'About',
-    component: () => import('@/views/About/index.vue'),
+    name: 'about',
+    component: () => import('@/views/about/about.vue'),
     meta: {
       title: `帮助反馈${titleSuffix}`
     }
