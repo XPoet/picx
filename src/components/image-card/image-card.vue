@@ -70,9 +70,13 @@ export default defineComponent({
           confirmButtonText: `确定`,
           cancelButtonText: `取消`,
           iconClass: `el-icon-warning`
-        }).then(() => {
-          this.doDeleteImage(imageObj)
         })
+          .then(() => {
+            this.doDeleteImage(imageObj)
+          })
+          .catch(() => {
+            console.log('取消删除')
+          })
       },
 
       doDeleteImage(imageObj: UploadedImageModel): void {
