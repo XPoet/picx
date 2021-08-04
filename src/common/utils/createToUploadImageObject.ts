@@ -1,6 +1,6 @@
 import { ToUploadImageModel } from '../model/upload.model'
 
-export default function (): ToUploadImageModel {
+export default (): ToUploadImageModel => {
   return {
     uuid: '',
 
@@ -11,13 +11,10 @@ export default function (): ToUploadImageModel {
 
     imgData: {
       base64Content: '',
-      base64Url: '',
-      base64Compress: ''
+      base64Url: ''
     },
 
     fileInfo: {
-      compressSize: '0',
-      userSetSize: '0',
       size: 0,
       lastModified: 0
     },
@@ -30,8 +27,7 @@ export default function (): ToUploadImageModel {
       initName: '',
       newName: 'xxx',
       isHashRename: true,
-      isRename: false,
-      isCompress: false
+      isRename: false
     },
 
     externalLink: {

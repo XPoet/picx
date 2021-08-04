@@ -28,7 +28,7 @@
 import { computed, defineComponent, reactive, toRefs } from 'vue'
 import { useStore } from '@/store'
 import { filenameHandle } from '@/common/utils/fileHandleHelper'
-import chooseImg from '@/common/utils/chooseImg'
+import selectedFileHandle from '@/common/utils/selectedFileHandle'
 import createToUploadImageObject from '@/common/utils/createToUploadImageObject'
 import paste from '@/common/utils/paste'
 
@@ -48,21 +48,16 @@ export default defineComponent({
     const reactiveData = reactive({
       uploadAreaActive: computed((): boolean => store.getters.getUploadAreaActive),
       uploadSettings: computed(() => store.getters.getUploadSettings).value,
-      toUploadImage: computed(() => store.getters.getToUploadImage),
+      toUploadImage: computed(() => store.getters.getToUploadImage).value,
 
       // 选择图片
       onSelect(e: any) {
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
         // eslint-disable-next-line no-restricted-syntax
         for (const file of e.target.files) {
-          chooseImg(
-            file,
-            this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize : null,
-            // eslint-disable-next-line no-shadow
-            (url: string, file: File) => {
-              this.getImage(url, file)
-            }
-          )
+          selectedFileHandle(file, this.uploadSettings.imageMaxSize)?.then((base64) => {
+            this.getImage(base64, file)
+          })
         }
       },
 
@@ -71,28 +66,20 @@ export default defineComponent({
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
         // eslint-disable-next-line no-restricted-syntax
         for (const file of e.dataTransfer.files) {
-          chooseImg(
-            file,
-            this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize : null,
-            // eslint-disable-next-line no-shadow
-            (url: any, file: any) => {
-              this.getImage(url, file)
-            }
-          )
+          selectedFileHandle(file, this.uploadSettings.imageMaxSize)?.then((base64) => {
+            this.getImage(base64, file)
+          })
         }
       },
 
       // 复制图片
       async onPaste(e: any) {
-        const { url, file } = await paste(
-          e,
-          this.uploadSettings.isSetMaxSize ? this.uploadSettings.compressSize : null
-        )
-        this.getImage(url, file)
+        const { base64, file } = await paste(e, this.uploadSettings.imageMaxSize)
+        this.getImage(base64, file)
       },
 
       // 获取图片对象
-      getImage(url: any, file: any) {
+      getImage(base64Data: string, file: File) {
         if (
           this.toUploadImage.list.length === this.toUploadImage.uploadedNumber &&
           this.toUploadImage.list.length > 0 &&
@@ -104,9 +91,9 @@ export default defineComponent({
 
         const curImg = createToUploadImageObject()
 
-        curImg.imgData.base64Url = url
+        curImg.imgData.base64Url = base64Data
         // eslint-disable-next-line prefer-destructuring
-        curImg.imgData.base64Content = url.split(',')[1]
+        curImg.imgData.base64Content = base64Data.split(',')[1]
 
         const { name, hash, suffix } = filenameHandle(file.name)
 
@@ -122,7 +109,10 @@ export default defineComponent({
         curImg.filename.initName = name
 
         store.dispatch('TO_UPLOAD_IMAGE_LIST_ADD', JSON.parse(JSON.stringify(curImg)))
-        store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', { uuid: hash, base64Url: url })
+        store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', {
+          uuid: hash,
+          base64Url: base64Data
+        })
       }
     })
 

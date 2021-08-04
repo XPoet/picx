@@ -1,4 +1,4 @@
-import chooseImg from './chooseImg'
+import selectedFileHandle from './selectedFileHandle'
 
 const onPaste = (e: any, maxsize: number): Promise<any> | null => {
   if (!(e.clipboardData && e.clipboardData.items)) {
@@ -12,8 +12,8 @@ const onPaste = (e: any, maxsize: number): Promise<any> | null => {
       const item = e.clipboardData.items[i]
       if (item.kind === 'file') {
         const pasteFile = item.getAsFile()
-        chooseImg(pasteFile, maxsize, (url: any, file: any) => {
-          resolve({ url, file })
+        selectedFileHandle(pasteFile, maxsize).then((base64) => {
+          resolve({ base64, file: pasteFile })
         })
       }
     }

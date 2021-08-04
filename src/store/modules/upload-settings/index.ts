@@ -5,14 +5,14 @@ import RootStateTypes from '../../types'
 const uploadSettingsModule: Module<UploadAreaActiveStateTypes, RootStateTypes> = {
   state: {
     uploadSettings: {
-      isSetMaxSize: false,
-      compressSize: 200
+      isSetMaxSize: true,
+      imageMaxSize: 30 * 1024
     }
   },
   mutations: {
     UPLOAD_SETTINGS_LOGOUT(state: UploadAreaActiveStateTypes) {
-      state.uploadSettings.isSetMaxSize = false
-      state.uploadSettings.compressSize = 200
+      state.uploadSettings.isSetMaxSize = true
+      state.uploadSettings.imageMaxSize = 30 * 1024
     }
   },
   actions: {},

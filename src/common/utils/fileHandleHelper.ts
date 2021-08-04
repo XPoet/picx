@@ -6,9 +6,9 @@ export const filenameHandle = (filename: string) => {
   const suffix = filename.substr(splitIndex + 1, filename.length)
 
   return {
-    name: name,
+    name,
     hash: getUuid(),
-    suffix: suffix,
+    suffix
   }
 }
 
@@ -21,7 +21,6 @@ export const isImage = (suffix: string): boolean => {
   return /(png|jpg|gif|jpeg|webp|svg\+xml)$/.test(suffix)
 }
 
-
 export const getFileSize = (size: number) => {
-  return (size / 1024).toFixed(2) + ' KB'
+  return Number((size / 1024).toFixed(2))
 }
