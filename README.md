@@ -11,9 +11,11 @@
 
 > 官方网站 https://picx.xpoet.cn/
 
-**基于 GitHub API 开发的图床神器。** 图片外链使用 jsDelivr 自动进行 CDN 加速。免下载、免安装，打开 **[PicX 官网](https://picx.xpoet.cn/)** 即可直接使用。免费、稳定、高效。
+**基于 GitHub API 开发的图床神器。** 图片外链使用 jsDelivr 自动进行 CDN 加速。不用下载、不用安装，打开 **[PicX 官网](https://picx.xpoet.cn/)** 即可使用。
 
-您只需 **选择** 或 **[创建](https://github.com/new)** 一个 GitHub 仓库来作为图床，然后进行[简单配置](https://picx.xpoet.cn/#/config) ，就能开始尽情玩转 **[PicX](https://picx.xpoet.cn/)** 。
+您只需 **选择** 或 **[创建](https://github.com/new)** 一个 GitHub 仓库作为图床，然后在 **[PicX](https://picx.xpoet.cn/)** 进行 [配置](https://picx.xpoet.cn/#/config) 就可以使用了，如此简单。
+
+亮点：:free: 完全免费、:trophy: 无比稳定、:rocket: 极速高效、:lock: 十分安全。
 
 ---
 
