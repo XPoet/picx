@@ -20,7 +20,7 @@
           </div>
 
           <div>
-            <copy-externalLink :img-obj="imageObj" />
+            <copy-external-link :img-obj="imageObj" />
           </div>
         </div>
       </div>
@@ -66,14 +66,15 @@ export default defineComponent({
       userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
 
       deleteImage(imageObj: UploadedImageModel) {
-        ElMessageBox.confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          iconClass: 'el-icon-warning'
+        ElMessageBox.confirm(`此操作将会永久删除 ${imageObj.name} ？`, `删除提示`, {
+          confirmButtonText: `确定`,
+          cancelButtonText: `取消`,
+          iconClass: `el-icon-warning`
         }).then(() => {
           this.doDeleteImage(imageObj)
         })
       },
+
       doDeleteImage(imageObj: UploadedImageModel): void {
         // eslint-disable-next-line no-param-reassign
         imageObj.deleting = true
