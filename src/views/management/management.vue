@@ -3,30 +3,20 @@
     <div class="content-container">
       <div class="top">
         <div class="left">
-          <selected-info-bar />
+          <selected-info-bar @selected-dir-change="dirChange" />
         </div>
 
         <div class="right flex-start">
-          展示类型：
-          <i
-            :class="listing ? 'el-icon-tickets' : 'el-icon-menu'"
-            @click.stop="toggleListing"
-          ></i>
-          切换目录：
-          <el-select
-            v-model="userConfigInfo.selectedDir"
-            placeholder="请选择"
-            size="mini"
-            @change="dirChange"
+          <el-tooltip
+            placement="top"
+            :content="listing ? '切换方块展示' : '切换列表展示'"
           >
-            <el-option
-              v-for="(item, index) in userConfigInfo.dirList"
-              :key="index"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
+            <i
+              class="btn-icon"
+              :class="listing ? 'el-icon-tickets' : 'el-icon-menu'"
+              @click.stop="toggleListing"
+            ></i>
+          </el-tooltip>
         </div>
       </div>
 
