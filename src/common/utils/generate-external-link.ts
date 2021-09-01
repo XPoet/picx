@@ -6,10 +6,12 @@ const generateExternalLink = (
   type: ExternalLinkType,
   content: any,
   config: UserConfigInfoModel
-): any => {
+  // eslint-disable-next-line consistent-return
+): string => {
   const cdnLink: string = `https://cdn.jsdelivr.net/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
   const ghLink: string = decodeURI(content.download_url)
 
+  // eslint-disable-next-line default-case
   switch (type) {
     case ExternalLinkType.gh:
       return ghLink

@@ -27,7 +27,7 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from 'vue'
 import { useStore } from '@/store'
-import { filenameHandle } from '@/common/utils/fileHandleHelper'
+import { filenameHandle } from '@/common/utils/file-handle-helper'
 import selectedFileHandle from '@/common/utils/selectedFileHandle'
 import createToUploadImageObject from '@/common/utils/createToUploadImageObject'
 import paste from '@/common/utils/paste'

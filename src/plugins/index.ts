@@ -3,13 +3,14 @@ import vue from '@vitejs/plugin-vue'
 import { ViteEnv } from '@/common/model/viteConfig.model'
 
 import configPWAPlugin from './pwa'
-import configStyleImportPlugin from './styleImport'
+import importElementPlus from 'vite-plugin-element-plus'
+
 
 export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   const vitePlugins: (Plugin | Plugin[])[] = [vue()]
 
-  // add plugin vite-plugin-style-import
-  vitePlugins.push(configStyleImportPlugin())
+  // add plugin vite-plugin-element-plus
+  vitePlugins.push(importElementPlus({}))
 
   // production env
   if (isBuild) {

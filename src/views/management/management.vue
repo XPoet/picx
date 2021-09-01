@@ -8,9 +8,17 @@
 
         <div class="right flex-start">
           展示类型：
-          <i :class="listing ? 'el-icon-tickets' : 'el-icon-menu'" @click.stop="toggleListing"></i>
+          <i
+            :class="listing ? 'el-icon-tickets' : 'el-icon-menu'"
+            @click.stop="toggleListing"
+          ></i>
           切换目录：
-          <el-select v-model="userConfigInfo.selectedDir" placeholder="请选择" size="mini" @change="dirChange">
+          <el-select
+            v-model="userConfigInfo.selectedDir"
+            placeholder="请选择"
+            size="mini"
+            @change="dirChange"
+          >
             <el-option
               v-for="(item, index) in userConfigInfo.dirList"
               :key="index"
@@ -50,12 +58,12 @@
 import { computed, defineComponent, onMounted, reactive, toRefs, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { filenameHandle, isImage } from '@/common/utils/fileHandleHelper'
+import { filenameHandle, isImage } from '@/common/utils/file-handle-helper'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import { ExternalLinkType } from '@/common/model/externalLink.model'
 import { UploadedImageModel } from '@/common/model/upload.model'
-import generateExternalLink from '@/common/utils/generateExternalLink'
-import getUuid from '@/common/utils/getUuid'
+import generateExternalLink from '@/common/utils/generate-external-link'
+import getUuid from '@/common/utils/get-uuid'
 import axios from '@/common/utils/axios'
 import imageCard from '@/components/image-card/image-card.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
@@ -73,7 +81,8 @@ export default defineComponent({
     const router = useRouter()
 
     const reactiveData = reactive({
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
+        .value,
       loggingStatus: computed(() => store.getters.getUserLoggingStatus).value,
       dirImageList: computed(() => store.getters.getDirImageList).value,
 
@@ -107,12 +116,15 @@ export default defineComponent({
 
       getReposContent() {
         axios
-          .get(`/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents`, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `token ${this.userConfigInfo.token}`
+          .get(
+            `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `token ${this.userConfigInfo.token}`
+              }
             }
-          })
+          )
           .then((res) => {
             console.log('res: ', res)
             if (res && res.status === 200 && res.data.length > 0) {
@@ -122,8 +134,14 @@ export default defineComponent({
               for (const item of res.data) {
                 if (item.type === 'dir') {
                   store.dispatch('DIR_IMAGE_LIST_ADD_DIR', item.name)
-                } else if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
-                  store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', this.getImageObject(item, '/'))
+                } else if (
+                  item.type === 'file' &&
+                  isImage(filenameHandle(item.name).suffix)
+                ) {
+                  store.dispatch(
+                    'DIR_IMAGE_LIST_ADD_IMAGE',
+                    this.getImageObject(item, '/')
+                  )
                 }
               }
 
@@ -147,12 +165,15 @@ export default defineComponent({
         const temp: any = { dir: selectedDir, imageList: [] }
 
         axios
-          .get(`/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${selectedDir}`, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `token ${this.userConfigInfo.token}`
+          .get(
+            `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${selectedDir}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `token ${this.userConfigInfo.token}`
+              }
             }
-          })
+          )
           .then((res) => {
             if (res && res.status === 200 && res.data.length > 0) {
               const tempImageList: UploadedImageModel[] = []
@@ -176,10 +197,22 @@ export default defineComponent({
           name: item.name,
           path: item.path,
           sha: item.sha,
-          github_url: generateExternalLink(ExternalLinkType.gh, item, this.userConfigInfo),
+          github_url: generateExternalLink(
+            ExternalLinkType.gh,
+            item,
+            this.userConfigInfo
+          ),
           cdn_url: generateExternalLink(ExternalLinkType.cdn, item, this.userConfigInfo),
-          md_gh_url: generateExternalLink(ExternalLinkType.md_gh, item, this.userConfigInfo),
-          md_cdn_url: generateExternalLink(ExternalLinkType.md_cdn, item, this.userConfigInfo),
+          md_gh_url: generateExternalLink(
+            ExternalLinkType.md_gh,
+            item,
+            this.userConfigInfo
+          ),
+          md_cdn_url: generateExternalLink(
+            ExternalLinkType.md_cdn,
+            item,
+            this.userConfigInfo
+          ),
           deleting: false,
           is_transform_md: false
         }
@@ -222,7 +255,9 @@ export default defineComponent({
     watch(
       () => reactiveData.dirImageList,
       (_n: any) => {
-        const temp = _n.find((v: any) => v.dir === reactiveData.userConfigInfo.selectedDir)
+        const temp = _n.find(
+          (v: any) => v.dir === reactiveData.userConfigInfo.selectedDir
+        )
         if (temp) {
           reactiveData.currentDirImageList = temp.imageList
         }

@@ -1,5 +1,5 @@
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getFileSize, isImage } from './fileHandleHelper'
+import { getFileSize, isImage } from './file-handle-helper'
 
 const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null => {
   if (!file) {
@@ -23,7 +23,9 @@ const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null
       if (curImgSize >= maxsize) {
         // 给出提示，引导用户自行去压缩图片
         ElMessageBox.confirm(
-          `当前图片 ${(curImgSize / 1024).toFixed(2)} M，CDN 只能加速小于 30M 的图片，建议使用第三方工具 TinyPNG 压缩?`,
+          `当前图片 ${(curImgSize / 1024).toFixed(
+            2
+          )} M，CDN 只能加速小于 30M 的图片，建议使用第三方工具 TinyPNG 压缩?`,
           '图片过大，禁止上传',
           {
             confirmButtonText: '前往 TinyPNG',

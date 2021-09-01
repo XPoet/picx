@@ -1,5 +1,8 @@
 <template>
-  <div class="to-upload-image-list-card" v-if="toUploadImage.list.length || userConfigInfo.selectedRepos">
+  <div
+    class="to-upload-image-list-card"
+    v-if="toUploadImage.list.length || userConfigInfo.selectedRepos"
+  >
     <div class="header">
       <div>
         <selected-info-bar />
@@ -43,7 +46,9 @@
 
             <div
               class="bottom rename-operation"
-              v-if="!imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100"
+              v-if="
+                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100
+              "
             >
               <!-- 哈希化 -->
               <el-checkbox
@@ -70,7 +75,9 @@
 
             <div
               class="bottom rename-operation"
-              v-if="!imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100"
+              v-if="
+                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100
+              "
             >
               <copy-externalLink :img-obj="imgItem.uploadedImg" />
             </div>
@@ -79,28 +86,42 @@
           <div
             class="upload-status-box"
             :class="{
-              'wait-upload': !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100,
-              uploading: imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100,
-              uploaded: !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100
+              'wait-upload':
+                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100,
+              uploading:
+                imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100,
+              uploaded:
+                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100
             }"
           >
-            <i class="el-icon-upload2" v-if="!imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100">
+            <i
+              class="el-icon-upload2"
+              v-if="
+                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100
+              "
+            >
             </i>
 
             <i
               class="el-icon-loading"
-              v-if="imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100"
+              v-if="
+                imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100
+              "
             ></i>
 
             <i
               class="el-icon-check"
-              v-if="!imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100"
+              v-if="
+                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100
+              "
             ></i>
           </div>
 
           <div
             class="remove-to-upload-image"
-            v-if="imgItem.uploadStatus.progress !== 100 && !imgItem.uploadStatus.uploading"
+            v-if="
+              imgItem.uploadStatus.progress !== 100 && !imgItem.uploadStatus.uploading
+            "
             @click="removeToUploadImage(imgItem)"
           >
             <el-tooltip effect="dark" content="移除" placement="top">
@@ -117,14 +138,18 @@
 import { computed, defineComponent, reactive, toRefs } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
-import { getFileSize } from '@/common/utils/fileHandleHelper'
+import { getFileSize } from '@/common/utils/file-handle-helper'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
-import { ToUploadImageModel, UploadedImageModel, UploadStatusEnum } from '@/common/model/upload.model'
+import {
+  ToUploadImageModel,
+  UploadedImageModel,
+  UploadStatusEnum
+} from '@/common/model/upload.model'
 import { ExternalLinkType } from '@/common/model/externalLink.model'
-import TimeHelper from '@/common/utils/timeHelper'
+import TimeHelper from '@/common/utils/time-helper'
 import axios from '@/common/utils/axios'
 import uploadUrlHandle from '@/common/utils/uploadUrlHandle'
-import generateExternalLink from '@/common/utils/generateExternalLink'
+import generateExternalLink from '@/common/utils/generate-external-link'
 import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 
@@ -150,7 +175,8 @@ export default defineComponent({
       isShowDialog: false,
       curImgInfo: null,
 
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
+        .value,
       toUploadImage: computed(() => store.getters.getToUploadImage).value,
 
       hashRename(e: boolean, img: any) {
@@ -192,8 +218,14 @@ export default defineComponent({
       async uploadImage_all(userConfigInfo: UserConfigInfoModel) {
         const uploadIndex = this.toUploadImage.uploadedNumber
 
-        if (uploadIndex >= this.toUploadImage.list.length) return UploadStatusEnum.uploaded
-        if ((await this.uploadImage_single(userConfigInfo, this.toUploadImage.list[uploadIndex])) === true) {
+        if (uploadIndex >= this.toUploadImage.list.length)
+          return UploadStatusEnum.uploaded
+        if (
+          (await this.uploadImage_single(
+            userConfigInfo,
+            this.toUploadImage.list[uploadIndex]
+          )) === true
+        ) {
           if (uploadIndex < this.toUploadImage.list.length) {
             await this.uploadImage_all(userConfigInfo)
             return UploadStatusEnum.allUploaded
@@ -203,7 +235,10 @@ export default defineComponent({
         return UploadStatusEnum.uploadFail
       },
 
-      uploadImage_single(userConfigInfo: UserConfigInfoModel, img: ToUploadImageModel): Promise<any> {
+      uploadImage_single(
+        userConfigInfo: UserConfigInfoModel,
+        img: ToUploadImageModel
+      ): Promise<any> {
         const { token, selectedBranch, email, owner } = userConfigInfo
 
         // eslint-disable-next-line no-param-reassign
@@ -251,7 +286,11 @@ export default defineComponent({
         })
       },
 
-      uploadedHandle(res: any, img: ToUploadImageModel, userConfigInfo: UserConfigInfoModel) {
+      uploadedHandle(
+        res: any,
+        img: ToUploadImageModel,
+        userConfigInfo: UserConfigInfoModel
+      ) {
         // 上传状态处理
         // eslint-disable-next-line no-param-reassign
         img.uploadStatus.progress = 100
@@ -260,13 +299,29 @@ export default defineComponent({
 
         // 生成外链
         // eslint-disable-next-line no-param-reassign
-        img.externalLink.github = generateExternalLink(ExternalLinkType.gh, res.data.content, userConfigInfo)
+        img.externalLink.github = generateExternalLink(
+          ExternalLinkType.gh,
+          res.data.content,
+          userConfigInfo
+        )
         // eslint-disable-next-line no-param-reassign
-        img.externalLink.cdn = generateExternalLink(ExternalLinkType.cdn, res.data.content, userConfigInfo)
+        img.externalLink.cdn = generateExternalLink(
+          ExternalLinkType.cdn,
+          res.data.content,
+          userConfigInfo
+        )
         // eslint-disable-next-line no-param-reassign
-        img.externalLink.markdown_gh = generateExternalLink(ExternalLinkType.md_gh, res.data.content, userConfigInfo)
+        img.externalLink.markdown_gh = generateExternalLink(
+          ExternalLinkType.md_gh,
+          res.data.content,
+          userConfigInfo
+        )
         // eslint-disable-next-line no-param-reassign
-        img.externalLink.markdown_cdn = generateExternalLink(ExternalLinkType.md_cdn, res.data.content, userConfigInfo)
+        img.externalLink.markdown_cdn = generateExternalLink(
+          ExternalLinkType.md_cdn,
+          res.data.content,
+          userConfigInfo
+        )
 
         const item: UploadedImageModel = {
           uuid: img.uuid,

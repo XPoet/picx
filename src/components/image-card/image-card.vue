@@ -30,8 +30,8 @@
 
 <script lang="ts">
 import { defineComponent, computed, reactive, toRefs } from 'vue'
-import { useStore } from '@/store'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useStore } from '@/store'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import axios from '@/common/utils/axios'
 import { UploadedImageModel } from '@/common/model/upload.model'
@@ -63,7 +63,8 @@ export default defineComponent({
     const store = useStore()
     const reactiveData = reactive({
       isEnableDeleted: true,
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
+        .value,
 
       deleteImage(imageObj: UploadedImageModel) {
         ElMessageBox.confirm(`此操作将会永久删除 ${imageObj.name} ？`, `删除提示`, {

@@ -1,7 +1,7 @@
 import { Module } from 'vuex'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import { PICX_CONFIG } from '@/common/model/localStorage.model'
-import cleanObject from '@/common/utils/cleanObject'
+import cleanObject from '@/common/utils/clean-object'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 
