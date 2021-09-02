@@ -8,6 +8,8 @@ const axios = Axios.create({
   timeout: 300000 // request timeout 请求超时 5m
 })
 
+axios.defaults.headers['Content-Type'] = 'application/json'
+
 // 发起请求之前的拦截器（前置拦截）
 axios.interceptors.request.use(
   (config) => {

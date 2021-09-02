@@ -88,10 +88,6 @@ export default defineComponent({
           .delete(
             `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${imageObj.path}`,
             {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `token ${this.userConfigInfo?.token}`
-              },
               data: {
                 owner: this.userConfigInfo?.owner,
                 repo: this.userConfigInfo?.selectedRepos,

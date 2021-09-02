@@ -184,21 +184,16 @@ export default defineComponent({
       getUserInfo() {
         if (this.userConfigInfo.token) {
           this.loading = true
-          axios
-            .get('/user', {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `token ${this.userConfigInfo.token}`
-              }
-            })
-            .then((res: any) => {
-              if (res && res.status === 200) {
-                this.saveUserInfo(res)
-                this.getReposList(res.data.repos_url)
-              } else {
-                this.loading = false
-              }
-            })
+          axios.defaults.headers.Authorization = `token ${this.userConfigInfo.token}`
+          axios.get('/user').then((res: any) => {
+            console.log('[getUserInfo] ', res)
+            if (res && res.status === 200) {
+              this.saveUserInfo(res)
+              this.getReposList(res.data.repos_url)
+            } else {
+              this.loading = false
+            }
+          })
         } else {
           ElMessage.warning('Token 不能为空！')
         }
@@ -214,30 +209,23 @@ export default defineComponent({
       },
 
       getReposList(reposUrl: string) {
-        axios
-          .get(reposUrl, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `token ${this.userConfigInfo.token}`
-            }
-          })
-          .then((res: any) => {
-            if (res.status === 200 && res.data.length > 0) {
-              this.userConfigInfo.reposList = []
-              // eslint-disable-next-line no-restricted-syntax
-              for (const repos of res.data) {
-                if (!repos.fork) {
-                  this.userConfigInfo.reposList.push({
-                    value: repos.name,
-                    label: repos.name,
-                    desc: repos.description
-                  })
-                }
+        axios.get(reposUrl).then((res: any) => {
+          if (res.status === 200 && res.data.length > 0) {
+            this.userConfigInfo.reposList = []
+            // eslint-disable-next-line no-restricted-syntax
+            for (const repos of res.data) {
+              if (!repos.fork) {
+                this.userConfigInfo.reposList.push({
+                  value: repos.name,
+                  label: repos.name,
+                  desc: repos.description
+                })
               }
-              this.loading = false
-              this.persistUserConfigInfo()
             }
-          })
+            this.loading = false
+            this.persistUserConfigInfo()
+          }
+        })
       },
 
       innerSelectRepos(repos: string) {
@@ -248,12 +236,7 @@ export default defineComponent({
       getBranchList(repos: string) {
         this.dirLoading = true
         axios
-          .get(`/repos/${this.userConfigInfo.owner}/${repos}/branches`, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `token ${this.userConfigInfo.token}`
-            }
-          })
+          .get(`/repos/${this.userConfigInfo.owner}/${repos}/branches`)
           .then((res: any) => {
             if (res && res.status === 200) {
               this.dirLoading = false
@@ -280,12 +263,7 @@ export default defineComponent({
       getDirList(repos: string) {
         this.dirLoading = true
         axios
-          .get(`/repos/${this.userConfigInfo.owner}/${repos}/contents`, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `token ${this.userConfigInfo.token}`
-            }
-          })
+          .get(`/repos/${this.userConfigInfo.owner}/${repos}/contents`)
           .then((res: any) => {
             if (res && res.status === 200 && res.data.length > 0) {
               this.userConfigInfo.dirList = [{ value: '/', label: '/' }]

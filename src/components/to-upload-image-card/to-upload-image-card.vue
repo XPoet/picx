@@ -239,7 +239,7 @@ export default defineComponent({
         userConfigInfo: UserConfigInfoModel,
         img: ToUploadImageModel
       ): Promise<any> {
-        const { token, selectedBranch, email, owner } = userConfigInfo
+        const { selectedBranch, email, owner } = userConfigInfo
 
         // eslint-disable-next-line no-param-reassign
         img.uploadStatus.uploading = true
@@ -259,12 +259,7 @@ export default defineComponent({
 
         return new Promise((resolve, reject) => {
           axios
-            .put(uploadUrlHandle(userConfigInfo, img.filename.now), data, {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `token ${token}`
-              }
-            })
+            .put(uploadUrlHandle(userConfigInfo, img.filename.now), data)
             .then((res) => {
               if (res && res.status === 201) {
                 this.uploadedHandle(res, img, userConfigInfo)

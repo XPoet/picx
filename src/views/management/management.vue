@@ -46,8 +46,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, onMounted, reactive, toRefs, watch } from 'vue'
+<script lang="ts" setup>
+import { computed, onMounted, watch, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { filenameHandle, isImage } from '@/common/utils/file-handle-helper'
@@ -60,217 +60,158 @@ import axios from '@/common/utils/axios'
 import imageCard from '@/components/image-card/image-card.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 
-export default defineComponent({
-  name: 'management',
+const store = useStore()
+const router = useRouter()
 
-  components: {
-    imageCard,
-    selectedInfoBar
-  },
+const userConfigInfo = computed(
+  (): UserConfigInfoModel => store.getters.getUserConfigInfo
+)
+const loggingStatus = computed(() => store.getters.getUserLoggingStatus)
+const dirImageList = computed(() => store.getters.getDirImageList)
 
-  setup() {
-    const store = useStore()
-    const router = useRouter()
+const currentDirImageList = ref([])
+const loadingImageList = ref(false)
+const listing = ref(false)
 
-    const reactiveData = reactive({
-      userConfigInfo: computed(
-        (): UserConfigInfoModel => store.getters.getUserConfigInfo
-      ),
-      loggingStatus: computed(() => store.getters.getUserLoggingStatus),
-      dirImageList: computed(() => store.getters.getDirImageList),
+function isHasDir(selectedDir: any) {
+  return userConfigInfo.value.dirList.some((v: any) => v.value === selectedDir)
+}
 
-      currentDirImageList: [],
-      loadingImageList: false,
-      listing: false,
+function getImageObject(item: any, selectedDir: any): UploadedImageModel {
+  return {
+    uuid: getUuid(),
+    dir: selectedDir,
+    name: item.name,
+    path: item.path,
+    sha: item.sha,
+    github_url: generateExternalLink(ExternalLinkType.gh, item, userConfigInfo.value),
+    cdn_url: generateExternalLink(ExternalLinkType.cdn, item, userConfigInfo.value),
+    md_gh_url: generateExternalLink(ExternalLinkType.md_gh, item, userConfigInfo.value),
+    md_cdn_url: generateExternalLink(ExternalLinkType.md_cdn, item, userConfigInfo.value),
+    deleting: false,
+    is_transform_md: false
+  }
+}
 
-      initDirImageList() {
-        if (!this.dirImageList.length) {
-          this.getReposContent()
-          return
-        }
+// 获取指定目录的内容
+function getDirContent(selectedDir: any) {
+  loadingImageList.value = true
 
-        const { selectedDir } = this.userConfigInfo
-        const targetDirObj = this.dirImageList.find((v: any) => v.dir === selectedDir)
+  const temp: any = { dir: selectedDir, imageList: [] }
 
-        if (!targetDirObj) {
-          if (this.isHasDir(selectedDir)) {
-            this.getDirContent(selectedDir)
+  axios
+    .get(
+      `/repos/${userConfigInfo.value.owner}/${userConfigInfo.value.selectedRepos}/contents/${selectedDir}`
+    )
+    .then((res) => {
+      if (res && res.status === 200 && res.data.length > 0) {
+        const tempImageList: UploadedImageModel[] = []
+        // eslint-disable-next-line no-restricted-syntax
+        for (const item of res.data) {
+          if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
+            tempImageList.push(getImageObject(item, selectedDir))
           }
-          return
         }
-
-        if (targetDirObj.imageList.length > 0) {
-          this.currentDirImageList = targetDirObj.imageList
-        } else {
-          // 请求该目录内容
-          this.getDirContent(selectedDir)
-        }
-      },
-
-      getReposContent() {
-        axios
-          .get(
-            `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents`,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `token ${this.userConfigInfo.token}`
-              }
-            }
-          )
-          .then((res) => {
-            console.log('[getReposContent] ', res)
-            if (res && res.status === 200 && res.data.length > 0) {
-              store.dispatch('DIR_IMAGE_LIST_ADD_DIR', '/')
-
-              // eslint-disable-next-line no-restricted-syntax
-              for (const item of res.data) {
-                if (item.type === 'dir') {
-                  store.dispatch('DIR_IMAGE_LIST_ADD_DIR', item.name)
-                } else if (
-                  item.type === 'file' &&
-                  isImage(filenameHandle(item.name).suffix)
-                ) {
-                  store.dispatch(
-                    'DIR_IMAGE_LIST_ADD_IMAGE',
-                    this.getImageObject(item, '/')
-                  )
-                }
-              }
-
-              // 如果 userConfig.dirList 无 selectedDir，则切换显示根目录下（ / ）图片
-              if (!this.isHasDir(this.userConfigInfo.selectedDir)) {
-                this.userConfigInfo.selectedDir = '/'
-              }
-              this.dirChange(this.userConfigInfo.selectedDir)
-            }
-          })
-      },
-
-      isHasDir(selectedDir: any) {
-        return this.userConfigInfo.dirList.some((v: any) => v.value === selectedDir)
-      },
-
-      // 获取指定目录的内容
-      getDirContent(selectedDir: any) {
-        this.loadingImageList = true
-
-        const temp: any = { dir: selectedDir, imageList: [] }
-
-        axios
-          .get(
-            `/repos/${this.userConfigInfo?.owner}/${this.userConfigInfo?.selectedRepos}/contents/${selectedDir}`,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `token ${this.userConfigInfo.token}`
-              }
-            }
-          )
-          .then((res) => {
-            if (res && res.status === 200 && res.data.length > 0) {
-              const tempImageList: UploadedImageModel[] = []
-              // eslint-disable-next-line no-restricted-syntax
-              for (const item of res.data) {
-                if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
-                  tempImageList.push(this.getImageObject(item, selectedDir))
-                }
-              }
-              temp.imageList = tempImageList
-              store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE_LIST', temp)
-              this.loadingImageList = false
-            }
-          })
-      },
-
-      getImageObject(item: any, selectedDir: any): UploadedImageModel {
-        return {
-          uuid: getUuid(),
-          dir: selectedDir,
-          name: item.name,
-          path: item.path,
-          sha: item.sha,
-          github_url: generateExternalLink(
-            ExternalLinkType.gh,
-            item,
-            this.userConfigInfo
-          ),
-          cdn_url: generateExternalLink(ExternalLinkType.cdn, item, this.userConfigInfo),
-          md_gh_url: generateExternalLink(
-            ExternalLinkType.md_gh,
-            item,
-            this.userConfigInfo
-          ),
-          md_cdn_url: generateExternalLink(
-            ExternalLinkType.md_cdn,
-            item,
-            this.userConfigInfo
-          ),
-          deleting: false,
-          is_transform_md: false
-        }
-      },
-
-      dirChange(dir: any) {
-        const targetDirObj = this.dirImageList.find((v: any) => v.dir === dir)
-        if (!targetDirObj || !targetDirObj.imageList.length) {
-          this.getDirContent(dir)
-          return
-        }
-        this.currentDirImageList = targetDirObj.imageList
-      },
-
-      toggleListing() {
-        this.listing = !this.listing
+        temp.imageList = tempImageList
+        store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE_LIST', temp)
+        loadingImageList.value = false
       }
     })
+}
 
-    function dirChange(dir: string) {
-      reactiveData.dirChange(dir)
-    }
+function dirChange(dir: string) {
+  const targetDirObj = dirImageList.value.find((v: any) => v.dir === dir)
+  if (!targetDirObj || !targetDirObj.imageList.length) {
+    getDirContent(dir)
+    return
+  }
+  currentDirImageList.value = targetDirObj.imageList
+}
 
-    function toggleListing() {
-      reactiveData.toggleListing()
-    }
-
-    function reloadPics() {
-      store.dispatch('DIR_IMAGE_LOGOUT')
-      reactiveData.initDirImageList()
-    }
-
-    onMounted(() => {
-      reactiveData.initDirImageList()
-    })
-
-    watch(
-      () => reactiveData.loggingStatus,
-      (_n: boolean) => {
-        // eslint-disable-next-line no-unused-expressions
-        !_n && router.push('/config')
-      }
+function getReposContent() {
+  axios
+    .get(
+      `/repos/${userConfigInfo.value.owner}/${userConfigInfo.value.selectedRepos}/contents`
     )
+    .then((res) => {
+      console.log('[getReposContent] ', res)
+      if (res && res.status === 200 && res.data.length > 0) {
+        store.dispatch('DIR_IMAGE_LIST_ADD_DIR', '/')
 
-    watch(
-      () => reactiveData.dirImageList,
-      (_n: any) => {
-        const temp = _n.find(
-          (v: any) => v.dir === reactiveData.userConfigInfo.selectedDir
-        )
-        if (temp) {
-          reactiveData.currentDirImageList = temp.imageList
+        // eslint-disable-next-line no-restricted-syntax
+        for (const item of res.data) {
+          if (item.type === 'dir') {
+            store.dispatch('DIR_IMAGE_LIST_ADD_DIR', item.name)
+          } else if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
+            store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', getImageObject(item, '/'))
+          }
         }
-      },
-      { deep: true }
-    )
 
-    return {
-      ...toRefs(reactiveData),
-      dirChange,
-      reloadPics,
-      toggleListing
+        // 如果 userConfig.dirList 无 selectedDir，则切换显示根目录下（ / ）图片
+        if (!isHasDir(userConfigInfo.value.selectedDir)) {
+          userConfigInfo.value.selectedDir = '/'
+        }
+        dirChange(userConfigInfo.value.selectedDir)
+      }
+    })
+}
+
+function initDirImageList() {
+  if (!dirImageList.value.length) {
+    getReposContent()
+    return
+  }
+
+  const { selectedDir } = userConfigInfo.value
+  const targetDirObj = dirImageList.value.find((v: any) => v.dir === selectedDir)
+
+  if (!targetDirObj) {
+    if (isHasDir(selectedDir)) {
+      getDirContent(selectedDir)
+    }
+    return
+  }
+
+  if (targetDirObj.imageList.length > 0) {
+    currentDirImageList.value = targetDirObj.imageList
+  } else {
+    // 请求该目录内容
+    getDirContent(selectedDir)
+  }
+}
+
+function toggleListing() {
+  listing.value = !listing.value
+}
+
+function reloadPics() {
+  store.dispatch('DIR_IMAGE_LOGOUT')
+  initDirImageList()
+}
+
+onMounted(() => {
+  initDirImageList()
+})
+
+watch(
+  () => loggingStatus,
+  (nv) => {
+    if (nv.value === false) {
+      router.push('/config')
     }
   }
-})
+)
+
+watch(
+  () => dirImageList,
+  (_n: any) => {
+    const temp = _n.value.find((v: any) => v.dir === userConfigInfo.value.selectedDir)
+    if (temp) {
+      currentDirImageList.value = temp.imageList
+    }
+  },
+  { deep: true }
+)
 </script>
 
 <style scoped lang="stylus">
