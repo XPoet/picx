@@ -16,7 +16,7 @@
           size="small"
           type="primary"
           native-type="submit"
-          @click="getUserInfo()"
+          @click.prevent="getUserInfo()"
         >
           确认 Token
         </el-button>
