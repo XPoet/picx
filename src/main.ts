@@ -10,4 +10,5 @@ if (import.meta.env.MODE === 'production') {
 }
 
 const app = createApp(App)
-styleImport(app).use(router).use(store, key).mount('#app')
+styleImport(app)
+app.use(router).use(store, key).mount('#app')

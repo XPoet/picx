@@ -5,7 +5,6 @@
         <div class="left">
           <selected-info-bar @selected-dir-change="dirChange" />
         </div>
-
         <div class="right flex-start">
           <el-tooltip
             placement="top"
@@ -17,6 +16,9 @@
               @click.stop="toggleListing"
             ></i>
           </el-tooltip>
+          <el-tooltip placement="top" content="重新加载图片">
+            <i class="btn-icon el-icon-refresh" @click.stop="reloadPics"></i>
+          </el-tooltip>
         </div>
       </div>
 
@@ -24,7 +26,7 @@
         class="bottom"
         v-loading="loadingImageList"
         element-loading-text="加载中..."
-        element-loading-background="rgba(0, 0, 0, 0.6)"
+        element-loading-background="rgba(0, 0, 0, 0.5)"
       >
         <ul class="image-list">
           <li
@@ -71,10 +73,11 @@ export default defineComponent({
     const router = useRouter()
 
     const reactiveData = reactive({
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
-        .value,
-      loggingStatus: computed(() => store.getters.getUserLoggingStatus).value,
-      dirImageList: computed(() => store.getters.getDirImageList).value,
+      userConfigInfo: computed(
+        (): UserConfigInfoModel => store.getters.getUserConfigInfo
+      ),
+      loggingStatus: computed(() => store.getters.getUserLoggingStatus),
+      dirImageList: computed(() => store.getters.getDirImageList),
 
       currentDirImageList: [],
       loadingImageList: false,
@@ -116,7 +119,7 @@ export default defineComponent({
             }
           )
           .then((res) => {
-            console.log('res: ', res)
+            console.log('[getReposContent] ', res)
             if (res && res.status === 200 && res.data.length > 0) {
               store.dispatch('DIR_IMAGE_LIST_ADD_DIR', '/')
 
@@ -230,6 +233,11 @@ export default defineComponent({
       reactiveData.toggleListing()
     }
 
+    function reloadPics() {
+      store.dispatch('DIR_IMAGE_LOGOUT')
+      reactiveData.initDirImageList()
+    }
+
     onMounted(() => {
       reactiveData.initDirImageList()
     })
@@ -258,6 +266,7 @@ export default defineComponent({
     return {
       ...toRefs(reactiveData),
       dirChange,
+      reloadPics,
       toggleListing
     }
   }

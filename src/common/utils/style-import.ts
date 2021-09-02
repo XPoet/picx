@@ -54,5 +54,4 @@ export default function styleImport(app: App) {
   ].forEach((v: any) => {
     app.use(v)
   })
-  return app
 }
