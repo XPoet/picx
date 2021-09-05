@@ -1,5 +1,6 @@
 import Axios from 'axios'
 import { ElMessage } from 'element-plus'
+import { PICX_CONFIG } from '@/common/model/localStorage.model'
 
 const baseURL = 'https://api.github.com'
 
@@ -13,11 +14,10 @@ axios.defaults.headers['Content-Type'] = 'application/json'
 // 发起请求之前的拦截器（前置拦截）
 axios.interceptors.request.use(
   (config) => {
-    // 如果有token 就携带 token
-    const token = window.localStorage.getItem('accessToken')
+    const userConfig = localStorage.getItem(PICX_CONFIG)
 
-    if (token) {
-      config.headers.common.Authorization = token
+    if (userConfig) {
+      config.headers.Authorization = `token ${JSON.parse(userConfig).token}`
     }
 
     return config
