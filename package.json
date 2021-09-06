@@ -14,16 +14,14 @@
     "serve": "vite preview",
     "release": "git push --tag && git push -u origin master",
     "format": "prettier --write",
-    "prepare": "husky install",
-    "https-preview": "serve dist",
-    "serve:pwa": "npm run build && npm run https-preview"
+    "prepare": "husky install"
   },
   "lint-staged": {
     "*.{vue,js,ts}": "eslint --fix"
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "element-plus": "^1.1.0-beta.8",
+    "element-plus": "^1.1.0-beta.9",
     "vue": "^3.2.7",
     "vue-router": "^4.0.11",
     "vuex": "^4.0.2"
@@ -45,7 +43,6 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-vue": "^7.9.0",
-    "https-localhost": "^4.6.4",
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
     "prettier": "^2.2.1",
