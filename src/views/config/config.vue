@@ -91,9 +91,9 @@
             :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个目录'"
             placement="top"
           >
-            <el-radio label="reposDir"
-              >选择 {{ userConfigInfo.selectedRepos }} 仓库目录</el-radio
-            >
+            <el-radio label="reposDir">
+              选择 {{ userConfigInfo.selectedRepos }} 仓库目录
+            </el-radio>
           </el-tooltip>
         </el-radio-group>
       </el-form-item>
@@ -149,7 +149,8 @@
           type="success"
           @click="goUpload"
           v-if="userConfigInfo.selectedRepos"
-          >完成配置
+        >
+          完成配置
         </el-button>
       </el-form-item>
     </el-form>
@@ -185,7 +186,7 @@ export default defineComponent({
         if (this.userConfigInfo.token) {
           this.loading = true
           axios.defaults.headers.Authorization = `token ${this.userConfigInfo.token}`
-          axios.get('/user').then((res: any) => {
+          axios.get('/user').then((res: unknown) => {
             console.log('[getUserInfo] ', res)
             if (res && res.status === 200) {
               this.saveUserInfo(res)
@@ -209,23 +210,32 @@ export default defineComponent({
       },
 
       getReposList(reposUrl: string) {
-        axios.get(reposUrl).then((res: any) => {
-          if (res.status === 200 && res.data.length > 0) {
-            this.userConfigInfo.reposList = []
-            // eslint-disable-next-line no-restricted-syntax
-            for (const repos of res.data) {
-              if (!repos.fork) {
-                this.userConfigInfo.reposList.push({
-                  value: repos.name,
-                  label: repos.name,
-                  desc: repos.description
-                })
-              }
+        axios
+          .get(reposUrl, {
+            params: {
+              type: 'public',
+              sort: 'created',
+              per_page: 100
             }
-            this.loading = false
-            this.persistUserConfigInfo()
-          }
-        })
+          })
+          .then((res: unknown) => {
+            console.log('[getReposList] ', res)
+            if (res.status === 200 && res.data.length > 0) {
+              this.userConfigInfo.reposList = []
+              // eslint-disable-next-line no-restricted-syntax
+              for (const repos of res.data) {
+                if (!repos.fork && !repos.private) {
+                  this.userConfigInfo.reposList.push({
+                    value: repos.name,
+                    label: repos.name,
+                    desc: repos.description
+                  })
+                }
+              }
+              this.loading = false
+              this.persistUserConfigInfo()
+            }
+          })
       },
 
       innerSelectRepos(repos: string) {
