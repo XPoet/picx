@@ -96,7 +96,7 @@ export default defineComponent({
             }
           })
           .then((res) => {
-            console.log('delete res: ', res)
+            console.log('[deleteImage] ', res)
             if (res && res.status === 200) {
               // eslint-disable-next-line no-param-reassign
               imageObj.deleting = false
