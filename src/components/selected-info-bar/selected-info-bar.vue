@@ -38,6 +38,7 @@ export default defineComponent({
     const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
 
     const dirChange = (dir: string) => {
+      store.dispatch('USER_CONFIG_INFO_PERSIST')
       context.emit('selected-dir-change', dir)
     }
 
