@@ -12,7 +12,7 @@ const uploadSettingsModule: Module<UploadAreaActiveStateTypes, RootStateTypes> =
   mutations: {
     UPLOAD_SETTINGS_LOGOUT(state: UploadAreaActiveStateTypes) {
       state.uploadSettings.isSetMaxSize = true
-      state.uploadSettings.imageMaxSize = 30 * 1024
+      state.uploadSettings.imageMaxSize = 50 * 1024
     }
   },
   actions: {},
