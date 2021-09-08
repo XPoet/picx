@@ -32,17 +32,18 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       cors: VITE_CORS,
 
       /**
-       * 设置代理，解决前端跨域问题
-       * /purge -> https://purge.jsdelivr.net
-       * ^/purge -> /
-       * /purge/gh/xx/xx.png -> https://purge.jsdelivr.net/gh/xx/xx.png
+       * 设置代理（解决前端跨域问题）
+       * /api -> https://xxx.xxx.com
+       * ^/API -> /
+       * /api/aa/bb -> https://xxx.xxx.com/aa/bb
+       * /api/API/aa/bb -> https://xxx.xxx.com/aa/bb
        */
       proxy: {
-        '/purge': {
-          target: 'https://purge.jsdelivr.net',
+        '/api': {
+          target: 'https://xxx.xxx.com',
           changeOrigin: true,
           secure: true,
-          rewrite: (path) => path.replace('^/purge', '/')
+          rewrite: (path) => path.replace('^/API', '/')
         }
       }
     }
