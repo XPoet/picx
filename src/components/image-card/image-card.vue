@@ -117,10 +117,15 @@ export default defineComponent({
           })
       },
 
-      imageView(imgObj: any) {
+      imageView(imgObj: UploadedImageModel) {
         store.commit('IMAGE_VIEWER', {
           isShow: true,
-          url: imgObj.cdn_url
+          imgInfo: {
+            name: imgObj.name,
+            size: imgObj.size,
+            lastModified: imgObj.lastModified,
+            url: imgObj.cdn_url
+          }
         })
       },
 

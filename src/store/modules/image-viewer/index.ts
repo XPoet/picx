@@ -5,19 +5,19 @@ import RootStateTypes from '../../types'
 const imageViewerModule: Module<ImageViewerStateTypes, RootStateTypes> = {
   state: {
     imageViewer: {
-      url: '',
+      imgInfo: null,
       isShow: false
     }
   },
   mutations: {
-    IMAGE_VIEWER(state: ImageViewerStateTypes, { url, isShow }) {
-      state.imageViewer.url = url
+    IMAGE_VIEWER(state: ImageViewerStateTypes, { imgInfo, isShow }) {
+      state.imageViewer.imgInfo = imgInfo
       state.imageViewer.isShow = isShow
     },
 
     IMAGE_VIEWER_LOGOUT(state: ImageViewerStateTypes) {
       state.imageViewer.isShow = false
-      state.imageViewer.url = ''
+      state.imageViewer.imgInfo = null
     }
   },
   actions: {},

@@ -1,7 +1,5 @@
-
 $transition-duration = 0.3s
 $transition-delay = 0s
-
 
 .image-viewer {
   position fixed
@@ -23,13 +21,28 @@ $transition-delay = 0s
   transition-timing-function ease, ease
 
   &.active {
-    background rgba(0, 0, 0, 0.5)
+    background rgba(0, 0, 0, 0.6)
     visibility visible
 
     .image-box {
-      cursor zoom-out
       transform scale(1)
       padding 2px
+    }
+
+    .image-info {
+      display block
+    }
+  }
+
+  .image-info {
+    position absolute
+    top 50px
+    left 50%
+    transform translateX(-50%)
+    display none
+
+    .item {
+      margin 0 6px
     }
   }
 
@@ -53,6 +66,7 @@ $transition-delay = 0s
     }
 
     .img {
+      cursor zoom-out
       max-width 100%
       max-height 100%
     }
