@@ -1,15 +1,20 @@
 import { Module } from 'vuex'
-import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import {
+  BranchModeEnum,
+  BranchModel,
+  UserConfigInfoModel
+} from '@/common/model/userConfigInfo.model'
 import { PICX_CONFIG } from '@/common/model/localStorage.model'
 import cleanObject from '@/common/utils/clean-object'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
+import { DirModeEnum } from '@/common/model/dir.model'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const config: string | null = localStorage.getItem(PICX_CONFIG)
   return config
     ? JSON.parse(config)
-    : {
+    : ({
         token: '',
         owner: '',
         email: '',
@@ -17,12 +22,14 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
         avatarUrl: '',
         selectedRepos: '',
         reposList: [],
+        branchMode: BranchModeEnum.reposBranch,
         selectedBranch: '',
-        dirMode: '',
+        branchList: [],
+        dirMode: DirModeEnum.reposDir,
         selectedDir: '',
         dirList: [],
         loggingStatus: false
-      }
+      } as UserConfigInfoModel)
 }
 
 const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
