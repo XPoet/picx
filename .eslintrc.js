@@ -18,6 +18,8 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'vue/no-multiple-template-root': 'off',
     'no-console': 'off',
+    'no-unused-vars': 'off',
+    'no-shadow': 'off',
     'no-param-reassign': [
       'error',
       {
