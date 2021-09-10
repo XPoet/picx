@@ -58,16 +58,77 @@
       </el-form-item>
     </el-form>
 
-    <!-- 目录 -->
+    <!-- 分支 -->
     <el-form
       label-width="70px"
       label-position="right"
       v-if="userConfigInfo.selectedRepos"
+      v-loading="branchLoading"
+      element-loading-text="加载中..."
+    >
+      <el-form-item
+        v-if="userConfigInfo.branchList.length && userConfigInfo.selectedRepos"
+        label="分支方式"
+      >
+        <el-radio-group v-model="userConfigInfo.branchMode" @change="branchModeChange">
+          <el-tooltip
+            v-if="userConfigInfo.branchList.length"
+            :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个分支'"
+            placement="top"
+          >
+            <el-radio label="reposBranch">
+              选择 {{ userConfigInfo.selectedRepos }} 仓库下的分支
+            </el-radio>
+          </el-tooltip>
+          <el-tooltip content="手动创建一个新分支" placement="top">
+            <el-radio label="newBranch">新建分支</el-radio>
+          </el-tooltip>
+        </el-radio-group>
+      </el-form-item>
+
+      <el-form-item
+        v-if="
+          userConfigInfo.branchList.length && userConfigInfo.branchMode === 'reposBranch'
+        "
+        label="选择分支"
+      >
+        <el-select
+          v-model="userConfigInfo.selectedBranch"
+          filterable
+          style="width: 100%"
+          placeholder="请选择分支..."
+          @change="selectBranch"
+        >
+          <el-option
+            v-for="(repos, reposIndex) in userConfigInfo.branchList"
+            :key="reposIndex"
+            :label="repos.label"
+            :value="repos.value"
+          >
+          </el-option>
+        </el-select>
+      </el-form-item>
+
+      <el-form-item v-if="userConfigInfo.branchMode === 'newBranch'" label="新建分支">
+        <el-input
+          v-model="userConfigInfo.selectedBranch"
+          @input="persistUserConfigInfo()"
+          clearable
+          placeholder="请输入新建的分支..."
+        ></el-input>
+      </el-form-item>
+    </el-form>
+
+    <!-- 目录 -->
+    <el-form
+      label-width="70px"
+      label-position="right"
+      v-if="userConfigInfo.selectedBranch"
       v-loading="dirLoading"
       element-loading-text="加载中..."
     >
       <el-form-item
-        v-if="userConfigInfo.reposList.length && userConfigInfo.selectedRepos"
+        v-if="userConfigInfo.branchList.length && userConfigInfo.selectedBranch"
         label="目录方式"
       >
         <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
@@ -87,8 +148,10 @@
           </el-tooltip>
 
           <el-tooltip
-            v-if="userConfigInfo.dirList.length"
-            :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个目录'"
+            v-if="
+              userConfigInfo.dirList.length && userConfigInfo.branchMode !== 'newBranch'
+            "
+            :content="'选择 ' + userConfigInfo.selectedBranch + ' 分支下的一个目录'"
             placement="top"
           >
             <el-radio label="reposDir">
@@ -116,7 +179,11 @@
       </el-form-item>
 
       <el-form-item
-        v-if="userConfigInfo.dirList.length && userConfigInfo.dirMode === 'reposDir'"
+        v-if="
+          userConfigInfo.dirList.length &&
+          userConfigInfo.dirMode === 'reposDir' &&
+          userConfigInfo.branchMode !== 'newBranch'
+        "
         label="选择目录"
       >
         <el-select
@@ -163,7 +230,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import { DirModeEnum } from '@/common/model/dir.model'
-import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import { BranchModeEnum, UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import axios from '@/common/utils/axios'
 import TimeHelper from '@/common/utils/time-helper'
 
@@ -181,12 +248,13 @@ export default defineComponent({
 
       loading: false,
       dirLoading: false,
+      branchLoading: false,
 
       getUserInfo() {
         if (this.userConfigInfo.token) {
           this.loading = true
           axios.defaults.headers.Authorization = `token ${this.userConfigInfo.token}`
-          axios.get('/user').then((res: unknown) => {
+          axios.get('/user').then((res: any) => {
             console.log('[getUserInfo] ', res)
             if (res && res.status === 200) {
               this.saveUserInfo(res)
@@ -218,7 +286,7 @@ export default defineComponent({
               per_page: 100
             }
           })
-          .then((res: unknown) => {
+          .then((res: any) => {
             console.log('[getReposList] ', res)
             if (res.status === 200 && res.data.length > 0) {
               this.userConfigInfo.reposList = []
@@ -244,37 +312,54 @@ export default defineComponent({
       },
 
       getBranchList(repos: string) {
-        this.dirLoading = true
+        this.branchLoading = true
         axios
           .get(`/repos/${this.userConfigInfo.owner}/${repos}/branches`)
           .then((res: any) => {
+            console.log('[getBranchList] ', res)
             if (res && res.status === 200) {
-              this.dirLoading = false
-              const MASTER = 'master'
-              const MAIN = 'main'
-
+              this.branchLoading = false
+              this.userConfigInfo.branchList = []
               if (res.data.length > 0) {
-                if (res.data.some((v: any) => v.name === MASTER)) {
-                  this.userConfigInfo.selectedBranch = MASTER
-                } else if (res.data.some((v: any) => v.name === MAIN)) {
-                  this.userConfigInfo.selectedBranch = MAIN
+                // eslint-disable-next-line no-restricted-syntax
+                for (const item of res.data) {
+                  this.userConfigInfo.branchList.push({
+                    value: item.name,
+                    label: item.name
+                  })
                 }
-                this.getDirList(repos)
               } else {
-                this.userConfigInfo.selectedBranch = MASTER
-                this.userConfigInfo.dirMode = DirModeEnum.newDir
-                this.userConfigInfo.selectedDir = ''
-                this.userConfigInfo.dirList = []
+                this.userConfigInfo.branchList.push({
+                  value: 'master',
+                  label: 'master'
+                })
               }
+              this.userConfigInfo.selectedBranch = this.userConfigInfo.branchList[0].value
+              this.userConfigInfo.branchMode = BranchModeEnum.reposBranch
+              this.getDirList(this.userConfigInfo.selectedBranch)
+              this.persistUserConfigInfo()
             }
           })
       },
 
-      getDirList(repos: string) {
+      innerSelectBranch(branch: string) {
+        reactiveData.getDirList(branch)
+        reactiveData.persistUserConfigInfo()
+      },
+
+      getDirList(branch: string) {
         this.dirLoading = true
         axios
-          .get(`/repos/${this.userConfigInfo.owner}/${repos}/contents`)
+          .get(
+            `/repos/${this.userConfigInfo.owner}/${this.userConfigInfo.selectedRepos}/contents`,
+            {
+              params: {
+                ref: branch
+              }
+            }
+          )
           .then((res: any) => {
+            console.log('[getDirList] ', res)
             if (res && res.status === 200 && res.data.length > 0) {
               this.userConfigInfo.dirList = [{ value: '/', label: '/' }]
               // eslint-disable-next-line no-restricted-syntax
@@ -290,6 +375,32 @@ export default defineComponent({
             }
             this.dirLoading = false
           })
+      },
+
+      innerBranchModeChange(mode: BranchModeEnum) {
+        const selBranch = this.userConfigInfo.selectedBranch
+        const bv = this.userConfigInfo.branchList[0].value
+
+        switch (mode) {
+          case BranchModeEnum.newBranch:
+            this.userConfigInfo.selectedBranch = 'xxx'
+            this.userConfigInfo.dirMode = DirModeEnum.newDir
+            this.userConfigInfo.selectedDir = 'xxx'
+            break
+
+          case BranchModeEnum.reposBranch:
+            if (selBranch !== bv) {
+              this.userConfigInfo.selectedBranch = bv
+              this.getDirList(bv)
+            }
+
+            break
+
+          default:
+            this.userConfigInfo.selectedBranch = ''
+            break
+        }
+        this.persistUserConfigInfo()
       },
 
       innerDirModeChange(dirMode: DirModeEnum) {
@@ -358,8 +469,16 @@ export default defineComponent({
       reactiveData.innerSelectRepos(repos)
     }
 
-    const dirModeChange = (dirMode: DirModeEnum) => {
-      reactiveData.innerDirModeChange(dirMode)
+    const selectBranch = (branch: string) => {
+      reactiveData.innerSelectBranch(branch)
+    }
+
+    const dirModeChange = (mode: DirModeEnum) => {
+      reactiveData.innerDirModeChange(mode)
+    }
+
+    const branchModeChange = (mode: BranchModeEnum) => {
+      reactiveData.innerBranchModeChange(mode)
     }
 
     const goUpload = () => {
@@ -378,8 +497,10 @@ export default defineComponent({
 
     return {
       ...toRefs(reactiveData),
+      branchModeChange,
       dirModeChange,
       selectRepos,
+      selectBranch,
       goUpload
     }
   }

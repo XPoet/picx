@@ -1,4 +1,20 @@
-import { DirModeEnum } from './dir.model'
+import { DirModeEnum, DirModel } from './dir.model'
+
+export interface ReposModel {
+  value: string
+  label: string
+  desc?: string
+}
+
+export interface BranchModel {
+  value: string
+  label: string
+}
+
+export enum BranchModeEnum {
+  newBranch = 'newBranch',
+  reposBranch = 'reposBranch'
+}
 
 export interface UserConfigInfoModel {
   token: string
@@ -7,10 +23,12 @@ export interface UserConfigInfoModel {
   name: string
   avatarUrl: string
   selectedRepos: string
-  reposList: any[]
+  reposList: ReposModel[]
   selectedBranch: string
+  branchMode: BranchModeEnum
+  branchList: BranchModel[]
   dirMode: DirModeEnum
   selectedDir: string
-  dirList: any[]
+  dirList: DirModel[]
   loggingStatus: boolean
 }
