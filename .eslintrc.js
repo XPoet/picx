@@ -20,6 +20,7 @@ module.exports = {
     'no-console': 'off',
     'no-unused-vars': 'off',
     'no-shadow': 'off',
+    camelcase: 'off',
     'no-param-reassign': [
       'error',
       {

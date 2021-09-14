@@ -23,7 +23,7 @@
           :key="index"
         >
           <div class="left-image-box flex-center">
-            <div class="image-box" @click="imageViewer(imgItem.imgData.base64Url)">
+            <div class="image-box" @click="imageViewer(imgItem)">
               <img :src="imgItem.imgData.base64Url" />
             </div>
           </div>
@@ -173,7 +173,9 @@ export default defineComponent({
 
     const reactiveData = reactive({
       isShowDialog: false,
-      curImgInfo: null,
+      curImgInfo: {
+        size: ''
+      },
 
       userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
         .value,
@@ -329,7 +331,9 @@ export default defineComponent({
           md_gh_url: img.externalLink.markdown_gh,
           md_cdn_url: img.externalLink.markdown_cdn,
           is_transform_md: false,
-          deleting: false
+          deleting: false,
+          size: img.fileInfo.size,
+          lastModified: img.fileInfo.lastModified
         }
 
         // eslint-disable-next-line no-param-reassign
@@ -351,10 +355,15 @@ export default defineComponent({
         store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', item)
       },
 
-      imageViewer(base64Url: string) {
+      imageViewer(imgObj: ToUploadImageModel) {
         store.commit('IMAGE_VIEWER', {
           isShow: true,
-          url: base64Url
+          imgInfo: {
+            name: imgObj.filename.now,
+            size: imgObj.fileInfo.size,
+            lastModified: imgObj.fileInfo.lastModified,
+            url: imgObj.imgData.base64Url
+          }
         })
       }
     })

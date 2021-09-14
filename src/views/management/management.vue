@@ -73,11 +73,11 @@ const currentDirImageList = ref([])
 const loadingImageList = ref(false)
 const listing = ref(false)
 
-function isHasDir(selectedDir: any) {
+function isHasDir(selectedDir: string) {
   return userConfigInfo.value.dirList.some((v: any) => v.value === selectedDir)
 }
 
-function getImageObject(item: any, selectedDir: any): UploadedImageModel {
+function getImageObject(item: any, selectedDir: string): UploadedImageModel {
   return {
     uuid: getUuid(),
     dir: selectedDir,
@@ -89,15 +89,16 @@ function getImageObject(item: any, selectedDir: any): UploadedImageModel {
     md_gh_url: generateExternalLink(ExternalLinkType.md_gh, item, userConfigInfo.value),
     md_cdn_url: generateExternalLink(ExternalLinkType.md_cdn, item, userConfigInfo.value),
     deleting: false,
-    is_transform_md: false
+    is_transform_md: false,
+    size: item.size
   }
 }
 
 // 获取指定目录的内容
-function getDirContent(selectedDir: any) {
+function getDirContent(selectedDir: string) {
   loadingImageList.value = true
 
-  const temp: any = { dir: selectedDir, imageList: [] }
+  const temp = { dir: selectedDir, imageList: [] as any[] }
 
   axios
     .get(

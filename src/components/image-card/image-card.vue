@@ -83,7 +83,7 @@ export default defineComponent({
       doDeleteImage(imageObj: UploadedImageModel): void {
         // eslint-disable-next-line no-param-reassign
         imageObj.deleting = true
-        const { owner, selectedRepos, selectedBranch } = reactiveData.userConfigInfo
+        const { owner, selectedRepos } = reactiveData.userConfigInfo
 
         axios
           .delete(`/repos/${owner}/${selectedRepos}/contents/${imageObj.path}`, {
@@ -103,13 +103,6 @@ export default defineComponent({
               ElMessage.success('删除成功！')
               store.dispatch('UPLOADED_LIST_REMOVE', imageObj)
               store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
-
-              this.jsDelivrRefreshCache(
-                owner,
-                selectedRepos,
-                selectedBranch,
-                imageObj.path
-              )
             } else {
               // eslint-disable-next-line no-param-reassign
               imageObj.deleting = false
@@ -117,29 +110,16 @@ export default defineComponent({
           })
       },
 
-      imageView(imgObj: any) {
+      imageView(imgObj: UploadedImageModel) {
         store.commit('IMAGE_VIEWER', {
           isShow: true,
-          url: imgObj.cdn_url
+          imgInfo: {
+            name: imgObj.name,
+            size: imgObj.size,
+            lastModified: imgObj.lastModified,
+            url: imgObj.cdn_url
+          }
         })
-      },
-
-      jsDelivrRefreshCache(
-        owner: string,
-        selectedRepos: string,
-        selectedBranch: string,
-        path: string
-      ) {
-        const tempTimeout = setTimeout(() => {
-          axios
-            .get(`/purge/gh/${owner}/${selectedRepos}@${selectedBranch}/${path}`, {
-              baseURL: ''
-            })
-            .then((res) => {
-              console.log('[purge jsDelivr] ', res)
-            })
-          clearTimeout(tempTimeout)
-        }, 1000)
       }
     })
     return {

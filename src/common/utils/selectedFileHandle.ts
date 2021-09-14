@@ -17,7 +17,7 @@ const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null
     reader.readAsDataURL(file)
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
-      const base64: any = e.target?.result
+      const base64: string = e.target?.result
       const curImgSize = getFileSize(base64?.length)
 
       if (curImgSize >= maxsize) {
@@ -25,7 +25,7 @@ const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null
         ElMessageBox.confirm(
           `当前图片 ${(curImgSize / 1024).toFixed(
             2
-          )} M，CDN 只能加速小于 30M 的图片，建议使用第三方工具 TinyPNG 压缩?`,
+          )} M，CDN 只能加速小于 50 MB 的图片，建议使用第三方工具 TinyPNG 压缩`,
           '图片过大，禁止上传',
           {
             confirmButtonText: '前往 TinyPNG',
