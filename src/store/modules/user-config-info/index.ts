@@ -11,25 +11,44 @@ import RootStateTypes from '@/store/types'
 import { DirModeEnum } from '@/common/model/dir.model'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
-  const config: string | null = localStorage.getItem(PICX_CONFIG)
-  return config
-    ? JSON.parse(config)
-    : ({
-        token: '',
-        owner: '',
-        email: '',
-        name: '',
-        avatarUrl: '',
-        selectedRepos: '',
-        reposList: [],
-        branchMode: BranchModeEnum.reposBranch,
-        selectedBranch: '',
-        branchList: [],
-        dirMode: DirModeEnum.reposDir,
-        selectedDir: '',
-        dirList: [],
-        loggingStatus: false
-      } as UserConfigInfoModel)
+  const LSConfig: string | null = localStorage.getItem(PICX_CONFIG)
+  const initConfig: UserConfigInfoModel = {
+    token: '',
+    owner: '',
+    email: '',
+    name: '',
+    avatarUrl: '',
+    selectedRepos: '',
+    reposList: [],
+    branchMode: BranchModeEnum.reposBranch,
+    selectedBranch: '',
+    branchList: [],
+    dirMode: DirModeEnum.reposDir,
+    selectedDir: '',
+    dirList: [],
+    loggingStatus: false
+  }
+
+  if (LSConfig) {
+    const oldConfig: UserConfigInfoModel = JSON.parse(LSConfig)
+
+    // eslint-disable-next-line guard-for-in,no-restricted-syntax
+    for (const oldConfigKey in oldConfig) {
+      // @ts-ignore
+      initConfig[oldConfigKey] = oldConfig[oldConfigKey]
+    }
+
+    if (initConfig.selectedBranch && !initConfig.branchList.length) {
+      initConfig.branchList = [
+        {
+          value: initConfig.selectedBranch,
+          label: initConfig.selectedBranch
+        }
+      ]
+    }
+    return initConfig
+  }
+  return initConfig
 }
 
 const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
@@ -74,6 +93,12 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
         /\s+/g,
         '-'
       )
+
+      state.userConfigInfo.selectedBranch = state.userConfigInfo.selectedBranch.replace(
+        /\s+/g,
+        '-'
+      )
+
       localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
     },
 

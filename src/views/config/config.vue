@@ -62,14 +62,12 @@
     <el-form
       label-width="70px"
       label-position="right"
-      v-if="userConfigInfo.selectedRepos"
+      v-if="userConfigInfo.selectedRepos && userConfigInfo.branchList.length"
       v-loading="branchLoading"
       element-loading-text="加载中..."
     >
-      <el-form-item
-        v-if="userConfigInfo.branchList.length && userConfigInfo.selectedRepos"
-        label="分支方式"
-      >
+      <!-- 因未验证 API 是否能创建空分支，暂时不开启分支选择方式 && 0 -->
+      <el-form-item v-if="userConfigInfo.selectedRepos && 0" label="分支方式">
         <el-radio-group v-model="userConfigInfo.branchMode" @change="branchModeChange">
           <el-tooltip
             v-if="userConfigInfo.branchList.length"
@@ -127,10 +125,7 @@
       v-loading="dirLoading"
       element-loading-text="加载中..."
     >
-      <el-form-item
-        v-if="userConfigInfo.branchList.length && userConfigInfo.selectedBranch"
-        label="目录方式"
-      >
+      <el-form-item v-if="userConfigInfo.selectedBranch" label="目录方式">
         <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
           <el-tooltip content="手动输入一个新目录" placement="top">
             <el-radio label="newDir">新建目录</el-radio>
@@ -307,6 +302,8 @@ export default defineComponent({
       },
 
       innerSelectRepos(repos: string) {
+        this.userConfigInfo.branchList = []
+        this.userConfigInfo.dirList = []
         reactiveData.getBranchList(repos)
         reactiveData.persistUserConfigInfo()
       },
@@ -319,7 +316,6 @@ export default defineComponent({
             console.log('[getBranchList] ', res)
             if (res && res.status === 200) {
               this.branchLoading = false
-              this.userConfigInfo.branchList = []
               if (res.data.length > 0) {
                 // eslint-disable-next-line no-restricted-syntax
                 for (const item of res.data) {
@@ -328,15 +324,15 @@ export default defineComponent({
                     label: item.name
                   })
                 }
+                this.userConfigInfo.selectedBranch =
+                  this.userConfigInfo.branchList[0].value
+                this.userConfigInfo.branchMode = BranchModeEnum.reposBranch
+                this.getDirList(this.userConfigInfo.selectedBranch)
               } else {
-                this.userConfigInfo.branchList.push({
-                  value: 'master',
-                  label: 'master'
-                })
+                this.userConfigInfo.selectedBranch = 'master'
+                this.userConfigInfo.branchMode = BranchModeEnum.newBranch
               }
-              this.userConfigInfo.selectedBranch = this.userConfigInfo.branchList[0].value
-              this.userConfigInfo.branchMode = BranchModeEnum.reposBranch
-              this.getDirList(this.userConfigInfo.selectedBranch)
+              this.innerDirModeChange(this.userConfigInfo.dirMode)
               this.persistUserConfigInfo()
             }
           })
@@ -393,7 +389,6 @@ export default defineComponent({
               this.userConfigInfo.selectedBranch = bv
               this.getDirList(bv)
             }
-
             break
 
           default:
@@ -417,12 +412,18 @@ export default defineComponent({
 
           case DirModeEnum.newDir:
             // 手动输入的新建目录
-            this.userConfigInfo.selectedDir = ''
+            this.userConfigInfo.selectedDir = 'xxx'
             break
 
           case DirModeEnum.reposDir:
             // 仓库目录
-            this.userConfigInfo.selectedDir = ''
+            // eslint-disable-next-line no-case-declarations
+            const { dirList } = this.userConfigInfo
+            if (dirList.length) {
+              this.userConfigInfo.selectedDir = dirList[0].value
+            } else {
+              this.userConfigInfo.selectedDir = ''
+            }
             break
 
           default:
@@ -485,6 +486,31 @@ export default defineComponent({
       reactiveData.innerGoUpload()
     }
 
+    const createBranch = () => {
+      // axios
+      //   .get(
+      //     `/repos/${reactiveData.userConfigInfo.owner}/${reactiveData.userConfigInfo.selectedRepos}/git/refs/heads`
+      //   )
+      //   .then((res: any) => {
+      //     console.log('[git/refs/heads] ', res)
+      //     if (res && res.status === 200) {
+      //     }
+      //   })
+      // axios
+      //   .post(
+      //     `/repos/${reactiveData.userConfigInfo.owner}/${reactiveData.userConfigInfo.selectedRepos}/git/refs`,
+      //     {
+      //       ref: `refs/heads/${reactiveData.userConfigInfo.selectedBranch}`,
+      //       sha: '6b74f243e6396757c1bc7aec85e57424286db33a'
+      //     }
+      //   )
+      //   .then((res: any) => {
+      //     console.log('[/git/refs] ', res)
+      //     if (res && res.status === 201) {
+      //     }
+      //   })
+    }
+
     watch(
       () => reactiveData.loggingStatus,
       (_n) => {
@@ -501,6 +527,7 @@ export default defineComponent({
       dirModeChange,
       selectRepos,
       selectBranch,
+      createBranch,
       goUpload
     }
   }
