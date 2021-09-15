@@ -28,8 +28,8 @@
 import { computed, defineComponent, reactive, toRefs } from 'vue'
 import { useStore } from '@/store'
 import { filenameHandle } from '@/common/utils/file-handle-helper'
-import selectedFileHandle from '@/common/utils/selectedFileHandle'
-import createToUploadImageObject from '@/common/utils/createToUploadImageObject'
+import selectedFileHandle from '@/common/utils/selected-file-handle'
+import createToUploadImageObject from '@/common/utils/create-to-upload-image'
 import paste from '@/common/utils/paste'
 
 export default defineComponent({
