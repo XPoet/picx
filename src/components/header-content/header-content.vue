@@ -8,12 +8,11 @@
         <div class="title">PicX</div>
       </div>
       <div class="website-count" @click="goGitHubRepo">
-        <el-tooltip effect="light" content="点个 Star 支持一下作者吧(*￣︶￣)" placement="bottom">
-          <i class="">
-            有
-            <site-count :isuv="false" />
-            位小伙伴使用 PicX 图床神器
-          </i>
+        <el-tooltip
+          content="前往 GitHub 点 Star 支持一下作者(*￣︶￣)"
+          placement="bottom"
+        >
+          <i class=""> 有 <site-count :isuv="false" /> 位小伙伴使用 PicX 图床神器 </i>
         </el-tooltip>
       </div>
     </div>
@@ -28,7 +27,11 @@
           <i class="el-icon-user-solid"></i>
         </div>
 
-        <el-dropdown trigger="click" @command="handleCommand" v-if="userConfigInfo?.avatarUrl">
+        <el-dropdown
+          trigger="click"
+          @command="handleCommand"
+          v-if="userConfigInfo?.avatarUrl"
+        >
           <span class="el-dropdown-link">
             <span class="avatar">
               <img :src="userConfigInfo?.avatarUrl" :alt="userConfigInfo?.owner" />
@@ -68,7 +71,10 @@ export default defineComponent({
     })
 
     const onUserInfoClick = () => {
-      if (!reactiveData.userConfigInfo.loggingStatus && router.currentRoute.value.path !== '/config') {
+      if (
+        !reactiveData.userConfigInfo.loggingStatus &&
+        router.currentRoute.value.path !== '/config'
+      ) {
         router.push('/config')
       }
     }

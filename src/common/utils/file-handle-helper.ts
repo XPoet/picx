@@ -2,7 +2,7 @@ import getUuid from './get-uuid'
 
 export const filenameHandle = (filename: string) => {
   const splitIndex = filename.lastIndexOf('.')
-  const name = filename.substr(0, splitIndex)
+  const name = filename.substr(0, splitIndex).trim().replace(/\s+/g, '-')
   const suffix = filename.substr(splitIndex + 1, filename.length)
 
   return {

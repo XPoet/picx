@@ -1,4 +1,4 @@
-import selectedFileHandle from './selectedFileHandle'
+import selectedFileHandle from './selected-file-handle'
 
 const onPaste = (e: any, maxsize: number): Promise<any> | null => {
   if (!(e.clipboardData && e.clipboardData.items)) {
@@ -12,7 +12,8 @@ const onPaste = (e: any, maxsize: number): Promise<any> | null => {
       const item = e.clipboardData.items[i]
       if (item.kind === 'file') {
         const pasteFile = item.getAsFile()
-        selectedFileHandle(pasteFile, maxsize).then((base64) => {
+        // @ts-ignore
+        selectedFileHandle(pasteFile, maxsize)?.then((base64) => {
           resolve({ base64, file: pasteFile })
         })
       }

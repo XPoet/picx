@@ -17,8 +17,8 @@ const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null
     reader.readAsDataURL(file)
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
-      const base64: string = e.target?.result
-      const curImgSize = getFileSize(base64?.length)
+      const base64: any = e.target?.result
+      const curImgSize = getFileSize(base64.length)
 
       if (curImgSize >= maxsize) {
         // 给出提示，引导用户自行去压缩图片
