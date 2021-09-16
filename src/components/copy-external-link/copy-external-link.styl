@@ -1,34 +1,32 @@
 @import "../../style.styl"
 
 .copy-external-link-box {
+  position relative
+  width 100%
+  height 100%
+  box-sizing border-box
+  display flex
+  justify-content space-between
+  align-items flex-end
+  padding 2px
+
+  .markdown-icon-box {
+    position absolute
+    bottom -9px
+    cursor pointer
+  }
 
   .btn-item {
     box-sizing border-box
     border-radius 5px
     font-size 12px
-    margin-right 6px
+    margin-left 6px
     cursor pointer
     transition all 0.3s ease
-
-    &:last-child {
-      margin-left 0
-    }
   }
-
-  .transform-btn {
-    border 1px solid $default-font-color
-    color $default-font-color
-    padding 0 1px 0 5px
-
-    &.is-transform {
-      background $default-font-color
-      color $background-color
-    }
-  }
-
 
   .copy-url {
-    padding 0 2px
+    padding 2px 4px
     border 1px solid $default-font-color
     color $default-font-color
 

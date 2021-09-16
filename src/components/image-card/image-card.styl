@@ -1,106 +1,124 @@
-@import '../../style.styl';
+@import '../../style.styl'
 
-$infoBoxHeight = 56px;
+$infoBoxHeight = 56px
 
 .image-card {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  box-shadow: 1px 2px 3px $image-card-shadow-color;
-  box-sizing: border-box;
-  padding-bottom: $infoBoxHeight;
+  position relative
+  width 100%
+  height 100%
+  box-shadow 1px 2px 3px $image-card-shadow-color
+  box-sizing border-box
+  padding-bottom $infoBoxHeight
+
+  &:hover {
+    box-shadow 0 0 10px #666
+  }
+
+  &.listing {
+    display flex
+    justify-content flex-start
+    align-items center
+    padding 5px
+    border-radius $box-border-radius
+
+    .image-box {
+      height 45px
+      width 45px
+    }
+
+    .info-box {
+      position relative
+      width 80%
+    }
+
+    :deep(.el-loading-mask) {
+      .el-loading-spinner {
+        margin-top -25px
+
+        .circular {
+          height 24px
+          width 24px
+        }
+
+        .el-loading-text {
+          margin 0
+        }
+      }
+
+    }
+  }
+
 
   .image-box {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
+    position relative
+    width 100%
+    height 100%
 
     img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      width 100%
+      height 100%
+      object-fit cover
     }
   }
 
 
   .info-box {
-    width: 100%;
-    height: $infoBoxHeight;
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    width 100%
+    height $infoBoxHeight
+    position absolute
+    bottom 0
+    left 0
 
     .image-info {
-      width: 100%;
-      height: 100%;
-      padding: 5px;
-      color: $default-font-color;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      width 100%
+      height 100%
+      padding 5px
+      color $default-font-color
+      box-sizing border-box
+      display flex
+      flex-direction column
+      justify-content space-between
 
       .filename {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 13px;
+        overflow hidden
+        text-overflow ellipsis
+        white-space nowrap
+        font-size 13px
       }
 
       .image-operation {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 5px;
-
-        .delete {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          cursor: pointer;
-
-          i {
-            font-size: 16px;
-          }
-
-        }
+        margin-top 5px
       }
     }
   }
 
 
-  &.listing {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    padding: 5px;
-    border-radius: $box-border-radius;
+  .operation-box {
+    position absolute
+    top 10px
+    right 8px
+    display flex
+    justify-content flex-end
 
-    .image-box {
-      height: 45px;
-      width: 45px;
-    }
+    .btn {
+      width 32px
+      height 32px
+      border-radius 50%
+      box-shadow 0 0 6px #555
+      cursor pointer
+      background: #fff
+      display flex
+      justify-content center
+      align-items center
+      margin-left 8px
+      font-size 18px
 
-    .info-box {
-      position: relative;
-      width: 80%;
-    }
-
-    :deep(.el-loading-mask) {
-      .el-loading-spinner {
-        margin-top: -25px;
-
-        .circular {
-          height: 24px;
-          width: 24px;
-        }
-
-        .el-loading-text {
-          margin: 0;
-        }
+      &:first-child {
+        margin-left 0
       }
-
     }
+
   }
+
+
 }
