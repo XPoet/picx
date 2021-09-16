@@ -3,6 +3,7 @@ import config from '@/views/config/config.vue'
 import upload from '@/views/upload/upload.vue'
 import management from '@/views/management/management.vue'
 import tutorials from '@/views/tutorials/tutorials.vue'
+import settings from '@/views/settings/settings.vue'
 
 const titleSuffix = ` | PicX 图床神器`
 
@@ -52,6 +53,14 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/about/about.vue'),
     meta: {
       title: `帮助反馈${titleSuffix}`
+    }
+  },
+  {
+    path: '/settings',
+    name: 'settings',
+    component: settings,
+    meta: {
+      title: `我的设置${titleSuffix}`
     }
   }
 ]

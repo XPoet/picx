@@ -330,7 +330,7 @@ export default defineComponent({
           cdn_url: img.externalLink.cdn,
           md_gh_url: img.externalLink.markdown_gh,
           md_cdn_url: img.externalLink.markdown_cdn,
-          is_transform_md: false,
+          is_transform_md: userConfigInfo.personalSetting.defaultMarkdown,
           deleting: false,
           size: img.fileInfo.size,
           lastModified: img.fileInfo.lastModified

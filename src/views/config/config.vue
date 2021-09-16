@@ -86,7 +86,8 @@
 
       <el-form-item
         v-if="
-          userConfigInfo.branchList.length && userConfigInfo.branchMode === 'reposBranch'
+          userConfigInfo.branchList.length > 1 &&
+          userConfigInfo.branchMode === 'reposBranch'
         "
         label="选择分支"
       >

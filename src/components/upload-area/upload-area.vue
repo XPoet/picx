@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from 'vue'
-import { useStore } from '@/store'
+import { store, useStore } from '@/store'
 import { filenameHandle } from '@/common/utils/file-handle-helper'
 import selectedFileHandle from '@/common/utils/selected-file-handle'
 import createToUploadImageObject from '@/common/utils/create-to-upload-image'
@@ -46,6 +46,7 @@ export default defineComponent({
     const store = useStore()
 
     const reactiveData = reactive({
+      userConfigInfo: computed(() => store.getters.getUserConfigInfo).value,
       uploadAreaActive: computed((): boolean => store.getters.getUploadAreaActive),
       uploadSettings: computed(() => store.getters.getUploadSettings).value,
       toUploadImage: computed(() => store.getters.getToUploadImage).value,
@@ -107,6 +108,7 @@ export default defineComponent({
         curImg.filename.suffix = suffix
         curImg.filename.now = `${name}.${hash}.${suffix}`
         curImg.filename.initName = name
+        curImg.filename.isHashRename = this.userConfigInfo.personalSetting.defaultHash
 
         store.dispatch('TO_UPLOAD_IMAGE_LIST_ADD', JSON.parse(JSON.stringify(curImg)))
         store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', {

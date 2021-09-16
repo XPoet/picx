@@ -31,4 +31,8 @@ export interface UserConfigInfoModel {
   selectedDir: string
   dirList: DirModel[]
   loggingStatus: boolean
+  personalSetting: {
+    defaultHash: boolean
+    defaultMarkdown: boolean
+  }
 }

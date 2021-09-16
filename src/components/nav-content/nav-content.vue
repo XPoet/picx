@@ -21,9 +21,9 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs, onMounted, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
-import { ElMessage } from 'element-plus'
 
 export default defineComponent({
   name: 'nav-content',
@@ -33,7 +33,8 @@ export default defineComponent({
     const store = useStore()
 
     const reactiveData = reactive({
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
+        .value,
 
       navList: [
         {
@@ -53,6 +54,12 @@ export default defineComponent({
           icon: 'el-icon-box',
           isActive: false,
           path: '/management'
+        },
+        {
+          name: '我的设置',
+          icon: 'el-icon-setting',
+          isActive: false,
+          path: '/settings'
         },
         {
           name: '使用教程',

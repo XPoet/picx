@@ -5,25 +5,31 @@
     v-loading="imageObj.deleting"
     element-loading-text="删除中..."
     element-loading-background="rgba(0, 0, 0, 0.6)"
+    @mouseenter="isShowDelBtn = true"
+    @mouseleave="isShowDelBtn = false"
   >
     <div class="image-box">
-      <img :src="imageObj.cdn_url" @click="imageView(imageObj)" />
+      <img :src="imageObj.cdn_url" />
     </div>
     <div class="info-box">
       <div class="image-info">
         <div class="filename">{{ imageObj.name }}</div>
         <div class="image-operation">
-          <div class="delete">
-            <el-tooltip content="删除" placement="top">
-              <i class="el-icon-delete" @click="deleteImage(imageObj)"></i>
-            </el-tooltip>
-          </div>
-
-          <div>
-            <copy-external-link :img-obj="imageObj" />
-          </div>
+          <copy-external-link :img-obj="imageObj" />
         </div>
       </div>
+    </div>
+    <div class="operation-box" v-show="isShowDelBtn">
+      <el-tooltip content="查看大图" placement="top">
+        <div class="btn" @click="imageView(imageObj)">
+          <i class="el-icon-full-screen"></i>
+        </div>
+      </el-tooltip>
+      <el-tooltip content="删除图片" placement="top">
+        <div class="btn" @click="deleteImageTips(imageObj)">
+          <i class="el-icon-delete"></i>
+        </div>
+      </el-tooltip>
     </div>
   </div>
 </template>
@@ -62,11 +68,12 @@ export default defineComponent({
   setup() {
     const store = useStore()
     const reactiveData = reactive({
-      isEnableDeleted: true,
       userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
         .value,
 
-      deleteImage(imageObj: UploadedImageModel) {
+      isShowDelBtn: false,
+
+      deleteImageTips(imageObj: UploadedImageModel) {
         ElMessageBox.confirm(`此操作将会永久删除图片 ${imageObj.name} ？`, `删除提示`, {
           confirmButtonText: `确定`,
           cancelButtonText: `取消`,
@@ -120,6 +127,14 @@ export default defineComponent({
             url: imgObj.cdn_url
           }
         })
+      },
+
+      imgMouseenter(e) {
+        console.log('e --- ', e)
+      },
+
+      imgMouseleave(e) {
+        console.log('e --- ', e)
       }
     })
     return {

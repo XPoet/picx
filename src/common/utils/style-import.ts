@@ -20,7 +20,8 @@ import {
   ElDropdownMenu,
   ElOption,
   ElFormItem,
-  ElDialog
+  ElDialog,
+  ElSwitch
 } from 'element-plus'
 
 /**
@@ -50,7 +51,8 @@ export default function styleImport(app: App) {
     ElDropdownMenu,
     ElOption,
     ElFormItem,
-    ElDialog
+    ElDialog,
+    ElSwitch
   ].forEach((v: any) => {
     app.use(v)
   })
