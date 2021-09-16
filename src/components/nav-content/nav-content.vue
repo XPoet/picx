@@ -44,12 +44,6 @@ export default defineComponent({
           path: '/config'
         },
         {
-          name: '我的设置',
-          icon: 'el-icon-setting',
-          isActive: false,
-          path: '/settings'
-        },
-        {
           name: '上传图片',
           icon: 'el-icon-upload2',
           isActive: false,
@@ -60,6 +54,12 @@ export default defineComponent({
           icon: 'el-icon-box',
           isActive: false,
           path: '/management'
+        },
+        {
+          name: '我的设置',
+          icon: 'el-icon-setting',
+          isActive: false,
+          path: '/settings'
         },
         {
           name: '使用教程',

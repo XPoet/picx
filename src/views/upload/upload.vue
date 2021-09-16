@@ -28,15 +28,26 @@
       <!-- 待上传的图片列表 -->
       <div class="row-item">
         <div class="content-box">
-          <to-upload-image-card ref="toUploadImageCardDom" :loading-all-image="imageLoading" />
+          <to-upload-image-card
+            ref="toUploadImageCardDom"
+            :loading-all-image="imageLoading"
+          />
         </div>
       </div>
 
       <!-- 重置 & 上传 -->
       <div class="row-item">
         <div class="content-box" style="text-align: right">
-          <el-button plain size="small" @click="resetUploadInfo" v-if="toUploadImage.list.length">重置 </el-button>
-          <el-button type="primary" plain size="small" @click="uploadImage">上传 </el-button>
+          <el-button
+            plain
+            size="small"
+            @click="resetUploadInfo"
+            v-if="toUploadImage.list.length"
+            >重置
+          </el-button>
+          <el-button type="primary" plain size="small" @click="uploadImage"
+            >上传
+          </el-button>
         </div>
       </div>
     </div>
@@ -73,7 +84,8 @@ export default defineComponent({
     const uploadAreaDom: Ref = ref<null | HTMLElement>(null)
 
     const reactiveData = reactive({
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo).value,
+      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
+        .value,
       logoutStatus: computed(() => store.getters.getUserLoggingStatus),
       uploadedImageList: computed(() => store.getters.getUploadedImageList),
       toUploadImage: computed(() => store.getters.getToUploadImage),
@@ -106,7 +118,10 @@ export default defineComponent({
         return
       }
 
-      if (reactiveData.toUploadImage.list.length === reactiveData.toUploadImage.uploadedNumber) {
+      if (
+        reactiveData.toUploadImage.list.length ===
+        reactiveData.toUploadImage.uploadedNumber
+      ) {
         ElMessage.error('请选择要上传的图片！')
         return
       }

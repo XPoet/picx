@@ -11,7 +11,6 @@ import RootStateTypes from '@/store/types'
 import { DirModeEnum } from '@/common/model/dir.model'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
-  const LSConfig: string | null = localStorage.getItem(PICX_CONFIG)
   const initConfig: UserConfigInfoModel = {
     token: '',
     owner: '',
@@ -26,9 +25,14 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     dirMode: DirModeEnum.reposDir,
     selectedDir: '',
     dirList: [],
-    loggingStatus: false
+    loggingStatus: false,
+    personalSetting: {
+      defaultHash: true,
+      defaultMarkdown: false
+    }
   }
 
+  const LSConfig: string | null = localStorage.getItem(PICX_CONFIG)
   if (LSConfig) {
     const oldConfig: UserConfigInfoModel = JSON.parse(LSConfig)
 
