@@ -1,14 +1,11 @@
 import { Module } from 'vuex'
-import {
-  BranchModeEnum,
-  BranchModel,
-  UserConfigInfoModel
-} from '@/common/model/userConfigInfo.model'
+import { BranchModeEnum, UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
 import { PICX_CONFIG } from '@/common/model/localStorage.model'
 import cleanObject from '@/common/utils/clean-object'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 import { DirModeEnum } from '@/common/model/dir.model'
+import TimeHelper from '@/common/utils/time-helper'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {
@@ -50,6 +47,11 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
         }
       ]
     }
+
+    if (initConfig.dirMode === DirModeEnum.autoDir) {
+      initConfig.selectedDir = TimeHelper.getYyyyMmDd()
+    }
+
     return initConfig
   }
   return initConfig
