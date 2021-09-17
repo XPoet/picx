@@ -84,8 +84,8 @@ const toUploadImageModule: Module<ToUploadImageStateTypes, RootStateTypes> = {
   },
 
   getters: {
-    getToUploadImageList: (state: any) => state.list,
-    getToUploadImage: (state: any) => state
+    getToUploadImageList: (state: ToUploadImageStateTypes) => state.list,
+    getToUploadImage: (state: ToUploadImageStateTypes) => state
   }
 }
 
