@@ -106,7 +106,9 @@ export default defineComponent({
         curImg.filename.name = name
         curImg.filename.hash = hash
         curImg.filename.suffix = suffix
-        curImg.filename.now = `${name}.${hash}.${suffix}`
+        curImg.filename.now = this.userConfigInfo.personalSetting.defaultHash
+          ? `${name}.${hash}.${suffix}`
+          : `${name}.${suffix}`
         curImg.filename.initName = name
         curImg.filename.isHashRename = this.userConfigInfo.personalSetting.defaultHash
 

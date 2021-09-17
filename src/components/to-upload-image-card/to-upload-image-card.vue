@@ -135,7 +135,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRefs } from 'vue'
+import { computed, defineComponent, reactive, toRefs, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import { getFileSize } from '@/common/utils/file-handle-helper'
@@ -371,6 +371,15 @@ export default defineComponent({
     const removeToUploadImage = (imgItem: ToUploadImageModel) => {
       store.dispatch('TO_UPLOAD_IMAGE_LIST_REMOVE', imgItem.uuid)
     }
+
+    onMounted(() => {
+      const isHash = reactiveData.userConfigInfo.personalSetting.defaultHash
+      reactiveData.toUploadImage.list.forEach((v: ToUploadImageModel) => {
+        // eslint-disable-next-line no-param-reassign
+        v.filename.isHashRename = isHash
+        reactiveData.hashRename(isHash, v)
+      })
+    })
 
     return {
       ...toRefs(reactiveData),
