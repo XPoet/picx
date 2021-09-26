@@ -128,18 +128,23 @@
     >
       <el-form-item v-if="userConfigInfo.selectedBranch" label="目录方式">
         <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
-          <el-tooltip content="手动输入一个新目录" placement="top">
+          <el-tooltip content="手动输入一个新目录" placement="top" :offset="-1">
             <el-radio label="newDir">新建目录</el-radio>
           </el-tooltip>
 
           <el-tooltip
             :content="'图片存储在 ' + userConfigInfo.selectedBranch + ' 分支的根目录下'"
             placement="top"
+            :offset="-1"
           >
             <el-radio label="rootDir">根目录</el-radio>
           </el-tooltip>
 
-          <el-tooltip :content="'根据日期自动创建格式 YYYYMMDD 的目录'" placement="top">
+          <el-tooltip
+            :content="'根据日期自动创建格式 YYYYMMDD 的目录'"
+            placement="top"
+            :offset="-1"
+          >
             <el-radio label="autoDir">自动目录</el-radio>
           </el-tooltip>
 
@@ -149,6 +154,7 @@
             "
             :content="'选择 ' + userConfigInfo.selectedBranch + ' 分支下的一个目录'"
             placement="top"
+            :offset="-1"
           >
             <el-radio label="reposDir">
               选择 {{ userConfigInfo.selectedRepos }} 仓库目录

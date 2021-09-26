@@ -11,30 +11,46 @@
   padding 2px
 
   .markdown-icon-box {
-    position absolute
-    bottom -9px
+    width 26px
+    height 20px
+    position relative
     cursor pointer
   }
 
-  .btn-item {
-    box-sizing border-box
-    border-radius 5px
-    font-size 12px
-    margin-left 6px
-    cursor pointer
-    transition all 0.3s ease
-  }
 
-  .copy-url {
-    padding 1px 3px
-    border 1px solid $default-font-color
-    color $default-font-color
+  .btn-box {
+    position relative
+    width 108px
+    height 100%
+    display flex
+    justify-content space-between
 
-    &:hover {
-      background $default-font-color
-      color $background-color
+    .btn-item {
+      height 20px
+      box-sizing border-box
+      border-radius 5px
+      font-size 12px
+      cursor pointer
+      transition all 0.3s ease
+    }
+
+    .copy-url {
+      border 1px solid $default-font-color
+      color $default-font-color
+
+      &:hover {
+        background $default-font-color
+        color $background-color
+      }
+    }
+
+
+    .github {
+      width 56px
+    }
+
+    .cdn {
+      width 40px
     }
   }
-
-
 }
