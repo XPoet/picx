@@ -18,7 +18,7 @@ export const hashFilenameHandle = (hashFilename: string) => {
 }
 
 export const isImage = (suffix: string): boolean => {
-  return /(png|jpg|gif|jpeg|webp|svg\+xml)$/.test(suffix)
+  return /(png|jpg|gif|jpeg|webp|svg\+xml|image\/x-icon)$/.test(suffix)
 }
 
 export const getFileSize = (size: number) => {
