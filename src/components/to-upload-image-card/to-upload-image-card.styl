@@ -140,7 +140,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
 
               .item {
                 padding 1px 4px
-                background $file-info-background-color
+                background $third-background-color
                 border-radius 2px
                 margin-left 10px
               }
@@ -182,15 +182,15 @@ $image-width = $info-item-height - ($info-item-border * 2)
           box-shadow: 0 1px 1px $image-list-border-color;
 
           &.wait-upload {
-            background: #E6A23C;
+            background: $background-await-upload;
           }
 
           &.uploading {
-            background: #409EFF;
+            background: $background-uploading;
           }
 
           &.uploaded {
-            background: #67C23A;
+            background: $background-uploaded;
           }
 
           i {
