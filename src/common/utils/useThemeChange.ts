@@ -65,10 +65,10 @@ const useThemeChange = () => {
   const callback = (e: any) => {
     const prefersDarkMode = e.matches
     if (prefersDarkMode) {
-      console.log('黑暗模式')
+      // console.log('黑暗模式')
       setBodyClassName('dark')
     } else {
-      console.log('亮色模式')
+      // console.log('亮色模式')
       setBodyClassName('light')
     }
   }
