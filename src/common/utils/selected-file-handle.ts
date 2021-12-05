@@ -1,7 +1,16 @@
 import { ElMessage, ElMessageBox } from 'element-plus'
+import Compress from '@yireen/squoosh-browser'
+import {
+  defaultPreprocessorState,
+  defaultProcessorState,
+  encoderMap
+} from '@yireen/squoosh-browser/dist/client/lazy-app/feature-meta'
 import { getFileSize, isImage } from './file-handle-helper'
 
-const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null => {
+const selectedFileHandle = async (
+  file: File,
+  maxsize: number
+): Promise<Promise<string> | null> => {
   if (!file) {
     return null
   }
@@ -11,10 +20,21 @@ const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null
     return null
   }
 
-  return new Promise((resolve) => {
+  const compress = new Compress(file, {
+    encoderState: {
+      type: 'mozJPEG',
+      options: encoderMap.mozJPEG.meta.defaultOptions
+    },
+    processorState: defaultProcessorState,
+    preprocessorState: defaultPreprocessorState
+  })
+
+  const compressFile = await compress.process()
+
+  return new Promise<string>((resolve) => {
     const reader = new FileReader()
 
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(compressFile)
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const base64: any = e.target?.result

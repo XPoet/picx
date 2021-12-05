@@ -1,6 +1,6 @@
-import type { UserConfig, ConfigEnv } from 'vite'
 import { loadEnv } from 'vite'
 import { resolve } from 'path'
+import type { UserConfig, ConfigEnv } from 'vite'
 import createVitePlugins from './src/plugins'
 import wrapperEnv from './src/common/utils/env'
 
@@ -46,6 +46,9 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       //     rewrite: (path) => path.replace('^/API', '/')
       //   }
       // }
+    },
+    optimizeDeps: {
+      exclude: ['@yireen/squoosh-browser']
     }
   }
 }
