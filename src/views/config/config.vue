@@ -209,7 +209,13 @@
     <!-- 操作 -->
     <el-form label-width="70px">
       <el-form-item class="operation">
-        <el-button plain size="small" @click="reset()" v-if="userConfigInfo.owner">
+        <el-button
+          plain
+          size="small"
+          type="warning"
+          @click="reset()"
+          v-if="userConfigInfo.owner"
+        >
           重置
         </el-button>
         <el-button

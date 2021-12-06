@@ -20,8 +20,8 @@ const useThemeChange = () => {
     })
   }
   const themeTimeResult = (autoLightThemeDate: AutoLightThemeDateTyoe): boolean => {
-    const hour = new Date().getHours() * 1
-    const min = new Date().getMinutes() * 1
+    const hour = new Date().getHours()
+    const min = new Date().getMinutes()
     if (
       hour < Number(autoLightThemeDate[0].substr(0, 2)) ||
       hour > Number(autoLightThemeDate[1].substr(0, 2))
@@ -34,14 +34,10 @@ const useThemeChange = () => {
     ) {
       return false
     }
-    if (
+    return !(
       hour === Number(autoLightThemeDate[1].substr(0, 2)) &&
       min > Number(autoLightThemeDate[1].substr(-2))
-    ) {
-      return false
-    }
-
-    return true
+    )
   }
   const setThemeByConfigFn = (confit: PersonalSetting) => {
     const { themeMode, autoLightThemeDate } = confit

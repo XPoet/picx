@@ -45,8 +45,8 @@
             v-if="toUploadImage.list.length"
             >重置
           </el-button>
-          <el-button type="primary" plain size="small" @click="uploadImage"
-            >上传
+          <el-button plain size="small" type="primary" @click="uploadImage">
+            上传
           </el-button>
         </div>
       </div>

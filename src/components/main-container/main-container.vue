@@ -47,7 +47,7 @@ export default defineComponent({
       )
     }
 
-    const themeResult = userConfigInfoModel()
+    userConfigInfoModel()
 
     return {
       changeUploadAreaActive
