@@ -21,7 +21,8 @@ import {
   ElOption,
   ElFormItem,
   ElDialog,
-  ElSwitch
+  ElSwitch,
+  ElTimeSelect
 } from 'element-plus'
 
 /**
@@ -52,7 +53,8 @@ export default function styleImport(app: App) {
     ElOption,
     ElFormItem,
     ElDialog,
-    ElSwitch
+    ElSwitch,
+    ElTimeSelect
   ].forEach((v: any) => {
     app.use(v)
   })

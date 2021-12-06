@@ -25,7 +25,9 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     loggingStatus: false,
     personalSetting: {
       defaultHash: true,
-      defaultMarkdown: false
+      defaultMarkdown: false,
+      themeMode: 'auto',
+      autoLightThemeDate: ['09:00', '18:00']
     }
   }
 

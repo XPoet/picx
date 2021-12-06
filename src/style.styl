@@ -1,11 +1,19 @@
-$default-font-color= #2c3e50
-$background-color = #fff
-$second-background-color = #f0f0f0
-$image-card-shadow-color = #ccc
-$upload-area-focus-color = #2066bb
-$upload-area-border-color = #999
-$scrollbar-color = #dfdfdf
-$image-list-border-color = #ddd
+@import './common/theme/index.styl'
+
+$default-font-color= var(--default-font-color);
+$background-color= var(--background-color);
+$second-background-color= var(--second-background-color);
+$image-card-shadow-color= var(--image-card-shadow-color);
+$upload-area-focus-color= var(--upload-area-focus-color);
+$upload-area-border-color= var(--upload-area-border-color);
+$scrollbar-color= var(--scrollbar-color);
+$image-list-border-color= var(--image-list-border-color);
+
+$background-await-upload= var(--background-await-upload);
+$background-uploading= var(--background-uploading);
+$background-uploaded= var(--background-uploaded);
+
+$third-background-color= var(--third-background-color);
 
 
 $component-interval = 16px
