@@ -6,6 +6,27 @@ import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 import { DirModeEnum } from '@/common/model/dir.model'
 import TimeHelper from '@/common/utils/time-helper'
+import getType from '@/common/utils/get-type'
+
+/**
+ * 将 obj2 对象的值深度赋值给 obj1 对象
+ * @param obj1{Object}
+ * @param obj2{Object}
+ */
+function deepAssign(obj1: object, obj2: object) {
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key in obj2) {
+    // @ts-ignore
+    if (getType(obj2[key]) !== 'object') {
+      // @ts-ignore
+      // eslint-disable-next-line no-param-reassign
+      obj1[key] = obj2[key]
+    } else {
+      // @ts-ignore
+      deepAssign(obj1[key], obj2[key])
+    }
+  }
+}
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {
@@ -27,19 +48,17 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
       defaultHash: true,
       defaultMarkdown: false,
       themeMode: 'light',
-      autoLightThemeDate: ['09:00', '18:00']
+      autoLightThemeDate: ['08:00', '19:00']
     }
   }
 
   const LSConfig: string | null = localStorage.getItem(PICX_CONFIG)
+
   if (LSConfig) {
     const oldConfig: UserConfigInfoModel = JSON.parse(LSConfig)
 
-    // eslint-disable-next-line guard-for-in,no-restricted-syntax
-    for (const oldConfigKey in oldConfig) {
-      // @ts-ignore
-      initConfig[oldConfigKey] = oldConfig[oldConfigKey]
-    }
+    // Assign: oldConfig -> initConfig
+    deepAssign(initConfig, oldConfig)
 
     if (initConfig.selectedBranch && !initConfig.branchList.length) {
       initConfig.branchList = [
@@ -56,6 +75,7 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
 
     return initConfig
   }
+
   return initConfig
 }
 

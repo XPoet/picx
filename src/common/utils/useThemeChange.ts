@@ -39,8 +39,8 @@ const useThemeChange = () => {
       min > Number(autoLightThemeDate[1].substr(-2))
     )
   }
-  const setThemeByConfigFn = (confit: PersonalSetting) => {
-    const { themeMode, autoLightThemeDate } = confit
+  const setThemeByConfigFn = (config: PersonalSetting) => {
+    const { themeMode, autoLightThemeDate } = config
     if (themeMode !== 'auto') {
       setBodyClassName(themeMode)
     } else if (themeTimeResult(autoLightThemeDate)) {
@@ -73,6 +73,7 @@ const useThemeChange = () => {
     setThemeByConfigFn(store.getters.getUserConfigInfo.personalSetting)
     media.addEventListener('change', callback)
   })
+
   onUnmounted(() => {
     media.removeEventListener('change', callback)
   })
