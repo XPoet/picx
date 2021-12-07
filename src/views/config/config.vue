@@ -261,16 +261,19 @@ export default defineComponent({
       getUserInfo() {
         if (this.userConfigInfo.token) {
           this.loading = true
-          axios.defaults.headers.Authorization = `token ${this.userConfigInfo.token}`
-          axios.get('/user').then((res: any) => {
-            console.log('[getUserInfo] ', res)
-            if (res && res.status === 200) {
-              this.saveUserInfo(res)
-              this.getReposList(res.data.repos_url)
-            } else {
-              this.loading = false
-            }
-          })
+          axios
+            .get('/user', {
+              headers: { Authorization: `token ${this.userConfigInfo.token}` }
+            })
+            .then((res: any) => {
+              console.log('[getUserInfo] ', res)
+              if (res && res.status === 200) {
+                this.saveUserInfo(res)
+                this.getReposList(res.data.repos_url)
+              } else {
+                this.loading = false
+              }
+            })
         } else {
           ElMessage.warning('Token 不能为空！')
         }
