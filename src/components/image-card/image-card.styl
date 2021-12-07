@@ -79,6 +79,14 @@ $infoBoxHeight = 56px
       flex-direction column
       justify-content space-between
 
+      .rename-input{
+        height: 20px
+        display: flex
+        :deep(input){
+          height: 20px
+        }
+      }
+
       .filename {
         overflow hidden
         text-overflow ellipsis
@@ -116,6 +124,19 @@ $infoBoxHeight = 56px
       &:first-child {
         margin-left 0
       }
+    }
+    .btn-active{
+      width 32px
+      height 32px
+      border-radius 50%
+      box-shadow 0 0 6px #555
+      cursor pointer
+      background: #fff
+      display flex
+      justify-content center
+      align-items center
+      margin-left 8px
+      font-size 18px
     }
 
   }
