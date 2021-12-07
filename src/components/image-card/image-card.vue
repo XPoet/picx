@@ -9,7 +9,7 @@
     @mouseleave="isShowDelBtn = false"
   >
     <div class="image-box">
-      <img :src="imageObj.cdn_url" @click="imageView(imageObj)" />
+      <img :src="imageObj.cdn_url" />
     </div>
     <div class="info-box">
       <div class="image-info">
@@ -26,23 +26,23 @@
         </div>
       </div>
     </div>
-    <div class="operation-box" v-show="isShowDelBtn">
+
+    <div class="operation-box" v-show="isShowDelBtn || dropdownVisible">
       <el-tooltip content="查看大图" placement="top">
         <div class="btn" @click="imageView(imageObj)">
           <i class="el-icon-full-screen"></i>
         </div>
       </el-tooltip>
-      <el-tooltip content="删除图片" placement="top">
-        <div class="btn" @click="deleteImageTips(imageObj)">
-          <i class="el-icon-delete"></i>
-        </div>
-      </el-tooltip>
-      <el-dropdown>
-        <div class="btn-active">
+
+      <el-dropdown size="small" trigger="click" @visible-change="visibleChange">
+        <div class="btn">
           <i class="el-icon-more"></i>
         </div>
         <template #dropdown>
           <el-dropdown-menu>
+            <el-dropdown-item @click="deleteImageTips(imageObj)">
+              删除图片
+            </el-dropdown-item>
             <el-dropdown-item @click="renameImage(imageObj)">重命名</el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -52,14 +52,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch, defineEmits, nextTick } from 'vue'
+import { computed, ref, defineEmits, nextTick } from 'vue'
 import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import type { ElInput } from 'element-plus'
 import { useStore } from '@/store'
 import axios from '@/common/utils/axios'
 import { UploadedImageModel } from '@/common/model/upload.model'
 import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
-import { uploadImage_single, getUrlBase64, getImage } from '@/common/utils/renameFile'
+import { getUrlBase64, getImage } from '@/common/utils/rename-image'
+import { uploadImage_single } from '@/common/utils/upload-helper'
 
 // eslint-disable-next-line no-undef
 const props = defineProps({
@@ -97,6 +98,8 @@ const renameValue = ref('')
 
 const toUploadImage = computed(() => store.getters.getToUploadImage).value
 
+const dropdownVisible = ref<Boolean>(false)
+
 const doDeleteImage = (
   imageObj: UploadedImageModel,
   isRename: boolean = false
@@ -124,7 +127,7 @@ const doDeleteImage = (
           // eslint-disable-next-line no-param-reassign
           imageObj.deleting = false
           // eslint-disable-next-line no-unused-expressions
-          isRename ? ElMessage.success('更新成功！') : ElMessage.success('删除成功！')
+          ElMessage.success(`${isRename ? '更新' : '删除'}成功！`)
           store.dispatch('UPLOADED_LIST_REMOVE', imageObj)
           store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
           resolve(true)
@@ -170,6 +173,7 @@ const renameImage = async (imgObj: UploadedImageModel) => {
     renameInput.value?.focus()
   })
 }
+
 const updateRename = async () => {
   emits('update:modelValue', undefined)
   const { imageObj } = props
@@ -181,12 +185,14 @@ const updateRename = async () => {
     text: '更新中...',
     background: 'rgba(0, 0, 0, 0.6)'
   })
+
   const imgInfo = {
     name: `${renameValue.value}.${imgExt}`,
     size: imageObj.size,
     lastModified: Date.now(),
     type: `image/${imgExt}`
   }
+
   const base64 = await getUrlBase64(imageObj.cdn_url, imgExt)
   if (base64) {
     const res = await getImage(base64, imgInfo)
@@ -199,13 +205,18 @@ const updateRename = async () => {
         userConfigInfo.value,
         toUploadImage.list[0]
       )
+
       if (isUploadSuccess) {
-        const isDeleteSuccess = await doDeleteImage(imageObj, true)
-        store.dispatch('TO_UPLOAD_IMAGE_LIST_REMOVE', toUploadImage.list[0].uuid)
+        await doDeleteImage(imageObj, true)
+        await store.dispatch('TO_UPLOAD_IMAGE_LIST_REMOVE', toUploadImage.list[0].uuid)
       }
     }
   }
   loading.close()
+}
+
+const visibleChange = (e: boolean) => {
+  dropdownVisible.value = e
 }
 </script>
 
