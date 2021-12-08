@@ -21,7 +21,7 @@ function goCreateRepo() {
 
 .tutorials-step-1 {
 
-  width 800px
+  width 800rem
 
   .go-create-repo {
     cursor pointer
@@ -29,7 +29,7 @@ function goCreateRepo() {
 
     &:hover {
       color #085fb8
-      border-bottom 1px solid #085fb8
+      border-bottom 1rem solid #085fb8
     }
   }
 

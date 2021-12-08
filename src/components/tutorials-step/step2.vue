@@ -9,7 +9,10 @@
       alt="Create GitHub Token"
     />
     <p>然后点击 Generate token 按钮，即可生成一个token，如下图：</p>
-    <img src="https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.pzmcp6b80fk.png" alt="token-demo" />
+    <img
+      src="https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.pzmcp6b80fk.png"
+      alt="token-demo"
+    />
     <p style="color: red">
       <em>新生成的 Token 只会显示一次，请妥善保存！如有遗失，重新生成即可。</em>
     </p>
@@ -26,7 +29,7 @@ function goCreateToken() {
 
 .tutorials-step-2 {
 
-  width 800px
+  width 800rem
 
   .go-create-token {
     cursor pointer
@@ -34,7 +37,7 @@ function goCreateToken() {
 
     &:hover {
       color #085fb8
-      border-bottom 1px solid #085fb8
+      border-bottom 1rem solid #085fb8
     }
   }
 
@@ -45,7 +48,7 @@ function goCreateToken() {
 
   p {
     font-weight bold
-    padding-top 20px
+    padding-top 20rem
   }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="page-container config-page-container">
     <!-- Token -->
-    <el-form label-width="70px" label-position="right" class="config-form">
+    <el-form label-width="70rem" label-position="right" class="config-form">
       <el-form-item label="Token">
         <el-input
           v-model="userConfigInfo.token"
@@ -25,7 +25,7 @@
 
     <!-- 基本信息 -->
     <el-form
-      label-width="70px"
+      label-width="70rem"
       label-position="right"
       v-if="userConfigInfo.token"
       v-loading="loading"
@@ -60,7 +60,7 @@
 
     <!-- 分支 -->
     <el-form
-      label-width="70px"
+      label-width="70rem"
       label-position="right"
       v-if="userConfigInfo.selectedRepos && userConfigInfo.branchList.length"
       v-loading="branchLoading"

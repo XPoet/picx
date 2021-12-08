@@ -2,9 +2,18 @@
 @import './variables.styl'
 
 
-$component-interval = 16px
-$box-border-radius = 6px
-$content-max-width = 888px
+$component-interval = 16rem
+$box-border-radius = 6rem
+$content-max-width = 888rem
+$scrollbar-size = 8rem
+
+:root {
+  font-size 1px
+
+  +picx-tablet() {
+    font-size 0.9px
+  }
+}
 
 html, body {
   position relative
@@ -25,13 +34,13 @@ li {
 
 * {
   &::-webkit-scrollbar {
-    height 8px
-    width 8px
+    height $scrollbar-size
+    width $scrollbar-size
   }
 
   &::-webkit-scrollbar-thumb {
     background var(--scrollbar-color)
-    border-radius 5px
+    border-radius $box-border-radius
   }
 
   &::-webkit-scrollbar-track {
@@ -56,7 +65,7 @@ li {
   width 100%
   height 100%
   box-sizing border-box
-  padding 30px
+  padding 30rem
   background var(--background-color)
   border-top-left-radius $box-border-radius
   border-top-right-radius $box-border-radius

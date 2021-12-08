@@ -8,6 +8,12 @@ if (import.meta.env.MODE === 'production') {
   import('@/common/utils/register-sw')
 }
 
+window.addEventListener('resize', (e: any) => {
+  if (e.target?.innerWidth <= 780) {
+    console.log('平板模式')
+  }
+})
+
 const app = createApp(App)
 styleImport(app)
 app.use(router).use(store, key).mount('#app')

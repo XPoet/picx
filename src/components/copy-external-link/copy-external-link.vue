@@ -119,8 +119,8 @@ function copyExternalLink(type: ExternalLinkType) {
     externalLinkDom = document.createElement('textarea')
     externalLinkDom.setAttribute('class', 'temp-external-link')
     externalLinkDom.style.position = 'absolute'
-    externalLinkDom.style.top = '-99999px'
-    externalLinkDom.style.left = '-99999px'
+    externalLinkDom.style.top = '-99999rem'
+    externalLinkDom.style.left = '-99999rem'
     document.body.appendChild(externalLinkDom)
   }
 

@@ -35,7 +35,7 @@
       在使用过程中遇到问题，请仔细阅读文档，或者给作者提&nbsp;
       <el-link
         type="primary"
-        style="font-size: 16px"
+        style="font-size: 16rem"
         href="https://github.com/XPoet/picx/issues"
         target="_blank"
       >
@@ -47,7 +47,7 @@
     <div class="help-info-item red-text">
       图片上传缓慢或加载不出来等情况，可借助&nbsp;
       <el-link
-        style="font-size: 16px"
+        style="font-size: 16rem"
         type="primary"
         href="https://github.com/Alvin9999/new-pac/wiki"
         target="_blank"

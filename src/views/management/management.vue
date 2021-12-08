@@ -34,8 +34,8 @@
             v-for="(image, index) in currentDirImageList"
             :key="index"
             :style="{
-              width: listing ? '50%' : '230px',
-              height: listing ? '80px' : '240px'
+              width: listing ? '50%' : '230rem',
+              height: listing ? '80rem' : '240rem'
             }"
           >
             <image-card

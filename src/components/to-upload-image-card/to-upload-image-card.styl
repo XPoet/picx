@@ -1,8 +1,8 @@
 @import "../../style/base.styl"
 
-$info-item-height = 68px
-$info-item-border = 1px
-$info-item-padding = 5px
+$info-item-height = 68rem
+$info-item-border = 1rem
+$info-item-padding = 5rem
 $file-info-background-color = #f1f1f1
 $image-width = $info-item-height - ($info-item-border * 2)
 
@@ -13,30 +13,30 @@ $image-width = $info-item-height - ($info-item-border * 2)
 
   .header {
     width 100%
-    height 30px
+    height 30rem
     box-sizing border-box
-    font-size 12px
+    font-size 12rem
     display flex
     align-items center
     justify-content space-between
-    padding-bottom 6px
+    padding-bottom 6rem
   }
 
   .body {
     width 100%
     height 100%
-    max-height 170px
+    max-height 170rem
     overflow-y auto
     box-sizing border-box
-    padding 10px
-    border 1px solid var(--border-color)
+    padding 10rem
+    border 1rem solid var(--border-color)
 
     &::-webkit-scrollbar {
-      width 5px
+      width 5rem
     }
 
     &::-webkit-scrollbar-thumb {
-      border-radius 2px
+      border-radius 2rem
     }
 
     .image-uploading-info-box {
@@ -52,10 +52,10 @@ $image-width = $info-item-height - ($info-item-border * 2)
         width 100%
         height $info-item-height
         border $info-item-border solid var(--border-color)
-        border-radius 5px
-        margin-bottom 10px
+        border-radius 5rem
+        margin-bottom 10rem
         overflow hidden
-        font-size 15px
+        font-size 15rem
         padding-left $image-width
         transition all 0.3s ease
 
@@ -69,7 +69,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
         }
 
         &:hover {
-          box-shadow 0 0 5px var(--shadow-hover-color)
+          box-shadow 0 0 5rem var(--shadow-hover-color)
         }
 
         .left-image-box {
@@ -79,14 +79,14 @@ $image-width = $info-item-height - ($info-item-border * 2)
           width $image-width
           height 100%
           box-sizing border-box
-          margin-right 5px
+          margin-right 5rem
           padding $info-item-padding
 
           .image-box {
             width 100%
             height 100%
-            border 1px solid var(--border-color)
-            border-radius 5px
+            border 1rem solid var(--border-color)
+            border-radius 5rem
             box-sizing border-box
             overflow hidden
             cursor pointer
@@ -105,13 +105,13 @@ $image-width = $info-item-height - ($info-item-border * 2)
           width 100%
           height 100%
           box-sizing border-box
-          padding $info-item-padding 22px $info-item-padding $info-item-padding
+          padding $info-item-padding 22rem $info-item-padding $info-item-padding
 
           .top, .bottom {
             width 100%
             height 50%
             box-sizing border-box
-            padding 0 5px
+            padding 0 5rem
           }
 
           .top {
@@ -127,7 +127,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
             }
 
             .image-name {
-              font-size 13px
+              font-size 13rem
               width 55%
               overflow: hidden;
               text-overflow: ellipsis;
@@ -135,14 +135,14 @@ $image-width = $info-item-height - ($info-item-border * 2)
             }
 
             .image-info {
-              font-size 12px
+              font-size 12rem
               width 45%
 
               .item {
-                padding 1px 4px
+                padding 1rem 4rem
                 background var(--third-background-color)
-                border-radius 2px
-                margin-left 10px
+                border-radius 2rem
+                margin-left 10rem
               }
             }
           }
@@ -155,13 +155,13 @@ $image-width = $info-item-height - ($info-item-border * 2)
             &.rename-operation {
 
               .el-checkbox {
-                margin-right: 20px;
+                margin-right: 20rem;
               }
 
               .rename-input {
                 input {
-                  height 23px
-                  line-height 23px
+                  height 23rem
+                  line-height 23rem
                 }
               }
             }
@@ -173,13 +173,13 @@ $image-width = $info-item-height - ($info-item-border * 2)
           box-sizing border-box
           color: #fff;
           position: absolute;
-          right: -17px;
-          top: -7px;
-          width: 46px;
-          height: 26px;
+          right: -17rem;
+          top: -7rem;
+          width: 46rem;
+          height: 26rem;
           text-align: center;
           transform: rotate(45deg);
-          box-shadow: 0 1px 1px var(--border-color);
+          box-shadow: 0 1rem 1rem var(--border-color);
 
           &.wait-upload {
             background: var(--await-upload-color);
@@ -194,8 +194,8 @@ $image-width = $info-item-height - ($info-item-border * 2)
           }
 
           i {
-            font-size: 12px;
-            margin-top: 12px;
+            font-size: 12rem;
+            margin-top: 12rem;
             transform: rotate(-45deg);
           }
         }
@@ -203,8 +203,8 @@ $image-width = $info-item-height - ($info-item-border * 2)
 
         .remove-to-upload-image {
           position absolute
-          bottom 5px
-          right 5px
+          bottom 5rem
+          right 5rem
           cursor pointer
         }
 
