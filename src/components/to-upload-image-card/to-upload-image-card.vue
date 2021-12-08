@@ -35,9 +35,20 @@
               </div>
 
               <div class="image-info">
-                <span class="file-size item">
+                <template v-if="imgItem.fileInfo.compressFileSize">
+                  <span class="file-size item">
+                    <del>
+                      {{ getFileSize(imgItem.fileInfo.size) }}
+                    </del>
+                  </span>
+                  <span class="file-size item isCompressed">
+                    {{ getFileSize(imgItem.fileInfo.compressFileSize) }}
+                  </span>
+                </template>
+                <span v-else class="file-size item">
                   {{ getFileSize(imgItem.fileInfo.size) }}
                 </span>
+
                 <span class="last-modified item">
                   {{ formatLastModified(imgItem.fileInfo.lastModified) }}
                 </span>

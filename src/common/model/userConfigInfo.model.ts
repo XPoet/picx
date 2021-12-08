@@ -1,3 +1,4 @@
+import { CompressMethod } from '../utils/compress'
 import { DirModeEnum, DirModel } from './dir.model'
 
 export interface ReposModel {
@@ -23,6 +24,8 @@ export interface PersonalSetting {
   defaultMarkdown: boolean
   themeMode: ThemeModeType
   autoLightThemeDate: AutoLightThemeDateTyoe
+  defaultCompress: boolean
+  defaultCompressMethod: CompressMethod
 }
 
 export interface UserConfigInfoModel {

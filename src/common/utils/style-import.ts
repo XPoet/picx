@@ -1,4 +1,3 @@
-import type { App } from 'vue'
 import {
   ElIcon,
   ElLoading,
@@ -24,6 +23,7 @@ import {
   ElSwitch,
   ElTimeSelect
 } from 'element-plus'
+import type { App } from 'vue'
 
 /**
  * Introduces component on demand.

@@ -1,7 +1,15 @@
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { store } from '@/store'
+import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
+import { UserConfigInfoModel } from '../model/userConfigInfo.model'
+import { compress } from './compress'
 import { getFileSize, isImage } from './file-handle-helper'
 
-const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null => {
+export type handleResult = { base64: string; originalFile: File; compressFile?: File }
+
+const selectedFileHandle = async (
+  file: File,
+  maxsize: number
+): Promise<handleResult | null> => {
   if (!file) {
     return null
   }
@@ -10,11 +18,26 @@ const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null
     ElMessage.error('该文件不是图片格式！')
     return null
   }
+  let compressFile: NonNullable<File>
+  const { personalSetting }: UserConfigInfoModel = store.getters.getUserConfigInfo
+  const { defaultCompress, defaultCompressMethod, themeMode, autoLightThemeDate } =
+    personalSetting
+  if (defaultCompress) {
+    const darkColor = 'rgba(0, 0, 0, 0.7)'
+    const isDark = themeMode === 'dark'
+    const loadingInstance = ElLoading.service({
+      background: isDark ? darkColor : undefined,
+      target: '.upload-area',
+      text: '图片正在压缩····'
+    })
+    compressFile = await compress(file, defaultCompressMethod)
+    loadingInstance.close()
+  }
 
   return new Promise((resolve) => {
     const reader = new FileReader()
 
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(defaultCompress ? compressFile : file)
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const base64: any = e.target?.result
@@ -39,7 +62,7 @@ const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null
             console.log('放弃上传')
           })
       } else {
-        resolve(base64)
+        resolve({ base64, originalFile: file, compressFile })
       }
     }
   })

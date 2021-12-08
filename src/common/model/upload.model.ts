@@ -38,6 +38,7 @@ export interface ToUploadImageModel {
   }
 
   fileInfo: {
+    compressFileSize?: number
     size: number
     lastModified: number
   }
