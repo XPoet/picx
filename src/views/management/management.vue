@@ -38,7 +38,12 @@
               height: listing ? '80px' : '240px'
             }"
           >
-            <image-card :image-obj="image" :listing="listing" />
+            <image-card
+              :image-obj="image"
+              :listing="listing"
+              v-model="activeIndex"
+              :index="index"
+            />
           </li>
         </ul>
       </div>
@@ -72,6 +77,7 @@ const dirImageList = computed(() => store.getters.getDirImageList)
 const currentDirImageList = ref([])
 const loadingImageList = ref(false)
 const listing = ref(false)
+const activeIndex = ref<number>()
 
 function isHasDir(selectedDir: string) {
   return userConfigInfo.value.dirList.some((v: any) => v.value === selectedDir)

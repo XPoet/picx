@@ -1,4 +1,3 @@
-import type { App } from 'vue'
 import {
   ElIcon,
   ElLoading,
@@ -21,8 +20,10 @@ import {
   ElOption,
   ElFormItem,
   ElDialog,
-  ElSwitch
+  ElSwitch,
+  ElTimeSelect
 } from 'element-plus'
+import type { App } from 'vue'
 
 /**
  * Introduces component on demand.
@@ -52,7 +53,8 @@ export default function styleImport(app: App) {
     ElOption,
     ElFormItem,
     ElDialog,
-    ElSwitch
+    ElSwitch,
+    ElTimeSelect
   ].forEach((v: any) => {
     app.use(v)
   })
