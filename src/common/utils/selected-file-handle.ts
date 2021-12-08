@@ -20,9 +20,13 @@ const selectedFileHandle = async (
   }
   let compressFile: NonNullable<File>
   const { personalSetting }: UserConfigInfoModel = store.getters.getUserConfigInfo
-  const { defaultCompress, defaultCompressMethod } = personalSetting
+  const { defaultCompress, defaultCompressMethod, themeMode, autoLightThemeDate } =
+    personalSetting
   if (defaultCompress) {
+    const darkColor = 'rgba(0, 0, 0, 0.7)'
+    const isDark = themeMode === 'dark'
     const loadingInstance = ElLoading.service({
+      background: isDark ? darkColor : undefined,
       target: '.upload-area',
       text: '图片正在压缩····'
     })
