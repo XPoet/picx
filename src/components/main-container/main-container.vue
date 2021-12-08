@@ -22,7 +22,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, onMounted } from 'vue'
 import headerContent from '@/components/header-content/header-content.vue'
 import navContent from '@/components/nav-content/nav-content.vue'
 import imageViewer from '@/components/image-viewer/image-viewer.vue'
@@ -40,6 +40,7 @@ export default defineComponent({
 
   setup() {
     const store = useStore()
+
     const changeUploadAreaActive = (e: any) => {
       store.commit(
         'CHANGE_UPLOAD_AREA_ACTIVE',
@@ -47,7 +48,30 @@ export default defineComponent({
       )
     }
 
+    const elementPlusSizeHadle = (width: number) => {
+      if (width <= 500) {
+        store.dispatch('SET_USER_CONFIG_INFO', {
+          elementPlusSize: 'mini'
+        })
+      } else if (width <= 800) {
+        store.dispatch('SET_USER_CONFIG_INFO', {
+          elementPlusSize: 'small'
+        })
+      } else {
+        store.dispatch('SET_USER_CONFIG_INFO', {
+          elementPlusSize: 'medium'
+        })
+      }
+    }
+
     userConfigInfoModel()
+
+    onMounted(() => {
+      elementPlusSizeHadle(window.innerWidth)
+      window.addEventListener('resize', (e: any) => {
+        elementPlusSizeHadle(e.target.innerWidth)
+      })
+    })
 
     return {
       changeUploadAreaActive

@@ -25,6 +25,7 @@
           v-model="userConfigInfo.personalSetting.themeMode"
           placeholder="主题模式"
           @change="saveConfigInfo"
+          :size="userConfigInfo.elementPlusSize"
         >
           <el-option label="自动设置" value="auto"></el-option>
           <el-option label="暗夜主题" value="dark"></el-option>
@@ -38,7 +39,7 @@
     </div>
     <ul class="setting-list" v-if="userConfigInfo.personalSetting.themeMode === 'auto'">
       <li class="setting-item">
-        <el-form ref="form">
+        <el-form ref="form" :size="userConfigInfo.elementPlusSize">
           <el-form-item v-if="userConfigInfo.personalSetting.themeMode === 'auto'">
             <el-time-select
               v-model="userConfigInfo.personalSetting.autoLightThemeDate[0]"

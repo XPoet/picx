@@ -49,7 +49,8 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
       defaultMarkdown: false,
       themeMode: 'light',
       autoLightThemeDate: ['08:00', '19:00']
-    }
+    },
+    elementPlusSize: 'medium'
   }
 
   const LSConfig: string | null = localStorage.getItem(PICX_CONFIG)

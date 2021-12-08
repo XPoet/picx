@@ -1,7 +1,12 @@
 <template>
   <div class="page-container config-page-container">
     <!-- Token -->
-    <el-form label-width="70rem" label-position="right" class="config-form">
+    <el-form
+      label-width="70rem"
+      :label-position="labelPosition"
+      class="config-form"
+      :size="userConfigInfo.elementPlusSize"
+    >
       <el-form-item label="Token">
         <el-input
           v-model="userConfigInfo.token"
@@ -13,7 +18,7 @@
       <el-form-item class="operation">
         <el-button
           plain
-          size="small"
+          :size="userConfigInfo.elementPlusSize"
           type="primary"
           native-type="submit"
           @click.prevent="getUserInfo()"
@@ -26,10 +31,11 @@
     <!-- 基本信息 -->
     <el-form
       label-width="70rem"
-      label-position="right"
+      :label-position="labelPosition"
       v-if="userConfigInfo.token"
       v-loading="loading"
       element-loading-text="加载中..."
+      :size="userConfigInfo.elementPlusSize"
     >
       <el-form-item v-if="userConfigInfo.owner" label="用户名">
         <el-input v-model="userConfigInfo.owner" readonly></el-input>
@@ -61,10 +67,11 @@
     <!-- 分支 -->
     <el-form
       label-width="70rem"
-      label-position="right"
+      :label-position="labelPosition"
       v-if="userConfigInfo.selectedRepos && userConfigInfo.branchList.length"
       v-loading="branchLoading"
       element-loading-text="加载中..."
+      :size="userConfigInfo.elementPlusSize"
     >
       <!-- 因未验证 API 是否能创建空分支，暂时不开启分支选择方式 && 0 -->
       <el-form-item v-if="userConfigInfo.selectedRepos && 0" label="分支方式">
@@ -121,10 +128,11 @@
     <!-- 目录 -->
     <el-form
       label-width="70px"
-      label-position="right"
+      :label-position="labelPosition"
       v-if="userConfigInfo.selectedBranch"
       v-loading="dirLoading"
       element-loading-text="加载中..."
+      :size="userConfigInfo.elementPlusSize"
     >
       <el-form-item v-if="userConfigInfo.selectedBranch" label="目录方式">
         <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
@@ -207,11 +215,15 @@
     </el-form>
 
     <!-- 操作 -->
-    <el-form label-width="70px">
+    <el-form
+      label-width="70px"
+      :size="userConfigInfo.elementPlusSize"
+      :label-position="labelPosition"
+    >
       <el-form-item class="operation">
         <el-button
           plain
-          size="small"
+          :size="userConfigInfo.elementPlusSize"
           type="warning"
           @click="reset()"
           v-if="userConfigInfo.owner"
@@ -220,7 +232,7 @@
         </el-button>
         <el-button
           plain
-          size="small"
+          :size="userConfigInfo.elementPlusSize"
           type="success"
           @click="goUpload"
           v-if="userConfigInfo.selectedRepos"
@@ -249,7 +261,7 @@ export default defineComponent({
     const router = useRouter()
     const store = useStore()
 
-    const reactiveData = reactive({
+    const reactiveData: any = reactive({
       userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
         .value,
       loggingStatus: computed(() => store.getters.getUserConfigInfo).value,
@@ -257,6 +269,10 @@ export default defineComponent({
       loading: false,
       dirLoading: false,
       branchLoading: false,
+
+      labelPosition: computed(() => {
+        return reactiveData.userConfigInfo.elementPlusSize !== 'medium' ? 'top' : 'right'
+      }),
 
       getUserInfo() {
         if (this.userConfigInfo.token) {

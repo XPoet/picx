@@ -41,4 +41,5 @@ export interface UserConfigInfoModel {
   dirList: DirModel[]
   loggingStatus: boolean
   personalSetting: PersonalSetting
+  elementPlusSize?: 'medium' | 'small' | 'mini'
 }

@@ -40,13 +40,18 @@
         <div class="content-box" style="text-align: right">
           <el-button
             plain
-            size="small"
+            :size="userConfigInfo.elementPlusSize"
             type="warning"
             @click="resetUploadInfo"
             v-if="toUploadImage.list.length"
             >重置
           </el-button>
-          <el-button plain size="small" type="primary" @click="uploadImage">
+          <el-button
+            plain
+            :size="userConfigInfo.elementPlusSize"
+            type="primary"
+            @click="uploadImage"
+          >
             上传
           </el-button>
         </div>
