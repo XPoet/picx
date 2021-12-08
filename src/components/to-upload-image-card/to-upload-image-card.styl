@@ -4,6 +4,7 @@ $info-item-height = 68px
 $info-item-border = 1px
 $info-item-padding = 5px
 $file-info-background-color = #f1f1f1
+$compressed-file-background-color = #409EFF
 $image-width = $info-item-height - ($info-item-border * 2)
 
 .to-upload-image-list-card {
@@ -143,6 +144,9 @@ $image-width = $info-item-height - ($info-item-border * 2)
                 background $file-info-background-color
                 border-radius 2px
                 margin-left 10px
+              }
+              .isCompressed {
+                color $compressed-file-background-color
               }
             }
           }

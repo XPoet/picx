@@ -6,6 +6,7 @@ import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 import { DirModeEnum } from '@/common/model/dir.model'
 import TimeHelper from '@/common/utils/time-helper'
+import { CompressMethod } from '@/common/utils/compress'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {
@@ -25,7 +26,9 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     loggingStatus: false,
     personalSetting: {
       defaultHash: true,
-      defaultMarkdown: false
+      defaultMarkdown: false,
+      defaultCompress: true,
+      defaultCompressMethod: CompressMethod.mozJPEG
     }
   }
 

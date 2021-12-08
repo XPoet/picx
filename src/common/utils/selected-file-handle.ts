@@ -1,16 +1,15 @@
-import { ElMessage, ElMessageBox } from 'element-plus'
-import Compress from '@yireen/squoosh-browser'
-import {
-  defaultPreprocessorState,
-  defaultProcessorState,
-  encoderMap
-} from '@yireen/squoosh-browser/dist/client/lazy-app/feature-meta'
+import { store } from '@/store'
+import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
+import { UserConfigInfoModel } from '../model/userConfigInfo.model'
+import { compress } from './compress'
 import { getFileSize, isImage } from './file-handle-helper'
+
+export type handleResult = { base64: string; originalFile: File; compressFile?: File }
 
 const selectedFileHandle = async (
   file: File,
   maxsize: number
-): Promise<Promise<string> | null> => {
+): Promise<handleResult | null> => {
   if (!file) {
     return null
   }
@@ -19,22 +18,22 @@ const selectedFileHandle = async (
     ElMessage.error('该文件不是图片格式！')
     return null
   }
+  let compressFile: NonNullable<File>
+  const { personalSetting }: UserConfigInfoModel = store.getters.getUserConfigInfo
+  const { defaultCompress, defaultCompressMethod } = personalSetting
+  if (defaultCompress) {
+    const loadingInstance = ElLoading.service({
+      target: '.upload-area',
+      text: '图片正在压缩····'
+    })
+    compressFile = await compress(file, defaultCompressMethod)
+    loadingInstance.close()
+  }
 
-  const compress = new Compress(file, {
-    encoderState: {
-      type: 'mozJPEG',
-      options: encoderMap.mozJPEG.meta.defaultOptions
-    },
-    processorState: defaultProcessorState,
-    preprocessorState: defaultPreprocessorState
-  })
-
-  const compressFile = await compress.process()
-
-  return new Promise<string>((resolve) => {
+  return new Promise((resolve) => {
     const reader = new FileReader()
 
-    reader.readAsDataURL(compressFile)
+    reader.readAsDataURL(defaultCompress ? compressFile : file)
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const base64: any = e.target?.result
@@ -59,7 +58,7 @@ const selectedFileHandle = async (
             console.log('放弃上传')
           })
       } else {
-        resolve(base64)
+        resolve({ base64, originalFile: file, compressFile })
       }
     }
   })
