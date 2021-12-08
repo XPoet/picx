@@ -1,4 +1,4 @@
-@import "../../style/style.styl"
+@import "../../style/base.styl"
 
 .copy-external-link-box {
   position relative
@@ -35,12 +35,12 @@
     }
 
     .copy-url {
-      border 1px solid $default-font-color
-      color $default-font-color
+      border 1px solid var(--default-text-color)
+      color var(--default-text-color)
 
       &:hover {
-        background $default-font-color
-        color $background-color
+        background var(--default-text-color)
+        color var(--background-color)
       }
     }
 

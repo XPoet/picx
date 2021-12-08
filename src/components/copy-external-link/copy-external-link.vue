@@ -29,7 +29,7 @@
           <svg
             v-if="img.is_transform_md"
             t="1631784688556"
-            class="markdown-icon"
+            class="markdown-icon active"
             viewBox="0 0 1280 1024"
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"

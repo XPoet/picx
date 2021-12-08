@@ -1,4 +1,4 @@
-@import "../../style/style.styl"
+@import "../../style/base.styl"
 
 .upload-page-container {
   width 100%
@@ -49,70 +49,70 @@
     }
 
     .upload-status {
-      position: relative;
-      width: 100%;
-      padding: 10px;
-      background: $second-background-color;
-      color: #666;
-      font-size: 12px;
+      position relative
+      width 100%
+      padding 10px
+      background var(--second-background-color)
+      color #666
+      font-size 12px
       box-sizing border-box
 
       .info-item {
-        margin-top: 4px;
+        margin-top 4px
       }
 
       .file-status {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+        display flex
+        justify-content space-between
+        align-items center
       }
 
       .upload-tips {
 
-        display: flex;
-        align-items: center;
+        display flex
+        align-items center
 
         i {
-          margin-left: 2px;
-          font-size: 20px;
+          margin-left 2px
+          font-size 20px
         }
       }
 
       .wait-upload {
-        color: $background-await-upload;
+        color var(--await-upload-color)
       }
 
       .uploading {
-        color: $background-uploading
+        color var(--uploading-color)
       }
 
       .uploaded {
-        color: $background-uploaded
+        color var(--uploaded-color)
       }
 
     }
 
 
     .external-link {
-      width: 100%;
+      width 100%
 
       .external-link-input {
-        margin-bottom: 10px;
+        margin-bottom 10px
 
         &:last-child {
-          margin-bottom: 0;
+          margin-bottom 0
         }
 
         .el-input-group__append {
-          width: 100px;
-          text-align-last: justify;
+          width 100px
+          text-align-last justify
         }
       }
     }
 
 
     .upload-tools {
-      width: 100%;
+      width 100%
 
       .repos-dir-info {
         margin-bottom 20px

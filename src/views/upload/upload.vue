@@ -41,6 +41,7 @@
           <el-button
             plain
             size="small"
+            type="warning"
             @click="resetUploadInfo"
             v-if="toUploadImage.list.length"
             >重置
@@ -153,6 +154,6 @@ watch(
 )
 </script>
 
-<style scoped lang="stylus">
+<style lang="stylus">
 @import "upload.styl"
 </style>

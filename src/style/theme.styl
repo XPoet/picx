@@ -1,127 +1,120 @@
-.light-mode {
-  --default-font-color: #2c3e50
-  --background-color: #fff
-  --second-background-color: #f0f0f0
-  --third-background-color: #f1f1f1
-  --image-card-shadow-color: #ccc
-  --upload-area-focus-color: #2066bb
-  --upload-area-border-color: #999
-  --scrollbar-color: #dfdfdf
-  --image-list-border-color: #ddd
+@import './variables.styl'
 
-  --background-await-upload: #E6A23C
-  --background-uploading: #409EFF
-  --background-uploaded: #67C23A
+:root {
+  root-color('light');
 }
 
+@media (prefers-color-scheme light) {
+  :root {
+    root-color('light');
+  }
+}
+
+@media (prefers-color-scheme dark) {
+  :root {
+    root-color('dark');
+  }
+}
+
+.light-mode {
+  root-color('light');
+}
 
 .dark-mode {
-  --default-font-color: #ececec
-  --second-font-color: #cbcbd1
-  --background-color: #383940
-  --second-background-color: #32333a
-  --third-background-color: #62636a
-  --image-card-shadow-color: var(--third-background-color)
-  --upload-area-focus-color: #125ab1
-  --upload-area-border-color: var(--second-font-color)
-  --scrollbar-color: #dfdfdf
-  --image-list-border-color: var(--second-font-color)
+  root-color('dark');
 
-  --background-await-upload: #c0a275
-  --background-uploading: #2f75be
-  --background-uploaded: #539035
+  .markdown-icon {
+    path {
+      fill #aaa
+    }
 
-  --el-text-color-primary: var(--second-font-color)
-  --el-color-primary: var(--default-font-color)
-  --el-text-color-regular: var(--second-font-color)
-  --el-background-color-base: var(--second-background-color)
+    &.active {
+      path {
+        fill #ddd
+      }
+    }
+  }
+
+
+  --el-text-color-primary var(--default-text-color)
+  --el-text-color-regular var(--second-text-color)
+  --el-background-color-base var(--second-background-color)
 
   .el-input {
-    --el-input-background-color: var(--background-color)
-    --el-input-font-color: var(--default-font-color)
-    --el-border-color-base: var(--second-font-color)
+    --el-input-background-color var(--background-color)
+    --el-input-font-color var(--default-text-color)
+    --el-border-color-base var(--second-text-color)
   }
 
   .el-button {
-    background: transparent
+    background transparent
   }
 
   .el-dropdown-menu {
-    background-color: var(--background-color)
+    background-color var(--background-color)
   }
 
   .el-popper.is-dark {
-    border: 1px solid var(--el-border-color-light)
+    border 1px solid var(--el-border-color-light)
   }
 
   .el-popper.is-dark .el-popper__arrow:before {
-    border-top-color: transparent
-    border-left-color: transparent
+    border-top-color transparent
+    border-left-color transparent
   }
 
   .el-popper, .el-select__popper.el-popper[role=tooltip], .el-dropdown__popper.el-popper[role=tooltip] {
-    background-color: var(--background-color)
-    --el-text-color-primary: var(--background-color)
-    box-shadow: 0 0 3px var(--second-font-color)
+    background-color var(--background-color)
+    --el-text-color-primary var(--background-color)
+    box-shadow 0 0 3px var(--second-text-color)
   }
 
   .el-popper__arrow:before, .el-select__popper.el-popper[role=tooltip] .el-popper__arrow::before, .el-dropdown__popper.el-popper[role=tooltip] .el-popper__arrow::before {
-    background-color: var(--background-color)
-    border: 1px solid var(--el-border-color-light)
+    background-color var(--background-color)
+    border 1px solid var(--el-border-color-light)
   }
 
   .el-select__popper.el-popper[role=tooltip][data-popper-placement^=top] .el-popper__arrow::before {
-    border-top-color: transparent
-    border-left-color: transparent
+    border-top-color transparent
+    border-left-color transparent
   }
 
   .el-select__popper.el-popper[role=tooltip][data-popper-placement^=bottom] .el-popper__arrow::before {
-    border-bottom-color: transparent
-    border-right-color: transparent
+    border-bottom-color transparent
+    border-right-color transparent
   }
 
   .el-dropdown__popper {
-    --el-dropdown-menuItem-hover-fill: var(--background-color)
-    --el-dropdown-menuItem-hover-color: var(--default-font-color)
+    --el-dropdown-menuItem-hover-fill var(--background-color)
   }
 
   .el-switch {
-    --el-switch-on-color: var(--default-font-color)
-    --el-switch-off-color: var(--third-background-color)
+    --el-switch-off-color var(--third-text-color)
   }
 
   .el-switch__action {
-    background-color: var(--background-color)
+    background-color var(--background-color)
   }
 
   .el-checkbox {
-    --el-checkbox-checked-background-color: var(--second-background-color)
-    --el-checkbox-checked-input-border-color: var(--default-font-color)
-    --el-checkbox-checked-icon-color: var(--default-font-color)
-    --el-checkbox-background-color: var(--second-background-color)
-    --el-checkbox-checked-font-color: var(--default-font-color)
-    --el-checkbox-font-color: var(--second-font-color)
+    --el-checkbox-checked-input-border-color var(--default-text-color)
+    --el-checkbox-background-color var(--second-background-color)
+    --el-checkbox-checked-font-color var(--default-text-color)
+    --el-checkbox-font-color var(--second-text-color)
   }
 
   .el-radio {
-    --el-border-color-base: var(--second-font-color)
-  }
-
-  .el-radio__input.is-checked .el-radio__inner {
-    background: var(--background-color)
+    --el-border-color-base var(--second-text-color)
+    --el-radio-input-background-color var(--dark-fourth-text-color)
+    --el-color-white var(--third-background-color)
   }
 
   .el-tag {
-    background: transparent
-    --el-tag-border-color: var(--second-font-color)
-  }
-
-  [class*=" el-icon-"], [class^=el-icon-] {
-
+    background transparent
+    --el-tag-border-color var(--second-text-color)
   }
 
   .el-message-box {
-    background-color: var(--second-background-color)
+    background-color var(--second-background-color)
   }
-
 }

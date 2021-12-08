@@ -1,19 +1,5 @@
 @import './theme.styl'
-
-$default-font-color= var(--default-font-color);
-$background-color= var(--background-color);
-$second-background-color= var(--second-background-color);
-$image-card-shadow-color= var(--image-card-shadow-color);
-$upload-area-focus-color= var(--upload-area-focus-color);
-$upload-area-border-color= var(--upload-area-border-color);
-$scrollbar-color= var(--scrollbar-color);
-$image-list-border-color= var(--image-list-border-color);
-
-$background-await-upload= var(--background-await-upload);
-$background-uploading= var(--background-uploading);
-$background-uploaded= var(--background-uploaded);
-
-$third-background-color= var(--third-background-color);
+@import './variables.styl'
 
 
 $component-interval = 16px
@@ -26,7 +12,7 @@ html, body {
   margin 0
   width 100%
   height 100%
-  color $default-font-color
+  color var(--default-text-color)
 }
 
 
@@ -44,7 +30,7 @@ li {
   }
 
   &::-webkit-scrollbar-thumb {
-    background $scrollbar-color
+    background var(--scrollbar-color)
     border-radius 5px
   }
 
@@ -71,7 +57,7 @@ li {
   height 100%
   box-sizing border-box
   padding 30px
-  background $background-color
+  background var(--background-color)
   border-top-left-radius $box-border-radius
   border-top-right-radius $box-border-radius
   overflow-y auto
