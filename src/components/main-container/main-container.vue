@@ -22,11 +22,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 import headerContent from '@/components/header-content/header-content.vue'
 import navContent from '@/components/nav-content/nav-content.vue'
 import imageViewer from '@/components/image-viewer/image-viewer.vue'
 import { useStore } from '@/store'
-import { defineComponent } from 'vue'
+import userConfigInfoModel from '@/common/utils/useThemeChange'
 
 export default defineComponent({
   name: 'main-container',
@@ -40,8 +41,13 @@ export default defineComponent({
   setup() {
     const store = useStore()
     const changeUploadAreaActive = (e: any) => {
-      store.commit('CHANGE_UPLOAD_AREA_ACTIVE', e.target.classList.contains('active-upload'))
+      store.commit(
+        'CHANGE_UPLOAD_AREA_ACTIVE',
+        e.target.classList.contains('active-upload')
+      )
     }
+
+    userConfigInfoModel()
 
     return {
       changeUploadAreaActive

@@ -1,9 +1,9 @@
-@import "../../style.styl"
+@import "../../style/base.styl"
 
 .header {
   width 100%
   height 100%
-  background: #fff
+  background var(--background-color)
   padding 0 20px
   box-sizing border-box
   display flex
@@ -69,9 +69,9 @@
         align-items: center;
         width: 38px;
         height: 38px;
-        color: $default-font-color;
+        color: var(--default-text-color);
         border-radius: 50%;
-        border: 1px solid $default-font-color;
+        border: 1px solid var(--default-text-color);
         margin-left: 10px;
         padding: 1px;
         box-sizing: border-box;

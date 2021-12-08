@@ -1,11 +1,11 @@
-@import "../../style.styl"
+@import "../../style/base.styl"
 
 .nav {
   position relative
   width 100%
   height 100%
   box-sizing border-box
-  background: $background-color
+  background var(--background-color)
 
   ul.nav-list {
     padding 0
@@ -19,25 +19,24 @@
 
       &.active {
         font-weight bold
-        background $second-background-color
+        background var(--second-background-color)
       }
 
       .nav-content {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        display flex
+        flex-direction column
+        justify-content center
+        align-items center
 
         .nav-icon {
-          font-size: 26px;
+          font-size 26px
         }
 
         .nav-name {
-          margin-top: 5px;
-          font-size: 12px;
+          margin-top 5px
+          font-size 12px
         }
       }
-
     }
 
   }

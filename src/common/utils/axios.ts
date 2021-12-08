@@ -17,7 +17,10 @@ axios.interceptors.request.use(
     const userConfig = localStorage.getItem(PICX_CONFIG)
 
     if (userConfig) {
-      config.headers.Authorization = `token ${JSON.parse(userConfig).token}`
+      const { token } = JSON.parse(userConfig)
+      if (token) {
+        config.headers.Authorization = `token ${token}`
+      }
     }
 
     return config
