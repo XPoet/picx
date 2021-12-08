@@ -27,20 +27,26 @@
         ></el-switch>
       </li>
       <li class="setting-item">
-        压缩方式：
         <el-radio-group
           :disabled="!userConfigInfo.personalSetting.defaultCompress"
           v-model="userConfigInfo.personalSetting.defaultCompressMethod"
         >
-          <el-radio :label="CompressMethods.mozJPEG">
-            {{ CompressMethods.mozJPEG }} (产物为 JPEG ，兼容性好)
-          </el-radio>
-          <el-radio :label="CompressMethods.avif">
-            {{ CompressMethods.avif }} (最新格式，效率极高，压缩产物目前仅谷歌浏览器支持)
-          </el-radio>
-          <el-radio :label="CompressMethods.webP">
-            {{ CompressMethods.webP }} (现代浏览器支持)
-          </el-radio>
+          <div>
+            <el-radio :label="CompressMethods.mozJPEG">
+              {{ CompressMethods.mozJPEG }} (产物为 JPEG ，兼容性好)
+            </el-radio>
+          </div>
+          <div>
+            <el-radio :label="CompressMethods.avif">
+              {{ CompressMethods.avif }}
+              (最新格式，效率极高，压缩产物目前仅谷歌浏览器支持)
+            </el-radio>
+          </div>
+          <div>
+            <el-radio :label="CompressMethods.webP">
+              {{ CompressMethods.webP }} (现代浏览器支持)
+            </el-radio>
+          </div>
         </el-radio-group>
       </li>
     </ul>
