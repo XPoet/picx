@@ -6,7 +6,7 @@ import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 import { DirModeEnum } from '@/common/model/dir.model'
 import TimeHelper from '@/common/utils/time-helper'
-import { CompressMethod } from '@/common/utils/compress'
+import { CompressEncoderMap } from '@/common/utils/compress'
 import getType from '@/common/utils/get-type'
 
 /**
@@ -48,8 +48,8 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     personalSetting: {
       defaultHash: true,
       defaultMarkdown: false,
-      defaultCompress: true,
-      defaultCompressMethod: CompressMethod.mozJPEG,
+      isCompress: true,
+      compressEncoder: CompressEncoderMap.webP,
       themeMode: 'light',
       autoLightThemeDate: ['08:00', '19:00']
     },

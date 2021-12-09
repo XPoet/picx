@@ -4,13 +4,14 @@ $info-item-height = 68rem
 $info-item-border = 1rem
 $info-item-padding = 5rem
 $file-info-background-color = #f1f1f1
-$compressed-file-background-color = #409EFF
+$compressed-file-background-color = #228eff
 $image-width = $info-item-height - ($info-item-border * 2)
 
 .to-upload-image-list-card {
   position relative
   width 100%
   box-sizing border-box
+  margin-top 6rem
 
   .header {
     width 100%
@@ -31,6 +32,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
     box-sizing border-box
     padding 10rem
     border 1rem solid var(--border-color)
+    margin-top 10rem
 
     &::-webkit-scrollbar {
       width 5rem
@@ -106,7 +108,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
           width 100%
           height 100%
           box-sizing border-box
-          padding $info-item-padding 22rem $info-item-padding $info-item-padding
+          padding $info-item-padding 20rem $info-item-padding $info-item-padding
 
           .top, .bottom {
             width 100%
@@ -129,7 +131,6 @@ $image-width = $info-item-height - ($info-item-border * 2)
 
             .image-name {
               font-size 13rem
-              width 55%
               overflow: hidden;
               text-overflow: ellipsis;
               white-space: nowrap;
@@ -137,16 +138,16 @@ $image-width = $info-item-height - ($info-item-border * 2)
 
             .image-info {
               font-size 12rem
-              width 45%
 
               .item {
                 padding 1rem 4rem
                 background var(--third-background-color)
                 border-radius 2rem
                 margin-left 10rem
-              }
-              .isCompressed {
-                color $compressed-file-background-color
+
+                &.compressed {
+                  color $compressed-file-background-color
+                }
               }
             }
           }

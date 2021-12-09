@@ -33,19 +33,20 @@
               <div class="image-name">
                 {{ imgItem.filename.now }}
               </div>
-
               <div class="image-info">
-                <template v-if="imgItem.fileInfo.compressFileSize">
-                  <span class="file-size item">
-                    <del>
-                      {{ getFileSize(imgItem.fileInfo.size) }}
-                    </del>
-                  </span>
-                  <span class="file-size item isCompressed">
-                    {{ getFileSize(imgItem.fileInfo.compressFileSize) }}
-                  </span>
-                </template>
-                <span v-else class="file-size item">
+                <span
+                  class="file-size item"
+                  v-if="userConfigInfo.personalSetting.isCompress"
+                >
+                  <del>
+                    {{ getFileSize(imgItem.fileInfo.originSize) }}
+                  </del>
+                </span>
+
+                <span
+                  class="file-size item"
+                  :class="{ compressed: userConfigInfo.personalSetting.isCompress }"
+                >
                   {{ getFileSize(imgItem.fileInfo.size) }}
                 </span>
 
@@ -147,22 +148,14 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import { getFileSize } from '@/common/utils/file-handle-helper'
 import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
-import {
-  ToUploadImageModel,
-  UploadedImageModel,
-  UploadStatusEnum
-} from '@/common/model/upload.model'
-import { ExternalLinkType } from '@/common/model/externalLink.model'
+import { ToUploadImageModel, UploadStatusEnum } from '@/common/model/upload.model'
 import TimeHelper from '@/common/utils/time-helper'
-import axios from '@/common/utils/axios'
-import generateExternalLink from '@/common/utils/generate-external-link'
 import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
-import { uploadImage_single, uploadUrlHandle } from '@/common/utils/upload-helper'
+import { uploadImage_single } from '@/common/utils/upload-helper'
 
 export default defineComponent({
   name: 'to-upload-image-card',

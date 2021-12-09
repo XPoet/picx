@@ -2,7 +2,7 @@ import { watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useStore } from '@/store'
 import {
   PersonalSetting,
-  AutoLightThemeDateTyoe
+  AutoLightThemeDateType
 } from '@/common/model/userConfigInfo.model'
 
 const useThemeChange = () => {
@@ -19,7 +19,7 @@ const useThemeChange = () => {
       }
     })
   }
-  const themeTimeResult = (autoLightThemeDate: AutoLightThemeDateTyoe): boolean => {
+  const themeTimeResult = (autoLightThemeDate: AutoLightThemeDateType): boolean => {
     const hour = new Date().getHours()
     const min = new Date().getMinutes()
     if (

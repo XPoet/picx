@@ -21,35 +21,37 @@
     <ul class="setting-list">
       <li class="setting-item">
         <el-switch
-          v-model="userConfigInfo.personalSetting.defaultCompress"
+          v-model="userConfigInfo.personalSetting.isCompress"
           @change="switchChange"
           active-text="是否压缩图片"
         ></el-switch>
       </li>
       <li class="setting-item">
+        <div>选择图像编码器：</div>
         <el-radio-group
-          :disabled="!userConfigInfo.personalSetting.defaultCompress"
-          v-model="userConfigInfo.personalSetting.defaultCompressMethod"
+          :disabled="!userConfigInfo.personalSetting.isCompress"
+          v-model="userConfigInfo.personalSetting.compressEncoder"
         >
           <div>
-            <el-radio :label="CompressMethods.mozJPEG">
-              {{ CompressMethods.mozJPEG }} (产物为 JPEG ，兼容性好)
+            <el-radio :label="compressEncoder.webP">
+              {{ compressEncoder.webP }} （压缩后格式为 webp，现代浏览器支持）
             </el-radio>
           </div>
           <div>
-            <el-radio :label="CompressMethods.avif">
-              {{ CompressMethods.avif }}
-              (最新格式，效率极高，压缩产物目前仅谷歌浏览器支持)
+            <el-radio :label="compressEncoder.mozJPEG">
+              {{ compressEncoder.mozJPEG }} （压缩后格式为 jpg，兼容性好）
             </el-radio>
           </div>
           <div>
-            <el-radio :label="CompressMethods.webP">
-              {{ CompressMethods.webP }} (现代浏览器支持)
+            <el-radio :label="compressEncoder.avif">
+              {{ compressEncoder.avif }} （压缩后格式为 avif，
+              压缩比高，目前仅谷歌浏览器支持该格式）
             </el-radio>
           </div>
         </el-radio-group>
       </li>
     </ul>
+
     <div class="setting-title">主题设置：</div>
     <ul class="setting-list">
       <li class="setting-item">
@@ -100,14 +102,14 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { store } from '@/store'
-import { CompressMethod } from '@/common/utils/compress'
+import { CompressEncoderMap } from '@/common/utils/compress'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
 const switchChange = () => {
   store.dispatch('USER_CONFIG_INFO_PERSIST')
 }
-const CompressMethods = CompressMethod
+const compressEncoder = CompressEncoderMap
 const saveConfigInfo = () => {
   store.dispatch('SET_USER_CONFIG_INFO', {
     ...userConfigInfo,

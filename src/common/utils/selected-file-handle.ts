@@ -1,5 +1,5 @@
-import { store } from '@/store'
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
+import { store } from '@/store'
 import { UserConfigInfoModel } from '../model/userConfigInfo.model'
 import { compress } from './compress'
 import { getFileSize, isImage } from './file-handle-helper'
@@ -20,24 +20,22 @@ const selectedFileHandle = async (
   }
   let compressFile: NonNullable<File>
   const { personalSetting }: UserConfigInfoModel = store.getters.getUserConfigInfo
-  const { defaultCompress, defaultCompressMethod, themeMode, autoLightThemeDate } =
-    personalSetting
-  if (defaultCompress) {
-    const darkColor = 'rgba(0, 0, 0, 0.7)'
+  const { isCompress, compressEncoder, themeMode } = personalSetting
+  if (isCompress) {
     const isDark = themeMode === 'dark'
     const loadingInstance = ElLoading.service({
-      background: isDark ? darkColor : undefined,
+      background: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)',
       target: '.upload-area',
-      text: '图片正在压缩····'
+      text: '正在压缩图片'
     })
-    compressFile = await compress(file, defaultCompressMethod)
+    compressFile = await compress(file, compressEncoder)
     loadingInstance.close()
   }
 
   return new Promise((resolve) => {
     const reader = new FileReader()
 
-    reader.readAsDataURL(defaultCompress ? compressFile : file)
+    reader.readAsDataURL(isCompress ? compressFile : file)
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const base64: any = e.target?.result

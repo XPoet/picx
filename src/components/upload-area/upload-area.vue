@@ -26,7 +26,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from 'vue'
-import { store, useStore } from '@/store'
+import { useStore } from '@/store'
 import { filenameHandle } from '@/common/utils/file-handle-helper'
 import selectedFileHandle, { handleResult } from '@/common/utils/selected-file-handle'
 import createToUploadImageObject from '@/common/utils/create-to-upload-image'
@@ -91,7 +91,7 @@ export default defineComponent({
       },
 
       // 获取图片对象
-      getImage(base64Data: string, file: File, compressFile?: File) {
+      getImage(base64Data: string, originFile: File, compressFile?: File) {
         if (
           this.toUploadImage.list.length === this.toUploadImage.uploadedNumber &&
           this.toUploadImage.list.length > 0 &&
@@ -101,28 +101,29 @@ export default defineComponent({
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_UPLOADED_NUMBER')
         }
 
+        const { defaultHash, defaultCompress } = this.userConfigInfo.personalSetting
+        const file = defaultCompress ? compressFile : originFile
         const curImg = createToUploadImageObject()
 
         curImg.imgData.base64Url = base64Data
         // eslint-disable-next-line prefer-destructuring
         curImg.imgData.base64Content = base64Data.split(',')[1]
 
-        const { name, hash, suffix } = filenameHandle(file.name)
-
+        const { name, hash, suffix } = filenameHandle(file?.name)
         curImg.uuid = hash
-
-        curImg.fileInfo.size = file.size
-        curImg.fileInfo.compressFileSize = compressFile?.size
-        curImg.fileInfo.lastModified = file.lastModified
+        curImg.fileInfo.compressedSize = compressFile?.size
+        curImg.fileInfo.originSize = originFile.size
+        curImg.fileInfo.size = file?.size
+        curImg.fileInfo.lastModified = file?.lastModified
 
         curImg.filename.name = name
         curImg.filename.hash = hash
         curImg.filename.suffix = suffix
-        curImg.filename.now = this.userConfigInfo.personalSetting.defaultHash
+        curImg.filename.now = defaultHash
           ? `${name}.${hash}.${suffix}`
           : `${name}.${suffix}`
         curImg.filename.initName = name
-        curImg.filename.isHashRename = this.userConfigInfo.personalSetting.defaultHash
+        curImg.filename.isHashRename = defaultHash
 
         store.dispatch('TO_UPLOAD_IMAGE_LIST_ADD', JSON.parse(JSON.stringify(curImg)))
         store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', {

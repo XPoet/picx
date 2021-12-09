@@ -1,4 +1,4 @@
-import { CompressMethod } from '../utils/compress'
+import { CompressEncoderMap } from '../utils/compress'
 import { DirModeEnum, DirModel } from './dir.model'
 
 export interface ReposModel {
@@ -18,14 +18,14 @@ export enum BranchModeEnum {
 }
 
 export type ThemeModeType = 'auto' | 'light' | 'dark'
-export type AutoLightThemeDateTyoe = Array<String>
+export type AutoLightThemeDateType = Array<String>
 export interface PersonalSetting {
   defaultHash: boolean
   defaultMarkdown: boolean
   themeMode: ThemeModeType
-  autoLightThemeDate: AutoLightThemeDateTyoe
-  defaultCompress: boolean
-  defaultCompressMethod: CompressMethod
+  autoLightThemeDate: AutoLightThemeDateType
+  isCompress: boolean
+  compressEncoder: CompressEncoderMap
 }
 
 export interface UserConfigInfoModel {
