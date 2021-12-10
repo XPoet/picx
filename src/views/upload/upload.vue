@@ -40,7 +40,7 @@
         <div class="content-box" style="text-align: right">
           <el-button
             plain
-            :size="userConfigInfo.elementPlusSize"
+            :size="userSettings.elementPlusSize"
             type="warning"
             @click="resetUploadInfo"
             v-if="toUploadImage.list.length"
@@ -48,7 +48,7 @@
           </el-button>
           <el-button
             plain
-            :size="userConfigInfo.elementPlusSize"
+            :size="userSettings.elementPlusSize"
             type="primary"
             @click="uploadImage"
           >
@@ -79,6 +79,7 @@ const toUploadImageCardDom: Ref = ref<null | HTMLElement>(null)
 const uploadAreaDom: Ref = ref<null | HTMLElement>(null)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
+const userSettings = computed(() => store.getters.getUserSettings)
 const logoutStatus = computed(() => store.getters.getUserLoggingStatus)
 const uploadedImageList = computed(() => store.getters.getUploadedImageList)
 const toUploadImage = computed(() => store.getters.getToUploadImage)

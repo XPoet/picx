@@ -34,10 +34,7 @@
                 {{ imgItem.filename.now }}
               </div>
               <div class="image-info">
-                <span
-                  class="file-size item"
-                  v-if="userConfigInfo.personalSetting.isCompress"
-                >
+                <span class="file-size item" v-if="userSettings.isCompress">
                   <del>
                     {{ getFileSize(imgItem.fileInfo.originSize) }}
                   </del>
@@ -45,7 +42,7 @@
 
                 <span
                   class="file-size item"
-                  :class="{ compressed: userConfigInfo.personalSetting.isCompress }"
+                  :class="{ compressed: userSettings.isCompress }"
                 >
                   {{ getFileSize(imgItem.fileInfo.size) }}
                 </span>
@@ -150,7 +147,7 @@
 import { computed, defineComponent, reactive, toRefs, onMounted } from 'vue'
 import { useStore } from '@/store'
 import { getFileSize } from '@/common/utils/file-handle-helper'
-import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
 import { ToUploadImageModel, UploadStatusEnum } from '@/common/model/upload.model'
 import TimeHelper from '@/common/utils/time-helper'
 import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
@@ -181,8 +178,8 @@ export default defineComponent({
         size: ''
       },
 
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
-        .value,
+      userConfigInfo: computed(() => store.getters.getUserConfigInfo).value,
+      userSettings: computed(() => store.getters.getUserSettings).value,
       toUploadImage: computed(() => store.getters.getToUploadImage).value,
 
       hashRename(e: boolean, img: any) {
@@ -258,7 +255,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      const isHash = reactiveData.userConfigInfo.personalSetting.defaultHash
+      const isHash = reactiveData.userSettings.defaultHash
       reactiveData.toUploadImage.list.forEach((v: ToUploadImageModel) => {
         // eslint-disable-next-line no-param-reassign
         v.filename.isHashRename = isHash

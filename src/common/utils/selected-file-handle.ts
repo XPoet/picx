@@ -1,6 +1,5 @@
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
 import { store } from '@/store'
-import { UserConfigInfoModel } from '../model/userConfigInfo.model'
 import { compress } from './compress'
 import { getFileSize, isImage } from './file-handle-helper'
 
@@ -19,12 +18,11 @@ const selectedFileHandle = async (
     return null
   }
   let compressFile: NonNullable<File>
-  const { personalSetting }: UserConfigInfoModel = store.getters.getUserConfigInfo
-  const { isCompress, compressEncoder, themeMode } = personalSetting
+  const { isCompress, compressEncoder, themeMode } = store.getters.getUserSettings
   if (isCompress) {
     const isDark = themeMode === 'dark'
     const loadingInstance = ElLoading.service({
-      background: isDark ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.7)',
+      background: isDark ? 'rgba(0, 0, 0, 0.6)' : '',
       target: '.upload-area',
       text: '正在压缩图片'
     })

@@ -47,6 +47,7 @@ export default defineComponent({
 
     const reactiveData = reactive({
       userConfigInfo: computed(() => store.getters.getUserConfigInfo).value,
+      userSettings: computed(() => store.getters.getUserSettings).value,
       uploadAreaActive: computed((): boolean => store.getters.getUploadAreaActive),
       uploadSettings: computed(() => store.getters.getUploadSettings).value,
       toUploadImage: computed(() => store.getters.getToUploadImage).value,
@@ -101,8 +102,8 @@ export default defineComponent({
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_UPLOADED_NUMBER')
         }
 
-        const { defaultHash, defaultCompress } = this.userConfigInfo.personalSetting
-        const file = defaultCompress ? compressFile : originFile
+        const { defaultHash, isCompress } = this.userSettings
+        const file = isCompress ? compressFile : originFile
         const curImg = createToUploadImageObject()
 
         curImg.imgData.base64Url = base64Data

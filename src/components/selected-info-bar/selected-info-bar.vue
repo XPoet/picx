@@ -1,12 +1,12 @@
 <template>
   <div class="selected-info-bar-box" v-if="userConfigInfo.selectedRepos">
     <span class="info-item">
-      仓库：<el-tag :size="userConfigInfo.elementPlusSize">{{
+      仓库：<el-tag :size="userSettings.elementPlusSize">{{
         userConfigInfo.selectedRepos
       }}</el-tag>
     </span>
     <span class="info-item" v-if="userConfigInfo.selectedBranch">
-      分支：<el-tag :size="userConfigInfo.elementPlusSize">{{
+      分支：<el-tag :size="userSettings.elementPlusSize">{{
         userConfigInfo.selectedBranch
       }}</el-tag>
     </span>
@@ -15,7 +15,7 @@
       <el-select
         v-model="userConfigInfo.selectedDir"
         placeholder="请选择"
-        :size="userConfigInfo.elementPlusSize === 'medium' ? 'small' : 'mini'"
+        :size="userSettings.elementPlusSize === 'medium' ? 'small' : 'mini'"
         @change="dirChange"
       >
         <el-option
@@ -40,6 +40,7 @@ export default defineComponent({
   setup(props, context) {
     const store = useStore()
     const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
+    const userSettings = computed(() => store.getters.getUserSettings)
 
     const dirChange = (dir: string) => {
       store.dispatch('USER_CONFIG_INFO_PERSIST')
@@ -48,6 +49,7 @@ export default defineComponent({
 
     return {
       userConfigInfo,
+      userSettings,
       dirChange
     }
   }

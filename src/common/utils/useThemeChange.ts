@@ -1,9 +1,6 @@
 import { watch, onMounted, onUnmounted, nextTick } from 'vue'
 import { useStore } from '@/store'
-import {
-  PersonalSetting,
-  AutoLightThemeDateType
-} from '@/common/model/userConfigInfo.model'
+import { UserSettingsModel } from '@/common/model/user-settings.model'
 
 const useThemeChange = () => {
   const store = useStore()
@@ -19,41 +16,42 @@ const useThemeChange = () => {
       }
     })
   }
-  const themeTimeResult = (autoLightThemeDate: AutoLightThemeDateType): boolean => {
+  const themeTimeResult = (autoLightThemeTime: string[]): boolean => {
     const hour = new Date().getHours()
     const min = new Date().getMinutes()
     if (
-      hour < Number(autoLightThemeDate[0].substr(0, 2)) ||
-      hour > Number(autoLightThemeDate[1].substr(0, 2))
+      hour < Number(autoLightThemeTime[0].substr(0, 2)) ||
+      hour > Number(autoLightThemeTime[1].substr(0, 2))
     ) {
       return false
     }
     if (
-      hour === Number(autoLightThemeDate[0].substr(0, 2)) &&
-      min > Number(autoLightThemeDate[0].substr(-2))
+      hour === Number(autoLightThemeTime[0].substr(0, 2)) &&
+      min > Number(autoLightThemeTime[0].substr(-2))
     ) {
       return false
     }
     return !(
-      hour === Number(autoLightThemeDate[1].substr(0, 2)) &&
-      min > Number(autoLightThemeDate[1].substr(-2))
+      hour === Number(autoLightThemeTime[1].substr(0, 2)) &&
+      min > Number(autoLightThemeTime[1].substr(-2))
     )
   }
-  const setThemeByConfigFn = (config: PersonalSetting) => {
-    const { themeMode, autoLightThemeDate } = config
+  const setThemeByConfigFn = (settings: UserSettingsModel) => {
+    const { themeMode, autoLightThemeTime } = settings
     if (themeMode !== 'auto') {
       setBodyClassName(themeMode)
-    } else if (themeTimeResult(autoLightThemeDate)) {
+    } else if (themeTimeResult(autoLightThemeTime)) {
       setBodyClassName('light')
     } else {
       setBodyClassName('dark')
     }
   }
   watch(
-    (): PersonalSetting => store.getters.getUserConfigInfo.personalSetting,
+    (): UserSettingsModel => store.getters.getUserSettings,
     (newValue) => {
       setThemeByConfigFn(newValue)
-    }
+    },
+    { deep: true }
   )
 
   const media = window.matchMedia('(prefers-color-scheme:dark)')
@@ -70,7 +68,7 @@ const useThemeChange = () => {
   }
 
   onMounted(() => {
-    setThemeByConfigFn(store.getters.getUserConfigInfo.personalSetting)
+    setThemeByConfigFn(store.getters.getUserSettings)
     media.addEventListener('change', callback)
   })
 

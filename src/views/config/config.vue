@@ -5,7 +5,7 @@
       label-width="70rem"
       :label-position="labelPosition"
       class="config-form"
-      :size="userConfigInfo.elementPlusSize"
+      :size="userSettings.elementPlusSize"
     >
       <el-form-item label="Token">
         <el-input
@@ -18,7 +18,7 @@
       <el-form-item class="operation">
         <el-button
           plain
-          :size="userConfigInfo.elementPlusSize"
+          :size="userSettings.elementPlusSize"
           type="primary"
           native-type="submit"
           @click.prevent="getUserInfo()"
@@ -35,7 +35,7 @@
       v-if="userConfigInfo.token"
       v-loading="loading"
       element-loading-text="加载中..."
-      :size="userConfigInfo.elementPlusSize"
+      :size="userSettings.elementPlusSize"
     >
       <el-form-item v-if="userConfigInfo.owner" label="用户名">
         <el-input v-model="userConfigInfo.owner" readonly></el-input>
@@ -71,7 +71,7 @@
       v-if="userConfigInfo.selectedRepos && userConfigInfo.branchList.length"
       v-loading="branchLoading"
       element-loading-text="加载中..."
-      :size="userConfigInfo.elementPlusSize"
+      :size="userSettings.elementPlusSize"
     >
       <!-- 因未验证 API 是否能创建空分支，暂时不开启分支选择方式 && 0 -->
       <el-form-item v-if="userConfigInfo.selectedRepos && 0" label="分支方式">
@@ -132,7 +132,7 @@
       v-if="userConfigInfo.selectedBranch"
       v-loading="dirLoading"
       element-loading-text="加载中..."
-      :size="userConfigInfo.elementPlusSize"
+      :size="userSettings.elementPlusSize"
     >
       <el-form-item v-if="userConfigInfo.selectedBranch" label="目录方式">
         <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
@@ -217,13 +217,13 @@
     <!-- 操作 -->
     <el-form
       label-width="70px"
-      :size="userConfigInfo.elementPlusSize"
+      :size="userSettings.elementPlusSize"
       :label-position="labelPosition"
     >
       <el-form-item class="operation">
         <el-button
           plain
-          :size="userConfigInfo.elementPlusSize"
+          :size="userSettings.elementPlusSize"
           type="warning"
           @click="reset()"
           v-if="userConfigInfo.owner"
@@ -232,7 +232,7 @@
         </el-button>
         <el-button
           plain
-          :size="userConfigInfo.elementPlusSize"
+          :size="userSettings.elementPlusSize"
           type="success"
           @click="goUpload"
           v-if="userConfigInfo.selectedRepos"
@@ -250,7 +250,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import { DirModeEnum } from '@/common/model/dir.model'
-import { BranchModeEnum, UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import { BranchModeEnum } from '@/common/model/user-config-info.model'
 import axios from '@/common/utils/axios'
 import TimeHelper from '@/common/utils/time-helper'
 
@@ -262,16 +262,16 @@ export default defineComponent({
     const store = useStore()
 
     const reactiveData: any = reactive({
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
-        .value,
+      userConfigInfo: computed(() => store.getters.getUserConfigInfo).value,
       loggingStatus: computed(() => store.getters.getUserConfigInfo).value,
+      userSettings: computed(() => store.getters.getUserSettings).value,
 
       loading: false,
       dirLoading: false,
       branchLoading: false,
 
       labelPosition: computed(() => {
-        return reactiveData.userConfigInfo.elementPlusSize !== 'medium' ? 'top' : 'right'
+        return reactiveData.userSettings.elementPlusSize !== 'medium' ? 'top' : 'right'
       }),
 
       getUserInfo() {

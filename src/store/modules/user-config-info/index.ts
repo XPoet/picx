@@ -1,33 +1,14 @@
 import { Module } from 'vuex'
-import { BranchModeEnum, UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import {
+  BranchModeEnum,
+  UserConfigInfoModel
+} from '@/common/model/user-config-info.model'
 import { PICX_CONFIG } from '@/common/model/localStorage.model'
-import cleanObject from '@/common/utils/clean-object'
+import { deepAssignObject, cleanObject } from '@/common/utils/object-helper'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 import { DirModeEnum } from '@/common/model/dir.model'
 import TimeHelper from '@/common/utils/time-helper'
-import { CompressEncoderMap } from '@/common/utils/compress'
-import getType from '@/common/utils/get-type'
-
-/**
- * 将 obj2 对象的值深度赋值给 obj1 对象
- * @param obj1{Object}
- * @param obj2{Object}
- */
-function deepAssign(obj1: object, obj2: object) {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in obj2) {
-    // @ts-ignore
-    if (getType(obj2[key]) !== 'object') {
-      // @ts-ignore
-      // eslint-disable-next-line no-param-reassign
-      obj1[key] = obj2[key]
-    } else {
-      // @ts-ignore
-      deepAssign(obj1[key], obj2[key])
-    }
-  }
-}
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {
@@ -44,25 +25,14 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     dirMode: DirModeEnum.reposDir,
     selectedDir: '',
     dirList: [],
-    loggingStatus: false,
-    personalSetting: {
-      defaultHash: true,
-      defaultMarkdown: false,
-      isCompress: true,
-      compressEncoder: CompressEncoderMap.webP,
-      themeMode: 'light',
-      autoLightThemeDate: ['08:00', '19:00']
-    },
-    elementPlusSize: 'medium'
+    loggingStatus: false
   }
 
   const LSConfig: string | null = localStorage.getItem(PICX_CONFIG)
 
   if (LSConfig) {
-    const oldConfig: UserConfigInfoModel = JSON.parse(LSConfig)
-
     // Assign: oldConfig -> initConfig
-    deepAssign(initConfig, oldConfig)
+    deepAssignObject(initConfig, JSON.parse(LSConfig))
 
     if (initConfig.selectedBranch && !initConfig.branchList.length) {
       initConfig.branchList = [
@@ -137,7 +107,6 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
     // 退出登录
     USER_CONFIG_INFO_LOGOUT({ state }) {
       cleanObject(state.userConfigInfo)
-      localStorage.removeItem(PICX_CONFIG)
     }
   },
 

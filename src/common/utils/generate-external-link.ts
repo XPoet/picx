@@ -1,6 +1,6 @@
 import { hashFilenameHandle } from './file-handle-helper'
 import { ExternalLinkType } from '../model/externalLink.model'
-import { UserConfigInfoModel } from '../model/userConfigInfo.model'
+import { UserConfigInfoModel } from '../model/user-config-info.model'
 
 const generateExternalLink = (
   type: ExternalLinkType,

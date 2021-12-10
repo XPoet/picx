@@ -82,6 +82,8 @@ const props = defineProps({
 })
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
+const userSettings = computed(() => store.getters.getUserSettings)
+
 const img = ref(props.imgObj)
 const externalLinkType = ExternalLinkType
 
@@ -135,7 +137,7 @@ onUpdated(() => {
 })
 
 onMounted(() => {
-  img.value.is_transform_md = userConfigInfo.value.personalSetting.defaultMarkdown
+  img.value.is_transform_md = userSettings.value.defaultMarkdown
 })
 </script>
 

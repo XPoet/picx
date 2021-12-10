@@ -30,6 +30,7 @@ export function getUrlBase64(url: string, ext: string): Promise<string | null> {
 // 获取图片对象
 export function getImage(base64Data: string, file: any): Promise<Boolean> {
   const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+  const userSettings = computed(() => store.getters.getUserSettings).value
   const curImg = createToUploadImageObject()
 
   curImg.imgData.base64Url = base64Data
@@ -45,11 +46,11 @@ export function getImage(base64Data: string, file: any): Promise<Boolean> {
   curImg.filename.name = name
   curImg.filename.hash = hash
   curImg.filename.suffix = suffix
-  curImg.filename.now = userConfigInfo.personalSetting.defaultHash
+  curImg.filename.now = userSettings.defaultHash
     ? `${name}.${hash}.${suffix}`
     : `${name}.${suffix}`
   curImg.filename.initName = name
-  curImg.filename.isHashRename = userConfigInfo.personalSetting.defaultHash
+  curImg.filename.isHashRename = userSettings.defaultHash
 
   return new Promise((resolve, reject) => {
     store
