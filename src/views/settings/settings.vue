@@ -16,6 +16,23 @@
           active-text="上传后默认开启 Markdown 格式的外链"
         ></el-switch>
       </li>
+      <li class="setting-item">
+        <el-switch
+          v-model="userSettings.defaultPrefix"
+          @change="persistUserSettings"
+          active-text="上传时默认使用配置的命名前缀"
+        ></el-switch>
+        <el-input
+          class="prefix-input"
+          v-if="userSettings.defaultPrefix"
+          v-model="userSettings.prefixName"
+          :size="userSettings.elementPlusSize"
+          placeholder="请输入命名前缀"
+          @input="persistUserSettings"
+          clearable
+          autofocus
+        ></el-input>
+      </li>
     </ul>
     <div class="setting-title">压缩设置：</div>
     <ul class="setting-list">

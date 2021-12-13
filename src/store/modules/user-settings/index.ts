@@ -11,6 +11,8 @@ const initUserSettings = (): UserSettingsModel => {
   const initSettings: UserSettingsModel = {
     defaultHash: true,
     defaultMarkdown: false,
+    defaultPrefix: false,
+    prefixName: '',
     isCompress: true,
     compressEncoder: CompressEncoderMap.webP,
     themeMode: 'light',

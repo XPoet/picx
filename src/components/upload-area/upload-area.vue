@@ -102,7 +102,7 @@ export default defineComponent({
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_UPLOADED_NUMBER')
         }
 
-        const { defaultHash, isCompress } = this.userSettings
+        const { defaultHash, isCompress, defaultPrefix, prefixName } = this.userSettings
         const file = isCompress ? compressFile : originFile
         const curImg = createToUploadImageObject()
 
@@ -117,14 +117,16 @@ export default defineComponent({
         curImg.fileInfo.size = file?.size
         curImg.fileInfo.lastModified = file?.lastModified
 
-        curImg.filename.name = name
+        curImg.filename.initName = name
+        curImg.filename.name = defaultPrefix ? `${prefixName}.${name}` : name
+        curImg.filename.prefixName = prefixName
         curImg.filename.hash = hash
         curImg.filename.suffix = suffix
         curImg.filename.now = defaultHash
-          ? `${name}.${hash}.${suffix}`
-          : `${name}.${suffix}`
-        curImg.filename.initName = name
+          ? `${curImg.filename.name}.${hash}.${suffix}`
+          : `${curImg.filename.name}.${suffix}`
         curImg.filename.isHashRename = defaultHash
+        curImg.filename.isPrefix = defaultPrefix
 
         store.dispatch('TO_UPLOAD_IMAGE_LIST_ADD', JSON.parse(JSON.stringify(curImg)))
         store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', {

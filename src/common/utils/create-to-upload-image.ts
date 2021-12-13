@@ -23,11 +23,13 @@ export default (): ToUploadImageModel => {
       name: '',
       hash: '',
       suffix: '',
+      prefixName: '',
       now: '',
       initName: '',
       newName: 'xxx',
       isHashRename: true,
-      isRename: false
+      isRename: false,
+      isPrefix: false
     },
 
     externalLink: {
