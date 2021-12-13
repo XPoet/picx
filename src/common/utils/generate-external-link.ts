@@ -1,4 +1,4 @@
-import { hashFilenameHandle } from './file-handle-helper'
+import { getFilename } from './file-handle-helper'
 import { ExternalLinkType } from '../model/externalLink.model'
 import { UserConfigInfoModel } from '../model/user-config-info.model'
 
@@ -17,13 +17,13 @@ const generateExternalLink = (
       return ghLink
 
     case ExternalLinkType.md_gh:
-      return `![${hashFilenameHandle(content.name)}](${ghLink})`
+      return `![${getFilename(content.name)}](${ghLink})`
 
     case ExternalLinkType.cdn:
       return cdnLink
 
     case ExternalLinkType.md_cdn:
-      return `![${hashFilenameHandle(content.name)}](${cdnLink})`
+      return `![${getFilename(content.name)}](${cdnLink})`
   }
 }
 

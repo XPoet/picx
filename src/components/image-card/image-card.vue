@@ -54,13 +54,14 @@
 <script lang="ts" setup>
 import { computed, ref, defineEmits, nextTick } from 'vue'
 import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import type { ElInput } from 'element-plus'
 import { useStore } from '@/store'
 import axios from '@/common/utils/axios'
 import { UploadedImageModel } from '@/common/model/upload.model'
 import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
-import { getUrlBase64, getImage } from '@/common/utils/rename-image'
+import { getBase64ByImageUrl, getImage } from '@/common/utils/rename-image'
 import { uploadImage_single } from '@/common/utils/upload-helper'
-import type { ElInput } from 'element-plus'
+import { getFilename, getFileSuffix } from '@/common/utils/file-handle-helper'
 
 // eslint-disable-next-line no-undef
 const props = defineProps({
@@ -128,7 +129,7 @@ const doDeleteImage = (
           imageObj.deleting = false
           // eslint-disable-next-line no-unused-expressions
           ElMessage.success(`${isRename ? '更新' : '删除'}成功！`)
-          store.dispatch('UPLOADED_LIST_REMOVE', imageObj)
+          store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
           store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
           resolve(true)
         } else {
@@ -167,8 +168,7 @@ const imageView = (imgObj: UploadedImageModel) => {
 
 const renameImage = async (imgObj: UploadedImageModel) => {
   emits('update:modelValue', props.index)
-  const splitIndex = imgObj.name.lastIndexOf('.')
-  renameValue.value = imgObj.name.substr(0, splitIndex).trim().replace(/\s+/g, '-')
+  renameValue.value = getFilename(imgObj.name)
   await nextTick(() => {
     renameInput.value?.focus()
   })
@@ -177,8 +177,10 @@ const renameImage = async (imgObj: UploadedImageModel) => {
 const updateRename = async () => {
   emits('update:modelValue', undefined)
   const { imageObj } = props
-  const imgExt = imageObj.name.split('.').pop()
-  if (`${renameValue.value}.${imgExt}` === imageObj.name) return
+
+  if (renameValue.value === getFilename(imageObj.name) || !renameValue.value) {
+    return
+  }
 
   const loading = ElLoading.service({
     lock: true,
@@ -186,29 +188,25 @@ const updateRename = async () => {
     background: 'rgba(0, 0, 0, 0.6)'
   })
 
+  const suffix = getFileSuffix(imageObj.name)
+
   const imgInfo = {
-    name: `${renameValue.value}.${imgExt}`,
+    name: renameValue.value + imageObj.name.substring(imageObj.name.indexOf('.')),
     size: imageObj.size,
     lastModified: Date.now(),
-    type: `image/${imgExt}`
+    type: `image/${suffix}`
   }
 
-  const base64 = await getUrlBase64(imageObj.cdn_url, imgExt)
+  const base64 = await getBase64ByImageUrl(imageObj.cdn_url, suffix)
   if (base64) {
-    const res = await getImage(base64, imgInfo)
-    if (res) {
-      renameValue.value = ''
-      /**
-       * @return isUploadSuccess 是否上传成功
-       */
-      const isUploadSuccess = await uploadImage_single(
-        userConfigInfo.value,
-        toUploadImage.list[0]
-      )
+    const newImgObj = getImage(base64, imgInfo)
+    if (newImgObj) {
+      const isUploadSuccess = await uploadImage_single(userConfigInfo.value, newImgObj)
 
       if (isUploadSuccess) {
+        renameValue.value = ''
         await doDeleteImage(imageObj, true)
-        await store.dispatch('TO_UPLOAD_IMAGE_LIST_REMOVE', toUploadImage.list[0].uuid)
+        await store.dispatch('UPLOADED_LIST_REMOVE', newImgObj.uuid)
       }
     }
   }
