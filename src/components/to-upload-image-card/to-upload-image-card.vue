@@ -80,6 +80,14 @@
                 @input="rename($event, imgItem)"
                 clearable
               ></el-input>
+
+              <!-- 哈希化 -->
+              <el-checkbox
+                label="命名前缀"
+                v-if="!imgItem.filename.isRename"
+                v-model="imgItem.filename.isPrefix"
+                @change="prefixName($event, imgItem)"
+              ></el-checkbox>
             </div>
 
             <div
@@ -192,13 +200,30 @@ export default defineComponent({
         }
       },
 
+      prefixName(e: boolean, img: any) {
+        if (e) {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.name = `${img.filename.prefixName}.${img.filename.initName}`
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.name = `${img.filename.initName}`
+        }
+        if (img.filename.isHashRename) {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.now = `${img.filename.name}.${img.filename.suffix}`
+        }
+      },
+
       rename(e: boolean, img: any) {
         if (e) {
           // eslint-disable-next-line no-param-reassign
           img.filename.name = img.filename.newName.trim().replace(/\s+/g, '-')
         } else {
           // eslint-disable-next-line no-param-reassign
-          img.filename.name = img.filename.initName
+          reactiveData.prefixName(img.filename.isPrefix, img) // 恢复列表prefix选项
         }
 
         if (img.filename.isHashRename) {
@@ -256,7 +281,11 @@ export default defineComponent({
 
     onMounted(() => {
       const isHash = reactiveData.userSettings.defaultHash
+      const isPrefix = reactiveData.userSettings.defaultPrefix
       reactiveData.toUploadImage.list.forEach((v: ToUploadImageModel) => {
+        // eslint-disable-next-line no-param-reassign
+        v.filename.isPrefix = isPrefix
+        reactiveData.prefixName(isPrefix, v)
         // eslint-disable-next-line no-param-reassign
         v.filename.isHashRename = isHash
         reactiveData.hashRename(isHash, v)

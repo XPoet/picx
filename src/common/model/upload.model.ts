@@ -48,11 +48,13 @@ export interface ToUploadImageModel {
     name: string
     hash: string
     suffix: string
+    prefixName: string
     now: string
     initName: string
     newName: string
     isHashRename: boolean
     isRename: boolean
+    isPrefix: boolean
   }
 
   externalLink: {
