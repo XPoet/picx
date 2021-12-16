@@ -189,7 +189,7 @@ async function getReposContent() {
   return new Promise<void>((resolve, reject) => {
     axios
       .get(
-        `/repos/${userConfigInfo.value.owner}/${userConfigInfo.value.selectedRepos}/contents/${currentPath.value}`
+        `/repos/${userConfigInfo.value.owner}/${userConfigInfo.value.selectedRepos}/contents${currentPath.value}`
       )
       .then((res) => {
         userConfigInfo.value.selectedDir = currentPath.value || '/'
