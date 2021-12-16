@@ -118,7 +118,7 @@ export default defineComponent({
         curImg.fileInfo.lastModified = file?.lastModified
 
         curImg.filename.initName = name
-        curImg.filename.name = defaultPrefix ? `${prefixName}.${name}` : name
+        curImg.filename.name = defaultPrefix ? `${prefixName}${name}` : name
         curImg.filename.prefixName = prefixName
         curImg.filename.hash = hash
         curImg.filename.suffix = suffix
