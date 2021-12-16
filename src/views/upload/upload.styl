@@ -1,134 +1,128 @@
-@import "../../style/base.styl"
+@import '../../style/base.styl';
 
 .upload-page-container {
-  width 100%
-  height 100%
-  display flex
-  justify-content space-between
-
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
 
   .upload-page-left {
-    height 100%
-    box-sizing border-box
-    margin-right $component-interval
+    box-sizing: border-box;
+    display: flex;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    font-size: 0px;
+    margin-right: $component-interval;
 
     .uploaded-item {
-      margin-bottom 20rem
+      width: 100px;
+      margin: 5px;
+      height: 120px;
 
       &:last-child {
-        margin-bottom 0
+        margin-bottom: 0;
       }
-
     }
   }
 
-
   .upload-page-right {
-    box-sizing border-box
-    height 100%
-    overflow-y auto
+    box-sizing: border-box;
+    height: 100%;
+    overflow-y: auto;
 
     .row-item {
-      width 100%
-      display flex
-      justify-content center
-      margin-bottom 16rem
-      box-sizing border-box
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16rem;
+      box-sizing: border-box;
 
       &:last-child {
-        margin-bottom 0
+        margin-bottom: 0;
       }
 
       .content-box {
-        width 100%
-        max-width $content-max-width
-        margin 0 auto
-        box-sizing border-box
+        width: 100%;
+        max-width: $content-max-width;
+        margin: 0 auto;
+        box-sizing: border-box;
       }
-
     }
 
     .upload-status {
-      position relative
-      width 100%
-      padding 10rem
-      background var(--second-background-color)
-      color #666
-      font-size 12rem
-      box-sizing border-box
+      position: relative;
+      width: 100%;
+      padding: 10rem;
+      background: var(--second-background-color);
+      color: #666;
+      font-size: 12rem;
+      box-sizing: border-box;
 
       .info-item {
-        margin-top 4rem
+        margin-top: 4rem;
       }
 
       .file-status {
-        display flex
-        justify-content space-between
-        align-items center
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
       }
 
       .upload-tips {
-
-        display flex
-        align-items center
+        display: flex;
+        align-items: center;
 
         i {
-          margin-left 2rem
-          font-size 20rem
+          margin-left: 2rem;
+          font-size: 20rem;
         }
       }
 
       .wait-upload {
-        color var(--await-upload-color)
+        color: var(--await-upload-color);
       }
 
       .uploading {
-        color var(--uploading-color)
+        color: var(--uploading-color);
       }
 
       .uploaded {
-        color var(--uploaded-color)
+        color: var(--uploaded-color);
       }
-
     }
 
-
     .external-link {
-      width 100%
+      width: 100%;
 
       .external-link-input {
-        margin-bottom 10rem
+        margin-bottom: 10rem;
 
         &:last-child {
-          margin-bottom 0
+          margin-bottom: 0;
         }
 
         .el-input-group__append {
-          width 100rem
-          text-align-last justify
+          width: 100rem;
+          text-align-last: justify;
         }
       }
     }
 
-
     .upload-tools {
-      width 100%
+      width: 100%;
 
       .repos-dir-info {
-        margin-bottom 20rem
-        font-size 12rem
+        margin-bottom: 20rem;
+        font-size: 12rem;
 
         .repos-dir-info-item {
-          margin-right 10rem
+          margin-right: 10rem;
 
           &:last-child {
-            margin-right 0
+            margin-right: 0;
           }
         }
-
-
       }
     }
   }
-
 }

@@ -1,6 +1,6 @@
 @import '../../style/base.styl';
 
-.image-card {
+.folder-card {
   width: 110px;
   height: 110px;
   overflow: hidden;
@@ -9,19 +9,20 @@
   justify-content: flex-start;
   flex-direction: column;
 
-  .image {
+  .folder {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
     width: 50px;
     height: 50px;
     margin-top: 10px;
-    object-fit: contain;
+    align-items: flex-end;
     overflow: hidden;
 
     img {
       width: 100%;
       height: 100%;
+      font-size: 50px;
       object-fit: contain;
     }
   }
@@ -37,6 +38,5 @@
     -webkit-line-clamp: 2;
     word-wrap: break-word;
     word-break: break-all;
-    font-size: 14px;
   }
 }
