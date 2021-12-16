@@ -203,7 +203,7 @@ export default defineComponent({
       prefixName(e: boolean, img: any) {
         if (e) {
           // eslint-disable-next-line no-param-reassign
-          img.filename.name = `${img.filename.prefixName}.${img.filename.initName}`
+          img.filename.name = `${img.filename.prefixName}${img.filename.initName}`
         } else {
           // eslint-disable-next-line no-param-reassign
           img.filename.name = `${img.filename.initName}`
@@ -280,11 +280,16 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      const isHash = reactiveData.userSettings.defaultHash
-      const isPrefix = reactiveData.userSettings.defaultPrefix
+      const {
+        defaultHash: isHash,
+        defaultPrefix: isPrefix,
+        prefixName
+      } = reactiveData.userSettings
       reactiveData.toUploadImage.list.forEach((v: ToUploadImageModel) => {
         // eslint-disable-next-line no-param-reassign
         v.filename.isPrefix = isPrefix
+        // eslint-disable-next-line no-param-reassign
+        v.filename.prefixName = prefixName
         reactiveData.prefixName(isPrefix, v)
         // eslint-disable-next-line no-param-reassign
         v.filename.isHashRename = isHash
