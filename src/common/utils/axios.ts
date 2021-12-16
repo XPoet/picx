@@ -22,6 +22,10 @@ axios.interceptors.request.use(
         config.headers.Authorization = `token ${token}`
       }
     }
+    // 防止请求缓存
+    if (config.method == 'get') {
+      config.url = `${config.url}?${new Date().getTime()}`
+    }
 
     return config
   },
