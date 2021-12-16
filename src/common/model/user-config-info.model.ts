@@ -1,4 +1,3 @@
-import { CompressMethod } from '../utils/compress'
 import { DirModeEnum, DirModel } from './dir.model'
 
 export interface ReposModel {
@@ -17,17 +16,6 @@ export enum BranchModeEnum {
   reposBranch = 'reposBranch'
 }
 
-export type ThemeModeType = 'auto' | 'light' | 'dark'
-export type AutoLightThemeDateTyoe = Array<String>
-export interface PersonalSetting {
-  defaultHash: boolean
-  defaultMarkdown: boolean
-  themeMode: ThemeModeType
-  autoLightThemeDate: AutoLightThemeDateTyoe
-  defaultCompress: boolean
-  defaultCompressMethod: CompressMethod
-}
-
 export interface UserConfigInfoModel {
   token: string
   owner: string
@@ -43,6 +31,4 @@ export interface UserConfigInfoModel {
   selectedDir: string
   dirList: DirModel[]
   loggingStatus: boolean
-  personalSetting: PersonalSetting
-  elementPlusSize?: 'medium' | 'small' | 'mini'
 }

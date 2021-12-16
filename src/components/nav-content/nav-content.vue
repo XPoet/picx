@@ -7,7 +7,7 @@
         :key="index"
         :class="{ active: navItem.isActive }"
         @click="navClick(navItem)"
-        v-show="navItem.path !== '/management' || userConfigInfo.loggingStatus"
+        v-show="navItem.isShow"
       >
         <div class="nav-content">
           <i class="nav-icon" :class="navItem.icon"></i>
@@ -23,7 +23,7 @@ import { defineComponent, reactive, toRefs, onMounted, watch, computed } from 'v
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
-import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
 
 export default defineComponent({
   name: 'nav-content',
@@ -41,37 +41,43 @@ export default defineComponent({
           name: '图床配置',
           icon: 'el-icon-edit-outline',
           isActive: false,
-          path: '/config'
+          path: '/config',
+          isShow: true
         },
         {
           name: '上传图片',
           icon: 'el-icon-upload2',
           isActive: false,
-          path: '/upload'
+          path: '/upload',
+          isShow: true
         },
         {
           name: '图床管理',
           icon: 'el-icon-box',
           isActive: false,
-          path: '/management'
+          path: '/management',
+          isShow: true
         },
         {
           name: '我的设置',
           icon: 'el-icon-setting',
           isActive: false,
-          path: '/settings'
+          path: '/settings',
+          isShow: true
         },
         {
           name: '使用教程',
           icon: 'el-icon-magic-stick',
           isActive: false,
-          path: '/tutorials'
+          path: '/tutorials',
+          isShow: true
         },
         {
           name: '帮助反馈',
           icon: 'el-icon-chat-dot-round',
           isActive: false,
-          path: '/about'
+          path: '/about',
+          isShow: true
         }
       ],
 
@@ -107,6 +113,25 @@ export default defineComponent({
       () => router.currentRoute.value,
       (_n) => {
         changeNavActive(_n.path)
+      }
+    )
+
+    watch(
+      () => reactiveData.userConfigInfo.loggingStatus,
+      (_n) => {
+        reactiveData.navList.forEach((v: any) => {
+          // eslint-disable-next-line default-case
+          switch (v.path) {
+            case '/management':
+            case '/settings':
+              // eslint-disable-next-line no-param-reassign
+              v.isShow = _n
+          }
+        })
+      },
+      {
+        deep: true,
+        immediate: true
       }
     )
 

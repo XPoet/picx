@@ -96,7 +96,7 @@ import { ElMessage } from 'element-plus'
 
 import { useStore } from '@/store'
 import { filenameHandle, isImage } from '@/common/utils/file-handle-helper'
-import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
 import { ExternalLinkType } from '@/common/model/externalLink.model'
 import { UploadedImageModel } from '@/common/model/upload.model'
 import generateExternalLink from '@/common/utils/generate-external-link'

@@ -1,4 +1,4 @@
-import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
 import { ToUploadImageModel, UploadedImageModel } from '@/common/model/upload.model'
 import axios from '@/common/utils/axios'
 import { store } from '@/store'
@@ -63,6 +63,8 @@ function uploadedHandle(
   img: ToUploadImageModel,
   userConfigInfo: UserConfigInfoModel
 ) {
+  const userSettings = store.getters.getUserSettings
+
   // 上传状态处理
   // eslint-disable-next-line no-param-reassign
   img.uploadStatus.progress = 100
@@ -111,7 +113,7 @@ function uploadedHandle(
     cdn_url: img.externalLink.cdn,
     md_gh_url: img.externalLink.markdown_gh,
     md_cdn_url: img.externalLink.markdown_cdn,
-    is_transform_md: userConfigInfo.personalSetting.defaultMarkdown,
+    is_transform_md: userSettings.defaultMarkdown,
     deleting: false,
     size: img.fileInfo.size,
     lastModified: img.fileInfo.lastModified

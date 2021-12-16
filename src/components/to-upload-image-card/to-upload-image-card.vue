@@ -33,19 +33,17 @@
               <div class="image-name">
                 {{ imgItem.filename.now }}
               </div>
-
               <div class="image-info">
-                <template v-if="imgItem.fileInfo.compressFileSize">
-                  <span class="file-size item">
-                    <del>
-                      {{ getFileSize(imgItem.fileInfo.size) }}
-                    </del>
-                  </span>
-                  <span class="file-size item isCompressed">
-                    {{ getFileSize(imgItem.fileInfo.compressFileSize) }}
-                  </span>
-                </template>
-                <span v-else class="file-size item">
+                <span class="file-size item" v-if="userSettings.isCompress">
+                  <del>
+                    {{ getFileSize(imgItem.fileInfo.originSize) }}
+                  </del>
+                </span>
+
+                <span
+                  class="file-size item"
+                  :class="{ compressed: userSettings.isCompress }"
+                >
                   {{ getFileSize(imgItem.fileInfo.size) }}
                 </span>
 
@@ -82,6 +80,14 @@
                 @input="rename($event, imgItem)"
                 clearable
               ></el-input>
+
+              <!-- 哈希化 -->
+              <el-checkbox
+                label="命名前缀"
+                v-if="!imgItem.filename.isRename"
+                v-model="imgItem.filename.isPrefix"
+                @change="prefixName($event, imgItem)"
+              ></el-checkbox>
             </div>
 
             <div
@@ -147,22 +153,14 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import { getFileSize } from '@/common/utils/file-handle-helper'
-import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
-import {
-  ToUploadImageModel,
-  UploadedImageModel,
-  UploadStatusEnum
-} from '@/common/model/upload.model'
-import { ExternalLinkType } from '@/common/model/externalLink.model'
+import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
+import { ToUploadImageModel, UploadStatusEnum } from '@/common/model/upload.model'
 import TimeHelper from '@/common/utils/time-helper'
-import axios from '@/common/utils/axios'
-import generateExternalLink from '@/common/utils/generate-external-link'
 import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
-import { uploadImage_single, uploadUrlHandle } from '@/common/utils/upload-helper'
+import { uploadImage_single } from '@/common/utils/upload-helper'
 
 export default defineComponent({
   name: 'to-upload-image-card',
@@ -188,12 +186,29 @@ export default defineComponent({
         size: ''
       },
 
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
-        .value,
+      userConfigInfo: computed(() => store.getters.getUserConfigInfo).value,
+      userSettings: computed(() => store.getters.getUserSettings).value,
       toUploadImage: computed(() => store.getters.getToUploadImage).value,
 
       hashRename(e: boolean, img: any) {
         if (e) {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.now = `${img.filename.name}.${img.filename.suffix}`
+        }
+      },
+
+      prefixName(e: boolean, img: any) {
+        if (e) {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.name = `${img.filename.prefixName}${img.filename.initName}`
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.name = `${img.filename.initName}`
+        }
+        if (img.filename.isHashRename) {
           // eslint-disable-next-line no-param-reassign
           img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
         } else {
@@ -208,7 +223,7 @@ export default defineComponent({
           img.filename.name = img.filename.newName.trim().replace(/\s+/g, '-')
         } else {
           // eslint-disable-next-line no-param-reassign
-          img.filename.name = img.filename.initName
+          reactiveData.prefixName(img.filename.isPrefix, img) // 恢复列表prefix选项
         }
 
         if (img.filename.isHashRename) {
@@ -265,8 +280,17 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      const isHash = reactiveData.userConfigInfo.personalSetting.defaultHash
+      const {
+        defaultHash: isHash,
+        defaultPrefix: isPrefix,
+        prefixName
+      } = reactiveData.userSettings
       reactiveData.toUploadImage.list.forEach((v: ToUploadImageModel) => {
+        // eslint-disable-next-line no-param-reassign
+        v.filename.isPrefix = isPrefix
+        // eslint-disable-next-line no-param-reassign
+        v.filename.prefixName = prefixName
+        reactiveData.prefixName(isPrefix, v)
         // eslint-disable-next-line no-param-reassign
         v.filename.isHashRename = isHash
         reactiveData.hashRename(isHash, v)

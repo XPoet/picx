@@ -4,54 +4,80 @@
     <ul class="setting-list">
       <li class="setting-item">
         <el-switch
-          v-model="userConfigInfo.personalSetting.defaultHash"
-          @change="switchChange"
+          v-model="userSettings.defaultHash"
+          @change="persistUserSettings"
           active-text="上传时默认给图片加上哈希码"
         ></el-switch>
       </li>
       <li class="setting-item">
         <el-switch
-          v-model="userConfigInfo.personalSetting.defaultMarkdown"
-          @change="switchChange"
+          v-model="userSettings.defaultMarkdown"
+          @change="persistUserSettings"
           active-text="上传后默认开启 Markdown 格式的外链"
         ></el-switch>
+      </li>
+      <li class="setting-item">
+        <el-switch
+          v-model="userSettings.defaultPrefix"
+          @change="persistUserSettings"
+          active-text="上传时默认使用配置的命名前缀"
+        ></el-switch>
+        <el-input
+          class="prefix-input"
+          v-if="userSettings.defaultPrefix"
+          v-model="userSettings.prefixName"
+          :size="userSettings.elementPlusSize"
+          placeholder="请输入命名前缀"
+          @input="persistUserSettings"
+          clearable
+          autofocus
+        ></el-input>
       </li>
     </ul>
     <div class="setting-title">压缩设置：</div>
     <ul class="setting-list">
       <li class="setting-item">
         <el-switch
-          v-model="userConfigInfo.personalSetting.defaultCompress"
-          @change="switchChange"
+          v-model="userSettings.isCompress"
+          @change="persistUserSettings"
           active-text="是否压缩图片"
         ></el-switch>
       </li>
       <li class="setting-item">
-        压缩方式：
+        <div>选择图像编码器：</div>
         <el-radio-group
-          :disabled="!userConfigInfo.personalSetting.defaultCompress"
-          v-model="userConfigInfo.personalSetting.defaultCompressMethod"
+          :disabled="!userSettings.isCompress"
+          v-model="userSettings.compressEncoder"
+          @change="persistUserSettings"
         >
-          <el-radio :label="CompressMethods.mozJPEG">
-            {{ CompressMethods.mozJPEG }} (产物为 JPEG ，兼容性好)
-          </el-radio>
-          <el-radio :label="CompressMethods.avif">
-            {{ CompressMethods.avif }} (最新格式，效率极高，压缩产物目前仅谷歌浏览器支持)
-          </el-radio>
-          <el-radio :label="CompressMethods.webP">
-            {{ CompressMethods.webP }} (现代浏览器支持)
-          </el-radio>
+          <div>
+            <el-radio :label="compressEncoder.webP">
+              {{ compressEncoder.webP }} （压缩后格式为 webp，现代浏览器支持）
+            </el-radio>
+          </div>
+          <div>
+            <el-radio :label="compressEncoder.mozJPEG">
+              {{ compressEncoder.mozJPEG }} （压缩后格式为 jpg，兼容性好）
+            </el-radio>
+          </div>
+          <div>
+            <el-radio :label="compressEncoder.avif">
+              {{ compressEncoder.avif }} （压缩后格式为 avif，
+              压缩比高，目前仅谷歌浏览器支持该格式）
+            </el-radio>
+          </div>
         </el-radio-group>
       </li>
     </ul>
+
     <div class="setting-title">主题设置：</div>
     <ul class="setting-list">
       <li class="setting-item">
         <el-select
-          v-model="userConfigInfo.personalSetting.themeMode"
+          v-model="userSettings.themeMode"
           placeholder="主题模式"
-          @change="saveConfigInfo"
-          :size="userConfigInfo.elementPlusSize"
+          @change="saveUserSettings"
+          :size="userSettings.elementPlusSize"
         >
           <el-option label="自动设置" value="auto"></el-option>
           <el-option label="暗夜主题" value="dark"></el-option>
@@ -60,29 +86,29 @@
       </li>
     </ul>
 
-    <div class="setting-title" v-if="userConfigInfo.personalSetting.themeMode === 'auto'">
+    <div class="setting-title" v-if="userSettings.themeMode === 'auto'">
       设置白昼模式时间区间：
     </div>
-    <ul class="setting-list" v-if="userConfigInfo.personalSetting.themeMode === 'auto'">
+    <ul class="setting-list" v-if="userSettings.themeMode === 'auto'">
       <li class="setting-item">
-        <el-form ref="form" :size="userConfigInfo.elementPlusSize">
-          <el-form-item v-if="userConfigInfo.personalSetting.themeMode === 'auto'">
+        <el-form ref="form" :size="userSettings.elementPlusSize">
+          <el-form-item>
             <el-time-select
-              v-model="userConfigInfo.personalSetting.autoLightThemeDate[0]"
+              v-model="userSettings.autoLightThemeTime[0]"
               placeholder=""
               start="00:00"
               step="00:30"
               end="23:59"
-              @change="saveConfigInfo"
+              @change="saveUserSettings"
             ></el-time-select>
             <span class="time-middle-space"> ~ </span>
             <el-time-select
-              v-model="userConfigInfo.personalSetting.autoLightThemeDate[1]"
+              v-model="userSettings.autoLightThemeTime[1]"
               placeholder="Start time"
-              :start="userConfigInfo.personalSetting.autoLightThemeDate[0]"
+              :start="userSettings.autoLightThemeTime[0]"
               step="00:30"
               end="23:59"
-              @change="saveConfigInfo"
+              @change="saveUserSettings"
             ></el-time-select>
           </el-form-item>
         </el-form>
@@ -94,22 +120,21 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { store } from '@/store'
-import { CompressMethod } from '@/common/utils/compress'
+import { CompressEncoderMap } from '@/common/utils/compress'
 
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const userSettings = computed(() => store.getters.getUserSettings).value
 
-const switchChange = () => {
-  store.dispatch('USER_CONFIG_INFO_PERSIST')
+const persistUserSettings = () => {
+  store.dispatch('USER_SETTINGS_PERSIST')
 }
-const CompressMethods = CompressMethod
-const saveConfigInfo = () => {
-  store.dispatch('SET_USER_CONFIG_INFO', {
-    ...userConfigInfo,
-    personalSetting: {
-      ...userConfigInfo.personalSetting
-    }
+
+const compressEncoder = CompressEncoderMap
+
+const saveUserSettings = () => {
+  store.dispatch('SET_USER_SETTINGS', {
+    ...userSettings
   })
-  store.dispatch('USER_CONFIG_INFO_PERSIST')
+  persistUserSettings()
 }
 </script>
 

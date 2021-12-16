@@ -14,7 +14,7 @@ export interface UploadedImageModel {
   dir: string
   path: string
   name: string
-  size: number
+  size: number | undefined
   lastModified?: number
   github_url: string
   cdn_url: string
@@ -38,20 +38,23 @@ export interface ToUploadImageModel {
   }
 
   fileInfo: {
-    compressFileSize?: number
-    size: number
-    lastModified: number
+    compressedSize?: number | undefined
+    originSize?: number | undefined
+    size: number | undefined
+    lastModified: number | undefined
   }
 
   filename: {
     name: string
     hash: string
     suffix: string
+    prefixName: string
     now: string
     initName: string
     newName: string
     isHashRename: boolean
     isRename: boolean
+    isPrefix: boolean
   }
 
   externalLink: {

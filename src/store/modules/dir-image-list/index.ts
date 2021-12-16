@@ -93,7 +93,6 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
     // 图床管理 - 退出登录
     DIR_IMAGE_LOGOUT({ state }) {
       state.dirImageList = []
-      localStorage.removeItem(PICX_MANAGEMENT)
     }
   },
 
