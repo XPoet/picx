@@ -1,0 +1,42 @@
+@import '../../style/base.styl';
+
+.image-card {
+  width: 110px;
+  height: 110px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-direction: column;
+
+  .image {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    margin-top: 10px;
+    object-fit: contain;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .name {
+    width: 90%;
+    margin-top: 5px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    word-wrap: break-word;
+    word-break: break-all;
+    font-size: 14px;
+  }
+}

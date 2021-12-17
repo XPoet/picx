@@ -49,7 +49,7 @@
             "
             class="item"
           >
-            <folder-card @click="backDir"></folder-card>
+            <folder-card @dblclick="backDir"></folder-card>
           </li>
           <li
             class="item"
@@ -61,7 +61,7 @@
             <folder-card
               v-if="item.type == 'dir'"
               :folderObj="item"
-              @click="currentPath = item.path"
+              @dblclick="currentPath = item.path"
             ></folder-card>
           </li>
           <li
@@ -71,7 +71,7 @@
             v-show="item.type == 'image'"
             :key="index"
           >
-            <image-card v-if="item.type == 'image'" :imageObj="item"></image-card>
+            <new-image-card v-if="item.type == 'image'" :imageObj="item"></new-image-card>
           </li>
         </ul>
       </div>
@@ -104,7 +104,7 @@ import getUuid from '@/common/utils/get-uuid'
 import axios from '@/common/utils/axios'
 import menuUtil from '../../common/utils/menu-util.ts'
 
-import imageCard from '@/components/image-card/image-card.vue'
+import newImageCard from '@/components/new-image-card/new-image-card.vue'
 import folderCard from '@/components/folder-card/folder-card.vue'
 import uploadDialog from '@/components/upload-dialog/upload-dialog.vue'
 
