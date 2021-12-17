@@ -20,12 +20,13 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     selectedRepos: '',
     reposList: [],
     branchMode: BranchModeEnum.reposBranch,
-    selectedBranch: '',
     branchList: [],
-    dirMode: DirModeEnum.reposDir,
+    selectedBranch: '',
     selectedDir: '',
+    dirMode: DirModeEnum.reposDir,
     dirList: [],
-    loggingStatus: false
+    loggingStatus: false,
+    selectedDirList: []
   }
 
   const LSConfig: string | null = localStorage.getItem(PICX_CONFIG)

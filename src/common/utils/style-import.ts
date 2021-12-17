@@ -21,13 +21,14 @@ import {
   ElFormItem,
   ElDialog,
   ElSwitch,
-  ElTimeSelect
+  ElTimeSelect,
+  ElCascader
 } from 'element-plus'
 import type { App } from 'vue'
 
 /**
  * Introduces component on demand.
- * Vite Plugin: https://github.com/element-plus/vite-plugin-element-plus
+ * Vite Plugin: https://github.com/element-plus/unplugin-element-plus
  * @param app {App}
  */
 export default function styleImport(app: App) {
@@ -54,7 +55,8 @@ export default function styleImport(app: App) {
     ElFormItem,
     ElDialog,
     ElSwitch,
-    ElTimeSelect
+    ElTimeSelect,
+    ElCascader
   ].forEach((v: any) => {
     app.use(v)
   })

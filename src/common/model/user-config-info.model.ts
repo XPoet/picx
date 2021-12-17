@@ -29,6 +29,7 @@ export interface UserConfigInfoModel {
   branchList: BranchModel[]
   dirMode: DirModeEnum
   selectedDir: string
+  selectedDirList: string[]
   dirList: DirModel[]
   loggingStatus: boolean
 }

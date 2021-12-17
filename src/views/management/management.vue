@@ -4,12 +4,12 @@
     @contextmenu.prevent="menu"
     v-loading="loadingPageStatus"
     element-loading-text="加载中..."
-    element-loading-background="rgba(255, 255, 255, 0.7)"
+    element-loading-background="rgba(0, 0, 0, 0.6)"
     @click="menuType = ''"
   >
     <div @click.stop="closeMenuBox">
       <transition name="fade">
-        <div v-show="menuType == 'blank'" class="menu-box" :style="menuStyle">
+        <div v-show="menuType === 'blank'" class="menu-box" :style="menuStyle">
           <li @click="menuFn('refresh')">刷新</li>
           <li @click="menuFn('addFolder')">新建文件夹</li>
           <li @click="menuFn('upImage')">上传图片</li>
@@ -17,7 +17,7 @@
       </transition>
 
       <transition name="fade">
-        <div v-show="menuType == 'dir'" class="menu-box" :style="menuItemStyle">
+        <div v-show="menuType === 'dir'" class="menu-box" :style="menuItemStyle">
           <li @click="menuFn('openFolder')">打开文件夹</li>
           <li @click="menuFn('deleteFolder')">删除文件夹</li>
           <li @click="menuFn('openFolderDetail')">属性</li>
@@ -25,7 +25,7 @@
       </transition>
 
       <transition name="fade">
-        <div v-show="menuType == 'image'" class="menu-box" :style="menuItemStyle">
+        <div v-show="menuType === 'image'" class="menu-box" :style="menuItemStyle">
           <li @click="menuFn('copyGithubUrl')">复制 Github 链接</li>
           <li @click="menuFn('copyCDNUrl')">复制 CDN 链接</li>
           <li @click="menuFn('copyMarkdownGithubUrl')">复制 Markdown 格式 Github 链接</li>
@@ -55,11 +55,11 @@
             class="item"
             @contextmenu.prevent.stop="itemMenu($event, item)"
             v-for="(item, index) in curContentList"
-            v-show="item.type == 'dir'"
+            v-show="item.type === 'dir'"
             :key="index"
           >
             <folder-card
-              v-if="item.type == 'dir'"
+              v-if="item.type === 'dir'"
               :folderObj="item"
               @dblclick="currentPath = item.path"
             ></folder-card>
@@ -68,10 +68,13 @@
             class="item"
             @contextmenu.prevent.stop="itemMenu($event, item)"
             v-for="(item, index) in curContentList"
-            v-show="item.type == 'image'"
+            v-show="item.type === 'image'"
             :key="index"
           >
-            <new-image-card v-if="item.type == 'image'" :imageObj="item"></new-image-card>
+            <new-image-card
+              v-if="item.type === 'image'"
+              :imageObj="item"
+            ></new-image-card>
           </li>
         </ul>
       </div>
@@ -91,7 +94,6 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, watch, ref } from 'vue'
-import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 
 import { useStore } from '@/store'
@@ -140,11 +142,42 @@ function itemMenu(e: any, item: any) {
   menuItemObj.value = item
   menuItemStyle.value = ` left: ${e.pageX + 10}px;top:${e.pageY + 10}px;`
 }
+
 // 延时 防止关闭过快 影响点击事件视觉效果
 function closeMenuBox() {
   setTimeout(() => {
     menuType.value = ''
   }, 100)
+}
+
+// 根据路径获取当前对象
+async function getReposContent() {
+  loadingPageStatus.value = true
+  return new Promise<void>((resolve) => {
+    axios
+      .get(
+        `/repos/${userConfigInfo.value.owner}/${userConfigInfo.value.selectedRepos}/contents${currentPath.value}`
+      )
+      .then((res) => {
+        userConfigInfo.value.selectedDir = currentPath.value || '/'
+        store.dispatch('USER_CONFIG_INFO_PERSIST')
+        if (res.status === 401) {
+          ElMessage.error('非法访问，请检查token是否正确')
+        }
+        const list = res.data.map((item: any) => {
+          if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
+            // eslint-disable-next-line no-use-before-define,no-param-reassign
+            item = getImageObject(item, currentPath.value)
+            // eslint-disable-next-line no-param-reassign
+            item.type = 'image'
+          }
+          return item
+        })
+        loadingPageStatus.value = false
+        curContentList.value = list
+        resolve()
+      })
+  })
 }
 
 // 监听当前path变化
@@ -181,34 +214,6 @@ function getImageObject(item: any, selectedDir: string): UploadedImageModel {
     is_transform_md: false,
     size: item.size
   }
-}
-
-// 根据路径获取当前对象
-async function getReposContent() {
-  loadingPageStatus.value = true
-  return new Promise<void>((resolve, reject) => {
-    axios
-      .get(
-        `/repos/${userConfigInfo.value.owner}/${userConfigInfo.value.selectedRepos}/contents${currentPath.value}`
-      )
-      .then((res) => {
-        userConfigInfo.value.selectedDir = currentPath.value || '/'
-        store.dispatch('USER_CONFIG_INFO_PERSIST')
-        if (res.status == 401) {
-          ElMessage.error('非法访问，请检查token是否正确')
-        }
-        const list = res.data.map((item: any) => {
-          if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
-            item = getImageObject(item, currentPath.value)
-            item.type = 'image'
-          }
-          return item
-        })
-        loadingPageStatus.value = false
-        curContentList.value = list
-        resolve()
-      })
-  })
 }
 
 function selectDirChange(value) {
