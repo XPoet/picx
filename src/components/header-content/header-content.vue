@@ -43,9 +43,14 @@
 import { defineComponent, reactive, computed, toRefs } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
+import siteCount from '@/components/site-count/site-count.vue'
 
 export default defineComponent({
   name: 'header-content',
+
+  components: {
+    siteCount
+  },
 
   setup() {
     const router = useRouter()
