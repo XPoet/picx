@@ -247,8 +247,7 @@ export default defineComponent({
         img.uploadStatus.uploading = true
 
         const data: any = {
-            // Insert uploaded time in message format as: "Uploaded at 2020-05-01_120000
-          message: 'Uploaded via PicX at'+'\n'+TimeHelper.formatTimestamp(new Date().getTime()),
+          message: '🎉 Uploaded via PicX',
           branch: selectedBranch,
           content: img.imgData.base64Content
         }
