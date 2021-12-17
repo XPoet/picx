@@ -7,15 +7,6 @@
         </div>
         <div class="title">PicX</div>
       </div>
-      <div class="website-count" @click="goGitHubRepo">
-        <el-tooltip
-          content="前往 GitHub 点 Star 支持一下作者(*￣︶￣)"
-          placement="bottom"
-        >
-          <i class=""> 有 <site-count :isuv="false" /> 位小伙伴使用 PicX 图床神器 </i>
-        </el-tooltip>
-      </div>
-    </div>
 
     <div class="header-right">
       <div class="user-info" @click="onUserInfoClick">
