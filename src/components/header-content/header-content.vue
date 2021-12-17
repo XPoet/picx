@@ -9,10 +9,10 @@
       </div>
       <div class="website-count" @click="goGitHubRepo">
         <el-tooltip
-          content=" "
+          content=""
           placement="bottom"
         >
-          <i class=""> 有 <site-count :isuv="false" /> </i>
+          <i class=""><site-count :isuv="false" /></i>
         </el-tooltip>
       </div>
     </div>
