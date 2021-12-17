@@ -5,7 +5,7 @@ import management from '@/views/management/management.vue'
 import tutorials from '@/views/tutorials/tutorials.vue'
 import settings from '@/views/settings/settings.vue'
 
-const titleSuffix = ` | Image Hosting `
+const titleSuffix = ` | PicX 图床神器`
 
 const routes: Array<RouteRecordRaw> = [
   {
