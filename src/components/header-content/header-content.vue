@@ -9,10 +9,10 @@
       </div>
       <div class="website-count" @click="goGitHubRepo">
         <el-tooltip
-          content="前往 GitHub 点 Star 支持一下作者(*￣︶￣)"
+          content=" "
           placement="bottom"
         >
-          <i class=""> 有 <site-count :isuv="false" /> 位小伙伴使用 PicX 图床神器 </i>
+          <i class=""> 有 <site-count :isuv="false" /> </i>
         </el-tooltip>
       </div>
     </div>
