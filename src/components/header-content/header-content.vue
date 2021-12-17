@@ -1,6 +1,6 @@
 <template>
   <header class="header">
-    <div class="header-left">
+    <div class="header-left"/>
       <div class="brand" @click="router.push('/')">
         <div class="logo">
           <img src="../../assets/logo.png" alt="PicX" />
