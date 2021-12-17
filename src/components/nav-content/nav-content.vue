@@ -61,18 +61,6 @@ export default defineComponent({
           isActive: false,
           path: '/settings'
         },
-        {
-          name: '使用教程',
-          icon: 'el-icon-magic-stick',
-          isActive: false,
-          path: '/tutorials'
-        },
-        {
-          name: '帮助反馈',
-          icon: 'el-icon-chat-dot-round',
-          isActive: false,
-          path: '/about'
-        }
       ],
 
       navClick(e: any) {
