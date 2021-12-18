@@ -75,7 +75,7 @@ const doDeleteImage = (imageObj: UploadedImageModel) => {
         owner,
         repo: selectedRepos,
         path: imageObj.path,
-        message: 'delete picture via PicX(https://github.com/XPoet/picx)',
+        message: '🗑️ Deleted Picture via PicX',
         sha: imageObj.sha
       }
     })
