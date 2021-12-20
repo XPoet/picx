@@ -199,9 +199,10 @@
         <el-cascader
           style="width: 100%"
           :props="cascaderProps"
+          :key="elCascaderKey"
           v-model="userConfigInfo.selectedDirList"
           filterable
-          placeholder="选择一个目录"
+          placeholder="请选择一个目录..."
           clearable
           @change="cascaderChange"
         />
@@ -263,6 +264,8 @@ const branchLoading = ref(false)
 const labelPosition = computed(() => {
   return userSettings.elementPlusSize !== 'medium' ? 'top' : 'right'
 })
+
+const elCascaderKey = ref<string>('elCascaderKey')
 
 function persistUserConfigInfo() {
   store.dispatch('USER_CONFIG_INFO_PERSIST')
@@ -403,9 +406,12 @@ function selectRepos(repos: string) {
   persistUserConfigInfo()
 }
 
-function selectBranch(branch: string) {
+async function selectBranch(branch: string) {
   userConfigInfo.selectedBranch = branch
-  getDirList()
+  await getDirList()
+  elCascaderKey.value = userConfigInfo.selectedBranch
+  userConfigInfo.selectedDir = userConfigInfo.dirList[0].value
+  userConfigInfo.selectedDirList = [userConfigInfo.selectedDir]
   persistUserConfigInfo()
 }
 
@@ -467,14 +473,20 @@ const cascaderProps = {
   checkStrictly: true,
   async lazyLoad(node: any, resolve: any) {
     const { level, pathLabels } = node
-    const dirs: any = await GetDirList(pathLabels.join('/'))
+    let dirs: any
+    if (level === 0) {
+      dirs = userConfigInfo.dirList
+    } else {
+      dirs = await GetDirList(pathLabels.join('/'))
+    }
     if (dirs) {
-      const nodes = dirs.map((x: any) => ({
-        value: x.value,
-        label: x.label,
-        leaf: level >= 2
-      }))
-      resolve(nodes)
+      resolve(
+        dirs.map((x: any) => ({
+          value: x.value,
+          label: x.label,
+          leaf: level >= 2
+        }))
+      )
     } else {
       resolve([])
     }
