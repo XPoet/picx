@@ -2,9 +2,9 @@
   <div class="upload-page-container">
     <div
       class="upload-page-left page-container"
-      v-if="uploadedImageList.length"
+      v-if="uploadedImageList.length && userSettings.elementPlusSize === 'medium'"
       :style="{
-        width: '30%'
+        width: '280rem'
       }"
     >
       <div class="uploaded-item" v-for="(item, index) in uploadedImageList" :key="index">
@@ -12,12 +12,7 @@
       </div>
     </div>
 
-    <div
-      class="upload-page-right page-container"
-      :style="{
-        width: uploadedImageList.length ? '70%' : '100%'
-      }"
-    >
+    <div class="upload-page-right page-container">
       <!-- 上传区域 -->
       <div class="row-item">
         <div class="content-box">

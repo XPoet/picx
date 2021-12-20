@@ -1,42 +1,132 @@
-@import '../../style/base.styl';
+@import "../../style/base.styl"
+
+$infoBoxHeight = 56rem
 
 .image-card {
-  width: 110px;
-  height: 110px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-direction: column;
+  position relative
+  width 100%
+  height 100%
+  box-shadow 1rem 2rem 3rem var(--shadow-color)
+  box-sizing border-box
+  padding-bottom $infoBoxHeight
 
-  .image {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    margin-top: 10px;
-    object-fit: contain;
-    overflow: hidden;
+  &:hover {
+    box-shadow 0 0 10rem #666
+  }
 
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+  &.listing {
+    display flex
+    justify-content flex-start
+    align-items center
+    padding 5rem
+    border-radius $box-border-radius
+
+    .image-box {
+      height 45rem
+      width 45rem
+    }
+
+    .info-box {
+      position relative
+      width 80%
+    }
+
+    :deep(.el-loading-mask) {
+      .el-loading-spinner {
+        margin-top -25rem
+
+        .circular {
+          height 24rem
+          width 24rem
+        }
+
+        .el-loading-text {
+          margin 0
+        }
+      }
+
     }
   }
 
-  .name {
-    width: 90%;
-    margin-top: 5px;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    word-wrap: break-word;
-    word-break: break-all;
-    font-size: 14px;
+
+  .image-box {
+    position relative
+    width 100%
+    height 100%
+
+    img {
+      width 100%
+      height 100%
+      object-fit cover
+    }
   }
+
+
+  .info-box {
+    width 100%
+    height $infoBoxHeight
+    position absolute
+    bottom 0
+    left 0
+
+    .image-info {
+      width 100%
+      height 100%
+      padding 5rem
+      color var(--default-text-color)
+      box-sizing border-box
+      display flex
+      flex-direction column
+      justify-content space-between
+
+      .rename-input {
+        height 20rem
+        display flex
+
+        :deep(input) {
+          height 20rem
+        }
+      }
+
+      .filename {
+        overflow hidden
+        text-overflow ellipsis
+        white-space nowrap
+        font-size 13rem
+      }
+
+      .image-operation {
+        margin-top 5rem
+      }
+    }
+  }
+
+
+  .operation-box {
+    position absolute
+    top 10rem
+    right 8rem
+    display flex
+    justify-content flex-end
+
+    .btn {
+      width 32rem
+      height 32rem
+      border-radius 50%
+      box-shadow 0 0 6rem #555
+      cursor pointer
+      background var(--background-color)
+      display flex
+      justify-content center
+      align-items center
+      margin-right 8rem
+      font-size 18rem
+
+      &:last-child {
+        margin-right 0
+      }
+    }
+  }
+
+
 }
