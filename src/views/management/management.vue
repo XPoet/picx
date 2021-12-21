@@ -1,296 +1,167 @@
 <template>
-  <div
-    class="page-container management-page-container"
-    @contextmenu.prevent="menu"
-    v-loading="loadingPageStatus"
-    element-loading-text="加载中..."
-    element-loading-background="rgba(0, 0, 0, 0.6)"
-    @click="menuType = ''"
-  >
-    <div @click.stop="closeMenuBox">
-      <transition name="fade">
-        <div v-show="menuType === 'blank'" class="menu-box" :style="menuStyle">
-          <li @click="menuFn('refresh')">刷新</li>
-          <li @click="menuFn('addFolder')">新建文件夹</li>
-          <li @click="menuFn('upImage')">上传图片</li>
-        </div>
-      </transition>
-
-      <transition name="fade">
-        <div v-show="menuType === 'dir'" class="menu-box" :style="menuItemStyle">
-          <li @click="menuFn('openFolder')">打开文件夹</li>
-          <li @click="menuFn('deleteFolder')">删除文件夹</li>
-          <li @click="menuFn('openFolderDetail')">属性</li>
-        </div>
-      </transition>
-
-      <transition name="fade">
-        <div v-show="menuType === 'image'" class="menu-box" :style="menuItemStyle">
-          <li @click="menuFn('copyGithubUrl')">复制 Github 链接</li>
-          <li @click="menuFn('copyCDNUrl')">复制 CDN 链接</li>
-          <li @click="menuFn('copyMarkdownGithubUrl')">复制 Markdown 格式 Github 链接</li>
-          <li @click="menuFn('copyMarkdownCDNUrl')">复制 Markdown 格式 CDN 链接</li>
-          <li @click="menuFn('deleteImage')">删除图片</li>
-          <li @click="menuFn('openImageDetail')">属性</li>
-        </div>
-      </transition>
-    </div>
+  <div class="page-container management-page-container">
     <div class="content-container">
       <div class="top">
         <div class="left">
-          <selected-info-bar @selected-dir-change="selectDirChange" />
+          <selected-info-bar />
+        </div>
+        <div class="right flex-start">
+          <el-tooltip
+            placement="top"
+            :content="listing ? '切换方块展示' : '切换列表展示'"
+          >
+            <i
+              class="btn-icon"
+              :class="listing ? 'el-icon-tickets' : 'el-icon-menu'"
+              @click.stop="toggleListing"
+            ></i>
+          </el-tooltip>
+          <el-tooltip placement="top" content="重新加载图片">
+            <i class="btn-icon el-icon-refresh" @click.stop="reloadPics"></i>
+          </el-tooltip>
         </div>
       </div>
-      <div class="bottom">
-        <ul class="list">
-          <li
-            v-show="
-              curContentList.length > 0 && curContentList[0].path.split('/').length > 1
-            "
-            class="item"
-          >
-            <folder-card @dblclick="backDir"></folder-card>
+
+      <div
+        class="bottom"
+        v-loading="loadingImageList"
+        element-loading-text="加载中..."
+        element-loading-background="rgba(0, 0, 0, 0.5)"
+      >
+        <ul class="image-list">
+          <li class="image-item" v-if="userConfigInfo.selectedDir !== '/'">
+            <folder-card mode="back" />
+          </li>
+          <li class="image-item" v-for="(dir, index) in currentPathDirList" :key="index">
+            <folder-card :folder-obj="dir" />
           </li>
           <li
-            class="item"
-            @contextmenu.prevent.stop="itemMenu($event, item)"
-            v-for="(item, index) in curContentList"
-            v-show="item.type === 'dir'"
+            class="image-item"
+            v-for="(image, index) in currentPathImageList"
             :key="index"
+            :style="{
+              width: listing ? '50%' : '230rem',
+              height: listing ? '80rem' : '240rem'
+            }"
           >
-            <folder-card
-              v-if="item.type === 'dir'"
-              :folderObj="item"
-              @dblclick="currentPath = item.path"
-            ></folder-card>
-          </li>
-          <li
-            class="item"
-            @contextmenu.prevent.stop="itemMenu($event, item)"
-            v-for="(item, index) in curContentList"
-            v-show="item.type === 'image'"
-            :key="index"
-          >
-            <new-image-card
-              v-if="item.type === 'image'"
-              :imageObj="item"
-            ></new-image-card>
+            <image-card
+              :image-obj="image"
+              :listing="listing"
+              v-model="activeIndex"
+              :index="index"
+            />
           </li>
         </ul>
       </div>
     </div>
   </div>
-  <el-dialog
-    v-model="dialogUploadImage"
-    title="上传图片"
-    width="1000px"
-    destroy-on-close
-    top="5vh"
-    @close="getReposContent()"
-  >
-    <div class="upload-dialog"><upload-dialog></upload-dialog></div>
-  </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import { computed, onMounted, watch, ref } from 'vue'
-import { ElMessage } from 'element-plus'
-
+import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { filenameHandle, isImage } from '@/common/utils/file-handle-helper'
-import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
 import { ExternalLinkType } from '@/common/model/externalLink.model'
 import { UploadedImageModel } from '@/common/model/upload.model'
 import generateExternalLink from '@/common/utils/generate-external-link'
 import getUuid from '@/common/utils/get-uuid'
 import axios from '@/common/utils/axios'
-import menuUtil from '../../common/utils/menu-util.ts'
+import { getContentByReposPath } from '@/common/api'
 
-import newImageCard from '@/components/new-image-card/new-image-card.vue'
-import folderCard from '@/components/folder-card/folder-card.vue'
-import uploadDialog from '@/components/upload-dialog/upload-dialog.vue'
-
+import imageCard from '@/components/image-card/image-card.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
+import folderCard from '@/components/folder-card/folder-card.vue'
+import { filterDirContent, getDirContent } from '@/views/management/management.util'
 
 const store = useStore()
+const router = useRouter()
 
-const userConfigInfo = computed(
-  (): UserConfigInfoModel => store.getters.getUserConfigInfo
-)
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const loggingStatus = computed(() => store.getters.getUserLoggingStatus).value
+const dirImageList = computed(() => store.getters.getDirImageList).value
 
-const loadingPageStatus = ref(false)
-const dialogUploadImage = ref(false)
+const loadingImageList = ref(false)
+const listing = ref(false)
+const activeIndex = ref<number>()
 
-// 当前
-const curContentList = ref([] as any)
-const currentPath = ref<String>(userConfigInfo.value.selectedDir)
+const currentPathDirList = ref([])
+const currentPathImageList = ref([])
 
-// 右键菜单
-const menuStyle = ref<String>('')
-const menuItemStyle = ref<String>('')
-const menuType = ref<String>('')
-const menuItemObj = ref<Object>({})
+async function dirContentHandle(dir: string) {
+  loadingImageList.value = true
 
-// 右键空白处菜单列表
-function menu(e: any) {
-  menuType.value = 'blank'
-  menuStyle.value = ` left: ${e.pageX + 10}px;top:${e.pageY + 10}px;`
-}
-// 右键item菜单列表
-function itemMenu(e: any, item: any) {
-  menuType.value = item.type
-  menuItemObj.value = item
-  menuItemStyle.value = ` left: ${e.pageX + 10}px;top:${e.pageY + 10}px;`
-}
+  const dirContent = getDirContent(dir, dirImageList)
+  if (dirContent) {
+    const dirs = filterDirContent(dir, dirContent, 'dir')
+    const images = filterDirContent(dir, dirContent, 'image')
 
-// 延时 防止关闭过快 影响点击事件视觉效果
-function closeMenuBox() {
-  setTimeout(() => {
-    menuType.value = ''
-  }, 100)
-}
-
-// 根据路径获取当前对象
-async function getReposContent() {
-  loadingPageStatus.value = true
-  return new Promise<void>((resolve) => {
-    axios
-      .get(
-        `/repos/${userConfigInfo.value.owner}/${userConfigInfo.value.selectedRepos}/contents${currentPath.value}`
-      )
-      .then((res) => {
-        userConfigInfo.value.selectedDir = currentPath.value || '/'
-        store.dispatch('USER_CONFIG_INFO_PERSIST')
-        if (res.status === 401) {
-          ElMessage.error('非法访问，请检查token是否正确')
-        }
-        const list = res.data.map((item: any) => {
-          if (item.type === 'file' && isImage(filenameHandle(item.name).suffix)) {
-            // eslint-disable-next-line no-use-before-define,no-param-reassign
-            item = getImageObject(item, currentPath.value)
-            // eslint-disable-next-line no-param-reassign
-            item.type = 'image'
-          }
-          return item
-        })
-        loadingPageStatus.value = false
-        curContentList.value = list
-        resolve()
-      })
-  })
-}
-
-// 监听当前path变化
-watch(
-  () => currentPath.value,
-  () => {
-    getReposContent()
-  }
-)
-// 返回上一级
-function backDir() {
-  const opath: any = curContentList.value[0].path
-  const pos: Number = opath.lastIndexOf('/')
-  const path: any = opath.substr(0, opath.lastIndexOf('/', opath.lastIndexOf('/') - 1))
-  if (curContentList.value[0].path.split('/').length > 2) {
-    currentPath.value = path
+    if (!dirs.length && !images.length) {
+      await getContentByReposPath(dir)
+    } else {
+      currentPathDirList.value = dirs
+      currentPathImageList.value = images
+    }
   } else {
-    currentPath.value = '/'
+    await getContentByReposPath(dir)
   }
-}
-// 图片格式化
-function getImageObject(item: any, selectedDir: string): UploadedImageModel {
-  return {
-    uuid: getUuid(),
-    dir: selectedDir,
-    name: item.name,
-    path: item.path,
-    sha: item.sha,
-    github_url: generateExternalLink(ExternalLinkType.gh, item, userConfigInfo.value),
-    cdn_url: generateExternalLink(ExternalLinkType.cdn, item, userConfigInfo.value),
-    md_gh_url: generateExternalLink(ExternalLinkType.md_gh, item, userConfigInfo.value),
-    md_cdn_url: generateExternalLink(ExternalLinkType.md_cdn, item, userConfigInfo.value),
-    deleting: false,
-    is_transform_md: false,
-    size: item.size
-  }
+  loadingImageList.value = false
 }
 
-function selectDirChange(value) {
-  currentPath.value = value
+async function initDirImageList() {
+  const { selectedDir } = userConfigInfo
+
+  if (!dirImageList.length) {
+    await getContentByReposPath(selectedDir)
+    return
+  }
+
+  await dirContentHandle(selectedDir)
 }
 
-// 菜单指令
-async function menuFn(type: String) {
-  switch (type) {
-    case 'refresh': {
-      getReposContent()
-      break
-    }
-    case 'addFolder': {
-      const code = await menuUtil.addFolder(userConfigInfo.value)
-      if (code === 200) {
-        getReposContent()
-      }
-      break
-    }
-    case 'deleteFolder': {
-      const code = await menuUtil.deleteFolder(userConfigInfo.value, menuItemObj.value)
-      if (code === 200) {
-        getReposContent()
-      }
-      break
-    }
-    case 'upImage': {
-      dialogUploadImage.value = true
-      break
-    }
-    case 'openFolder': {
-      currentPath.value = menuItemObj.value.path
-      break
-    }
+function toggleListing() {
+  listing.value = !listing.value
+}
 
-    case 'openFolderDetail': {
-      menuUtil.openFolderDetail(menuItemObj.value)
-      break
-    }
-
-    case 'copyGithubUrl': {
-      menuUtil.copyGithubUrl(menuItemObj.value)
-      break
-    }
-    case 'copyCDNUrl': {
-      menuUtil.copyCDNUrl(menuItemObj.value)
-      break
-    }
-    case 'copyMarkdownGithubUrl': {
-      menuUtil.copyMarkdownGithubUrl(menuItemObj.value)
-      break
-    }
-    case 'copyMarkdownCDNUrl': {
-      menuUtil.copyMarkdownCDNUrl(menuItemObj.value)
-      break
-    }
-    case 'deleteImage': {
-      const code = await menuUtil.deleteImage(userConfigInfo.value, menuItemObj.value)
-      if (code === 200) {
-        getReposContent()
-      }
-      break
-    }
-    case 'openImageDetail': {
-      menuUtil.openImageDetail(menuItemObj.value)
-      break
-    }
-    default: {
-      break
-    }
-  }
+// 重新加载
+function reloadPics() {
+  store.dispatch('DIR_IMAGE_LOGOUT')
+  initDirImageList()
 }
 
 onMounted(() => {
-  getReposContent()
+  initDirImageList()
 })
+
+watch(
+  () => loggingStatus,
+  (nv) => {
+    if (nv.value === false) {
+      router.push('/config')
+    }
+  }
+)
+
+watch(
+  () => userConfigInfo.selectedDir,
+  async (nDir) => {
+    await dirContentHandle(nDir)
+  },
+  { deep: true }
+)
+
+watch(
+  () => dirImageList,
+  (nv: any) => {
+    const { selectedDir } = userConfigInfo
+    const dirContent = getDirContent(selectedDir, nv)
+    if (dirContent) {
+      currentPathDirList.value = filterDirContent(selectedDir, dirContent, 'dir')
+      currentPathImageList.value = filterDirContent(selectedDir, dirContent, 'image')
+    }
+  },
+  { deep: true }
+)
 </script>
 
 <style scoped lang="stylus">

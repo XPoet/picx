@@ -104,6 +104,7 @@ function uploadedHandle(
   )
 
   const item: UploadedImageModel = {
+    type: 'image',
     uuid: img.uuid,
     dir: userConfigInfo.selectedDir,
     name: res.data.content.name,
@@ -122,14 +123,8 @@ function uploadedHandle(
   // eslint-disable-next-line no-param-reassign
   img.uploadedImg = item
 
-  // 如果 userConfigInfo.dirList 不存在该目录，则增加
-  if (!userConfigInfo.dirList.some((v: any) => v.value === item.dir)) {
-    // userConfigInfo 增加目录
-    store.dispatch('USER_CONFIG_INFO_ADD_DIR', item.dir)
-
-    // dirImageList 增加目录
-    store.dispatch('DIR_IMAGE_LIST_ADD_DIR', item.dir)
-  }
+  // dirImageList 增加目录
+  store.dispatch('DIR_IMAGE_LIST_ADD_DIR', userConfigInfo.selectedDir)
 
   // uploadedList 增加图片
   store.dispatch('UPLOADED_LIST_ADD', item)

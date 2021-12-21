@@ -9,6 +9,7 @@ export enum UploadStatusEnum {
 }
 
 export interface UploadedImageModel {
+  type: string
   uuid: string
   sha: string
   dir: string

@@ -2,6 +2,7 @@ import { Module } from 'vuex'
 import { PICX_MANAGEMENT } from '@/common/model/localStorage.model'
 import DirImageListStateTypes from './types'
 import RootStateTypes from '../../types'
+import { createDirObject } from '@/store/modules/dir-image-list/utils'
 
 const initDirImageList = () => {
   const dirImageList = localStorage.getItem(PICX_MANAGEMENT)
@@ -17,37 +18,101 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
   mutations: {},
 
   actions: {
-    // 图床管理 - 增加图片
-    DIR_IMAGE_LIST_ADD_IMAGE({ state, dispatch }, item: any) {
-      const temp = state.dirImageList.find((v: any) => v.dir === item.dir)
-      if (temp) {
-        temp.imageList.push(item)
-        dispatch('DIR_IMAGE_LIST_PERSIST')
-      }
-    },
+    // 图床管理 - 增加目录
+    DIR_IMAGE_LIST_ADD_DIR({ state, dispatch }, dirPath: string) {
+      const dirList: string[] = dirPath.split('/')
+      let dirPathC = ''
+      let targetDirObj_l1 = null
+      let targetDirObj_l2 = null
 
-    // 图床管理 - 往指定目录增加图片列表
-    DIR_IMAGE_LIST_ADD_IMAGE_LIST({ state, dispatch }, dirImageItem: any) {
-      const temp = state.dirImageList.find((v: any) => v.dir === dirImageItem.dir)
-      if (temp) {
-        temp.imageList = dirImageItem.imageList
-      } else {
-        state.dirImageList.unshift(dirImageItem)
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0, len = dirList.length; i < len; i++) {
+        const dirName = dirList[i]
+        dirPathC += `${i > 0 ? '/' : ''}${dirName}`
+        if (i === 0) {
+          if (!state.dirImageList.some((v: any) => v.dir === dirList[0])) {
+            state.dirImageList.push(createDirObject(dirName, dirPathC))
+          }
+        } else if (i === 1) {
+          targetDirObj_l1 = state.dirImageList.find((v: any) => v.dir === dirList[0])
+          if (
+            targetDirObj_l1 &&
+            !targetDirObj_l1.childrenDirs.some((v: any) => v.dir === dirList[1])
+          ) {
+            targetDirObj_l1.childrenDirs.push(createDirObject(dirName, dirPathC))
+          }
+        } else if (i === 2) {
+          if (targetDirObj_l1) {
+            targetDirObj_l2 = targetDirObj_l1.childrenDirs.find(
+              (v: any) => v.dir === dirList[1]
+            )
+            if (
+              targetDirObj_l2 &&
+              !targetDirObj_l2.childrenDirs.some((v: any) => v.dir === dirList[2])
+            ) {
+              targetDirObj_l2.childrenDirs.push(createDirObject(dirName, dirPathC))
+            }
+          }
+        }
       }
+
       dispatch('DIR_IMAGE_LIST_PERSIST')
     },
 
-    // 图床管理 - 增加目录
-    DIR_IMAGE_LIST_ADD_DIR({ state, dispatch }, dir: string) {
-      if (!state.dirImageList.some((v: any) => v.dir === dir)) {
-        const dirObj = { dir, imageList: [] }
+    // 图床管理 - 增加图片
+    async DIR_IMAGE_LIST_ADD_IMAGE({ state, dispatch }, item: any) {
+      const { dir } = item
 
-        if (dir === '/') {
-          state.dirImageList.unshift(dirObj)
-        } else {
-          state.dirImageList.push(dirObj)
-        }
+      if (dir === '/' && !state.dirImageList.some((v: any) => v.name === item.name)) {
+        state.dirImageList.push(item)
         dispatch('DIR_IMAGE_LIST_PERSIST')
+        return
+      }
+
+      const dirList: string[] = dir.split('/')
+      const targetDirObj_l1 = state.dirImageList.find((v: any) => v.dir === dirList[0])
+
+      const tempFn = () => {
+        if (
+          dirList.length === 1 &&
+          !targetDirObj_l1.imageList.some((v: any) => v.name === item.name)
+        ) {
+          targetDirObj_l1.imageList.push(item)
+          dispatch('DIR_IMAGE_LIST_PERSIST')
+          return
+        }
+
+        const targetDirObj_l2 = targetDirObj_l1.childrenDirs.find(
+          (v: any) => v.dir === dirList[1]
+        )
+
+        if (
+          dirList.length === 2 &&
+          !targetDirObj_l2.imageList.some((v: any) => v.name === item.name)
+        ) {
+          targetDirObj_l2.imageList.push(item)
+          dispatch('DIR_IMAGE_LIST_PERSIST')
+          return
+        }
+
+        const targetDirObj_l3 = targetDirObj_l2.childrenDirs.find(
+          (v: any) => v.dir === dirList[2]
+        )
+        if (
+          dirList.length === 3 &&
+          !targetDirObj_l3.imageList.some((v: any) => v.name === item.name)
+        ) {
+          targetDirObj_l3.imageList.push(item)
+          dispatch('DIR_IMAGE_LIST_PERSIST')
+        }
+      }
+
+      if (!targetDirObj_l1) {
+        dispatch('DIR_IMAGE_LIST_ADD_DIR', dir).then(() => {
+          tempFn()
+        })
+      } else {
+        tempFn()
       }
     },
 

@@ -1,42 +1,47 @@
-@import '../../style/base.styl';
+@import '../../style/base.styl'
 
 .folder-card {
-  width: 110px;
-  height: 110px;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-direction: column;
+  position relative
+  width 110rem
+  height 106rem
+  display flex
+  align-items center
+  flex-direction column
+  justify-content flex-start
+  cursor pointer
+  box-sizing border-box
+  padding 3rem
+  user-select none
+
+  &:hover {
+    background var(--second-background-color)
+  }
 
   .folder {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    margin-top: 10px;
-    align-items: flex-end;
-    overflow: hidden;
+    display flex
+    align-items center
+    justify-content center
+    width 50rem
+    height 50rem
 
-    img {
-      width: 100%;
-      height: 100%;
-      font-size: 50px;
-      object-fit: contain;
+    svg {
+      width 100%
+      height 100%
     }
   }
 
+
   .name {
-    width: 90%;
-    margin-top: 5px;
-    text-align: center;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    word-wrap: break-word;
-    word-break: break-all;
+    width 90%
+    font-size 14rem
+    margin-top 5rem
+    text-align center
+    overflow hidden
+    text-overflow ellipsis
+    display -webkit-box
+    -webkit-box-orient vertical
+    -webkit-line-clamp 2
+    word-wrap break-word
+    word-break break-all
   }
 }

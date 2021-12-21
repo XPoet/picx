@@ -9,7 +9,7 @@
     @mouseleave="isShowDelBtn = false"
   >
     <div class="image-box">
-      <img :src="imageObj.cdn_url" />
+      <img data-fancybox="gallery" :src="imageObj.cdn_url" />
     </div>
     <div class="info-box">
       <div class="image-info">
