@@ -23,8 +23,8 @@
           :key="index"
         >
           <div class="left-image-box flex-center">
-            <div class="image-box" @click="imageViewer(imgItem)">
-              <img :src="imgItem.imgData.base64Url" />
+            <div class="image-box">
+              <img data-fancybox="gallery" :src="imgItem.imgData.base64Url" />
             </div>
           </div>
 
@@ -260,18 +260,6 @@ export default defineComponent({
           return UploadStatusEnum.uploaded
         }
         return UploadStatusEnum.uploadFail
-      },
-
-      imageViewer(imgObj: ToUploadImageModel) {
-        store.commit('IMAGE_VIEWER', {
-          isShow: true,
-          imgInfo: {
-            name: imgObj.filename.now,
-            size: imgObj.fileInfo.size,
-            lastModified: imgObj.fileInfo.lastModified,
-            url: imgObj.imgData.base64Url
-          }
-        })
       }
     })
 

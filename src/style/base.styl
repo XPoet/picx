@@ -38,7 +38,7 @@ a:link {
   text-decoration none
 }
 
-// 重置a标签
+// 重置 a 标签
 a:visited {
   color var(--default-text-color)
   text-decoration underline
@@ -74,17 +74,20 @@ ul, ol, li {
   }
 }
 
+
 .flex-center {
   display flex
   justify-content center
   align-items center
 }
 
+
 .flex-start {
   display flex
   justify-content flex-start
   align-items center
 }
+
 
 .page-container {
   width 100%
@@ -97,62 +100,14 @@ ul, ol, li {
   overflow-y auto
 }
 
-// 菜单 属性项 此处css需要外置
-.message-box {
-  padding 10px
-
-  .title {
-    font-size 18px
-    color var(--text-color)
-    margin-bottom 35px
-    font-weight bolder
-  }
-
-  .item {
-    font-size 14px
-    color var(--text-color)
-    display flex
-    margin-bottom 25px
-
-    .label {
-      width 80px
-      font-weight bolder
-      white-space nowrap
-    }
-
-    .content {
-      width calc(100% - 100px)
-      overflow hidden
-      text-overflow ellipsis
-      display -webkit-box
-      -webkit-box-orient vertical
-      -webkit-line-clamp 10
-      word-wrap break-word
-      word-break break-all
-      font-size 14px
-    }
-  }
-
-  .col {
-    flex-direction column
-
-    .label {
-      width 100%
-      font-weight bolder
-      white-space nowrap
-    }
-
-    .content {
-      width 100%
-      overflow hidden
-      text-overflow ellipsis
-      display -webkit-box
-      -webkit-box-orient vertical
-      -webkit-line-clamp 10
-      word-wrap break-word
-      word-break break-all
-      font-size 14px
-      margin-top 10px
-    }
+.clear {
+  &::after {
+    content ''
+    display block
+    clear both
+    visibility hidden
+    height 0
   }
 }
+
+

@@ -1,18 +1,24 @@
 import { Module } from 'vuex'
 import { PICX_MANAGEMENT } from '@/common/model/localStorage.model'
-import DirImageListStateTypes from './types'
+import DirImageListStateTypes, { DirObject } from './types'
 import RootStateTypes from '../../types'
-import { createDirObject } from '@/store/modules/dir-image-list/utils'
+import {
+  createDirObject,
+  getUpLevelDirList,
+  getUpOneLevelDir
+} from '@/store/modules/dir-image-list/utils'
+import { UploadedImageModel } from '@/common/model/upload.model'
+import { getDirContent } from '@/views/management/management.util'
 
-const initDirImageList = () => {
-  const dirImageList = localStorage.getItem(PICX_MANAGEMENT)
-  return dirImageList ? JSON.parse(dirImageList) : []
+const initDirObject = () => {
+  const dirObj = localStorage.getItem(PICX_MANAGEMENT)
+  return dirObj ? JSON.parse(dirObj) : createDirObject('/', '/')
 }
 
 const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
   state: {
     name: 'dirImageListModule',
-    dirImageList: initDirImageList()
+    dirObject: initDirObject()
   },
 
   mutations: {},
@@ -20,149 +26,234 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
   actions: {
     // 图床管理 - 增加目录
     DIR_IMAGE_LIST_ADD_DIR({ state, dispatch }, dirPath: string) {
+      if (dirPath === '/') {
+        return
+      }
+
+      const findAssign = (dirObj: DirObject, dir: string, dirPath: string) => {
+        if (dirObj) {
+          if (!dirObj.childrenDirs.some((v: DirObject) => v.dir === dir)) {
+            dirObj.childrenDirs.push(createDirObject(dir, dirPath))
+          }
+          const temp = dirObj.childrenDirs.find((x: DirObject) => x.dir === dir)
+          return temp || createDirObject(dir, dirPath)
+        }
+        return createDirObject(dir, dirPath)
+      }
+
       const dirList: string[] = dirPath.split('/')
       let dirPathC = ''
-      let targetDirObj_l1 = null
-      let targetDirObj_l2 = null
+      let tempDirObj: DirObject = state.dirObject
 
       // eslint-disable-next-line no-plusplus
       for (let i = 0, len = dirList.length; i < len; i++) {
         const dirName = dirList[i]
         dirPathC += `${i > 0 ? '/' : ''}${dirName}`
+        tempDirObj = findAssign(tempDirObj, dirName, dirPathC)
+
         if (i === 0) {
-          if (!state.dirImageList.some((v: any) => v.dir === dirList[0])) {
-            state.dirImageList.push(createDirObject(dirName, dirPathC))
-          }
-        } else if (i === 1) {
-          targetDirObj_l1 = state.dirImageList.find((v: any) => v.dir === dirList[0])
-          if (
-            targetDirObj_l1 &&
-            !targetDirObj_l1.childrenDirs.some((v: any) => v.dir === dirList[1])
-          ) {
-            targetDirObj_l1.childrenDirs.push(createDirObject(dirName, dirPathC))
-          }
-        } else if (i === 2) {
-          if (targetDirObj_l1) {
-            targetDirObj_l2 = targetDirObj_l1.childrenDirs.find(
-              (v: any) => v.dir === dirList[1]
-            )
-            if (
-              targetDirObj_l2 &&
-              !targetDirObj_l2.childrenDirs.some((v: any) => v.dir === dirList[2])
-            ) {
-              targetDirObj_l2.childrenDirs.push(createDirObject(dirName, dirPathC))
-            }
-          }
+          dispatch('USER_CONFIG_INFO_ADD_DIR', dirName)
         }
       }
 
       dispatch('DIR_IMAGE_LIST_PERSIST')
     },
 
-    // 图床管理 - 增加图片
-    async DIR_IMAGE_LIST_ADD_IMAGE({ state, dispatch }, item: any) {
-      const { dir } = item
+    // 图床管理 - 删除目录
+    DIR_IMAGE_LIST_REMOVE_DIR({ state, dispatch }, dirPath: string) {
+      if (dirPath === '/') {
+        return
+      }
 
-      if (dir === '/' && !state.dirImageList.some((v: any) => v.name === item.name)) {
-        state.dirImageList.push(item)
+      const rmDir = (dirObj: DirObject, dir: string, isRm: boolean) => {
+        if (dir === '/') {
+          return state.dirObject
+        }
+
+        const temp = dirObj.childrenDirs.find((v) => v.dir === dir)
+        if (!temp) {
+          return dirObj
+        }
+
+        if (isRm) {
+          const rmIndex = dirObj.childrenDirs.findIndex((v: any) => v.dir === dir)
+          if (rmIndex !== -1) {
+            dirObj.childrenDirs.splice(rmIndex, 1)
+          }
+        }
+
+        return temp
+      }
+
+      const dirList = dirPath.split('/')
+
+      let tempDirObj = state.dirObject
+      dirList.forEach((d, i) => {
+        tempDirObj = rmDir(tempDirObj, d, i === dirList.length - 1)
+
+        // 删除在用户配置信息模块里的目录项
+        if (i === 0) {
+          dispatch('USER_CONFIG_INFO_REMOVE_DIR', d)
+        }
+      })
+
+      dispatch('DIR_IMAGE_LIST_PERSIST')
+    },
+
+    // 图床管理 - 增加图片
+    DIR_IMAGE_LIST_ADD_IMAGE({ state, dispatch }, item: UploadedImageModel) {
+      const addImg = (
+        dirObj: DirObject,
+        dir: string,
+        Img: UploadedImageModel,
+        isAdd: boolean = false
+      ) => {
+        if (!dirObj) {
+          return state.dirObject
+        }
+
+        const temp = dirObj.childrenDirs.find((x: DirObject) => x.dir === dir)
+        if (!temp) {
+          return state.dirObject
+        }
+
+        if (isAdd && !temp.imageList.some((v) => v.name === Img.name)) {
+          temp.imageList.push(Img)
+        }
+
+        return temp
+      }
+
+      let tempDirObj: DirObject = state.dirObject
+
+      if (item.dir === '/') {
+        if (!tempDirObj.imageList.some((v) => v.name === item.name)) {
+          tempDirObj.imageList.push(item)
+        }
+      } else {
+        const dirList: string[] = item.dir.split('/')
+        dirList.forEach((dir, i) => {
+          tempDirObj = addImg(tempDirObj, dir, item, i === dirList.length - 1)
+        })
+      }
+      dispatch('DIR_IMAGE_LIST_PERSIST')
+    },
+
+    // 图床管理 - 删除图片（即删除指定目录里的指定图片）
+    DIR_IMAGE_LIST_REMOVE({ state, dispatch }, item: any) {
+      // 删除
+      const rm = (list: UploadedImageModel[], uuid: string) => {
+        if (list.length) {
+          const rmIndex = list.findIndex((v: any) => v.uuid === uuid)
+          if (rmIndex !== -1) {
+            list.splice(rmIndex, 1)
+          }
+        }
+      }
+
+      // 删除图片
+      const rmImg = (
+        dirObj: DirObject,
+        dir: string,
+        img: UploadedImageModel,
+        isRm: boolean
+      ) => {
+        if (!dirObj) {
+          return state.dirObject
+        }
+
+        const temp = dirObj.childrenDirs.find((x: DirObject) => x.dir === dir)
+        if (!temp) {
+          return state.dirObject
+        }
+
+        if (temp.dir === dir && isRm) {
+          rm(temp.imageList, img.uuid)
+        }
+
+        return temp
+      }
+
+      const { dir, uuid } = item
+
+      if (dir === '/') {
+        rm(state.dirObject.imageList, uuid)
         dispatch('DIR_IMAGE_LIST_PERSIST')
         return
       }
 
       const dirList: string[] = dir.split('/')
-      const targetDirObj_l1 = state.dirImageList.find((v: any) => v.dir === dirList[0])
+      let tempDirObj: DirObject = state.dirObject
 
-      const tempFn = () => {
-        if (
-          dirList.length === 1 &&
-          !targetDirObj_l1.imageList.some((v: any) => v.name === item.name)
-        ) {
-          targetDirObj_l1.imageList.push(item)
-          dispatch('DIR_IMAGE_LIST_PERSIST')
-          return
-        }
+      dirList.forEach((d, i) => {
+        tempDirObj = rmImg(tempDirObj, d, item, i === dirList.length - 1)
+        if (!tempDirObj.imageList.length && !tempDirObj.childrenDirs.length) {
+          const dirPathList = getUpLevelDirList(tempDirObj.dirPath)
 
-        const targetDirObj_l2 = targetDirObj_l1.childrenDirs.find(
-          (v: any) => v.dir === dirList[1]
-        )
-
-        if (
-          dirList.length === 2 &&
-          !targetDirObj_l2.imageList.some((v: any) => v.name === item.name)
-        ) {
-          targetDirObj_l2.imageList.push(item)
-          dispatch('DIR_IMAGE_LIST_PERSIST')
-          return
-        }
-
-        const targetDirObj_l3 = targetDirObj_l2.childrenDirs.find(
-          (v: any) => v.dir === dirList[2]
-        )
-        if (
-          dirList.length === 3 &&
-          !targetDirObj_l3.imageList.some((v: any) => v.name === item.name)
-        ) {
-          targetDirObj_l3.imageList.push(item)
-          dispatch('DIR_IMAGE_LIST_PERSIST')
-        }
-      }
-
-      if (!targetDirObj_l1) {
-        dispatch('DIR_IMAGE_LIST_ADD_DIR', dir).then(() => {
-          tempFn()
-        })
-      } else {
-        tempFn()
-      }
-    },
-
-    // 图床管理 - 删除目录
-    DIR_IMAGE_LIST_REMOVE_DIR({ state, dispatch }, dir: string) {
-      if (state.dirImageList.some((v: any) => v.dir === dir)) {
-        const rmIndex = state.dirImageList.findIndex((v: any) => v.dir === dir)
-        // 删除目录
-        state.dirImageList.splice(rmIndex, 1)
-        dispatch('DIR_IMAGE_LIST_PERSIST')
-      }
-    },
-
-    // 图床管理 - 删除指定目录里的指定图片
-    DIR_IMAGE_LIST_REMOVE({ state, dispatch }, item: any) {
-      if (state.dirImageList.length > 0) {
-        const temp = state.dirImageList.find((v: any) => v.dir === item.dir)
-        if (temp) {
-          const rmIndex = temp.imageList.findIndex((v: any) => v.uuid === item.uuid)
-          if (rmIndex !== -1) {
-            // 删除图片
-            temp.imageList.splice(rmIndex, 1)
-
-            // 如果 imageList.length 为 0，需删除该目录
-            if (temp.imageList.length === 0) {
-              // userConfigInfo.dirList 中删除目录
-              dispatch('DIR_IMAGE_LIST_REMOVE_DIR', temp.dir)
-
-              // dirImageList 中删除目录
-              dispatch('USER_CONFIG_INFO_REMOVE_DIR', temp.dir)
+          // 循环遍历判断上一级目录的内容是否为空，为空则删除，依次往上查找，直到根目录
+          dirPathList.forEach((dp) => {
+            const dpc = getDirContent(dp, state.dirObject)
+            if (dpc && !dpc.imageList.length && !dpc.childrenDirs.length) {
+              const { dirPath } = getUpOneLevelDir(dp)
+              dispatch('SET_USER_CONFIG_INFO', { selectedDir: dirPath })
+              dispatch('DIR_IMAGE_LIST_REMOVE_DIR', dp)
             }
-            dispatch('DIR_IMAGE_LIST_PERSIST')
-          }
+          })
         }
-      }
+      })
     },
 
-    // 图床管理 - 持久化存储
+    // 图床管理 - 初始化指定目录（即删除指定目录的子目录列表和图片列表）  -- OK
+    DIR_IMAGE_LIST_INIT_DIR({ state, dispatch }, dirPath: string) {
+      let tempDirObj = state.dirObject
+
+      if (dirPath === '/') {
+        tempDirObj.imageList = []
+        tempDirObj.childrenDirs = []
+        dispatch('DIR_IMAGE_LIST_PERSIST')
+        return
+      }
+
+      const initDirObject = (dirObj: DirObject, dir: string, isInit: boolean) => {
+        if (!dirObj) {
+          return state.dirObject
+        }
+
+        const temp = dirObj.childrenDirs.find((x: DirObject) => x.dir === dir)
+        if (!temp) {
+          return state.dirObject
+        }
+
+        if (isInit) {
+          temp.imageList = []
+          temp.childrenDirs = []
+        }
+
+        return temp
+      }
+
+      const dirList = dirPath.split('/')
+
+      dirList.forEach((d, i) => {
+        tempDirObj = initDirObject(tempDirObj, d, i === dirList.length - 1)
+      })
+
+      dispatch('DIR_IMAGE_LIST_PERSIST')
+    },
+
+    // 图床管理 - 持久化存储  -- OK
     DIR_IMAGE_LIST_PERSIST({ state }) {
-      localStorage.setItem(PICX_MANAGEMENT, JSON.stringify(state.dirImageList))
+      localStorage.setItem(PICX_MANAGEMENT, JSON.stringify(state.dirObject))
     },
 
     // 图床管理 - 退出登录
     DIR_IMAGE_LOGOUT({ state }) {
-      state.dirImageList = []
+      state.dirObject = createDirObject('/', '/')
     }
   },
 
   getters: {
-    getDirImageList: (state: any) => state.dirImageList
+    getDirObject: (state: any) => state.dirObject
   }
 }
 

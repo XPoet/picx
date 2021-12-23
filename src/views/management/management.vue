@@ -17,7 +17,7 @@
             ></i>
           </el-tooltip>
           <el-tooltip placement="top" content="重新加载图片">
-            <i class="btn-icon el-icon-refresh" @click.stop="reloadPics"></i>
+            <i class="btn-icon el-icon-refresh" @click.stop="reloadCurrentDirContent"></i>
           </el-tooltip>
         </div>
       </div>
@@ -35,6 +35,7 @@
           <li class="image-item" v-for="(dir, index) in currentPathDirList" :key="index">
             <folder-card :folder-obj="dir" />
           </li>
+          <div class="clear"></div>
           <li
             class="image-item"
             v-for="(image, index) in currentPathImageList"
@@ -61,25 +62,23 @@
 import { computed, onMounted, watch, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { filenameHandle, isImage } from '@/common/utils/file-handle-helper'
-import { ExternalLinkType } from '@/common/model/externalLink.model'
-import { UploadedImageModel } from '@/common/model/upload.model'
-import generateExternalLink from '@/common/utils/generate-external-link'
-import getUuid from '@/common/utils/get-uuid'
-import axios from '@/common/utils/axios'
 import { getContentByReposPath } from '@/common/api'
+import {
+  dirModeHandle,
+  filterDirContent,
+  getDirContent
+} from '@/views/management/management.util'
 
 import imageCard from '@/components/image-card/image-card.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 import folderCard from '@/components/folder-card/folder-card.vue'
-import { filterDirContent, getDirContent } from '@/views/management/management.util'
 
 const store = useStore()
 const router = useRouter()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const loggingStatus = computed(() => store.getters.getUserLoggingStatus).value
-const dirImageList = computed(() => store.getters.getDirImageList).value
+const dirObject = computed(() => store.getters.getDirObject).value
 
 const loadingImageList = ref(false)
 const listing = ref(false)
@@ -91,7 +90,7 @@ const currentPathImageList = ref([])
 async function dirContentHandle(dir: string) {
   loadingImageList.value = true
 
-  const dirContent = getDirContent(dir, dirImageList)
+  const dirContent = getDirContent(dir, dirObject)
   if (dirContent) {
     const dirs = filterDirContent(dir, dirContent, 'dir')
     const images = filterDirContent(dir, dirContent, 'image')
@@ -111,7 +110,7 @@ async function dirContentHandle(dir: string) {
 async function initDirImageList() {
   const { selectedDir } = userConfigInfo
 
-  if (!dirImageList.length) {
+  if (!dirObject.imageList.length && !dirObject.childrenDirs.length) {
     await getContentByReposPath(selectedDir)
     return
   }
@@ -123,10 +122,13 @@ function toggleListing() {
   listing.value = !listing.value
 }
 
-// 重新加载
-function reloadPics() {
-  store.dispatch('DIR_IMAGE_LOGOUT')
-  initDirImageList()
+// 重新加载当前目录内容（网络请求）
+async function reloadCurrentDirContent() {
+  const { selectedDir } = userConfigInfo
+  await store.dispatch('DIR_IMAGE_LIST_INIT_DIR', selectedDir)
+  loadingImageList.value = true
+  await getContentByReposPath(selectedDir)
+  loadingImageList.value = false
 }
 
 onMounted(() => {
@@ -136,7 +138,7 @@ onMounted(() => {
 watch(
   () => loggingStatus,
   (nv) => {
-    if (nv.value === false) {
+    if (nv === false) {
       router.push('/config')
     }
   }
@@ -145,13 +147,14 @@ watch(
 watch(
   () => userConfigInfo.selectedDir,
   async (nDir) => {
+    dirModeHandle(nDir, store)
     await dirContentHandle(nDir)
   },
   { deep: true }
 )
 
 watch(
-  () => dirImageList,
+  () => dirObject,
   (nv: any) => {
     const { selectedDir } = userConfigInfo
     const dirContent = getDirContent(selectedDir, nv)

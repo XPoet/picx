@@ -1,27 +1,27 @@
 @import './variables.styl'
 
 :root {
-  root-color('light');
+  root-color('light')
 }
 
 @media (prefers-color-scheme light) {
   :root {
-    root-color('light');
+    root-color('light')
   }
 }
 
 @media (prefers-color-scheme dark) {
   :root {
-    root-color('dark');
+    root-color('dark')
   }
 }
 
 .light-mode {
-  root-color('light');
+  root-color('light')
 }
 
 .dark-mode {
-  root-color('dark');
+  root-color('dark')
 
   .markdown-icon {
     path {
@@ -62,6 +62,13 @@
     border-top-color transparent
     border-left-color transparent
   }
+
+  .el-popper.is-light .el-popper__arrow::before {
+    background: var(--background-color)
+    border-top-color transparent
+    border-left-color transparent
+  }
+
 
   .el-popper, .el-select__popper.el-popper[role=tooltip], .el-dropdown__popper.el-popper[role=tooltip] {
     background-color var(--background-color)
@@ -118,4 +125,11 @@
   .el-message-box {
     background-color var(--second-background-color)
   }
+
+  .el-cascader__dropdown.el-popper[role=tooltip] {
+    background var(--background-color)
+    box-shadow var(--shadow-color)
+  }
+
+
 }

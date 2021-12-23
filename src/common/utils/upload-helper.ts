@@ -123,11 +123,11 @@ function uploadedHandle(
   // eslint-disable-next-line no-param-reassign
   img.uploadedImg = item
 
-  // dirImageList 增加目录
-  store.dispatch('DIR_IMAGE_LIST_ADD_DIR', userConfigInfo.selectedDir)
-
   // uploadedList 增加图片
   store.dispatch('UPLOADED_LIST_ADD', item)
+
+  // dirImageList 增加目录
+  store.dispatch('DIR_IMAGE_LIST_ADD_DIR', userConfigInfo.selectedDir)
 
   // dirImageList 增加图片
   store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', item)

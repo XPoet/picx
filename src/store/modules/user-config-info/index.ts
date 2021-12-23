@@ -61,7 +61,7 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
 
   actions: {
     // 设置用户配置信息
-    SET_USER_CONFIG_INFO({ state }, configInfo: UserConfigInfoStateTypes) {
+    SET_USER_CONFIG_INFO({ state, dispatch }, configInfo: UserConfigInfoStateTypes) {
       // eslint-disable-next-line no-restricted-syntax
       for (const key in configInfo) {
         // eslint-disable-next-line no-prototype-builtins
@@ -70,6 +70,7 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
           state.userConfigInfo[key] = configInfo[key]
         }
       }
+      dispatch('USER_CONFIG_INFO_PERSIST')
     },
 
     // 用户配置信息 - 增加目录

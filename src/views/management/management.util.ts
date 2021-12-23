@@ -1,3 +1,6 @@
+import { Store } from 'vuex'
+import { DirObject } from '@/store/modules/dir-image-list/types'
+
 function getContent(targetContent: any, dirList: string[], n: number): any {
   if (targetContent) {
     if (dirList.length === n) {
@@ -16,16 +19,14 @@ function getContent(targetContent: any, dirList: string[], n: number): any {
 /**
  * 获取当前目录下所有内容（子目录和图片）
  * @param dirPath
- * @param dirImageList
+ * @param dirObj
  */
-export const getDirContent = (dirPath: string, dirImageList: any[]) => {
+export const getDirContent = (dirPath: string, dirObj: DirObject) => {
   if (dirPath === '/') {
-    return dirImageList
+    return dirObj
   }
-
   const dirList: string[] = dirPath.split('/')
-  const targetContent_l1 = dirImageList.find((v) => v.dir === dirList[0])
-  return getContent(targetContent_l1, dirList, 1)
+  return getContent(dirObj, dirList, 0)
 }
 
 /**
@@ -35,17 +36,21 @@ export const getDirContent = (dirPath: string, dirImageList: any[]) => {
  * @param type
  */
 export const filterDirContent = (dirPath: string, content: any, type: string): any => {
-  if (dirPath === '/') {
-    return content.filter((x: any) => x.type === type)
-  }
-
   if (type === 'dir') {
     return content.childrenDirs.filter((x: any) => x.type === 'dir')
   }
 
   if (type === 'image') {
-    return content.imageList
+    return content.imageList.filter((x: any) => x.type === 'image')
   }
 
   return []
+}
+
+export const dirModeHandle = (dir: string, store: Store<any>) => {
+  if (dir === '/') {
+    store.dispatch('SET_USER_CONFIG_INFO', {
+      dirMode: 'rootDir'
+    })
+  }
 }
