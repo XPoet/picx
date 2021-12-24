@@ -27,6 +27,7 @@
           v-if="currentPathImageList.length"
           :currentDirImageList="currentPathImageList"
           @update:initImageList="currentPathImageList"
+          :key="renderKey"
         ></image-selector>
         <ul
           class="image-list"
@@ -87,6 +88,7 @@ const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const loggingStatus = computed(() => store.getters.getUserLoggingStatus).value
 const dirObject = computed(() => store.getters.getDirObject).value
 
+const renderKey = ref(new Date().getTime()) // key for update image-selector component
 const loadingImageList = ref(false)
 const listing = ref(false)
 const activeIndex = ref<number>()
@@ -101,12 +103,12 @@ async function dirContentHandle(dir: string) {
   if (dirContent) {
     const dirs = filterDirContent(dir, dirContent, 'dir')
     const images = filterDirContent(dir, dirContent, 'image')
-
     if (!dirs.length && !images.length) {
       await getContentByReposPath(dir)
     } else {
       currentPathDirList.value = dirs
       currentPathImageList.value = images
+      store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
     }
   } else {
     await getContentByReposPath(dir)
@@ -117,7 +119,7 @@ async function dirContentHandle(dir: string) {
 async function initDirImageList() {
   const { selectedDir } = userConfigInfo
 
-  if (!dirObject.imageList.length && !dirObject.childrenDirs.length) {
+  if (!dirObject.imageList?.length && !dirObject.childrenDirs?.length) {
     await getContentByReposPath(selectedDir)
     return
   }
@@ -156,6 +158,7 @@ watch(
   async (nDir) => {
     dirModeHandle(nDir, store)
     await dirContentHandle(nDir)
+    renderKey.value += 1
   },
   { deep: true }
 )
@@ -168,6 +171,7 @@ watch(
     if (dirContent) {
       currentPathDirList.value = filterDirContent(selectedDir, dirContent, 'dir')
       currentPathImageList.value = filterDirContent(selectedDir, dirContent, 'image')
+      store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
     }
   },
   { deep: true }
