@@ -7,7 +7,7 @@ function getContent(targetContent: any, dirList: string[], n: number): any {
       return targetContent
     }
     return getContent(
-      targetContent.childrenDirs.find((v: any) => v.dir === dirList[n]),
+      targetContent.childrenDirs?.find((v: any) => v.dir === dirList[n]),
       dirList,
       // eslint-disable-next-line no-param-reassign,no-plusplus
       ++n
@@ -37,7 +37,7 @@ export const getDirContent = (dirPath: string, dirObj: DirObject) => {
  */
 export const filterDirContent = (dirPath: string, content: any, type: string): any => {
   if (type === 'dir') {
-    return content.childrenDirs.filter((x: any) => x.type === 'dir')
+    return content.childrenDirs?.filter((x: any) => x.type === 'dir')
   }
 
   if (type === 'image') {

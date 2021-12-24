@@ -112,7 +112,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
           return state.dirObject
         }
 
-        const temp = dirObj.childrenDirs.find((x: DirObject) => x.dir === dir)
+        const temp = dirObj.childrenDirs?.find((x: DirObject) => x.dir === dir)
         if (!temp) {
           return state.dirObject
         }
@@ -219,7 +219,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
           return state.dirObject
         }
 
-        const temp = dirObj.childrenDirs.find((x: DirObject) => x.dir === dir)
+        const temp = dirObj.childrenDirs?.find((x: DirObject) => x.dir === dir)
         if (!temp) {
           return state.dirObject
         }

@@ -41,12 +41,23 @@ const props = defineProps({
 const emits = defineEmits(['update:initImageList'])
 
 const store = useStore()
-const { currentDirImageList } = props
-const getImageCardCheckedArr = computed(() => store.getters.getImageCardCheckedArr)
-const getImageCardCheckedNum = computed(() => getImageCardCheckedArr.value.length || 0)
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
-
 const checked = ref(false)
+
+const getImageCardCheckedArr = computed(() => store.getters.getImageCardCheckedArr)
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const getImageCardCheckedNum = computed(() => getImageCardCheckedArr.value.length || 0)
+
+watch(
+  () => getImageCardCheckedNum.value,
+  (newVal, oldVal) => {
+    const newValCheckedNum = props.currentDirImageList.length
+    if (newVal === newValCheckedNum) {
+      checked.value = true
+    } else {
+      checked.value = false
+    }
+  }
+)
 
 function copyLink() {
   copyExternalLink(
@@ -57,7 +68,7 @@ function copyLink() {
 }
 
 function cancelPick() {
-  currentDirImageList.forEach((item: UploadedImageModel) => {
+  props.currentDirImageList.forEach((item: UploadedImageModel) => {
     if (item.checked) {
       // eslint-disable-next-line no-param-reassign
       item.checked = false
@@ -91,11 +102,11 @@ async function batchDeleteImage() {
 
 function triggleFullCheck() {
   let checkedImgArr: Array<UploadedImageModel> = []
-  currentDirImageList.forEach((item: UploadedImageModel) => {
+  props.currentDirImageList.forEach((item: UploadedImageModel) => {
     // eslint-disable-next-line no-param-reassign
     item.checked = checked.value
   })
-  checkedImgArr = currentDirImageList as any
+  checkedImgArr = props.currentDirImageList as any
   store.commit('REPLACE_IMAGE_CARD', { checkedImgArr })
 }
 onMounted(() => {
