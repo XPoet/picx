@@ -92,17 +92,29 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
     },
 
     // 持久化用户配置信息
+    // 持久化用户配置信息
     USER_CONFIG_INFO_PERSIST({ state }) {
-      state.userConfigInfo.selectedDir = state.userConfigInfo.selectedDir.replace(
-        /\s+/g,
-        '-'
-      )
-
-      state.userConfigInfo.selectedBranch = state.userConfigInfo.selectedBranch.replace(
-        /\s+/g,
-        '-'
-      )
-
+      const { selectedDir, selectedBranch, dirMode } = state.userConfigInfo
+      if (dirMode === 'newDir') {
+        const strList = selectedDir.split('')
+        let count = 0
+        let newStr = ''
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < strList.length; i++) {
+          if (strList[i] === ' ' || strList[i] === '.' || strList[i] === '、') {
+            strList[i] = '-'
+          }
+          if (strList[i] === '/') {
+            count += 1
+          }
+          if (count >= 3) {
+            break
+          }
+          newStr += strList[i]
+        }
+        state.userConfigInfo.selectedDir = newStr
+      }
+      state.userConfigInfo.selectedBranch = selectedBranch.replace(/\s+/g, '-')
       localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
     },
 
