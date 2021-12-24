@@ -115,14 +115,19 @@ async function dirContentHandle(dir: string) {
 }
 
 async function initDirImageList() {
-  const { selectedDir } = userConfigInfo
+  const { selectedDir, dirMode } = userConfigInfo
+
+  if (dirMode === 'newDir' && !getDirContent(selectedDir, dirObject)) {
+    userConfigInfo.selectedDir = '/'
+    userConfigInfo.dirMode = 'rootDir'
+  }
 
   if (!dirObject.imageList.length && !dirObject.childrenDirs.length) {
-    await getContentByReposPath(selectedDir)
+    await getContentByReposPath(userConfigInfo.selectedDir)
     return
   }
 
-  await dirContentHandle(selectedDir)
+  await dirContentHandle(userConfigInfo.selectedDir)
 }
 
 function toggleListing() {
