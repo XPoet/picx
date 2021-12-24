@@ -1,7 +1,7 @@
 <template>
   <div
     class="image-card"
-    :class="{ listing: listing }"
+    :class="{ listing: listing, checked: imageObj.checked }"
     v-loading="imageObj.deleting"
     element-loading-text="删除中..."
     element-loading-background="rgba(0, 0, 0, 0.6)"
@@ -27,26 +27,41 @@
       </div>
     </div>
 
-    <div class="operation-box" v-show="isShowDelBtn || dropdownVisible">
-      <el-tooltip content="查看大图" placement="top">
-        <div class="btn" @click="imageView(imageObj)">
-          <i class="el-icon-full-screen"></i>
-        </div>
-      </el-tooltip>
+    <div
+      class="operation-box"
+      v-show="isShowDelBtn || dropdownVisible || imageObj.checked"
+    >
+      <div class="operation-left">
+        <el-tooltip content="选择图片" placement="top" v-if="isManagementPage">
+          <div
+            :class="[imageObj.checked ? 'picked-btn' : 'pick-btn', 'btn']"
+            @click="trigglePick(imageObj)"
+          >
+            <i :class="[imageObj.checked ? 'el-icon-success' : 'el-icon-check']"></i>
+          </div>
+        </el-tooltip>
+      </div>
+      <div class="operation-right">
+        <el-tooltip content="查看大图" placement="top">
+          <div class="btn" @click="imageView(imageObj)">
+            <i class="el-icon-full-screen"></i>
+          </div>
+        </el-tooltip>
 
-      <el-dropdown size="small" trigger="click" @visible-change="visibleChange">
-        <div class="btn">
-          <i class="el-icon-more"></i>
-        </div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="deleteImageTips(imageObj)">
-              删除图片
-            </el-dropdown-item>
-            <el-dropdown-item @click="renameImage(imageObj)">重命名</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
+        <el-dropdown size="small" trigger="click" @visible-change="visibleChange">
+          <div class="btn">
+            <i class="el-icon-more"></i>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item @click="deleteImageTips(imageObj)">
+                删除图片
+              </el-dropdown-item>
+              <el-dropdown-item @click="renameImage(imageObj)">重命名</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
     </div>
   </div>
 </template>
@@ -55,6 +70,7 @@
 import { computed, ref, defineEmits, nextTick } from 'vue'
 import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
 import type { ElInput } from 'element-plus'
+import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
 import axios from '@/common/utils/axios'
 import { UploadedImageModel } from '@/common/model/upload.model'
@@ -88,8 +104,11 @@ const props = defineProps({
 const emits = defineEmits(['update:modelValue'])
 
 const store = useStore()
-
+const router = useRoute()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
+const isManagementPage = computed(() => {
+  return router.path === '/management'
+})
 
 const renameInput = ref<InstanceType<typeof ElInput>>()
 
@@ -152,6 +171,12 @@ const deleteImageTips = (imageObj: UploadedImageModel) => {
     .catch(() => {
       console.log('取消删除')
     })
+}
+
+const trigglePick = (imageObj: UploadedImageModel) => {
+  // eslint-disable-next-line no-param-reassign
+  imageObj.checked = !imageObj.checked
+  store.commit('IMAGE_CARD', { imageObj })
 }
 
 const imageView = (imgObj: UploadedImageModel) => {

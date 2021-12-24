@@ -28,6 +28,11 @@
         element-loading-text="加载中..."
         element-loading-background="rgba(0, 0, 0, 0.5)"
       >
+        <image-selector
+          v-if="currentDirImageList && currentDirImageList.length > 0"
+          :currentDirImageList="currentDirImageList"
+          @update:initImageList="reloadPics"
+        ></image-selector>
         <ul class="image-list">
           <li
             class="image-item"
@@ -64,6 +69,7 @@ import getUuid from '@/common/utils/get-uuid'
 import axios from '@/common/utils/axios'
 import imageCard from '@/components/image-card/image-card.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
+import imageSelector from '@/components/image-selector/image-selector.vue'
 
 const store = useStore()
 const router = useRouter()
@@ -96,7 +102,8 @@ function getImageObject(item: any, selectedDir: string): UploadedImageModel {
     md_cdn_url: generateExternalLink(ExternalLinkType.md_cdn, item, userConfigInfo.value),
     deleting: false,
     is_transform_md: false,
-    size: item.size
+    size: item.size,
+    checked: false
   }
 }
 

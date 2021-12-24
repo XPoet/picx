@@ -10,7 +10,7 @@ $infoBoxHeight = 56rem
   box-sizing border-box
   padding-bottom $infoBoxHeight
 
-  &:hover {
+  &.checked, &:hover {
     box-shadow 0 0 10rem #666
   }
 
@@ -106,8 +106,21 @@ $infoBoxHeight = 56rem
     position absolute
     top 10rem
     right 8rem
+    width calc(100% - 16rem)
     display flex
-    justify-content flex-end
+    justify-content space-between
+
+    .operation-left {
+      .picked-btn {
+        i.el-icon-success {
+          font-size 36rem
+        }
+      }  
+    }
+
+    .operation-right {
+      display flex  
+    }
 
     .btn {
       width 32rem

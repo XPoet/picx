@@ -22,6 +22,7 @@ export interface UploadedImageModel {
   md_cdn_url: string
   deleting: boolean
   is_transform_md: boolean
+  checked: boolean
 }
 
 export interface ToUploadImageModel {
