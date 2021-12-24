@@ -6,6 +6,7 @@ import toUploadImageModule from './modules/to-upload-image'
 import uploadedImageListModule from './modules/uploaded-image-list'
 import userConfigInfoModule from './modules/user-config-info'
 import imageViewerModule from './modules/image-viewer'
+import imageCardModule from './modules/image-card'
 import uploadAreaActiveModule from './modules/upload-area-active'
 import uploadSettingsModule from './modules/upload-settings'
 import userSettingsModule from './modules/user-settings'
@@ -18,6 +19,7 @@ export const store = createStore<RootStateTypes>({
     uploadedImageListModule,
     userConfigInfoModule,
     imageViewerModule,
+    imageCardModule,
     uploadAreaActiveModule,
     uploadSettingsModule,
     userSettingsModule
