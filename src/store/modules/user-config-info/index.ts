@@ -3,7 +3,7 @@ import {
   BranchModeEnum,
   UserConfigInfoModel
 } from '@/common/model/user-config-info.model'
-import { PICX_CONFIG } from '@/common/model/localStorage.model'
+import { PICX_CONFIG } from '@/common/model/storage.model'
 import { deepAssignObject, cleanObject } from '@/common/utils/object-helper'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'

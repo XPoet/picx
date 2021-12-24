@@ -4,7 +4,6 @@
     :class="{ listing: listing }"
     v-loading="imageObj.deleting"
     element-loading-text="删除中..."
-    element-loading-background="rgba(0, 0, 0, 0.6)"
     @mouseenter="isShowDelBtn = true"
     @mouseleave="isShowDelBtn = false"
   >
@@ -187,8 +186,7 @@ const updateRename = async () => {
   const renameFn = async () => {
     const loading = ElLoading.service({
       lock: true,
-      text: '更新中...',
-      background: 'rgba(0, 0, 0, 0.6)'
+      text: '更新中...'
     })
 
     const suffix = getFileSuffix(imageObj.name)
@@ -246,8 +244,6 @@ const imageView = (imgObj: UploadedImageModel) => {
 }
 
 const viewImageProperties = (imgObj: UploadedImageModel) => {
-  console.log('imgObj: ', imgObj)
-
   ElMessageBox.confirm(
     `
     <div>图片名称：<strong>${imgObj.name}</strong></div>

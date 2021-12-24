@@ -3,8 +3,8 @@
  * Plugin: vite-plugin-pwa
  * https://github.com/antfu/vite-plugin-pwa
  */
-import { ViteEnv } from '@/common/model/viteConfig.model'
 import { VitePWA } from 'vite-plugin-pwa'
+import { ViteEnv } from '@/common/model/vite-config.model'
 
 export default function configPWAPlugin(env: ViteEnv) {
   return VitePWA({

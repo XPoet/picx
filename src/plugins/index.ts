@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import ElementPlus from 'unplugin-element-plus/vite'
-import { ViteEnv } from '@/common/model/viteConfig.model'
+import { ViteEnv } from '@/common/model/vite-config.model'
 
 import configPWAPlugin from './pwa'
 

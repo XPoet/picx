@@ -1,6 +1,6 @@
 import Axios from 'axios'
 import { ElMessage } from 'element-plus'
-import { PICX_CONFIG } from '@/common/model/localStorage.model'
+import { PICX_CONFIG } from '@/common/model/storage.model'
 
 const baseURL = 'https://api.github.com'
 
@@ -22,9 +22,10 @@ axios.interceptors.request.use(
         config.headers.Authorization = `token ${token}`
       }
     }
-    // 防止请求缓存
-    if (config.method == 'get') {
-      config.url = `${config.url}?${new Date().getTime()}`
+
+    // 防止 GET 请求缓存
+    if (config.method === 'get') {
+      config.url = `${config.url}?${Date.now()}`
     }
 
     return config

@@ -1,5 +1,5 @@
 import { Module } from 'vuex'
-import { PICX_SETTINGS } from '@/common/model/localStorage.model'
+import { PICX_SETTINGS } from '@/common/model/storage.model'
 import { cleanObject, deepAssignObject } from '@/common/utils/object-helper'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'

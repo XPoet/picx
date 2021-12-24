@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import { Recordable, ViteEnv } from '@/common/model/viteConfig.model'
+import { Recordable, ViteEnv } from '@/common/model/vite-config.model'
 
 // Read all environment variable configuration files to process.env
 export default function wrapperEnv(envConf: Recordable): ViteEnv {

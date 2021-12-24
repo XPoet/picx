@@ -14,15 +14,13 @@ const selectedFileHandle = async (
   }
 
   if (!isImage(file.type)) {
-    ElMessage.error('该文件不是图片格式！')
+    ElMessage.error('该文件格式不支持！')
     return null
   }
   let compressFile: NonNullable<File>
-  const { isCompress, compressEncoder, themeMode } = store.getters.getUserSettings
+  const { isCompress, compressEncoder } = store.getters.getUserSettings
   if (isCompress) {
-    const isDark = themeMode === 'dark'
     const loadingInstance = ElLoading.service({
-      background: isDark ? 'rgba(0, 0, 0, 0.6)' : '',
       target: '.upload-area',
       text: '正在压缩图片'
     })

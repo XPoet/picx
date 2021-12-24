@@ -1,5 +1,5 @@
 import { Module } from 'vuex'
-import { PICX_MANAGEMENT } from '@/common/model/localStorage.model'
+import { PICX_MANAGEMENT } from '@/common/model/storage.model'
 import DirImageListStateTypes, { DirObject } from './types'
 import RootStateTypes from '../../types'
 import {

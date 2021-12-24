@@ -15,7 +15,7 @@ export interface UploadedImageModel {
   dir: string
   path: string
   name: string
-  size: number
+  size: any
   lastModified?: number
   github_url: string
   cdn_url: string

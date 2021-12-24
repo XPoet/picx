@@ -22,12 +22,7 @@
         </div>
       </div>
 
-      <div
-        class="bottom"
-        v-loading="loadingImageList"
-        element-loading-text="加载中..."
-        element-loading-background="rgba(0, 0, 0, 0.5)"
-      >
+      <div class="bottom" v-loading="loadingImageList" element-loading-text="加载中...">
         <ul class="image-list">
           <li class="image-item" v-if="userConfigInfo.selectedDir !== '/'">
             <folder-card mode="back" />

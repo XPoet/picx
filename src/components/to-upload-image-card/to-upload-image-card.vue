@@ -81,10 +81,14 @@
                 clearable
               ></el-input>
 
-              <!-- 哈希化 -->
+              <!-- 命名前缀 -->
               <el-checkbox
                 label="命名前缀"
-                v-if="!imgItem.filename.isRename"
+                v-if="
+                  !imgItem.filename.isRename &&
+                  userConfigInfo.defaultPrefix &&
+                  userConfigInfo.prefixName
+                "
                 v-model="imgItem.filename.isPrefix"
                 @change="prefixName($event, imgItem)"
               ></el-checkbox>

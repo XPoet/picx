@@ -27,7 +27,7 @@ import headerContent from '@/components/header-content/header-content.vue'
 import navContent from '@/components/nav-content/nav-content.vue'
 import imageViewer from '@/components/image-viewer/image-viewer.vue'
 import { useStore } from '@/store'
-import userConfigInfoModel from '@/common/utils/useThemeChange'
+import userConfigInfoModel from '@/common/utils/set-theme-mode'
 
 export default defineComponent({
   name: 'main-container',
@@ -64,9 +64,8 @@ export default defineComponent({
       }
     }
 
-    userConfigInfoModel()
-
     onMounted(() => {
+      userConfigInfoModel()
       elementPlusSizeHadle(window.innerWidth)
       window.addEventListener('resize', (e: any) => {
         elementPlusSizeHadle(e.target.innerWidth)
