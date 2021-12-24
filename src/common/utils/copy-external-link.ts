@@ -42,6 +42,6 @@ export default function copyBatchExternalLink(
     document.execCommand('copy')
     ElMessage.success(`${successInfo}`)
   } else {
-    console.warn('请先选择图片内容')
+    console.warn('请先选择图片')
   }
 }
