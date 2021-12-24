@@ -21,7 +21,8 @@ function structureImageObject(item: any, selectedDir: string): UploadedImageMode
     md_cdn_url: generateExternalLink(ExternalLinkType.md_cdn, item, userConfigInfo),
     deleting: false,
     is_transform_md: false,
-    size: item.size
+    size: item.size,
+    checked: false
   }
 }
 

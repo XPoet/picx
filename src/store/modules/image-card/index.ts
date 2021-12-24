@@ -32,7 +32,7 @@ const imageCardModule: Module<ImageCardStateTypes, RootStateTypes> = {
     getImageCardArr: (state: ImageCardStateTypes) => state.imgCardArr,
     getImageCardCheckedArr: (state: ImageCardStateTypes) => {
       return state.imgCardArr.filter((item: UploadedImageModel) => {
-        return item.checked === true
+        return item.checked
       })
     }
   }

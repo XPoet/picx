@@ -23,7 +23,17 @@
       </div>
 
       <div class="bottom" v-loading="loadingImageList" element-loading-text="加载中...">
-        <ul class="image-list">
+        <image-selector
+          v-if="currentPathImageList.length"
+          :currentDirImageList="currentPathImageList"
+          @update:initImageList="currentPathImageList"
+        ></image-selector>
+        <ul
+          class="image-list"
+          :style="{
+            height: isShowBatchTools ? 'calc(100% - 50rem)' : '100%'
+          }"
+        >
           <li class="image-item" v-if="userConfigInfo.selectedDir !== '/'">
             <folder-card mode="back" />
           </li>
@@ -67,6 +77,8 @@ import {
 import imageCard from '@/components/image-card/image-card.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 import folderCard from '@/components/folder-card/folder-card.vue'
+import imageSelector from '@/components/image-selector/image-selector.vue'
+import { UploadedImageModel } from '@/common/model/upload.model'
 
 const store = useStore()
 const router = useRouter()
@@ -157,6 +169,15 @@ watch(
       currentPathDirList.value = filterDirContent(selectedDir, dirContent, 'dir')
       currentPathImageList.value = filterDirContent(selectedDir, dirContent, 'image')
     }
+  },
+  { deep: true }
+)
+
+const isShowBatchTools = ref(false)
+watch(
+  () => currentPathImageList.value,
+  (nv: UploadedImageModel[]) => {
+    isShowBatchTools.value = nv.filter((x) => x.checked).length > 0
   },
   { deep: true }
 )

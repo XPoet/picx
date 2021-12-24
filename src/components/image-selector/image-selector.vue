@@ -1,13 +1,12 @@
 <template>
-  <div class="selector-wrapper" v-if="getImageCardCheckedNum > 0">
+  <div class="selector-wrapper" v-if="getImageCardCheckedNum">
     <div class="selector-left-box">
       <el-checkbox
         :label="checked ? '取消全选' : '全选'"
         v-model="checked"
         @change="triggleFullCheck"
       ></el-checkbox>
-      <div class="item">已选择了{{ getImageCardCheckedNum }}项内容</div>
-      <!-- {{number}} -->
+      <div class="item">已选择 {{ getImageCardCheckedNum }} 张图片</div>
       <div class="item cancel-select-btn" @click="cancelPick">取消选择</div>
     </div>
     <div class="selector-right-box">
