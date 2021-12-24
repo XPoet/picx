@@ -49,7 +49,6 @@ export const getContentByReposPath = (path: string = '') => {
         }
       )
       .then((res: any) => {
-        console.log('[getContentByReposPath] ', res)
         if (res && res.status === 200 && res.data.length > 0) {
           res.data
             .filter((v: any) => v.type === 'dir')
