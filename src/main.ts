@@ -4,9 +4,9 @@ import router from '@/router/index'
 import { key, store } from '@/store/index'
 import App from './App.vue'
 
-// if (import.meta.env.MODE === 'production') {
-//   import('@/common/utils/register-sw')
-// }
+if (import.meta.env.MODE === 'production') {
+  import('@/common/utils/register-sw')
+}
 
 const app = createApp(App)
 styleImport(app)
