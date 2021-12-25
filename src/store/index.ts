@@ -6,8 +6,10 @@ import toUploadImageModule from './modules/to-upload-image'
 import uploadedImageListModule from './modules/uploaded-image-list'
 import userConfigInfoModule from './modules/user-config-info'
 import imageViewerModule from './modules/image-viewer'
+import imageCardModule from './modules/image-card'
 import uploadAreaActiveModule from './modules/upload-area-active'
 import uploadSettingsModule from './modules/upload-settings'
+import userSettingsModule from './modules/user-settings'
 
 // Create a new store instance.
 export const store = createStore<RootStateTypes>({
@@ -17,8 +19,10 @@ export const store = createStore<RootStateTypes>({
     uploadedImageListModule,
     userConfigInfoModule,
     imageViewerModule,
+    imageCardModule,
     uploadAreaActiveModule,
-    uploadSettingsModule
+    uploadSettingsModule,
+    userSettingsModule
   },
 
   state: {
@@ -37,13 +41,16 @@ export const store = createStore<RootStateTypes>({
       commit('IMAGE_VIEWER_LOGOUT')
       commit('UPLOAD_AREA_ACTIVE_LOGOUT')
       commit('UPLOAD_SETTINGS_LOGOUT')
+      dispatch('USER_SETTINGS_LOGOUT')
+      localStorage.clear()
+      sessionStorage.clear()
     }
   },
 
   getters: {}
 })
 
-export const key: InjectionKey<Store<RootStateTypes>> = Symbol('vue-store')
+export const key: InjectionKey<Store<RootStateTypes>> = Symbol('vuex-store')
 
 export function useStore<T = AllStateTypes>() {
   return baseUseStore<T>(key)

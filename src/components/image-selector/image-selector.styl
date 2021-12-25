@@ -1,0 +1,52 @@
+@import "../../style/base.styl"
+
+.selector-wrapper {
+  padding 4rem 12rem
+  width 100%
+  box-sizing border-box
+  display flex
+  justify-content space-between
+  align-items center
+  border-bottom 1rem solid var(--third-background-color)
+
+
+  .selector-left-box {
+    display flex
+    align-items center
+
+    :deep(.el-checkbox) {
+      font-weight unset
+    }
+
+    :deep(.el-checkbox__label ) {
+      line-height unset
+    }
+
+    .cancel-select-btn {
+      color #576b95
+      cursor pointer
+    }
+
+    div.item {
+      margin-left 8rem
+    }
+  }
+
+  .selector-right-box {
+    .btn-icon {
+      cursor: pointer;
+      font-size: 22rem;
+      margin-left: 10rem;
+    }
+
+  }
+}
+
+.temp-batch-externalink {
+  opacity 0
+  position absolute
+  left -9999rem
+  top -9999rem
+  width 1px
+  height 1px
+}

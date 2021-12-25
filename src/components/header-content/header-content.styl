@@ -1,10 +1,10 @@
-@import "../../style.styl"
+@import "../../style/base.styl"
 
 .header {
   width 100%
   height 100%
-  background: #fff
-  padding 0 20px
+  background var(--background-color)
+  padding 0 20rem
   box-sizing border-box
   display flex
   justify-content space-between
@@ -23,9 +23,9 @@
       cursor pointer
 
       .logo {
-        width 46px
-        height 46px
-        margin-right 10px
+        width 46rem
+        height 46rem
+        margin-right 10rem
 
         img {
           width 100%
@@ -35,7 +35,7 @@
 
 
       .title {
-        font-size 36px
+        font-size 36rem
         font-weight bold
       }
     }
@@ -45,10 +45,14 @@
       box-sizing border-box
       display flex
       align-items flex-end
-      font-size 14px
-      margin-left 10px
-      padding-bottom 12px
+      font-size 14rem
+      margin-left 10rem
+      padding-bottom 12rem
       cursor pointer
+
+      +picx-mobile() {
+        display none
+      }
     }
   }
 
@@ -60,24 +64,24 @@
       cursor: pointer;
 
       .username {
-        font-size: 16px;
+        font-size: 16rem;
       }
 
       .avatar {
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 38px;
-        height: 38px;
-        color: $default-font-color;
+        width: 38rem;
+        height: 38rem;
+        color: var(--default-text-color);
         border-radius: 50%;
-        border: 1px solid $default-font-color;
-        margin-left: 10px;
-        padding: 1px;
+        border: 1rem solid var(--default-text-color);
+        margin-left: 10rem;
+        padding: 1rem;
         box-sizing: border-box;
 
         i {
-          font-size: 28px;
+          font-size: 28rem;
         }
 
         img {

@@ -12,9 +12,13 @@ const onPaste = (e: any, maxsize: number): Promise<any> | null => {
       const item = e.clipboardData.items[i]
       if (item.kind === 'file') {
         const pasteFile = item.getAsFile()
-        // @ts-ignore
-        selectedFileHandle(pasteFile, maxsize)?.then((base64) => {
-          resolve({ base64, file: pasteFile })
+
+        selectedFileHandle(pasteFile, maxsize)?.then((result) => {
+          if (!result) {
+            return
+          }
+          const { base64, originalFile, compressFile } = result
+          resolve({ base64, originalFile, compressFile })
         })
       }
     }

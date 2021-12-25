@@ -9,12 +9,13 @@ export enum UploadStatusEnum {
 }
 
 export interface UploadedImageModel {
+  type: string
   uuid: string
   sha: string
   dir: string
   path: string
   name: string
-  size: number
+  size: any
   lastModified?: number
   github_url: string
   cdn_url: string
@@ -22,6 +23,7 @@ export interface UploadedImageModel {
   md_cdn_url: string
   deleting: boolean
   is_transform_md: boolean
+  checked: boolean
 }
 
 export interface ToUploadImageModel {
@@ -38,19 +40,23 @@ export interface ToUploadImageModel {
   }
 
   fileInfo: {
-    size: number
-    lastModified: number
+    compressedSize?: number | undefined
+    originSize?: number | undefined
+    size: number | undefined
+    lastModified: number | undefined
   }
 
   filename: {
     name: string
     hash: string
     suffix: string
+    prefixName: string
     now: string
     initName: string
     newName: string
     isHashRename: boolean
     isRename: boolean
+    isPrefix: boolean
   }
 
   externalLink: {

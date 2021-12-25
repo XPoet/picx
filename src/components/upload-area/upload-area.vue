@@ -26,9 +26,9 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from 'vue'
-import { store, useStore } from '@/store'
+import { useStore } from '@/store'
 import { filenameHandle } from '@/common/utils/file-handle-helper'
-import selectedFileHandle from '@/common/utils/selected-file-handle'
+import selectedFileHandle, { handleResult } from '@/common/utils/selected-file-handle'
 import createToUploadImageObject from '@/common/utils/create-to-upload-image'
 import paste from '@/common/utils/paste'
 
@@ -47,6 +47,7 @@ export default defineComponent({
 
     const reactiveData = reactive({
       userConfigInfo: computed(() => store.getters.getUserConfigInfo).value,
+      userSettings: computed(() => store.getters.getUserSettings).value,
       uploadAreaActive: computed((): boolean => store.getters.getUploadAreaActive),
       uploadSettings: computed(() => store.getters.getUploadSettings).value,
       toUploadImage: computed(() => store.getters.getToUploadImage).value,
@@ -56,8 +57,12 @@ export default defineComponent({
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
         // eslint-disable-next-line no-restricted-syntax
         for (const file of e.target.files) {
-          selectedFileHandle(file, this.uploadSettings.imageMaxSize)?.then((base64) => {
-            this.getImage(base64, file)
+          selectedFileHandle(file, this.uploadSettings.imageMaxSize)?.then((result) => {
+            if (!result) {
+              return
+            }
+            const { base64, originalFile, compressFile } = result
+            this.getImage(base64, originalFile, compressFile)
           })
         }
       },
@@ -67,20 +72,27 @@ export default defineComponent({
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
         // eslint-disable-next-line no-restricted-syntax
         for (const file of e.dataTransfer.files) {
-          selectedFileHandle(file, this.uploadSettings.imageMaxSize)?.then((base64) => {
-            this.getImage(base64, file)
+          selectedFileHandle(file, this.uploadSettings.imageMaxSize)?.then((result) => {
+            if (!result) {
+              return
+            }
+            const { base64, originalFile, compressFile } = result
+            this.getImage(base64, originalFile, compressFile)
           })
         }
       },
 
       // 复制图片
       async onPaste(e: any) {
-        const { base64, file } = await paste(e, this.uploadSettings.imageMaxSize)
-        this.getImage(base64, file)
+        const { base64, originalFile, compressFile }: handleResult = await paste(
+          e,
+          this.uploadSettings.imageMaxSize
+        )
+        this.getImage(base64, originalFile, compressFile)
       },
 
       // 获取图片对象
-      getImage(base64Data: string, file: File) {
+      getImage(base64Data: string, originFile: File, compressFile?: File) {
         if (
           this.toUploadImage.list.length === this.toUploadImage.uploadedNumber &&
           this.toUploadImage.list.length > 0 &&
@@ -90,27 +102,31 @@ export default defineComponent({
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_UPLOADED_NUMBER')
         }
 
+        const { defaultHash, isCompress, defaultPrefix, prefixName } = this.userSettings
+        const file = isCompress ? compressFile : originFile
         const curImg = createToUploadImageObject()
 
         curImg.imgData.base64Url = base64Data
         // eslint-disable-next-line prefer-destructuring
         curImg.imgData.base64Content = base64Data.split(',')[1]
 
-        const { name, hash, suffix } = filenameHandle(file.name)
-
+        const { name, hash, suffix } = filenameHandle(file?.name)
         curImg.uuid = hash
+        curImg.fileInfo.compressedSize = compressFile?.size
+        curImg.fileInfo.originSize = originFile.size
+        curImg.fileInfo.size = file?.size
+        curImg.fileInfo.lastModified = file?.lastModified
 
-        curImg.fileInfo.size = file.size
-        curImg.fileInfo.lastModified = file.lastModified
-
-        curImg.filename.name = name
+        curImg.filename.initName = name
+        curImg.filename.name = defaultPrefix ? `${prefixName}${name}` : name
+        curImg.filename.prefixName = prefixName
         curImg.filename.hash = hash
         curImg.filename.suffix = suffix
-        curImg.filename.now = this.userConfigInfo.personalSetting.defaultHash
-          ? `${name}.${hash}.${suffix}`
-          : `${name}.${suffix}`
-        curImg.filename.initName = name
-        curImg.filename.isHashRename = this.userConfigInfo.personalSetting.defaultHash
+        curImg.filename.now = defaultHash
+          ? `${curImg.filename.name}.${hash}.${suffix}`
+          : `${curImg.filename.name}.${suffix}`
+        curImg.filename.isHashRename = defaultHash
+        curImg.filename.isPrefix = defaultPrefix
 
         store.dispatch('TO_UPLOAD_IMAGE_LIST_ADD', JSON.parse(JSON.stringify(curImg)))
         store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', {

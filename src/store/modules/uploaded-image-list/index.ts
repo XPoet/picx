@@ -1,7 +1,7 @@
 import { Module } from 'vuex'
 import UploadedImageListStateTypes from '@/store/modules/uploaded-image-list/types'
 import RootStateTypes from '@/store/types'
-import { PICX_UPLOADED } from '@/common/model/localStorage.model'
+import { PICX_UPLOADED } from '@/common/model/storage.model'
 import { UploadedImageModel } from '@/common/model/upload.model'
 
 const initUploadedImageList = (): UploadedImageModel[] => {
@@ -24,9 +24,9 @@ const uploadedImageListModule: Module<UploadedImageListStateTypes, RootStateType
     },
 
     // 上传完成的图片列表 - 删除
-    UPLOADED_LIST_REMOVE({ state, dispatch }, item: UploadedImageModel) {
+    UPLOADED_LIST_REMOVE({ state, dispatch }, uuid: string) {
       if (state.uploadedImageList.length > 0) {
-        const rmIndex = state.uploadedImageList.findIndex((v) => v.uuid === item.uuid)
+        const rmIndex = state.uploadedImageList.findIndex((v) => v.uuid === uuid)
         if (rmIndex !== -1) {
           state.uploadedImageList.splice(rmIndex, 1)
           dispatch('UPLOADED_LIST_PERSIST')
@@ -42,7 +42,6 @@ const uploadedImageListModule: Module<UploadedImageListStateTypes, RootStateType
     // 上传完成的图片列表 - 退出登录
     UPLOADED_LIST_LOGOUT({ state }) {
       state.uploadedImageList = []
-      sessionStorage.removeItem(PICX_UPLOADED)
     }
   },
 

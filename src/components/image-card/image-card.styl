@@ -1,29 +1,30 @@
-@import '../../style.styl'
+@import "../../style/base.styl"
 
-$infoBoxHeight = 56px
+$infoBoxHeight = 56rem
 
 .image-card {
   position relative
   width 100%
   height 100%
-  box-shadow 1px 2px 3px $image-card-shadow-color
+  box-shadow 1rem 2rem 3rem var(--shadow-color)
   box-sizing border-box
   padding-bottom $infoBoxHeight
+  user-select none
 
-  &:hover {
-    box-shadow 0 0 10px #666
+  &.checked, &:hover {
+    box-shadow 0 0 10rem #666
   }
 
   &.listing {
     display flex
     justify-content flex-start
     align-items center
-    padding 5px
+    padding 5rem
     border-radius $box-border-radius
 
     .image-box {
-      height 45px
-      width 45px
+      height 45rem
+      width 45rem
     }
 
     .info-box {
@@ -33,11 +34,11 @@ $infoBoxHeight = 56px
 
     :deep(.el-loading-mask) {
       .el-loading-spinner {
-        margin-top -25px
+        margin-top -25rem
 
         .circular {
-          height 24px
-          width 24px
+          height 24rem
+          width 24rem
         }
 
         .el-loading-text {
@@ -58,6 +59,7 @@ $infoBoxHeight = 56px
       width 100%
       height 100%
       object-fit cover
+      cursor pointer
     }
   }
 
@@ -72,22 +74,31 @@ $infoBoxHeight = 56px
     .image-info {
       width 100%
       height 100%
-      padding 5px
-      color $default-font-color
+      padding 5rem
+      color var(--default-text-color)
       box-sizing border-box
       display flex
       flex-direction column
       justify-content space-between
 
+      .rename-input {
+        height 20rem
+        display flex
+
+        :deep(input) {
+          height 20rem
+        }
+      }
+
       .filename {
         overflow hidden
         text-overflow ellipsis
         white-space nowrap
-        font-size 13px
+        font-size 13rem
       }
 
       .image-operation {
-        margin-top 5px
+        margin-top 5rem
       }
     }
   }
@@ -95,29 +106,41 @@ $infoBoxHeight = 56px
 
   .operation-box {
     position absolute
-    top 10px
-    right 8px
+    top 10rem
+    right 8rem
+    width calc(100% - 16rem)
     display flex
-    justify-content flex-end
+    justify-content space-between
 
-    .btn {
-      width 32px
-      height 32px
-      border-radius 50%
-      box-shadow 0 0 6px #555
-      cursor pointer
-      background: #fff
-      display flex
-      justify-content center
-      align-items center
-      margin-left 8px
-      font-size 18px
-
-      &:first-child {
-        margin-left 0
+    .operation-left {
+      .picked-btn {
+        i {
+          font-weight bold
+        }
       }
     }
 
+    .operation-right {
+      display flex
+    }
+
+    .btn {
+      width 32rem
+      height 32rem
+      border-radius 50%
+      box-shadow 0 0 6rem #555
+      cursor pointer
+      background var(--background-color)
+      display flex
+      justify-content center
+      align-items center
+      margin-right 8rem
+      font-size 18rem
+
+      &:last-child {
+        margin-right 0
+      }
+    }
   }
 
 

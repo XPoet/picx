@@ -1,7 +1,11 @@
 .setting-title {
-  font-size 16px
+  font-size 16rem
   font-weight bold
-  margin-bottom 20px
+  margin 40rem 0 20rem 0
+
+  &:first-child {
+    margin-top 0
+  }
 }
 
 .setting-list {
@@ -9,7 +13,13 @@
   margin 0
 
   .setting-item {
-    margin-bottom 15px
+    margin-bottom 15rem
+
+    .prefix-input {
+      width calc(100% - 50px)
+      margin-left 50px
+      margin-top 15rem
+    }
 
     &.last-child {
       margin-bottom 0

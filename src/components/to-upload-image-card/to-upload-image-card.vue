@@ -23,8 +23,8 @@
           :key="index"
         >
           <div class="left-image-box flex-center">
-            <div class="image-box" @click="imageViewer(imgItem)">
-              <img :src="imgItem.imgData.base64Url" />
+            <div class="image-box">
+              <img data-fancybox="gallery" :src="imgItem.imgData.base64Url" />
             </div>
           </div>
 
@@ -33,11 +33,20 @@
               <div class="image-name">
                 {{ imgItem.filename.now }}
               </div>
-
               <div class="image-info">
-                <span class="file-size item">
+                <span class="file-size item" v-if="userSettings.isCompress">
+                  <del>
+                    {{ getFileSize(imgItem.fileInfo.originSize) }}
+                  </del>
+                </span>
+
+                <span
+                  class="file-size item"
+                  :class="{ compressed: userSettings.isCompress }"
+                >
                   {{ getFileSize(imgItem.fileInfo.size) }}
                 </span>
+
                 <span class="last-modified item">
                   {{ formatLastModified(imgItem.fileInfo.lastModified) }}
                 </span>
@@ -71,6 +80,18 @@
                 @input="rename($event, imgItem)"
                 clearable
               ></el-input>
+
+              <!-- 命名前缀 -->
+              <el-checkbox
+                label="命名前缀"
+                v-if="
+                  !imgItem.filename.isRename &&
+                  userConfigInfo.defaultPrefix &&
+                  userConfigInfo.prefixName
+                "
+                v-model="imgItem.filename.isPrefix"
+                @change="prefixName($event, imgItem)"
+              ></el-checkbox>
             </div>
 
             <div
@@ -136,22 +157,14 @@
 
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import { getFileSize } from '@/common/utils/file-handle-helper'
-import { UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
-import {
-  ToUploadImageModel,
-  UploadedImageModel,
-  UploadStatusEnum
-} from '@/common/model/upload.model'
-import { ExternalLinkType } from '@/common/model/externalLink.model'
+import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
+import { ToUploadImageModel, UploadStatusEnum } from '@/common/model/upload.model'
 import TimeHelper from '@/common/utils/time-helper'
-import axios from '@/common/utils/axios'
-import uploadUrlHandle from '@/common/utils/upload-url-handle'
-import generateExternalLink from '@/common/utils/generate-external-link'
 import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
+import { uploadImage_single } from '@/common/utils/upload-helper'
 
 export default defineComponent({
   name: 'to-upload-image-card',
@@ -177,12 +190,29 @@ export default defineComponent({
         size: ''
       },
 
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
-        .value,
+      userConfigInfo: computed(() => store.getters.getUserConfigInfo).value,
+      userSettings: computed(() => store.getters.getUserSettings).value,
       toUploadImage: computed(() => store.getters.getToUploadImage).value,
 
       hashRename(e: boolean, img: any) {
         if (e) {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.now = `${img.filename.name}.${img.filename.suffix}`
+        }
+      },
+
+      prefixName(e: boolean, img: any) {
+        if (e) {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.name = `${img.filename.prefixName}${img.filename.initName}`
+        } else {
+          // eslint-disable-next-line no-param-reassign
+          img.filename.name = `${img.filename.initName}`
+        }
+        if (img.filename.isHashRename) {
           // eslint-disable-next-line no-param-reassign
           img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
         } else {
@@ -197,7 +227,7 @@ export default defineComponent({
           img.filename.name = img.filename.newName.trim().replace(/\s+/g, '-')
         } else {
           // eslint-disable-next-line no-param-reassign
-          img.filename.name = img.filename.initName
+          reactiveData.prefixName(img.filename.isPrefix, img) // 恢复列表prefix选项
         }
 
         if (img.filename.isHashRename) {
@@ -220,13 +250,12 @@ export default defineComponent({
       async uploadImage_all(userConfigInfo: UserConfigInfoModel) {
         const uploadIndex = this.toUploadImage.uploadedNumber
 
-        if (uploadIndex >= this.toUploadImage.list.length)
+        if (uploadIndex >= this.toUploadImage.list.length) {
           return UploadStatusEnum.uploaded
+        }
+
         if (
-          (await this.uploadImage_single(
-            userConfigInfo,
-            this.toUploadImage.list[uploadIndex]
-          )) === true
+          await uploadImage_single(userConfigInfo, this.toUploadImage.list[uploadIndex])
         ) {
           if (uploadIndex < this.toUploadImage.list.length) {
             await this.uploadImage_all(userConfigInfo)
@@ -235,136 +264,6 @@ export default defineComponent({
           return UploadStatusEnum.uploaded
         }
         return UploadStatusEnum.uploadFail
-      },
-
-      uploadImage_single(
-        userConfigInfo: UserConfigInfoModel,
-        img: ToUploadImageModel
-      ): Promise<any> {
-        const { selectedBranch, email, owner } = userConfigInfo
-
-        // eslint-disable-next-line no-param-reassign
-        img.uploadStatus.uploading = true
-
-        const data: any = {
-          message: 'Upload pictures via PicX(https://github.com/XPoet/picx)',
-          branch: selectedBranch,
-          content: img.imgData.base64Content
-        }
-
-        if (email) {
-          data.committer = {
-            name: owner,
-            email
-          }
-        }
-
-        return new Promise((resolve, reject) => {
-          axios
-            .put(uploadUrlHandle(userConfigInfo, img.filename.now), data)
-            .then((res) => {
-              if (res && res.status === 201) {
-                this.uploadedHandle(res, img, userConfigInfo)
-                store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
-                resolve(true)
-
-                ElMessage.success('上传成功！')
-              } else {
-                // eslint-disable-next-line no-param-reassign
-                img.uploadStatus.uploading = false
-                resolve(false)
-
-                ElMessage.error('上传失败！')
-              }
-            })
-            .catch((error) => {
-              reject(error)
-            })
-        })
-      },
-
-      uploadedHandle(
-        res: any,
-        img: ToUploadImageModel,
-        userConfigInfo: UserConfigInfoModel
-      ) {
-        // 上传状态处理
-        // eslint-disable-next-line no-param-reassign
-        img.uploadStatus.progress = 100
-        // eslint-disable-next-line no-param-reassign
-        img.uploadStatus.uploading = false
-
-        // 生成外链
-        // eslint-disable-next-line no-param-reassign
-        img.externalLink.github = generateExternalLink(
-          ExternalLinkType.gh,
-          res.data.content,
-          userConfigInfo
-        )
-        // eslint-disable-next-line no-param-reassign
-        img.externalLink.cdn = generateExternalLink(
-          ExternalLinkType.cdn,
-          res.data.content,
-          userConfigInfo
-        )
-        // eslint-disable-next-line no-param-reassign
-        img.externalLink.markdown_gh = generateExternalLink(
-          ExternalLinkType.md_gh,
-          res.data.content,
-          userConfigInfo
-        )
-        // eslint-disable-next-line no-param-reassign
-        img.externalLink.markdown_cdn = generateExternalLink(
-          ExternalLinkType.md_cdn,
-          res.data.content,
-          userConfigInfo
-        )
-
-        const item: UploadedImageModel = {
-          uuid: img.uuid,
-          dir: userConfigInfo.selectedDir,
-          name: res.data.content.name,
-          path: res.data.content.path,
-          sha: res.data.content.sha,
-          github_url: img.externalLink.github,
-          cdn_url: img.externalLink.cdn,
-          md_gh_url: img.externalLink.markdown_gh,
-          md_cdn_url: img.externalLink.markdown_cdn,
-          is_transform_md: userConfigInfo.personalSetting.defaultMarkdown,
-          deleting: false,
-          size: img.fileInfo.size,
-          lastModified: img.fileInfo.lastModified
-        }
-
-        // eslint-disable-next-line no-param-reassign
-        img.uploadedImg = item
-
-        // 如果 userConfigInfo.dirList 不存在该目录，则增加
-        if (!userConfigInfo.dirList.some((v: any) => v.value === item.dir)) {
-          // userConfigInfo 增加目录
-          store.dispatch('USER_CONFIG_INFO_ADD_DIR', item.dir)
-
-          // dirImageList 增加目录
-          store.dispatch('DIR_IMAGE_LIST_ADD_DIR', item.dir)
-        }
-
-        // uploadedList 增加图片
-        store.dispatch('UPLOADED_LIST_ADD', item)
-
-        // dirImageList 增加图片
-        store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', item)
-      },
-
-      imageViewer(imgObj: ToUploadImageModel) {
-        store.commit('IMAGE_VIEWER', {
-          isShow: true,
-          imgInfo: {
-            name: imgObj.filename.now,
-            size: imgObj.fileInfo.size,
-            lastModified: imgObj.fileInfo.lastModified,
-            url: imgObj.imgData.base64Url
-          }
-        })
       }
     })
 
@@ -373,8 +272,17 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      const isHash = reactiveData.userConfigInfo.personalSetting.defaultHash
+      const {
+        defaultHash: isHash,
+        defaultPrefix: isPrefix,
+        prefixName
+      } = reactiveData.userSettings
       reactiveData.toUploadImage.list.forEach((v: ToUploadImageModel) => {
+        // eslint-disable-next-line no-param-reassign
+        v.filename.isPrefix = isPrefix
+        // eslint-disable-next-line no-param-reassign
+        v.filename.prefixName = prefixName
+        reactiveData.prefixName(isPrefix, v)
         // eslint-disable-next-line no-param-reassign
         v.filename.isHashRename = isHash
         reactiveData.hashRename(isHash, v)

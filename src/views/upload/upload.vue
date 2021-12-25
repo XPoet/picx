@@ -2,9 +2,9 @@
   <div class="upload-page-container">
     <div
       class="upload-page-left page-container"
-      v-if="uploadedImageList.length"
+      v-if="uploadedImageList.length && userSettings.elementPlusSize === 'medium'"
       :style="{
-        width: '30%'
+        width: '280rem'
       }"
     >
       <div class="uploaded-item" v-for="(item, index) in uploadedImageList" :key="index">
@@ -12,12 +12,7 @@
       </div>
     </div>
 
-    <div
-      class="upload-page-right page-container"
-      :style="{
-        width: uploadedImageList.length ? '70%' : '100%'
-      }"
-    >
+    <div class="upload-page-right page-container">
       <!-- 上传区域 -->
       <div class="row-item">
         <div class="content-box">
@@ -40,13 +35,19 @@
         <div class="content-box" style="text-align: right">
           <el-button
             plain
-            size="small"
+            :size="userSettings.elementPlusSize"
+            type="warning"
             @click="resetUploadInfo"
             v-if="toUploadImage.list.length"
             >重置
           </el-button>
-          <el-button type="primary" plain size="small" @click="uploadImage"
-            >上传
+          <el-button
+            plain
+            :size="userSettings.elementPlusSize"
+            type="primary"
+            @click="uploadImage"
+          >
+            上传
           </el-button>
         </div>
       </div>
@@ -73,6 +74,7 @@ const toUploadImageCardDom: Ref = ref<null | HTMLElement>(null)
 const uploadAreaDom: Ref = ref<null | HTMLElement>(null)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
+const userSettings = computed(() => store.getters.getUserSettings)
 const logoutStatus = computed(() => store.getters.getUserLoggingStatus)
 const uploadedImageList = computed(() => store.getters.getUploadedImageList)
 const toUploadImage = computed(() => store.getters.getToUploadImage)
@@ -153,6 +155,6 @@ watch(
 )
 </script>
 
-<style scoped lang="stylus">
+<style lang="stylus">
 @import "upload.styl"
 </style>

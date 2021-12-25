@@ -29,7 +29,7 @@
           <svg
             v-if="img.is_transform_md"
             t="1631784688556"
-            class="markdown-icon"
+            class="markdown-icon active"
             viewBox="0 0 1280 1024"
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"
@@ -82,6 +82,8 @@ const props = defineProps({
 })
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
+const userSettings = computed(() => store.getters.getUserSettings)
+
 const img = ref(props.imgObj)
 const externalLinkType = ExternalLinkType
 
@@ -119,8 +121,8 @@ function copyExternalLink(type: ExternalLinkType) {
     externalLinkDom = document.createElement('textarea')
     externalLinkDom.setAttribute('class', 'temp-external-link')
     externalLinkDom.style.position = 'absolute'
-    externalLinkDom.style.top = '-99999px'
-    externalLinkDom.style.left = '-99999px'
+    externalLinkDom.style.top = '-99999rem'
+    externalLinkDom.style.left = '-99999rem'
     document.body.appendChild(externalLinkDom)
   }
 
@@ -135,7 +137,7 @@ onUpdated(() => {
 })
 
 onMounted(() => {
-  img.value.is_transform_md = userConfigInfo.value.personalSetting.defaultMarkdown
+  img.value.is_transform_md = userSettings.value.defaultMarkdown
 })
 </script>
 

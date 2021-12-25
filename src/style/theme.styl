@@ -1,0 +1,140 @@
+@import './variables.styl'
+
+:root {
+  root-color('light')
+}
+
+@media (prefers-color-scheme light) {
+  :root {
+    root-color('light')
+  }
+}
+
+@media (prefers-color-scheme dark) {
+  :root {
+    root-color('dark')
+  }
+}
+
+.light-mode {
+  root-color('light')
+}
+
+.dark-mode {
+  root-color('dark')
+
+  .markdown-icon {
+    path {
+      fill #aaa
+    }
+
+    &.active {
+      path {
+        fill #ddd
+      }
+    }
+  }
+
+
+  --el-text-color-primary var(--default-text-color)
+  --el-text-color-regular var(--second-text-color)
+  --el-background-color-base var(--second-background-color)
+
+  .el-input {
+    --el-input-background-color var(--background-color)
+    --el-input-font-color var(--default-text-color)
+    --el-border-color-base var(--second-text-color)
+  }
+
+  .el-button {
+    background transparent
+  }
+
+  .el-dropdown-menu {
+    background-color var(--background-color)
+  }
+
+  .el-popper.is-dark {
+    border 1px solid var(--el-border-color-light)
+  }
+
+  .el-popper.is-dark .el-popper__arrow:before {
+    border-top-color transparent
+    border-left-color transparent
+  }
+
+  .el-popper.is-light .el-popper__arrow::before {
+    background: var(--background-color)
+    border-top-color transparent
+    border-left-color transparent
+  }
+
+
+  .el-popper, .el-select__popper.el-popper[role=tooltip], .el-dropdown__popper.el-popper[role=tooltip] {
+    background-color var(--background-color)
+    --el-text-color-primary var(--background-color)
+    box-shadow 0 0 3px var(--second-text-color)
+  }
+
+  .el-popper__arrow:before, .el-select__popper.el-popper[role=tooltip] .el-popper__arrow::before, .el-dropdown__popper.el-popper[role=tooltip] .el-popper__arrow::before {
+    background-color var(--background-color)
+    border 1px solid var(--el-border-color-light)
+  }
+
+  .el-select__popper.el-popper[role=tooltip][data-popper-placement^=top] .el-popper__arrow::before {
+    border-top-color transparent
+    border-left-color transparent
+  }
+
+  .el-select__popper.el-popper[role=tooltip][data-popper-placement^=bottom] .el-popper__arrow::before {
+    border-bottom-color transparent
+    border-right-color transparent
+  }
+
+  .el-dropdown__popper {
+    --el-dropdown-menuItem-hover-fill var(--third-background-color)
+  }
+
+  .el-switch {
+    --el-switch-off-color var(--third-text-color)
+  }
+
+  .el-switch__action {
+    background-color var(--background-color)
+  }
+
+  .el-checkbox {
+    --el-checkbox-checked-input-border-color var(--default-text-color)
+    --el-checkbox-background-color var(--second-background-color)
+    --el-checkbox-checked-font-color var(--default-text-color)
+    --el-checkbox-font-color var(--second-text-color)
+  }
+
+  .el-radio {
+    --el-border-color-base var(--second-text-color)
+    --el-radio-input-background-color var(--dark-fourth-text-color)
+    --el-color-white var(--third-background-color)
+    --el-disabled-fill-base var(--second-background-color)
+  }
+
+  .el-tag {
+    background transparent
+    --el-tag-border-color var(--second-text-color)
+  }
+
+  .el-message-box {
+    background-color var(--second-background-color)
+  }
+
+  .el-cascader__dropdown.el-popper[role=tooltip] {
+    background var(--background-color)
+    box-shadow var(--shadow-color)
+  }
+
+  .el-loading-mask {
+    background-color var(--third-background-color)
+    opacity 0.8
+  }
+
+
+}

@@ -1,20 +1,37 @@
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
+import { store } from '@/store'
+import { compress } from './compress'
 import { getFileSize, isImage } from './file-handle-helper'
 
-const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null => {
+export type handleResult = { base64: string; originalFile: File; compressFile?: File }
+
+const selectedFileHandle = async (
+  file: File,
+  maxsize: number
+): Promise<handleResult | null> => {
   if (!file) {
     return null
   }
 
   if (!isImage(file.type)) {
-    ElMessage.error('该文件不是图片格式！')
+    ElMessage.error('该文件格式不支持！')
     return null
+  }
+  let compressFile: NonNullable<File>
+  const { isCompress, compressEncoder } = store.getters.getUserSettings
+  if (isCompress) {
+    const loadingInstance = ElLoading.service({
+      target: '.upload-area',
+      text: '正在压缩图片'
+    })
+    compressFile = await compress(file, compressEncoder)
+    loadingInstance.close()
   }
 
   return new Promise((resolve) => {
     const reader = new FileReader()
 
-    reader.readAsDataURL(file)
+    reader.readAsDataURL(isCompress ? compressFile : file)
 
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const base64: any = e.target?.result
@@ -39,7 +56,7 @@ const selectedFileHandle = (file: File, maxsize: number): Promise<string> | null
             console.log('放弃上传')
           })
       } else {
-        resolve(base64)
+        resolve({ base64, originalFile: file, compressFile })
       }
     }
   })

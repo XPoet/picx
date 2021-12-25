@@ -1,0 +1,47 @@
+@import '../../style/base.styl'
+
+.folder-card {
+  position relative
+  width 110rem
+  height 106rem
+  display flex
+  align-items center
+  flex-direction column
+  justify-content flex-start
+  cursor pointer
+  box-sizing border-box
+  padding 3rem
+  user-select none
+
+  &:hover {
+    background var(--second-background-color)
+  }
+
+  .icon {
+    display flex
+    align-items center
+    justify-content center
+    width 50rem
+    height 50rem
+
+    svg {
+      width 100%
+      height 100%
+    }
+  }
+
+
+  .text {
+    width 90%
+    font-size 14rem
+    margin-top 5rem
+    text-align center
+    overflow hidden
+    text-overflow ellipsis
+    display -webkit-box
+    -webkit-box-orient vertical
+    -webkit-line-clamp 2
+    word-wrap break-word
+    word-break break-all
+  }
+}

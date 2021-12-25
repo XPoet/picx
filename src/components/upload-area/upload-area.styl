@@ -1,10 +1,10 @@
-@import "../../style.styl"
+@import "../../style/base.styl"
 
 .upload-area {
   position: relative;
   width: 100%;
-  height: 300px;
-  border: 4px dashed $upload-area-border-color
+  height: 300rem;
+  border: 4rem dashed var(--third-text-color)
   box-sizing border-box
   display: flex;
   align-items: center;
@@ -12,11 +12,11 @@
   z-index: 999;
 
   &.focus {
-    border-color: $upload-area-focus-color;
+    border-color: var(--upload-area-focus-color);
   }
 
   &:hover {
-    border-color: $upload-area-focus-color;
+    border-color: var(--upload-area-focus-color);
   }
 
   label {
@@ -30,8 +30,8 @@
 
   input[type="file"] {
     position: absolute;
-    left: -9999px;
-    top: -9999px;
+    left: -9999rem;
+    top: -9999rem;
   }
 
   .tips {
@@ -39,13 +39,13 @@
     color: #aaa;
 
     .icon {
-      font-size: 100px;
-      margin-bottom: 10px;
+      font-size: 100rem;
+      margin-bottom: 10rem;
     }
 
     .text {
       cursor: default;
-      font-size: 20px;
+      font-size: 20rem;
     }
   }
 

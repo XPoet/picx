@@ -1,7 +1,12 @@
 <template>
   <div class="page-container config-page-container">
     <!-- Token -->
-    <el-form label-width="70px" label-position="right" class="config-form">
+    <el-form
+      label-width="70rem"
+      :label-position="labelPosition"
+      class="config-form"
+      :size="userSettings.elementPlusSize"
+    >
       <el-form-item label="Token">
         <el-input
           v-model="userConfigInfo.token"
@@ -13,7 +18,7 @@
       <el-form-item class="operation">
         <el-button
           plain
-          size="small"
+          :size="userSettings.elementPlusSize"
           type="primary"
           native-type="submit"
           @click.prevent="getUserInfo()"
@@ -25,11 +30,12 @@
 
     <!-- 基本信息 -->
     <el-form
-      label-width="70px"
-      label-position="right"
+      label-width="70rem"
+      :label-position="labelPosition"
       v-if="userConfigInfo.token"
       v-loading="loading"
       element-loading-text="加载中..."
+      :size="userSettings.elementPlusSize"
     >
       <el-form-item v-if="userConfigInfo.owner" label="用户名">
         <el-input v-model="userConfigInfo.owner" readonly></el-input>
@@ -60,11 +66,12 @@
 
     <!-- 分支 -->
     <el-form
-      label-width="70px"
-      label-position="right"
+      label-width="70rem"
+      :label-position="labelPosition"
       v-if="userConfigInfo.selectedRepos && userConfigInfo.branchList.length"
       v-loading="branchLoading"
       element-loading-text="加载中..."
+      :size="userSettings.elementPlusSize"
     >
       <!-- 因未验证 API 是否能创建空分支，暂时不开启分支选择方式 && 0 -->
       <el-form-item v-if="userConfigInfo.selectedRepos && 0" label="分支方式">
@@ -121,10 +128,11 @@
     <!-- 目录 -->
     <el-form
       label-width="70px"
-      label-position="right"
+      :label-position="labelPosition"
       v-if="userConfigInfo.selectedBranch"
       v-loading="dirLoading"
       element-loading-text="加载中..."
+      :size="userSettings.elementPlusSize"
     >
       <el-form-item v-if="userConfigInfo.selectedBranch" label="目录方式">
         <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
@@ -188,33 +196,38 @@
         "
         label="选择目录"
       >
-        <el-select
-          v-model="userConfigInfo.selectedDir"
-          filterable
+        <el-cascader
           style="width: 100%"
-          placeholder="请选择目录..."
-          @change="persistUserConfigInfo"
-        >
-          <el-option
-            v-for="repos in userConfigInfo.dirList"
-            :key="repos.value"
-            :label="repos.label"
-            :value="repos.value"
-          >
-          </el-option>
-        </el-select>
+          :props="cascaderProps"
+          :key="elCascaderKey"
+          v-model="userConfigInfo.selectedDirList"
+          filterable
+          placeholder="请选择一个目录..."
+          clearable
+          @change="cascaderChange"
+        />
       </el-form-item>
     </el-form>
 
     <!-- 操作 -->
-    <el-form label-width="70px">
+    <el-form
+      label-width="70px"
+      :size="userSettings.elementPlusSize"
+      :label-position="labelPosition"
+    >
       <el-form-item class="operation">
-        <el-button plain size="small" @click="reset()" v-if="userConfigInfo.owner">
+        <el-button
+          plain
+          :size="userSettings.elementPlusSize"
+          type="warning"
+          @click="reset()"
+          v-if="userConfigInfo.owner"
+        >
           重置
         </el-button>
         <el-button
           plain
-          size="small"
+          :size="userSettings.elementPlusSize"
           type="success"
           @click="goUpload"
           v-if="userConfigInfo.selectedRepos"
@@ -226,319 +239,275 @@
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, computed, toRefs, watch } from 'vue'
+<script lang="ts" setup>
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import { DirModeEnum } from '@/common/model/dir.model'
-import { BranchModeEnum, UserConfigInfoModel } from '@/common/model/userConfigInfo.model'
+import { BranchModeEnum } from '@/common/model/user-config-info.model'
 import axios from '@/common/utils/axios'
 import TimeHelper from '@/common/utils/time-helper'
+import { GetDirList } from '@/common/api'
 
-export default defineComponent({
-  name: 'config',
+const router = useRouter()
+const store = useStore()
 
-  setup() {
-    const router = useRouter()
-    const store = useStore()
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const loggingStatus = computed(() => store.getters.getUserConfigInfo).value
+const userSettings = computed(() => store.getters.getUserSettings).value
 
-    const reactiveData = reactive({
-      userConfigInfo: computed((): UserConfigInfoModel => store.getters.getUserConfigInfo)
-        .value,
-      loggingStatus: computed(() => store.getters.getUserConfigInfo).value,
+const loading = ref(false)
+const dirLoading = ref(false)
+const branchLoading = ref(false)
 
-      loading: false,
-      dirLoading: false,
-      branchLoading: false,
+const labelPosition = computed(() => {
+  return userSettings.elementPlusSize !== 'medium' ? 'top' : 'right'
+})
 
-      getUserInfo() {
-        if (this.userConfigInfo.token) {
-          this.loading = true
-          axios.defaults.headers.Authorization = `token ${this.userConfigInfo.token}`
-          axios.get('/user').then((res: any) => {
-            console.log('[getUserInfo] ', res)
-            if (res && res.status === 200) {
-              this.saveUserInfo(res)
-              this.getReposList(res.data.repos_url)
-            } else {
-              this.loading = false
-            }
-          })
-        } else {
-          ElMessage.warning('Token 不能为空！')
-        }
-      },
+const elCascaderKey = ref<string>('elCascaderKey')
 
-      saveUserInfo(res: any) {
-        this.userConfigInfo.loggingStatus = true
-        this.userConfigInfo.owner = res.data.login
-        this.userConfigInfo.name = res.data.name
-        this.userConfigInfo.email = res.data.email
-        this.userConfigInfo.avatarUrl = res.data.avatar_url
-        this.persistUserConfigInfo()
-      },
+function persistUserConfigInfo() {
+  store.dispatch('USER_CONFIG_INFO_PERSIST')
+}
 
-      getReposList(reposUrl: string) {
-        axios
-          .get(reposUrl, {
-            params: {
-              type: 'public',
-              sort: 'created',
-              per_page: 100
-            }
-          })
-          .then((res: any) => {
-            console.log('[getReposList] ', res)
-            if (res.status === 200 && res.data.length > 0) {
-              this.userConfigInfo.reposList = []
-              // eslint-disable-next-line no-restricted-syntax
-              for (const repos of res.data) {
-                if (!repos.fork && !repos.private) {
-                  this.userConfigInfo.reposList.push({
-                    value: repos.name,
-                    label: repos.name,
-                    desc: repos.description
-                  })
-                }
-              }
-              this.loading = false
-              this.persistUserConfigInfo()
-            }
-          })
-      },
+function saveUserInfo(res: any) {
+  userConfigInfo.loggingStatus = true
+  userConfigInfo.owner = res.data.login
+  userConfigInfo.name = res.data.name
+  userConfigInfo.email = res.data.email
+  userConfigInfo.avatarUrl = res.data.avatar_url
+  persistUserConfigInfo()
+}
 
-      innerSelectRepos(repos: string) {
-        this.userConfigInfo.branchList = []
-        this.userConfigInfo.dirList = []
-        reactiveData.getBranchList(repos)
-        reactiveData.persistUserConfigInfo()
-      },
-
-      getBranchList(repos: string) {
-        this.branchLoading = true
-        axios
-          .get(`/repos/${this.userConfigInfo.owner}/${repos}/branches`)
-          .then((res: any) => {
-            console.log('[getBranchList] ', res)
-            if (res && res.status === 200) {
-              this.branchLoading = false
-              if (res.data.length > 0) {
-                // eslint-disable-next-line no-restricted-syntax
-                for (const item of res.data) {
-                  this.userConfigInfo.branchList.push({
-                    value: item.name,
-                    label: item.name
-                  })
-                }
-                this.userConfigInfo.selectedBranch =
-                  this.userConfigInfo.branchList[0].value
-                this.userConfigInfo.branchMode = BranchModeEnum.reposBranch
-                this.getDirList(this.userConfigInfo.selectedBranch)
-              } else {
-                this.userConfigInfo.selectedBranch = 'master'
-                this.userConfigInfo.branchMode = BranchModeEnum.newBranch
-              }
-              this.innerDirModeChange(this.userConfigInfo.dirMode)
-              this.persistUserConfigInfo()
-            }
-          })
-      },
-
-      innerSelectBranch(branch: string) {
-        reactiveData.getDirList(branch)
-        reactiveData.persistUserConfigInfo()
-      },
-
-      getDirList(branch: string) {
-        this.dirLoading = true
-        axios
-          .get(
-            `/repos/${this.userConfigInfo.owner}/${this.userConfigInfo.selectedRepos}/contents`,
-            {
-              params: {
-                ref: branch
-              }
-            }
-          )
-          .then((res: any) => {
-            console.log('[getDirList] ', res)
-            if (res && res.status === 200 && res.data.length > 0) {
-              this.userConfigInfo.dirList = [{ value: '/', label: '/' }]
-              // eslint-disable-next-line no-restricted-syntax
-              for (const item of res.data) {
-                if (item.type === 'dir') {
-                  this.userConfigInfo.dirList.push({
-                    value: item.name,
-                    label: item.name
-                  })
-                }
-              }
-              this.persistUserConfigInfo()
-            }
-            this.dirLoading = false
-          })
-      },
-
-      innerBranchModeChange(mode: BranchModeEnum) {
-        const selBranch = this.userConfigInfo.selectedBranch
-        const bv = this.userConfigInfo.branchList[0].value
-
-        switch (mode) {
-          case BranchModeEnum.newBranch:
-            this.userConfigInfo.selectedBranch = 'xxx'
-            this.userConfigInfo.dirMode = DirModeEnum.newDir
-            this.userConfigInfo.selectedDir = 'xxx'
-            break
-
-          case BranchModeEnum.reposBranch:
-            if (selBranch !== bv) {
-              this.userConfigInfo.selectedBranch = bv
-              this.getDirList(bv)
-            }
-            break
-
-          default:
-            this.userConfigInfo.selectedBranch = ''
-            break
-        }
-        this.persistUserConfigInfo()
-      },
-
-      innerDirModeChange(dirMode: DirModeEnum) {
-        switch (dirMode) {
-          case DirModeEnum.rootDir:
-            // 根目录
-            this.userConfigInfo.selectedDir = '/'
-            break
-
-          case DirModeEnum.autoDir:
-            // 自动目录，根据当天日期自动生成
-            this.userConfigInfo.selectedDir = TimeHelper.getYyyyMmDd()
-            break
-
-          case DirModeEnum.newDir:
-            // 手动输入的新建目录
-            this.userConfigInfo.selectedDir = 'xxx'
-            break
-
-          case DirModeEnum.reposDir:
-            // 仓库目录
-            // eslint-disable-next-line no-case-declarations
-            const { dirList } = this.userConfigInfo
-            if (dirList.length) {
-              this.userConfigInfo.selectedDir = dirList[0].value
-            } else {
-              this.userConfigInfo.selectedDir = ''
-            }
-            break
-
-          default:
-            this.userConfigInfo.selectedDir = '/'
-            break
-        }
-        this.persistUserConfigInfo()
-      },
-
-      persistUserConfigInfo() {
-        store.dispatch('USER_CONFIG_INFO_PERSIST')
-      },
-
-      reset() {
-        this.loading = false
-        this.dirLoading = false
-        store.dispatch('LOGOUT')
-      },
-
-      innerGoUpload() {
-        const { selectedDir, dirMode } = this.userConfigInfo
-        let warningMessage: string = '目录不能为空！'
-
-        if (selectedDir === '') {
-          switch (dirMode) {
-            case DirModeEnum.newDir:
-              warningMessage = '请在输入框输入一个新目录！'
-              break
-            case DirModeEnum.reposDir:
-              warningMessage = `请选择 ${this.userConfigInfo.selectedRepos} 仓库下的一个目录！`
-              break
-            default:
-              warningMessage = '请在输入框输入一个新目录！'
-              break
-          }
-          ElMessage.warning(warningMessage)
-        } else {
-          router.push('/upload')
-        }
+function getReposList(reposUrl: string) {
+  axios
+    .get(reposUrl, {
+      params: {
+        type: 'public',
+        sort: 'created',
+        per_page: 100
       }
     })
-
-    const selectRepos = (repos: string) => {
-      reactiveData.innerSelectRepos(repos)
-    }
-
-    const selectBranch = (branch: string) => {
-      reactiveData.innerSelectBranch(branch)
-    }
-
-    const dirModeChange = (mode: DirModeEnum) => {
-      reactiveData.innerDirModeChange(mode)
-    }
-
-    const branchModeChange = (mode: BranchModeEnum) => {
-      reactiveData.innerBranchModeChange(mode)
-    }
-
-    const goUpload = () => {
-      reactiveData.innerGoUpload()
-    }
-
-    const createBranch = () => {
-      // axios
-      //   .get(
-      //     `/repos/${reactiveData.userConfigInfo.owner}/${reactiveData.userConfigInfo.selectedRepos}/git/refs/heads`
-      //   )
-      //   .then((res: any) => {
-      //     console.log('[git/refs/heads] ', res)
-      //     if (res && res.status === 200) {
-      //     }
-      //   })
-      // axios
-      //   .post(
-      //     `/repos/${reactiveData.userConfigInfo.owner}/${reactiveData.userConfigInfo.selectedRepos}/git/refs`,
-      //     {
-      //       ref: `refs/heads/${reactiveData.userConfigInfo.selectedBranch}`,
-      //       sha: '6b74f243e6396757c1bc7aec85e57424286db33a'
-      //     }
-      //   )
-      //   .then((res: any) => {
-      //     console.log('[/git/refs] ', res)
-      //     if (res && res.status === 201) {
-      //     }
-      //   })
-    }
-
-    watch(
-      () => reactiveData.loggingStatus,
-      (_n) => {
-        if (!_n) {
-          reactiveData.loading = false
-          reactiveData.dirLoading = false
+    .then((res: any) => {
+      console.log('[getReposList] ', res)
+      if (res.status === 200 && res.data.length > 0) {
+        userConfigInfo.reposList = []
+        // eslint-disable-next-line no-restricted-syntax
+        for (const repos of res.data) {
+          if (!repos.fork && !repos.private) {
+            userConfigInfo.reposList.push({
+              value: repos.name,
+              label: repos.name,
+              desc: repos.description
+            })
+          }
         }
+        loading.value = false
+        persistUserConfigInfo()
       }
-    )
+    })
+}
 
-    return {
-      ...toRefs(reactiveData),
-      branchModeChange,
-      dirModeChange,
-      selectRepos,
-      selectBranch,
-      createBranch,
-      goUpload
+async function getDirList() {
+  dirLoading.value = true
+  userConfigInfo.dirList = await GetDirList()
+  persistUserConfigInfo()
+  dirLoading.value = false
+}
+
+function dirModeChange(dirMode: DirModeEnum) {
+  switch (dirMode) {
+    case DirModeEnum.rootDir:
+      // 根目录
+      userConfigInfo.selectedDir = '/'
+      break
+
+    case DirModeEnum.autoDir:
+      // 自动目录，根据当天日期自动生成
+      userConfigInfo.selectedDir = TimeHelper.getYyyyMmDd()
+      break
+
+    case DirModeEnum.newDir:
+      // 手动输入的新建目录
+      userConfigInfo.selectedDir = 'xxx'
+      break
+
+    case DirModeEnum.reposDir:
+      // 仓库目录
+      // eslint-disable-next-line no-case-declarations
+      const { dirList } = userConfigInfo
+      if (dirList.length) {
+        userConfigInfo.selectedDir = dirList[0].value
+      } else {
+        userConfigInfo.selectedDir = ''
+      }
+      break
+
+    default:
+      userConfigInfo.selectedDir = '/'
+      break
+  }
+  persistUserConfigInfo()
+}
+
+function getBranchList(repos: string) {
+  branchLoading.value = true
+  axios.get(`/repos/${userConfigInfo.owner}/${repos}/branches`).then((res: any) => {
+    console.log('[getBranchList] ', res)
+    if (res && res.status === 200) {
+      branchLoading.value = false
+      if (res.data.length > 0) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const item of res.data) {
+          userConfigInfo.branchList.push({
+            value: item.name,
+            label: item.name
+          })
+        }
+        userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
+        userConfigInfo.branchMode = BranchModeEnum.reposBranch
+        getDirList()
+      } else {
+        userConfigInfo.selectedBranch = 'master'
+        userConfigInfo.branchMode = BranchModeEnum.newBranch
+      }
+      dirModeChange(userConfigInfo.dirMode)
+      persistUserConfigInfo()
+    }
+  })
+}
+
+function getUserInfo() {
+  if (userConfigInfo.token) {
+    loading.value = true
+    axios
+      .get('/user', {
+        headers: { Authorization: `token ${userConfigInfo.token}` }
+      })
+      .then((res: any) => {
+        console.log('[getUserInfo] ', res)
+        if (res && res.status === 200) {
+          saveUserInfo(res)
+          getReposList(res.data.repos_url)
+        } else {
+          loading.value = false
+        }
+      })
+  } else {
+    ElMessage.warning('Token 不能为空！')
+  }
+}
+
+function selectRepos(repos: string) {
+  userConfigInfo.branchList = []
+  userConfigInfo.dirList = []
+  getBranchList(repos)
+  persistUserConfigInfo()
+}
+
+async function selectBranch(branch: string) {
+  userConfigInfo.selectedBranch = branch
+  await getDirList()
+  elCascaderKey.value = userConfigInfo.selectedBranch
+  userConfigInfo.selectedDir = userConfigInfo.dirList[0].value
+  userConfigInfo.selectedDirList = [userConfigInfo.selectedDir]
+  persistUserConfigInfo()
+}
+
+function branchModeChange(mode: BranchModeEnum) {
+  const selBranch = userConfigInfo.selectedBranch
+  const bv = userConfigInfo.branchList[0].value
+
+  switch (mode) {
+    case BranchModeEnum.newBranch:
+      userConfigInfo.selectedBranch = 'xxx'
+      userConfigInfo.dirMode = DirModeEnum.newDir
+      userConfigInfo.selectedDir = 'xxx'
+      break
+
+    case BranchModeEnum.reposBranch:
+      if (selBranch !== bv) {
+        userConfigInfo.selectedBranch = bv
+        getDirList()
+      }
+      break
+
+    default:
+      userConfigInfo.selectedBranch = ''
+      break
+  }
+  persistUserConfigInfo()
+}
+
+function reset() {
+  loading.value = false
+  dirLoading.value = false
+  store.dispatch('LOGOUT')
+}
+
+function goUpload() {
+  const { selectedDir, dirMode } = userConfigInfo
+  let warningMessage: string = '目录不能为空！'
+
+  if (selectedDir === '') {
+    switch (dirMode) {
+      case DirModeEnum.newDir:
+        warningMessage = '请在输入框输入一个新目录！'
+        break
+      case DirModeEnum.reposDir:
+        warningMessage = `请选择 ${userConfigInfo.selectedRepos} 仓库下的一个目录！`
+        break
+      default:
+        warningMessage = '请在输入框输入一个新目录！'
+        break
+    }
+    ElMessage.warning(warningMessage)
+  } else {
+    router.push('/upload')
+  }
+}
+
+const cascaderProps = {
+  lazy: true,
+  checkStrictly: true,
+  async lazyLoad(node: any, resolve: any) {
+    const { level, pathLabels } = node
+    let dirs: any
+    if (level === 0) {
+      dirs = userConfigInfo.dirList
+    } else {
+      dirs = await GetDirList(pathLabels.join('/'))
+    }
+    if (dirs) {
+      resolve(
+        dirs.map((x: any) => ({
+          value: x.value,
+          label: x.label,
+          leaf: level >= 2
+        }))
+      )
+    } else {
+      resolve([])
     }
   }
-})
+}
+
+function cascaderChange(e: string[]) {
+  userConfigInfo.selectedDirList = e
+  userConfigInfo.selectedDir = e.join('/')
+  persistUserConfigInfo()
+}
+
+watch(
+  () => loggingStatus,
+  (_n) => {
+    if (!_n) {
+      loading.value = false
+      dirLoading.value = false
+    }
+  }
+)
 </script>
 
 <style scoped lang="stylus">

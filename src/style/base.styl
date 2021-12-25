@@ -1,0 +1,97 @@
+@import './theme.styl'
+@import './variables.styl'
+
+$component-interval = 16rem
+$box-border-radius = 6rem
+$content-max-width = 888rem
+$scrollbar-size = 8rem
+
+:root {
+  font-size 1px
+
+  +picx-tablet() {
+    font-size 0.9px
+  }
+
+  +picx-mobile() {
+    font-size 0.8px
+  }
+}
+
+html, body {
+  position relative
+  padding 0
+  margin 0
+  width 100%
+  height 100%
+  color var(--default-text-color)
+}
+
+a {
+  text-decoration none
+  font-size 1.5rem
+  color var(--default-text-color)
+}
+
+a:link {
+  color var(--default-text-color)
+  text-decoration none
+}
+
+ul, ol, li {
+  list-style none
+}
+
+* {
+  &::-webkit-scrollbar {
+    height $scrollbar-size
+    width $scrollbar-size
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background var(--scrollbar-color)
+    border-radius $box-border-radius
+  }
+
+  &::-webkit-scrollbar-track {
+    background transparent
+  }
+}
+
+
+.flex-center {
+  display flex
+  justify-content center
+  align-items center
+}
+
+
+.flex-start {
+  display flex
+  justify-content flex-start
+  align-items center
+}
+
+
+.page-container {
+  width 100%
+  height 100%
+  box-sizing border-box
+  padding 30rem
+  background var(--background-color)
+  border-top-left-radius $box-border-radius
+  border-top-right-radius $box-border-radius
+  overflow-y auto
+}
+
+.clear {
+  &::after {
+    content ''
+    display block
+    clear both
+    visibility hidden
+    height 0
+  }
+}
+
+

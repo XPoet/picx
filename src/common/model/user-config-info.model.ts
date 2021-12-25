@@ -29,10 +29,7 @@ export interface UserConfigInfoModel {
   branchList: BranchModel[]
   dirMode: DirModeEnum
   selectedDir: string
+  selectedDirList: string[]
   dirList: DirModel[]
   loggingStatus: boolean
-  personalSetting: {
-    defaultHash: boolean
-    defaultMarkdown: boolean
-  }
 }

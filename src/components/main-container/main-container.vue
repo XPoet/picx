@@ -22,11 +22,12 @@
 </template>
 
 <script lang="ts">
+import { defineComponent, onMounted } from 'vue'
 import headerContent from '@/components/header-content/header-content.vue'
 import navContent from '@/components/nav-content/nav-content.vue'
 import imageViewer from '@/components/image-viewer/image-viewer.vue'
 import { useStore } from '@/store'
-import { defineComponent } from 'vue'
+import userConfigInfoModel from '@/common/utils/set-theme-mode'
 
 export default defineComponent({
   name: 'main-container',
@@ -39,9 +40,37 @@ export default defineComponent({
 
   setup() {
     const store = useStore()
+
     const changeUploadAreaActive = (e: any) => {
-      store.commit('CHANGE_UPLOAD_AREA_ACTIVE', e.target.classList.contains('active-upload'))
+      store.commit(
+        'CHANGE_UPLOAD_AREA_ACTIVE',
+        e.target.classList.contains('active-upload')
+      )
     }
+
+    const elementPlusSizeHadle = (width: number) => {
+      if (width <= 500) {
+        store.dispatch('SET_USER_SETTINGS', {
+          elementPlusSize: 'mini'
+        })
+      } else if (width <= 800) {
+        store.dispatch('SET_USER_SETTINGS', {
+          elementPlusSize: 'small'
+        })
+      } else {
+        store.dispatch('SET_USER_SETTINGS', {
+          elementPlusSize: 'medium'
+        })
+      }
+    }
+
+    onMounted(() => {
+      userConfigInfoModel()
+      elementPlusSizeHadle(window.innerWidth)
+      window.addEventListener('resize', (e: any) => {
+        elementPlusSizeHadle(e.target.innerWidth)
+      })
+    })
 
     return {
       changeUploadAreaActive
