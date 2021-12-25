@@ -49,6 +49,22 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
     },
     optimizeDeps: {
       exclude: ['@yireen/squoosh-browser']
+    },
+    css: {
+      postcss: {
+        plugins: [
+          {
+            postcssPlugin: 'internal:charset-removal',
+            AtRule: {
+              charset: (atRule) => {
+                if (atRule.name === 'charset') {
+                  atRule.remove()
+                }
+              }
+            }
+          }
+        ]
+      }
     }
   }
 }
