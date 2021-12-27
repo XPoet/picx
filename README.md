@@ -70,4 +70,6 @@ https://picx-docs.xpoet.cn/tutorial/get-start.html
 
 ## 许可 | License
 
-[GPL-3.0](https://github.com/picx-dev/picx-docs/blob/master/LICENSE) Copyright © 2020-Present PicX Dev Team
+**[GPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)** 
+
+Copyright © 2020-Present PicX Dev Team
