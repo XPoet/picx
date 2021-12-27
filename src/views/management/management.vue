@@ -119,7 +119,10 @@ async function dirContentHandle(dir: string) {
 async function initDirImageList() {
   const { selectedDir, dirMode } = userConfigInfo
 
-  if (dirMode === 'newDir' && !getDirContent(selectedDir, dirObject)) {
+  if (
+    (dirMode === 'newDir' || dirMode === 'autoDir') &&
+    !getDirContent(selectedDir, dirObject)
+  ) {
     userConfigInfo.selectedDir = '/'
     userConfigInfo.dirMode = 'rootDir'
   }
