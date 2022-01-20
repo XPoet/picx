@@ -272,6 +272,8 @@ export default defineComponent({
     }
 
     onMounted(() => {
+      console.log('xxx', reactiveData.toUploadImage)
+
       const {
         defaultHash: isHash,
         defaultPrefix: isPrefix,
