@@ -1,7 +1,7 @@
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
 import { store } from '@/store'
 import { compress } from './compress'
-import { getFileSize, isImage } from './file-handle-helper'
+import { getFileSize, getFileSuffix, isImage } from './file-handle-helper'
 
 export type handleResult = { base64: string; originalFile: File; compressFile?: File }
 
@@ -19,7 +19,8 @@ const selectedFileHandle = async (
   }
   let compressFile: NonNullable<File>
   const { isCompress, compressEncoder } = store.getters.getUserSettings
-  if (isCompress) {
+  const isGif = file.type === 'image/gif'
+  if (!isGif && isCompress) {
     const loadingInstance = ElLoading.service({
       target: '.upload-area',
       text: '正在压缩图片'
@@ -30,9 +31,7 @@ const selectedFileHandle = async (
 
   return new Promise((resolve) => {
     const reader = new FileReader()
-
-    reader.readAsDataURL(isCompress ? compressFile : file)
-
+    reader.readAsDataURL(!isGif && isCompress ? compressFile : file)
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const base64: any = e.target?.result
       const curImgSize = getFileSize(base64.length)
@@ -56,7 +55,11 @@ const selectedFileHandle = async (
             console.log('放弃上传')
           })
       } else {
-        resolve({ base64, originalFile: file, compressFile })
+        resolve({
+          base64,
+          originalFile: file,
+          compressFile: !isGif && isCompress ? compressFile : file
+        })
       }
     }
   })
