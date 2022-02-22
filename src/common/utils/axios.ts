@@ -23,11 +23,6 @@ axios.interceptors.request.use(
       }
     }
 
-    // 防止 GET 请求缓存
-    if (config.method === 'get') {
-      config.url = `${config.url}?${Date.now()}`
-    }
-
     return config
   },
   (error) => {
