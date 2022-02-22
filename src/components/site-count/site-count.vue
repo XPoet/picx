@@ -1,7 +1,9 @@
 <template>
-  <span class="site-count" ref="siteCountDom">
-    <span id="busuanzi_value_site_uv" v-if="isuv"></span>
-    <span id="busuanzi_value_site_pv" v-if="!isuv"></span>
+  <span class="site-count" ref="siteCountDom" v-show="isShow">
+    累计
+    <span id="busuanzi_value_site_uv" class="uv" v-show="isuv"></span>
+    <span id="busuanzi_value_site_pv" class="pv" v-show="!isuv"></span>
+    访问次数
   </span>
 </template>
 
@@ -18,19 +20,39 @@ export default defineComponent({
     }
   },
 
-  setup() {
+  setup(props, ctx) {
     const siteCountDom: Ref = ref<null | HTMLElement>(null)
+    const isShow: Ref<boolean> = ref(false)
+
+    const getInnerText = (dom, isuv) => {
+      return dom.querySelector(`.${isuv ? 'u' : 'p'}v`).innerText
+    }
 
     onMounted(() => {
       const script: any = document.createElement('script')
       script.async = true
       script.src = '//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js'
       siteCountDom.value.appendChild(script)
+
+      script.onload = () => {
+        const tempT = setTimeout(() => {
+          if (getInnerText(siteCountDom.value, props.isuv)) {
+            isShow.value = true
+          }
+          clearTimeout(tempT)
+        }, 1500)
+      }
     })
 
     return {
-      siteCountDom
+      siteCountDom,
+      isShow
     }
   }
 })
 </script>
+<style lang="stylus">
+.site-count {
+  transition all 0.2s ease-in
+}
+</style>
