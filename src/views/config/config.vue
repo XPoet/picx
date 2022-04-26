@@ -240,7 +240,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, computed, ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
@@ -508,12 +508,6 @@ watch(
     }
   }
 )
-
-onMounted(() => {
-  if (userConfigInfo.dirMode === DirModeEnum.autoDir) {
-    userConfigInfo.selectedDir = TimeHelper.getYyyyMmDd()
-  }
-})
 </script>
 
 <style scoped lang="stylus">
