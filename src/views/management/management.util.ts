@@ -50,7 +50,8 @@ export const filterDirContent = (dirPath: string, content: any, type: string): a
 export const dirModeHandle = (dir: string, store: Store<any>) => {
   if (dir === '/') {
     store.dispatch('SET_USER_CONFIG_INFO', {
-      dirMode: 'rootDir'
+      dirMode: 'rootDir',
+      needPersist: false
     })
   }
 }
