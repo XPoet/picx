@@ -115,7 +115,7 @@ const dblclickFolder = () => {
     userConfigInfo.selectedDirList = selectedDir.split('/')
     userConfigInfo.dirMode = 'reposDir'
   }
-  store.dispatch('USER_CONFIG_INFO_PERSIST')
+  store.dispatch('USER_CONFIG_INFO_NOT_PERSIST')
 }
 </script>
 
