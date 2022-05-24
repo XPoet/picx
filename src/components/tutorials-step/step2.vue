@@ -5,12 +5,12 @@
       <span class="go-create-token" @click="goCreateToken"> GitHub Token</span>
     </h3>
     <img
-      src="https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.lpt1xl9fu.png"
+      src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/image.lpt1xl9fu.png"
       alt="Create GitHub Token"
     />
     <p>然后点击 Generate token 按钮，即可生成一个token，如下图：</p>
     <img
-      src="https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/image.pzmcp6b80fk.png"
+      src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/image.pzmcp6b80fk.png"
       alt="token-demo"
     />
     <p style="color: red">
