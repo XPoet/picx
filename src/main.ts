@@ -1,13 +1,13 @@
 import { createApp } from 'vue'
-import styleImport from '@/common/utils/style-import'
 import router from '@/router/index'
-import { key, store } from '@/store/index'
+import { key, store } from '@/store'
 import App from './App.vue'
 
 if (import.meta.env.MODE === 'production') {
-  import('@/common/utils/register-sw')
+  // @ts-ignore
+  import('@/common/utils/register-sw.ts')
 }
 
 const app = createApp(App)
-styleImport(app)
+// @ts-ignore
 app.use(router).use(store, key).mount('#app')

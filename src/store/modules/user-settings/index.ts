@@ -17,7 +17,7 @@ const initUserSettings = (): UserSettingsModel => {
     compressEncoder: CompressEncoderMap.webP,
     themeMode: 'light',
     autoLightThemeTime: ['08:00', '19:00'],
-    elementPlusSize: 'medium'
+    elementPlusSize: 'default'
   }
 
   const LSSettings: string | null = localStorage.getItem(PICX_SETTINGS)

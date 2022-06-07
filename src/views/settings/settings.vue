@@ -26,7 +26,6 @@
           class="prefix-input"
           v-if="userSettings.defaultPrefix"
           v-model="userSettings.prefixName"
-          :size="userSettings.elementPlusSize"
           placeholder="请输入命名前缀"
           @input="persistUserSettings"
           clearable
@@ -77,7 +76,6 @@
           v-model="userSettings.themeMode"
           placeholder="主题模式"
           @change="saveUserSettings"
-          :size="userSettings.elementPlusSize"
         >
           <el-option label="自动设置" value="auto"></el-option>
           <el-option label="暗夜主题" value="dark"></el-option>
@@ -91,7 +89,7 @@
     </div>
     <ul class="setting-list" v-if="userSettings.themeMode === 'auto'">
       <li class="setting-item">
-        <el-form ref="form" :size="userSettings.elementPlusSize">
+        <el-form ref="form">
           <el-form-item>
             <el-time-select
               v-model="userSettings.autoLightThemeTime[0]"

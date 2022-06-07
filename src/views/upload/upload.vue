@@ -2,7 +2,7 @@
   <div class="upload-page-container">
     <div
       class="upload-page-left page-container"
-      v-if="uploadedImageList.length && userSettings.elementPlusSize === 'medium'"
+      v-if="uploadedImageList.length && userSettings.elementPlusSize === 'large'"
       :style="{
         width: '280rem'
       }"
@@ -35,20 +35,12 @@
         <div class="content-box" style="text-align: right">
           <el-button
             plain
-            :size="userSettings.elementPlusSize"
             type="warning"
             @click="resetUploadInfo"
             v-if="toUploadImage.list.length"
             >重置
           </el-button>
-          <el-button
-            plain
-            :size="userSettings.elementPlusSize"
-            type="primary"
-            @click="uploadImage"
-          >
-            上传
-          </el-button>
+          <el-button plain type="primary" @click="uploadImage"> 上传 </el-button>
         </div>
       </div>
     </div>
