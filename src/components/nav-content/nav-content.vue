@@ -10,7 +10,9 @@
         v-show="navItem.isShow"
       >
         <div class="nav-content">
-          <i class="nav-icon" :class="navItem.icon"></i>
+          <el-icon :size="20">
+            <component :is="navItem.icon"></component>
+          </el-icon>
           <span class="nav-name">{{ navItem.name }}</span>
         </div>
       </li>
@@ -39,42 +41,42 @@ export default defineComponent({
       navList: [
         {
           name: '图床配置',
-          icon: 'el-icon-edit-outline',
+          icon: 'edit',
           isActive: false,
           path: '/config',
           isShow: true
         },
         {
           name: '上传图片',
-          icon: 'el-icon-upload2',
+          icon: 'upload',
           isActive: false,
           path: '/upload',
           isShow: true
         },
         {
           name: '图床管理',
-          icon: 'el-icon-box',
+          icon: 'box',
           isActive: false,
           path: '/management',
           isShow: true
         },
         {
           name: '我的设置',
-          icon: 'el-icon-setting',
+          icon: 'setting',
           isActive: false,
           path: '/settings',
           isShow: true
         },
         {
           name: '使用教程',
-          icon: 'el-icon-magic-stick',
+          icon: 'magic-stick',
           isActive: false,
           path: '/tutorials',
           isShow: true
         },
         {
           name: '帮助反馈',
-          icon: 'el-icon-chat-dot-round',
+          icon: 'chat-dot-round',
           isActive: false,
           path: '/about',
           isShow: true
