@@ -11,10 +11,10 @@
     </div>
     <div class="selector-right-box">
       <el-tooltip placement="top" content="批量复制外链">
-        <i class="el-icon-copy-document btn-icon" @click="copyLink"></i>
+        <el-icon class="btn-icon" @click="copyLink"><CopyDocument /></el-icon>
       </el-tooltip>
       <el-tooltip placement="top" content="批量删除图片">
-        <i class="el-icon-delete btn-icon" @click="batchDeleteImage"></i>
+        <el-icon class="btn-icon" @click="batchDeleteImage"><Delete /></el-icon>
       </el-tooltip>
     </div>
     <textarea class="temp-batch-externalink"></textarea>
@@ -22,7 +22,6 @@
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, defineEmits, watch, ref } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
 import { useStore } from '@/store'
 import { UploadedImageModel } from '@/common/model/upload.model'
 import copyExternalLink from '@/common/utils/copy-external-link'
@@ -75,9 +74,7 @@ function cancelPick() {
 async function batchDeleteImage() {
   if (getImageCardCheckedArr.value?.length > 0) {
     ElMessageBox.confirm('是否批量删除已选中的图片？', '删除提示', {
-      confirmButtonText: `确定`,
-      cancelButtonText: `取消`,
-      iconClass: `el-icon-warning`
+      type: 'warning'
     })
       .then(async () => {
         const res = await delelteBatchImage(getImageCardCheckedArr.value, userConfigInfo)

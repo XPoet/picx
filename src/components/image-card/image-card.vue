@@ -33,22 +33,21 @@
       <div class="operation-left">
         <div
           v-if="isManagementPage"
-          :class="[imageObj.checked ? 'picked-btn' : 'pick-btn', 'btn']"
+          :class="[imageObj.checked ? 'picked-btn' : 'pick-btn', 'operation-btn']"
           @click="trigglePick(imageObj)"
         >
-          <i v-if="imageObj.checked" class="el-icon-check"></i>
+          <el-icon v-if="imageObj.checked"><Check /></el-icon>
         </div>
       </div>
       <div class="operation-right">
         <!--<el-tooltip content="查看大图" placement="top">
           <div class="btn" @click="imageView(imageObj)">
-            <i class="el-icon-full-screen"></i>
+            <el-icon><FullScreen /></el-icon>
           </div>
         </el-tooltip>-->
-
-        <el-dropdown size="small" trigger="click" @visible-change="visibleChange">
-          <div class="btn">
-            <i class="el-icon-more"></i>
+        <el-dropdown trigger="click" @visible-change="visibleChange">
+          <div class="operation-btn">
+            <el-icon><MoreFilled /></el-icon>
           </div>
           <template #dropdown>
             <el-dropdown-menu>
@@ -69,7 +68,7 @@
 
 <script lang="ts" setup>
 import { computed, ref, defineEmits, nextTick } from 'vue'
-import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
@@ -173,10 +172,8 @@ const deleteImageTips = (imageObj: UploadedImageModel) => {
     `,
     `删除提示`,
     {
-      confirmButtonText: `确定`,
-      cancelButtonText: `取消`,
       dangerouslyUseHTMLString: true,
-      iconClass: `el-icon-warning`
+      type: 'warning'
     }
   )
     .then(() => {
@@ -241,9 +238,7 @@ const updateRename = async () => {
   }
 
   ElMessageBox.confirm(`确定重命名为 ${renameValue.value} ？`, `重命名提示`, {
-    confirmButtonText: `确定`,
-    cancelButtonText: `取消`,
-    iconClass: `el-icon-warning`
+    type: 'warning'
   })
     .then(async () => {
       await renameFn()
@@ -270,7 +265,7 @@ const imageView = (imgObj: UploadedImageModel) => {
 }
 
 const viewImageProperties = (imgObj: UploadedImageModel) => {
-  ElMessageBox.confirm(
+  ElMessageBox.alert(
     `
     <div>图片名称：<strong>${imgObj.name}</strong></div>
     <div>图片大小：<strong>${getFileSize(imgObj.size)} KB</strong></div>
@@ -284,12 +279,6 @@ const viewImageProperties = (imgObj: UploadedImageModel) => {
       dangerouslyUseHTMLString: true
     }
   )
-    .then(() => {
-      console.log('Confirm')
-    })
-    .catch(() => {
-      console.log('Close')
-    })
 }
 </script>
 

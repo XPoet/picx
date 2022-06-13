@@ -49,7 +49,6 @@
 
 <script lang="ts" setup>
 import { computed, watch, ref, Ref } from 'vue'
-import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import imageCard from '@/components/image-card/image-card.vue'

@@ -10,7 +10,7 @@
         v-show="navItem.isShow"
       >
         <div class="nav-content">
-          <el-icon :size="20">
+          <el-icon :size="28">
             <component :is="navItem.icon"></component>
           </el-icon>
           <span class="nav-name">{{ navItem.name }}</span>

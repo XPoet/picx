@@ -1,3 +1,3 @@
-// import { registerSW } from 'virtual:pwa-register'
-//
-// registerSW()
+import { registerSW } from 'virtual:pwa-register'
+
+registerSW()

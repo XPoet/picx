@@ -21,7 +21,7 @@
         </div>
 
         <div class="avatar" v-if="!userConfigInfo?.avatarUrl">
-          <i class="el-icon-user-solid"></i>
+          <el-icon :size="22"><UserFilled /></el-icon>
         </div>
 
         <el-dropdown

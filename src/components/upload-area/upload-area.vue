@@ -12,7 +12,7 @@
     <label for="uploader" class="active-upload" v-if="uploadAreaActive"></label>
     <input id="uploader" type="file" @change="onSelect" multiple="multiple" />
     <div class="tips active-upload" v-if="!toUploadImage.curImgBase64Url">
-      <i class="icon el-icon-upload active-upload"></i>
+      <el-icon :size="80" class="active-upload"><UploadFilled /></el-icon>
       <div class="text active-upload">拖拽、粘贴、或点击此处上传</div>
     </div>
     <img
@@ -31,10 +31,10 @@ import { filenameHandle } from '@/common/utils/file-handle-helper'
 import selectedFileHandle, { handleResult } from '@/common/utils/selected-file-handle'
 import createToUploadImageObject from '@/common/utils/create-to-upload-image'
 import paste from '@/common/utils/paste'
+import Upload from '@/views/upload/upload.vue'
 
 export default defineComponent({
   name: 'upload-area',
-
   props: {
     imageLoading: {
       type: Boolean,

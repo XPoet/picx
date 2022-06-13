@@ -115,27 +115,27 @@
                 !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100
             }"
           >
-            <i
-              class="el-icon-upload2"
+            <el-icon
               v-if="
                 !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100
               "
-            >
-            </i>
+              ><Upload
+            /></el-icon>
 
-            <i
-              class="el-icon-loading"
+            <el-icon
+              class="is-loading"
               v-if="
                 imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100
               "
-            ></i>
+              ><Loading
+            /></el-icon>
 
-            <i
-              class="el-icon-check"
+            <el-icon
               v-if="
                 !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100
               "
-            ></i>
+              ><Check
+            /></el-icon>
           </div>
 
           <div
@@ -146,7 +146,7 @@
             @click="removeToUploadImage(imgItem)"
           >
             <el-tooltip effect="dark" content="移除" placement="top">
-              <i class="el-icon-delete"></i>
+              <el-icon><Delete /></el-icon>
             </el-tooltip>
           </div>
         </li>
