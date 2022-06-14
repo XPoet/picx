@@ -7,6 +7,9 @@
           v-model="userConfigInfo.token"
           clearable
           :autofocus="!userConfigInfo.token"
+          type="password"
+          show-password
+          placeholder="请输入 GitHub Token"
         ></el-input>
       </el-form-item>
 
@@ -345,6 +348,7 @@ function getBranchList(repos: string) {
             label: item.name
           })
         }
+        userConfigInfo.branchList.reverse()
         userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
         userConfigInfo.branchMode = BranchModeEnum.reposBranch
         getDirList()
