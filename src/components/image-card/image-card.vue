@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, defineEmits, nextTick } from 'vue'
+import { computed, ref, nextTick } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'

@@ -7,13 +7,13 @@ const setThemeMode = () => {
 
   const setBodyClassName = async (theme: 'dark' | 'light') => {
     await nextTick(() => {
-      const body = document.getElementsByTagName('body')[0]
+      const body = document.getElementsByTagName('html')[0]
       if (theme === 'dark') {
-        body.classList.remove('light-mode')
-        body.classList.add('dark-mode')
+        body.classList.remove('light')
+        body.classList.add('dark')
       } else {
-        body.classList.remove('dark-mode')
-        body.classList.add('light-mode')
+        body.classList.remove('dark')
+        body.classList.add('light')
       }
     })
   }

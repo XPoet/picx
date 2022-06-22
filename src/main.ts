@@ -3,6 +3,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import router from '@/router/index'
 import { key, store } from '@/store'
 import App from './App.vue'
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 if (import.meta.env.MODE === 'production') {
   // @ts-ignore
