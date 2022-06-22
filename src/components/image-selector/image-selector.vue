@@ -21,7 +21,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, defineEmits, watch, ref } from 'vue'
+import { computed, onMounted, watch, ref } from 'vue'
 import { useStore } from '@/store'
 import { UploadedImageModel } from '@/common/model/upload.model'
 import copyExternalLink from '@/common/utils/copy-external-link'
@@ -48,13 +48,9 @@ const getImageCardCheckedNum = computed(() => getImageCardCheckedArr.value.lengt
 
 watch(
   () => getImageCardCheckedNum.value,
-  (newVal, oldVal) => {
+  (newVal) => {
     const newValCheckedNum = props.currentDirImageList.length
-    if (newVal === newValCheckedNum) {
-      checked.value = true
-    } else {
-      checked.value = false
-    }
+    checked.value = newVal === newValCheckedNum
   }
 )
 

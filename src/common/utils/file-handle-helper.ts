@@ -1,4 +1,4 @@
-import getUuid from './get-uuid'
+import { getUuid } from './common-utils'
 
 /**
  * get filename

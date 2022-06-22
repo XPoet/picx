@@ -12,7 +12,7 @@ export enum CompressEncoderMap {
   webP = 'webP'
 }
 
-const compress = async (file: File, encoder: CompressEncoderMap) => {
+export const compress = async (file: File, encoder: CompressEncoderMap) => {
   const compress = new Compress(file, {
     encoderState: {
       type: encoder,
@@ -24,5 +24,3 @@ const compress = async (file: File, encoder: CompressEncoderMap) => {
 
   return compress.process()
 }
-
-export { compress }

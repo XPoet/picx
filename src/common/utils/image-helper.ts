@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { UploadedImageModel } from '@/common/model/upload.model'
-import getUuid from '@/common/utils/get-uuid'
+import { getUuid } from '@/common/utils/common-utils'
 import generateExternalLink from '@/common/utils/generate-external-link'
 import { ExternalLinkType } from '@/common/model/externalLink.model'
 import { store } from '@/store'

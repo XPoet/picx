@@ -69,7 +69,6 @@
 
 <script lang="ts" setup>
 import { onMounted, computed, ref, onUpdated } from 'vue'
-import { ElMessage } from 'element-plus'
 import { ExternalLinkType } from '@/common/model/externalLink.model'
 import { store } from '@/store'
 
