@@ -43,21 +43,21 @@
         ></el-switch>
       </li>
       <li class="setting-item">
-        <div class="img-encoder-title">选择图像编码器：</div>
+        <div class="img-encoder-title">选择图像编码器（压缩算法）：</div>
         <el-radio-group
           :disabled="!userSettings.isCompress"
           v-model="userSettings.compressEncoder"
           @change="persistUserSettings"
         >
           <el-radio :label="compressEncoder.webP">
-            {{ compressEncoder.webP }} （压缩后格式为 webp，现代浏览器支持）
+            {{ compressEncoder.webP }} （压缩后图片格式为 webp，大多数现代浏览器支持）
           </el-radio>
           <el-radio :label="compressEncoder.mozJPEG">
-            {{ compressEncoder.mozJPEG }} （压缩后格式为 jpg，兼容性好）
+            {{ compressEncoder.mozJPEG }} （压缩后图片格式为 jpg，兼容性最好）
           </el-radio>
           <el-radio :label="compressEncoder.avif">
             {{ compressEncoder.avif }}
-            （压缩后格式为 avif， 压缩比高，目前仅谷歌浏览器支持该格式）
+            （压缩后图片格式为 avif，压缩比最高，目前仅谷歌浏览器支持）
           </el-radio>
         </el-radio-group>
       </li>
