@@ -15,15 +15,31 @@
   .setting-item {
     margin-bottom 15rem
 
+    &.last-child {
+      margin-bottom 0
+    }
+
     .prefix-input {
       width calc(100% - 50px)
       margin-left 50px
       margin-top 15rem
     }
 
-    &.last-child {
-      margin-bottom 0
+    .img-encoder-title {
+      margin-bottom 10rem
     }
+
+    :deep() .el-radio-group {
+
+      display inline-block
+
+      .el-radio {
+        display block
+        margin 2rem 0
+      }
+
+    }
+
   }
 
 }
