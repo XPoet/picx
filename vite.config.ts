@@ -26,13 +26,15 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       }
     },
     base: VITE_PUBLIC_PATH, // 设置打包路径
+    optimizeDeps: {
+      exclude: ['@yireen/squoosh-browser']
+    },
     server: {
       port: VITE_PORT,
       open: VITE_OPEN_BROWSER,
       cors: VITE_CORS
-
       /**
-       * 设置代理（解决前端跨域问题）
+       * proxy 设置代理（解决前端跨域问题）
        * /api -> https://xxx.xxx.com
        * ^/API -> /
        * /api/aa/bb -> https://xxx.xxx.com/aa/bb
@@ -46,25 +48,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       //     rewrite: (path) => path.replace('^/API', '/')
       //   }
       // }
-    },
-    optimizeDeps: {
-      exclude: ['@yireen/squoosh-browser']
-    },
-    css: {
-      postcss: {
-        plugins: [
-          {
-            postcssPlugin: 'internal:charset-removal',
-            AtRule: {
-              charset: (atRule) => {
-                if (atRule.name === 'charset') {
-                  atRule.remove()
-                }
-              }
-            }
-          }
-        ]
-      }
     }
   }
 }
