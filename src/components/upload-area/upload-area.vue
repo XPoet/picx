@@ -12,7 +12,7 @@
     <label for="uploader" class="active-upload" v-if="uploadAreaActive"></label>
     <input id="uploader" type="file" @change="onSelect" multiple="multiple" />
     <div class="tips active-upload" v-if="!toUploadImage.curImgBase64Url">
-      <el-icon :size="80" class="active-upload"><UploadFilled /></el-icon>
+      <el-icon class="icon active-upload"><UploadFilled /></el-icon>
       <div class="text active-upload">拖拽、粘贴、或点击此处上传</div>
     </div>
     <img

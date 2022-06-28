@@ -1,9 +1,9 @@
 <template>
   <span class="site-count" ref="siteCountDom" v-show="isShow">
-    累计
+    超过
     <span id="busuanzi_value_site_uv" class="uv" v-show="isuv"></span>
     <span id="busuanzi_value_site_pv" class="pv" v-show="!isuv"></span>
-    访问次数
+    次被使用
   </span>
 </template>
 

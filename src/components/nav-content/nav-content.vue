@@ -107,8 +107,6 @@ const navClick = (e: any) => {
 }
 
 const changeNavActive = (currentPath: string) => {
-  console.log('currentPath: ', currentPath)
-
   navList.value.forEach((v) => {
     const temp = v
     temp.isActive = v.path === currentPath

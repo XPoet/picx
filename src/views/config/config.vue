@@ -122,7 +122,7 @@
 
     <!-- 目录 -->
     <el-form
-      label-width="70px"
+      label-width="70rem"
       :label-position="labelPosition"
       v-if="userConfigInfo.selectedBranch"
       v-loading="dirLoading"
@@ -204,7 +204,7 @@
     </el-form>
 
     <!-- 操作（重置、完成配置） -->
-    <el-form label-width="70px" :label-position="labelPosition">
+    <el-form label-width="70rem" :label-position="labelPosition">
       <el-form-item class="operation">
         <el-button plain type="warning" @click="reset()" v-if="userConfigInfo.owner">
           重置
