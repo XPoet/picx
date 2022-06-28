@@ -54,22 +54,58 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
   return initConfig
 }
 
+const userConfigInfoUpdate = (state: UserConfigInfoStateTypes): void => {
+  const { selectedDir, selectedBranch, dirMode } = state.userConfigInfo
+  if (dirMode === 'newDir') {
+    const strList = selectedDir.split('')
+    let count = 0
+    let newStr = ''
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < strList.length; i++) {
+      if (strList[i] === ' ' || strList[i] === '.' || strList[i] === '、') {
+        strList[i] = '-'
+      }
+      if (strList[i] === '/') {
+        count += 1
+      }
+      if (count >= 3) {
+        break
+      }
+      newStr += strList[i]
+    }
+    state.userConfigInfo.selectedDir = newStr
+  }
+  state.userConfigInfo.selectedBranch = selectedBranch.replace(/\s+/g, '-')
+}
+
 const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
   state: {
     userConfigInfo: initUserConfigInfo()
   },
 
   actions: {
+    // 持久化状态获取
+    USER_CONFIG_INFO_RESET({ state }) {
+      state.userConfigInfo = initUserConfigInfo()
+    },
     // 设置用户配置信息
-    SET_USER_CONFIG_INFO({ state, dispatch }, configInfo: UserConfigInfoStateTypes) {
+    SET_USER_CONFIG_INFO(
+      { state, dispatch },
+      configInfo: UserConfigInfoStateTypes,
+      needPersist: boolean = true
+    ) {
       // eslint-disable-next-line no-restricted-syntax
       for (const key in configInfo) {
         // eslint-disable-next-line no-prototype-builtins
         if (state.userConfigInfo.hasOwnProperty(key)) {
           // @ts-ignore
           state.userConfigInfo[key] = configInfo[key]
+        } else if (key === 'needPersist') {
+          // eslint-disable-next-line
+          needPersist = false
         }
       }
+      if (!needPersist) return
       dispatch('USER_CONFIG_INFO_PERSIST')
     },
 
@@ -92,30 +128,14 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
     },
 
     // 持久化用户配置信息
-    // 持久化用户配置信息
     USER_CONFIG_INFO_PERSIST({ state }) {
-      const { selectedDir, selectedBranch, dirMode } = state.userConfigInfo
-      if (dirMode === 'newDir') {
-        const strList = selectedDir.split('')
-        let count = 0
-        let newStr = ''
-        // eslint-disable-next-line no-plusplus
-        for (let i = 0; i < strList.length; i++) {
-          if (strList[i] === ' ' || strList[i] === '.' || strList[i] === '、') {
-            strList[i] = '-'
-          }
-          if (strList[i] === '/') {
-            count += 1
-          }
-          if (count >= 3) {
-            break
-          }
-          newStr += strList[i]
-        }
-        state.userConfigInfo.selectedDir = newStr
-      }
-      state.userConfigInfo.selectedBranch = selectedBranch.replace(/\s+/g, '-')
+      userConfigInfoUpdate(state)
       localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
+    },
+
+    // 修改 userConfigInfo 但无需持久化 (目前提供图床管理页面使用)
+    USER_CONFIG_INFO_NOT_PERSIST({ state }) {
+      userConfigInfoUpdate(state)
     },
 
     // 退出登录

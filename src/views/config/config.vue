@@ -1,24 +1,21 @@
 <template>
   <div class="page-container config-page-container">
     <!-- Token -->
-    <el-form
-      label-width="70rem"
-      :label-position="labelPosition"
-      class="config-form"
-      :size="userSettings.elementPlusSize"
-    >
+    <el-form label-width="70rem" :label-position="labelPosition" class="config-form">
       <el-form-item label="Token">
         <el-input
           v-model="userConfigInfo.token"
           clearable
           :autofocus="!userConfigInfo.token"
+          type="password"
+          show-password
+          placeholder="请输入 GitHub Token"
         ></el-input>
       </el-form-item>
 
       <el-form-item class="operation">
         <el-button
           plain
-          :size="userSettings.elementPlusSize"
           type="primary"
           native-type="submit"
           @click.prevent="getUserInfo()"
@@ -35,7 +32,6 @@
       v-if="userConfigInfo.token"
       v-loading="loading"
       element-loading-text="加载中..."
-      :size="userSettings.elementPlusSize"
     >
       <el-form-item v-if="userConfigInfo.owner" label="用户名">
         <el-input v-model="userConfigInfo.owner" readonly></el-input>
@@ -71,7 +67,6 @@
       v-if="userConfigInfo.selectedRepos && userConfigInfo.branchList.length"
       v-loading="branchLoading"
       element-loading-text="加载中..."
-      :size="userSettings.elementPlusSize"
     >
       <!-- 因未验证 API 是否能创建空分支，暂时不开启分支选择方式 && 0 -->
       <el-form-item v-if="userConfigInfo.selectedRepos && 0" label="分支方式">
@@ -127,12 +122,11 @@
 
     <!-- 目录 -->
     <el-form
-      label-width="70px"
+      label-width="70rem"
       :label-position="labelPosition"
       v-if="userConfigInfo.selectedBranch"
       v-loading="dirLoading"
       element-loading-text="加载中..."
-      :size="userSettings.elementPlusSize"
     >
       <el-form-item v-if="userConfigInfo.selectedBranch" label="目录方式">
         <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
@@ -209,25 +203,14 @@
       </el-form-item>
     </el-form>
 
-    <!-- 操作 -->
-    <el-form
-      label-width="70px"
-      :size="userSettings.elementPlusSize"
-      :label-position="labelPosition"
-    >
+    <!-- 操作（重置、完成配置） -->
+    <el-form label-width="70rem" :label-position="labelPosition">
       <el-form-item class="operation">
-        <el-button
-          plain
-          :size="userSettings.elementPlusSize"
-          type="warning"
-          @click="reset()"
-          v-if="userConfigInfo.owner"
-        >
+        <el-button plain type="warning" @click="reset()" v-if="userConfigInfo.owner">
           重置
         </el-button>
         <el-button
           plain
-          :size="userSettings.elementPlusSize"
           type="success"
           @click="goUpload"
           v-if="userConfigInfo.selectedRepos"
@@ -262,7 +245,7 @@ const dirLoading = ref(false)
 const branchLoading = ref(false)
 
 const labelPosition = computed(() => {
-  return userSettings.elementPlusSize !== 'medium' ? 'top' : 'right'
+  return userSettings.elementPlusSize === 'small' ? 'top' : 'right'
 })
 
 const elCascaderKey = ref<string>('elCascaderKey')
@@ -365,6 +348,7 @@ function getBranchList(repos: string) {
             label: item.name
           })
         }
+        userConfigInfo.branchList.reverse()
         userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
         userConfigInfo.branchMode = BranchModeEnum.reposBranch
         getDirList()

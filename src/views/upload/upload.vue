@@ -2,7 +2,7 @@
   <div class="upload-page-container">
     <div
       class="upload-page-left page-container"
-      v-if="uploadedImageList.length && userSettings.elementPlusSize === 'medium'"
+      v-if="uploadedImageList.length && userSettings.elementPlusSize === 'large'"
       :style="{
         width: '280rem'
       }"
@@ -35,20 +35,12 @@
         <div class="content-box" style="text-align: right">
           <el-button
             plain
-            :size="userSettings.elementPlusSize"
             type="warning"
             @click="resetUploadInfo"
             v-if="toUploadImage.list.length"
             >重置
           </el-button>
-          <el-button
-            plain
-            :size="userSettings.elementPlusSize"
-            type="primary"
-            @click="uploadImage"
-          >
-            上传
-          </el-button>
+          <el-button plain type="primary" @click="uploadImage"> 上传 </el-button>
         </div>
       </div>
     </div>
@@ -57,7 +49,6 @@
 
 <script lang="ts" setup>
 import { computed, watch, ref, Ref } from 'vue'
-import { ElMessage } from 'element-plus'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import imageCard from '@/components/image-card/image-card.vue'

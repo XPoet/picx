@@ -9,5 +9,5 @@ export interface UserSettingsModel {
   autoLightThemeTime: string[]
   isCompress: boolean
   compressEncoder: CompressEncoderMap
-  elementPlusSize?: 'medium' | 'small' | 'mini'
+  elementPlusSize?: 'large' | 'default' | 'small'
 }

@@ -10,14 +10,15 @@
             placement="top"
             :content="listing ? '切换方块展示' : '切换列表展示'"
           >
-            <i
-              class="btn-icon"
-              :class="listing ? 'el-icon-tickets' : 'el-icon-menu'"
-              @click.stop="toggleListing"
-            ></i>
+            <el-icon class="btn-icon" @click.stop="toggleListing">
+              <Tickets v-if="listing" />
+              <Menu v-if="!listing" />
+            </el-icon>
           </el-tooltip>
           <el-tooltip placement="top" content="重新加载图片">
-            <i class="btn-icon el-icon-refresh" @click.stop="reloadCurrentDirContent"></i>
+            <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
+              <Refresh
+            /></el-icon>
           </el-tooltip>
         </div>
       </div>

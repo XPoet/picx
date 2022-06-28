@@ -25,7 +25,7 @@ export function uploadImage_single(
   img.uploadStatus.uploading = true
 
   const data: any = {
-    message: 'Upload pictures via PicX(https://github.com/XPoet/picx)',
+    message: 'Upload picture via PicX(https://github.com/XPoet/picx)',
     branch: selectedBranch,
     content: img.imgData.base64Content
   }
@@ -104,6 +104,7 @@ function uploadedHandle(
   )
 
   const item: UploadedImageModel = {
+    checked: false,
     type: 'image',
     uuid: img.uuid,
     dir: userConfigInfo.selectedDir,

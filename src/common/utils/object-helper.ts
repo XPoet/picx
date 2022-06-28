@@ -1,4 +1,4 @@
-import getType from './get-type'
+import { getType } from './common-utils'
 
 /**
  * 根据 object 每个 key 上值的数据类型，赋对应的初始值

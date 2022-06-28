@@ -2,19 +2,19 @@
   <div class="selected-info-bar-box" v-if="userConfigInfo.selectedRepos">
     <span class="info-item">
       仓库：
-      <el-tag :size="userSettings.elementPlusSize">
+      <el-tag>
         {{ userConfigInfo.selectedRepos }}
       </el-tag>
     </span>
     <span class="info-item" v-if="userConfigInfo.selectedBranch">
       分支：
-      <el-tag :size="userSettings.elementPlusSize">
+      <el-tag>
         {{ userConfigInfo.selectedBranch }}
       </el-tag>
     </span>
     <span class="info-item" v-if="userConfigInfo.selectedDir">
       目录：
-      <el-tag :size="userSettings.elementPlusSize">
+      <el-tag>
         {{ userConfigInfo.selectedDir }}
       </el-tag>
     </span>

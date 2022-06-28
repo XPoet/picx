@@ -1,28 +1,29 @@
 import { Module } from 'vuex'
 import { PICX_SETTINGS } from '@/common/model/storage.model'
-import { cleanObject, deepAssignObject } from '@/common/utils/object-helper'
+import { deepAssignObject } from '@/common/utils/object-helper'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 import { CompressEncoderMap } from '@/common/utils/compress'
 import { UserSettingsModel } from '@/common/model/user-settings.model'
 import UserSettingsStateTypes from '@/store/modules/user-settings/types'
+import { getLocalItem } from '@/common/utils/common-utils'
+
+const initSettings: UserSettingsModel = {
+  defaultHash: true,
+  defaultMarkdown: false,
+  defaultPrefix: false,
+  prefixName: '',
+  isCompress: true,
+  compressEncoder: CompressEncoderMap.webP,
+  themeMode: 'light',
+  autoLightThemeTime: ['08:00', '19:00'],
+  elementPlusSize: 'default'
+}
 
 const initUserSettings = (): UserSettingsModel => {
-  const initSettings: UserSettingsModel = {
-    defaultHash: true,
-    defaultMarkdown: false,
-    defaultPrefix: false,
-    prefixName: '',
-    isCompress: true,
-    compressEncoder: CompressEncoderMap.webP,
-    themeMode: 'light',
-    autoLightThemeTime: ['08:00', '19:00'],
-    elementPlusSize: 'medium'
-  }
-
-  const LSSettings: string | null = localStorage.getItem(PICX_SETTINGS)
+  const LSSettings = getLocalItem(PICX_SETTINGS)
   if (LSSettings) {
-    deepAssignObject(initSettings, JSON.parse(LSSettings))
+    deepAssignObject(initSettings, LSSettings)
   }
   return initSettings
 }
@@ -52,7 +53,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
 
     // 退出登录
     USER_SETTINGS_LOGOUT({ state }) {
-      cleanObject(state.userSettings)
+      state.userSettings = initSettings
     }
   },
 

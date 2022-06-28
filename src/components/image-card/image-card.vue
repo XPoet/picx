@@ -13,11 +13,13 @@
     <div class="info-box">
       <div class="image-info">
         <el-input
+          size="small"
           v-if="renameValue && props.modelValue === props.index"
           class="rename-input"
           v-model="renameValue"
-          @blur="updateRename"
-          ref="renameInput"
+          @blur="renameInputBlur"
+          @keydown.enter.prevent="updateRename"
+          ref="renameInputRef"
         ></el-input>
         <div class="filename" v-else>{{ imageObj.name }}</div>
         <div class="image-operation">
@@ -33,29 +35,30 @@
       <div class="operation-left">
         <div
           v-if="isManagementPage"
-          :class="[imageObj.checked ? 'picked-btn' : 'pick-btn', 'btn']"
+          :class="[imageObj.checked ? 'picked-btn' : 'pick-btn', 'operation-btn']"
           @click="trigglePick(imageObj)"
         >
-          <i v-if="imageObj.checked" class="el-icon-check"></i>
+          <el-icon v-if="imageObj.checked"><Check /></el-icon>
         </div>
       </div>
       <div class="operation-right">
         <!--<el-tooltip content="查看大图" placement="top">
           <div class="btn" @click="imageView(imageObj)">
-            <i class="el-icon-full-screen"></i>
+            <el-icon><FullScreen /></el-icon>
           </div>
         </el-tooltip>-->
-
-        <el-dropdown size="small" trigger="click" @visible-change="visibleChange">
-          <div class="btn">
-            <i class="el-icon-more"></i>
+        <el-dropdown size="default" trigger="click" @visible-change="visibleChange">
+          <div class="operation-btn">
+            <el-icon><MoreFilled /></el-icon>
           </div>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="deleteImageTips(imageObj)">
                 删除
               </el-dropdown-item>
-              <el-dropdown-item @click="renameImage(imageObj)">重命名</el-dropdown-item>
+              <el-dropdown-item @click.self="renameImage(imageObj)"
+                >重命名</el-dropdown-item
+              >
               <el-dropdown-item @click="viewImageProperties(imageObj)">
                 属性
               </el-dropdown-item>
@@ -68,8 +71,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, defineEmits, nextTick } from 'vue'
-import { ElLoading, ElMessage, ElMessageBox } from 'element-plus'
+import { computed, ref, nextTick } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
@@ -116,7 +118,7 @@ const isManagementPage = computed(() => {
   return router.path === '/management'
 })
 
-const renameInput = ref<InstanceType<typeof ElInput>>()
+const renameInputRef = ref<InstanceType<typeof ElInput>>()
 
 const isShowDelBtn = ref(false)
 
@@ -143,7 +145,7 @@ const doDeleteImage = (
           owner,
           repo: selectedRepos,
           path: imageObj.path,
-          message: 'delete picture via PicX(https://github.com/XPoet/picx)',
+          message: 'Delete picture via PicX(https://github.com/XPoet/picx)',
           sha: imageObj.sha
         }
       })
@@ -173,10 +175,8 @@ const deleteImageTips = (imageObj: UploadedImageModel) => {
     `,
     `删除提示`,
     {
-      confirmButtonText: `确定`,
-      cancelButtonText: `取消`,
       dangerouslyUseHTMLString: true,
-      iconClass: `el-icon-warning`
+      type: 'warning'
     }
   )
     .then(() => {
@@ -197,12 +197,20 @@ const renameImage = async (imgObj: UploadedImageModel) => {
   emits('update:modelValue', props.index)
   renameValue.value = getFilename(imgObj.name)
   await nextTick(() => {
-    renameInput.value?.focus()
+    const temp = setTimeout(() => {
+      renameInputRef.value?.focus()
+      clearTimeout(temp)
+    }, 100)
   })
 }
 
-const updateRename = async () => {
+const renameInputBlur = () => {
   emits('update:modelValue', undefined)
+}
+
+const updateRename = async () => {
+  renameInputBlur()
+
   const { imageObj }: any = props
 
   if (renameValue.value === getFilename(imageObj.name) || !renameValue.value) {
@@ -212,7 +220,7 @@ const updateRename = async () => {
   const renameFn = async () => {
     const loading = ElLoading.service({
       lock: true,
-      text: '更新中...'
+      text: '正在重命名...'
     })
 
     const suffix = getFileSuffix(imageObj.name)
@@ -240,16 +248,14 @@ const updateRename = async () => {
     loading.close()
   }
 
-  ElMessageBox.confirm(`确定重命名为 ${renameValue.value} ？`, `重命名提示`, {
-    confirmButtonText: `确定`,
-    cancelButtonText: `取消`,
-    iconClass: `el-icon-warning`
+  ElMessageBox.confirm(`该图片重命名为 ${renameValue.value} ？`, `提示`, {
+    type: 'warning'
   })
     .then(async () => {
       await renameFn()
     })
     .catch(() => {
-      console.log('取消')
+      console.log('取消图片重命名')
     })
 }
 
@@ -275,21 +281,14 @@ const viewImageProperties = (imgObj: UploadedImageModel) => {
     <div>图片名称：<strong>${imgObj.name}</strong></div>
     <div>图片大小：<strong>${getFileSize(imgObj.size)} KB</strong></div>
     `,
-    `图片属性`,
+    `属性`,
     {
-      confirmButtonText: `确定`,
-      cancelButtonText: `取消`,
       showCancelButton: false,
       showConfirmButton: false,
-      dangerouslyUseHTMLString: true
+      dangerouslyUseHTMLString: true,
+      type: 'info'
     }
   )
-    .then(() => {
-      console.log('Confirm')
-    })
-    .catch(() => {
-      console.log('Close')
-    })
 }
 </script>
 

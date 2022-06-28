@@ -48,28 +48,8 @@ export default defineComponent({
       )
     }
 
-    const elementPlusSizeHadle = (width: number) => {
-      if (width <= 500) {
-        store.dispatch('SET_USER_SETTINGS', {
-          elementPlusSize: 'mini'
-        })
-      } else if (width <= 800) {
-        store.dispatch('SET_USER_SETTINGS', {
-          elementPlusSize: 'small'
-        })
-      } else {
-        store.dispatch('SET_USER_SETTINGS', {
-          elementPlusSize: 'medium'
-        })
-      }
-    }
-
     onMounted(() => {
       userConfigInfoModel()
-      elementPlusSizeHadle(window.innerWidth)
-      window.addEventListener('resize', (e: any) => {
-        elementPlusSizeHadle(e.target.innerWidth)
-      })
     })
 
     return {

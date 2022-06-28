@@ -26,7 +26,6 @@
           class="prefix-input"
           v-if="userSettings.defaultPrefix"
           v-model="userSettings.prefixName"
-          :size="userSettings.elementPlusSize"
           placeholder="请输入命名前缀"
           @input="persistUserSettings"
           clearable
@@ -44,28 +43,22 @@
         ></el-switch>
       </li>
       <li class="setting-item">
-        <div>选择图像编码器：</div>
+        <div class="img-encoder-title">选择图像编码器（压缩算法）：</div>
         <el-radio-group
           :disabled="!userSettings.isCompress"
           v-model="userSettings.compressEncoder"
           @change="persistUserSettings"
         >
-          <div>
-            <el-radio :label="compressEncoder.webP">
-              {{ compressEncoder.webP }} （压缩后格式为 webp，现代浏览器支持）
-            </el-radio>
-          </div>
-          <div>
-            <el-radio :label="compressEncoder.mozJPEG">
-              {{ compressEncoder.mozJPEG }} （压缩后格式为 jpg，兼容性好）
-            </el-radio>
-          </div>
-          <div>
-            <el-radio :label="compressEncoder.avif">
-              {{ compressEncoder.avif }} （压缩后格式为 avif，
-              压缩比高，目前仅谷歌浏览器支持该格式）
-            </el-radio>
-          </div>
+          <el-radio :label="compressEncoder.webP">
+            {{ compressEncoder.webP }} （压缩后图片格式为 webp，大多数现代浏览器支持）
+          </el-radio>
+          <el-radio :label="compressEncoder.mozJPEG">
+            {{ compressEncoder.mozJPEG }} （压缩后图片格式为 jpg，兼容性最好）
+          </el-radio>
+          <el-radio :label="compressEncoder.avif">
+            {{ compressEncoder.avif }}
+            （压缩后图片格式为 avif，压缩比最高，目前仅谷歌浏览器支持）
+          </el-radio>
         </el-radio-group>
       </li>
     </ul>
@@ -77,7 +70,6 @@
           v-model="userSettings.themeMode"
           placeholder="主题模式"
           @change="saveUserSettings"
-          :size="userSettings.elementPlusSize"
         >
           <el-option label="自动设置" value="auto"></el-option>
           <el-option label="暗夜主题" value="dark"></el-option>
@@ -91,7 +83,7 @@
     </div>
     <ul class="setting-list" v-if="userSettings.themeMode === 'auto'">
       <li class="setting-item">
-        <el-form ref="form" :size="userSettings.elementPlusSize">
+        <el-form ref="form">
           <el-form-item>
             <el-time-select
               v-model="userSettings.autoLightThemeTime[0]"

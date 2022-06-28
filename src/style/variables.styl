@@ -49,6 +49,8 @@ $upload-area-focus-color = #0066CC;
 $await-upload-color = #E6A23C;
 $uploading-color = #409EFF;
 $uploaded-color = #67C23A;
+$markdown-icon-color = #808080;
+$markdown-icon-active-color = darken($markdown-icon-color, 30%);
 
 
 
@@ -56,7 +58,7 @@ $uploaded-color = #67C23A;
 // dark mode color
 // ========================================================================================
 $dark-primary-color = #0066CC;
-$dark-background-color = #383940;
+$dark-background-color = #2a2a2f;
 $dark-second-background-color = darken($dark-background-color, 10%);
 $dark-third-background-color = darken($dark-background-color, 15%);
 $dark-default-text-color = #bebec6;
@@ -74,6 +76,8 @@ $dark-upload-area-focus-color = #1070d0;
 $dark-await-upload-color = #c08327;
 $dark-uploading-color = #287dd5;
 $dark-uploaded-color = #55b626;
+$dark-markdown-icon-color = #aaa;
+$dark-markdown-icon-active-color = lighten($dark-markdown-icon-color, 30%);
 
 
 
@@ -100,5 +104,7 @@ root-color(mode) {
   --await-upload-color : mode == 'light' ? $await-upload-color : $dark-await-upload-color;
   --uploading-color : mode == 'light' ? $uploading-color : $dark-uploading-color;
   --uploaded-color : mode == 'light' ? $uploaded-color : $dark-uploaded-color;
+  --markdown-icon-color : mode == 'light' ? $markdown-icon-color : $dark-markdown-icon-color;
+  --markdown-icon-active-color : mode == 'light' ? $markdown-icon-active-color : $dark-markdown-icon-active-color;
 }
 
