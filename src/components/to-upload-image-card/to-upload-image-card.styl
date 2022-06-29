@@ -3,7 +3,6 @@
 $info-item-height = 68rem
 $info-item-border = 1rem
 $info-item-padding = 5rem
-$file-info-background-color = #f1f1f1
 $compressed-file-background-color = #228eff
 $image-width = $info-item-height - ($info-item-border * 2)
 
@@ -83,22 +82,15 @@ $image-width = $info-item-height - ($info-item-border * 2)
           height 100%
           box-sizing border-box
           margin-right 5rem
-          padding $info-item-padding
-
-          .image-box {
-            width 100%
-            height 100%
-            border 1rem solid var(--border-color)
-            border-radius 5rem
-            box-sizing border-box
-            overflow hidden
-            cursor pointer
-          }
 
           img {
-            object-fit: cover;
-            width: 100%;
-            height: 100%;
+            object-fit cover
+            width 100%
+            height 100%
+            overflow hidden
+            cursor pointer
+            border-top-left-radius 5rem
+            border-bottom-left-radius 5rem
           }
         }
 
@@ -131,9 +123,9 @@ $image-width = $info-item-height - ($info-item-border * 2)
 
             .image-name {
               font-size 13rem
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
+              overflow hidden
+              text-overflow ellipsis
+              white-space nowrap
             }
 
             .image-info {
@@ -160,7 +152,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
             &.rename-operation {
 
               .el-checkbox {
-                margin-right: 20rem;
+                margin-right 20rem
               }
 
               .rename-input {
@@ -176,35 +168,34 @@ $image-width = $info-item-height - ($info-item-border * 2)
 
         .upload-status-box {
           box-sizing border-box
-          color: #fff;
-          position: absolute;
-          right: -17rem;
-          top: -7rem;
-          width: 46rem;
-          height: 26rem;
-          text-align: center;
-          transform: rotate(45deg);
-          box-shadow: 0 1rem 1rem var(--border-color);
+          color #fff
+          position absolute
+          right -17rem
+          top -7rem
+          width 46rem
+          height 26rem
+          text-align center
+          transform rotate(45deg)
+          box-shadow 0 1rem 1rem var(--border-color)
 
           &.wait-upload {
-            background: var(--await-upload-color);
+            background var(--await-upload-color)
           }
 
           &.uploading {
-            background: var(--uploading-color);
+            background var(--uploading-color)
           }
 
           &.uploaded {
-            background: var(--uploaded-color);
+            background var(--uploaded-color)
           }
 
           i {
-            font-size: 12rem;
-            margin-top: 12rem;
-            transform: rotate(-45deg);
+            font-size 12rem
+            margin-top 12rem
+            transform rotate(-45deg)
           }
         }
-
 
         .remove-to-upload-image {
           position absolute
