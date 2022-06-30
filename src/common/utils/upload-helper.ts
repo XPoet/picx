@@ -2,8 +2,8 @@ import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
 import { ToUploadImageModel, UploadedImageModel } from '@/common/model/upload.model'
 import axios from '@/common/utils/axios'
 import { store } from '@/store'
-import generateExternalLink from '@/common/utils/generate-external-link'
-import { ExternalLinkType } from '@/common/model/externalLink.model'
+import { generateExternalLink } from '@/common/utils/external-link-handler'
+import ExternalLinkType from '@/common/model/external-link.model'
 
 export const uploadUrlHandle = (
   config: UserConfigInfoModel,
@@ -74,31 +74,23 @@ function uploadedHandle(
   // 生成 GitHub 外链
   // eslint-disable-next-line no-param-reassign
   img.externalLink.github = generateExternalLink(
-    ExternalLinkType.gh,
+    ExternalLinkType.github,
     res.data.content,
     userConfigInfo
   )
 
-  // 生成 CDN 外链
+  // 生成 jsDelivr CDN 外链
   // eslint-disable-next-line no-param-reassign
-  img.externalLink.cdn = generateExternalLink(
-    ExternalLinkType.cdn,
+  img.externalLink.jsdelivr = generateExternalLink(
+    ExternalLinkType.jsdelivr,
     res.data.content,
     userConfigInfo
   )
 
-  // 生成 Markdown 格式 GitHub 外链
+  // 生成 Staticaly CDN 外链
   // eslint-disable-next-line no-param-reassign
-  img.externalLink.markdown_gh = generateExternalLink(
-    ExternalLinkType.md_gh,
-    res.data.content,
-    userConfigInfo
-  )
-
-  // 生成 Markdown 格式 CDN 外链
-  // eslint-disable-next-line no-param-reassign
-  img.externalLink.markdown_cdn = generateExternalLink(
-    ExternalLinkType.md_cdn,
+  img.externalLink.staticaly = generateExternalLink(
+    ExternalLinkType.staticaly,
     res.data.content,
     userConfigInfo
   )
@@ -112,13 +104,11 @@ function uploadedHandle(
     path: res.data.content.path,
     sha: res.data.content.sha,
     github_url: img.externalLink.github,
-    cdn_url: img.externalLink.cdn,
-    md_gh_url: img.externalLink.markdown_gh,
-    md_cdn_url: img.externalLink.markdown_cdn,
+    jsdelivr_cdn_url: img.externalLink.jsdelivr,
+    staticaly_cdn_url: img.externalLink.staticaly,
     is_transform_md: userSettings.defaultMarkdown,
     deleting: false,
-    size: img.fileInfo.size,
-    lastModified: img.fileInfo.lastModified
+    size: img.fileInfo.size
   }
 
   // eslint-disable-next-line no-param-reassign

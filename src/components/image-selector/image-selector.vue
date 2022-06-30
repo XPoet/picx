@@ -17,19 +17,16 @@
         <el-icon class="btn-icon" @click="batchDeleteImage"><Delete /></el-icon>
       </el-tooltip>
     </div>
-    <textarea class="temp-batch-externalink"></textarea>
   </div>
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, watch, ref } from 'vue'
 import { useStore } from '@/store'
 import { UploadedImageModel } from '@/common/model/upload.model'
-import copyExternalLink from '@/common/utils/copy-external-link'
+import { batchCopyExternalLink } from '@/common/utils/external-link-handler'
 import { delelteBatchImage } from '@/common/utils/delete-image-card'
-import { ExternalLinkType } from '@/common/model/externalLink.model'
 import { deleteStatusEnum } from '@/common/model/delete.model'
 
-// eslint-disable-next-line no-undef
 const props = defineProps({
   currentDirImageList: {
     type: Array,
@@ -44,6 +41,7 @@ const checked = ref(false)
 
 const getImageCardCheckedArr = computed(() => store.getters.getImageCardCheckedArr)
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const userSettings = computed(() => store.getters.getUserSettings).value
 const getImageCardCheckedNum = computed(() => getImageCardCheckedArr.value.length || 0)
 
 watch(
@@ -55,7 +53,7 @@ watch(
 )
 
 function copyLink() {
-  copyExternalLink(getImageCardCheckedArr.value, ExternalLinkType.cdn, '批量复制链接成功')
+  batchCopyExternalLink(getImageCardCheckedArr.value, userSettings.externalLinkType)
 }
 
 function cancelPick() {

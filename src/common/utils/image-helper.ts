@@ -1,13 +1,16 @@
 import { computed } from 'vue'
 import { UploadedImageModel } from '@/common/model/upload.model'
 import { getUuid } from '@/common/utils/common-utils'
-import generateExternalLink from '@/common/utils/generate-external-link'
-import { ExternalLinkType } from '@/common/model/externalLink.model'
+import { generateExternalLink } from '@/common/utils/external-link-handler'
+import ExternalLinkType from '@/common/model/external-link.model'
 import { store } from '@/store'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
-function structureImageObject(item: any, selectedDir: string): UploadedImageModel {
+export default function structureImageObject(
+  item: any,
+  selectedDir: string
+): UploadedImageModel {
   return {
     type: 'image',
     uuid: getUuid(),
@@ -15,16 +18,20 @@ function structureImageObject(item: any, selectedDir: string): UploadedImageMode
     name: item.name,
     path: item.path,
     sha: item.sha,
-    github_url: generateExternalLink(ExternalLinkType.gh, item, userConfigInfo),
-    cdn_url: generateExternalLink(ExternalLinkType.cdn, item, userConfigInfo),
-    md_gh_url: generateExternalLink(ExternalLinkType.md_gh, item, userConfigInfo),
-    md_cdn_url: generateExternalLink(ExternalLinkType.md_cdn, item, userConfigInfo),
     deleting: false,
     is_transform_md: false,
     size: item.size,
-    checked: false
+    checked: false,
+    github_url: generateExternalLink(ExternalLinkType.github, item, userConfigInfo),
+    jsdelivr_cdn_url: generateExternalLink(
+      ExternalLinkType.jsdelivr,
+      item,
+      userConfigInfo
+    ),
+    staticaly_cdn_url: generateExternalLink(
+      ExternalLinkType.staticaly,
+      item,
+      userConfigInfo
+    )
   }
 }
-
-// eslint-disable-next-line import/prefer-default-export
-export { structureImageObject }

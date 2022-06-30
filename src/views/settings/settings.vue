@@ -6,21 +6,14 @@
         <el-switch
           v-model="userSettings.defaultHash"
           @change="persistUserSettings"
-          active-text="上传时默认给图片加上哈希码"
-        ></el-switch>
-      </li>
-      <li class="setting-item">
-        <el-switch
-          v-model="userSettings.defaultMarkdown"
-          @change="persistUserSettings"
-          active-text="上传后默认开启 Markdown 格式的外链"
+          active-text="上传时给图片名加上哈希码（确保图片名唯一，强烈建议开启）"
         ></el-switch>
       </li>
       <li class="setting-item">
         <el-switch
           v-model="userSettings.defaultPrefix"
           @change="persistUserSettings"
-          active-text="上传时默认使用配置的命名前缀"
+          active-text="上传时给图片名加上配置的前缀（示例：abc-image.jpg，abc- 为前缀）"
         ></el-switch>
         <el-input
           class="prefix-input"
@@ -32,7 +25,30 @@
           autofocus
         ></el-input>
       </li>
+      <li class="setting-item">
+        <el-switch
+          v-model="userSettings.defaultMarkdown"
+          @change="persistUserSettings"
+          active-text="上传成功后复制的图片外链启用 Markdown 格式（![ ... ]( ... )）"
+        ></el-switch>
+      </li>
     </ul>
+
+    <div class="setting-title">CDN 提供商：</div>
+    <ul class="setting-list">
+      <li class="setting-item">
+        <el-select
+          v-model="userSettings.externalLinkType"
+          placeholder="选择 CDN 提供商"
+          @change="saveUserSettings"
+        >
+          <el-option label="Staticaly" value="staticaly"></el-option>
+          <el-option label="jsDelivr" value="jsdelivr"></el-option>
+          <el-option label="GitHub" value="github"></el-option>
+        </el-select>
+      </li>
+    </ul>
+
     <div class="setting-title">压缩设置：</div>
     <ul class="setting-list">
       <li class="setting-item">
@@ -87,7 +103,6 @@
           <el-form-item>
             <el-time-select
               v-model="userSettings.autoLightThemeTime[0]"
-              placeholder=""
               start="00:00"
               step="00:30"
               end="23:59"
@@ -96,7 +111,6 @@
             <span class="time-middle-space"> ~ </span>
             <el-time-select
               v-model="userSettings.autoLightThemeTime[1]"
-              placeholder="Start time"
               :start="userSettings.autoLightThemeTime[0]"
               step="00:30"
               end="23:59"

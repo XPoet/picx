@@ -30,7 +30,7 @@ export const getDirContent = (dirPath: string, dirObj: DirObject) => {
 }
 
 /**
- * 获取当前目录下所有内容（子目录和图片）
+ * 过滤当前目录的内容（子目录或图片）
  * @param dirPath
  * @param content
  * @param type

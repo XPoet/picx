@@ -2,11 +2,15 @@ import { computed } from 'vue'
 import axios from '@/common/utils/axios'
 import { store } from '@/store'
 import { getFileSuffix, isImage } from '@/common/utils/file-handle-helper'
-import { structureImageObject } from '@/common/utils/image-helper'
+import structureImageObject from '@/common/utils/image-helper'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
-export const GetDirList = (path: string = '') => {
+/**
+ * 获取指定路径（path）下的目录列表
+ * @param path 路径
+ */
+export const getDirListByPath = (path: string = '') => {
   return new Promise((resolve) => {
     axios
       .get(
@@ -37,6 +41,10 @@ export const GetDirList = (path: string = '') => {
   })
 }
 
+/**
+ * 获取指定路径（path）下的目录和图片
+ * @param path
+ */
 export const getContentByReposPath = (path: string = '') => {
   return new Promise((resolve) => {
     axios

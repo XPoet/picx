@@ -4,12 +4,12 @@ import createToUploadImageObject from '@/common/utils/create-to-upload-image'
 import { filenameHandle } from './file-handle-helper'
 
 /**
- *
+ * 根据图片链接获取图片 base64 编码
  * @param url 图片路径
  * @param ext 图片格式
  */
 export function getBase64ByImageUrl(url: string, ext: string): Promise<string | null> {
-  const canvas = document.createElement('canvas') // 创建 canvas DOM 元素
+  const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
   const img = new Image()
   img.crossOrigin = 'Anonymous'

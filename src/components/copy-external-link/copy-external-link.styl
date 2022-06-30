@@ -32,6 +32,7 @@
 
   .btn-box {
     position relative
+    box-sizing border-box
     width 108rem
     height 100%
     display flex
@@ -47,22 +48,16 @@
     }
 
     .copy-url {
+      box-sizing border-box
       border 1rem solid var(--default-text-color)
       color var(--default-text-color)
+      padding 1rem 2rem
+      margin-right 4rem
 
       &:hover {
         background var(--default-text-color)
         color var(--background-color)
       }
-    }
-
-
-    .github {
-      width 56rem
-    }
-
-    .cdn {
-      width 40rem
     }
   }
 }

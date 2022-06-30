@@ -231,7 +231,7 @@ import { DirModeEnum } from '@/common/model/dir.model'
 import { BranchModeEnum } from '@/common/model/user-config-info.model'
 import axios from '@/common/utils/axios'
 import TimeHelper from '@/common/utils/time-helper'
-import { GetDirList } from '@/common/api'
+import { getDirListByPath } from '@/common/api'
 
 const router = useRouter()
 const store = useStore()
@@ -294,7 +294,7 @@ function getReposList(reposUrl: string) {
 
 async function getDirList() {
   dirLoading.value = true
-  userConfigInfo.dirList = await GetDirList()
+  userConfigInfo.dirList = await getDirListByPath()
   persistUserConfigInfo()
   dirLoading.value = false
 }
@@ -461,7 +461,7 @@ const cascaderProps = {
     if (level === 0) {
       dirs = userConfigInfo.dirList
     } else {
-      dirs = await GetDirList(pathLabels.join('/'))
+      dirs = await getDirListByPath(pathLabels.join('/'))
     }
     if (dirs) {
       resolve(

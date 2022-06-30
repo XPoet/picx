@@ -8,7 +8,7 @@
     @mouseleave="isShowDelBtn = false"
   >
     <div class="image-box">
-      <img data-fancybox="gallery" :src="imageObj.cdn_url" />
+      <img data-fancybox="gallery" :src="imgUrl" />
     </div>
     <div class="info-box">
       <div class="image-info">
@@ -42,11 +42,6 @@
         </div>
       </div>
       <div class="operation-right">
-        <!--<el-tooltip content="查看大图" placement="top">
-          <div class="btn" @click="imageView(imageObj)">
-            <el-icon><FullScreen /></el-icon>
-          </div>
-        </el-tooltip>-->
         <el-dropdown size="default" trigger="click" @visible-change="visibleChange">
           <div class="operation-btn">
             <el-icon><MoreFilled /></el-icon>
@@ -56,9 +51,9 @@
               <el-dropdown-item @click="deleteImageTips(imageObj)">
                 删除
               </el-dropdown-item>
-              <el-dropdown-item @click.self="renameImage(imageObj)"
-                >重命名</el-dropdown-item
-              >
+              <el-dropdown-item @click.self="renameImage(imageObj)">
+                重命名
+              </el-dropdown-item>
               <el-dropdown-item @click="viewImageProperties(imageObj)">
                 属性
               </el-dropdown-item>
@@ -70,8 +65,8 @@
   </div>
 </template>
 
-<script lang="ts" setup>
-import { computed, ref, nextTick } from 'vue'
+<script setup lang="ts">
+import { computed, nextTick, ref } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
@@ -84,10 +79,8 @@ import {
   getFileSize,
   getFileSuffix
 } from '@/common/utils/file-handle-helper'
+import ExternalLinkType from '@/common/model/external-link.model'
 
-import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
-
-// eslint-disable-next-line no-undef
 const props = defineProps({
   listing: {
     type: Boolean,
@@ -113,9 +106,21 @@ const emits = defineEmits(['update:modelValue'])
 
 const store = useStore()
 const router = useRoute()
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const userSettings = computed(() => store.getters.getUserSettings).value
 const isManagementPage = computed(() => {
   return router.path === '/management'
+})
+
+const imgUrl = computed(() => {
+  switch (userSettings.externalLinkType) {
+    case ExternalLinkType.jsdelivr:
+      return props.imageObj.jsdelivr_cdn_url
+    case ExternalLinkType.staticaly:
+      return props.imageObj.staticaly_cdn_url
+    default:
+      return props.imageObj.github_url
+  }
 })
 
 const renameInputRef = ref<InstanceType<typeof ElInput>>()
@@ -123,8 +128,6 @@ const renameInputRef = ref<InstanceType<typeof ElInput>>()
 const isShowDelBtn = ref(false)
 
 const renameValue = ref('')
-
-const toUploadImage = computed(() => store.getters.getToUploadImage).value
 
 const dropdownVisible = ref<Boolean>(false)
 
@@ -136,7 +139,7 @@ const doDeleteImage = (
     // eslint-disable-next-line no-param-reassign
     imageObj.deleting = true
   }
-  const { owner, selectedRepos } = userConfigInfo.value
+  const { owner, selectedRepos } = userConfigInfo
 
   return new Promise((resolve) => {
     axios
@@ -200,7 +203,7 @@ const renameImage = async (imgObj: UploadedImageModel) => {
     const temp = setTimeout(() => {
       renameInputRef.value?.focus()
       clearTimeout(temp)
-    }, 100)
+    }, 150)
   })
 }
 
@@ -232,11 +235,12 @@ const updateRename = async () => {
       type: `image/${suffix}`
     }
 
-    const base64 = await getBase64ByImageUrl(imageObj.cdn_url, suffix)
+    const base64 = await getBase64ByImageUrl(imgUrl.value, suffix)
+
     if (base64) {
       const newImgObj = getImage(base64, imgInfo)
       if (newImgObj) {
-        const isUploadSuccess = await uploadImage_single(userConfigInfo.value, newImgObj)
+        const isUploadSuccess = await uploadImage_single(userConfigInfo, newImgObj)
 
         if (isUploadSuccess) {
           renameValue.value = ''
@@ -261,18 +265,6 @@ const updateRename = async () => {
 
 const visibleChange = (e: boolean) => {
   dropdownVisible.value = e
-}
-
-const imageView = (imgObj: UploadedImageModel) => {
-  store.commit('IMAGE_VIEWER', {
-    isShow: true,
-    imgInfo: {
-      name: imgObj.name,
-      size: imgObj.size,
-      lastModified: imgObj.lastModified,
-      url: imgObj.cdn_url
-    }
-  })
 }
 
 const viewImageProperties = (imgObj: UploadedImageModel) => {
