@@ -245,7 +245,7 @@ const dirLoading = ref(false)
 const branchLoading = ref(false)
 
 const labelPosition = computed(() => {
-  return userSettings.elementPlusSize === 'small' ? 'top' : 'right'
+  return userSettings.elementPlusSize === 'default' ? 'top' : 'right'
 })
 
 const elCascaderKey = ref<string>('elCascaderKey')
