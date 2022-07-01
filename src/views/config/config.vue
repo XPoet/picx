@@ -225,7 +225,6 @@
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { useStore } from '@/store'
 import { DirModeEnum } from '@/common/model/dir.model'
 import { BranchModeEnum } from '@/common/model/user-config-info.model'

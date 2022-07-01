@@ -1,5 +1,4 @@
 import Axios from 'axios'
-import { ElMessage } from 'element-plus'
 import { PICX_CONFIG } from '@/common/model/storage.model'
 
 const baseURL = 'https://api.github.com'
