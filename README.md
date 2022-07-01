@@ -1,5 +1,5 @@
 <a href="https://picx.xpoet.cn" >
-<img width="100" align="right" alt="PicX" src="https://cdn.jsdelivr.net/gh/XPoet/image-hosting@master/PicX/picx-logo.png">
+<img width="100" align="right" alt="PicX" src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/picx-logo.png">
 </a>
 
 # PicX 图床
@@ -12,7 +12,7 @@
 [![Deploy](https://github.com/XPoet/picx/workflows/deploy/badge.svg)](https://github.com/XPoet/picx/actions/workflows/deploy.yml)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-Airbnb-hotpink.svg)](https://github.com/lin-123/javascript)
 
-**[PicX](https://picx.xpoet.cn)** 是一款基于 GitHub API & jsDelivr 开发的具有 CDN 加速功能的图床管理工具
+**[PicX](https://picx.xpoet.cn)** 是一款基于 GitHub API 开发的具有 CDN 加速功能的图床管理工具
 
 
 
