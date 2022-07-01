@@ -17,8 +17,8 @@
           </el-tooltip>
           <el-tooltip placement="top" content="重新加载图片">
             <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
-              <Refresh
-            /></el-icon>
+              <Refresh />
+            </el-icon>
           </el-tooltip>
         </div>
       </div>

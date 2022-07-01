@@ -1,7 +1,6 @@
-import { ElMessage, ElMessageBox, ElLoading } from 'element-plus'
 import { store } from '@/store'
 import { compress } from './compress'
-import { getFileSize, getFileSuffix, isImage } from './file-handle-helper'
+import { getFileSize, isImage } from './file-handle-helper'
 
 export type handleResult = { base64: string; originalFile: File; compressFile?: File }
 

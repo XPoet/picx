@@ -7,6 +7,7 @@ import { CompressEncoderMap } from '@/common/utils/compress'
 import { UserSettingsModel } from '@/common/model/user-settings.model'
 import UserSettingsStateTypes from '@/store/modules/user-settings/types'
 import { getLocalItem } from '@/common/utils/common-utils'
+import ExternalLinkType from '@/common/model/external-link.model'
 
 const initSettings: UserSettingsModel = {
   defaultHash: true,
@@ -17,7 +18,8 @@ const initSettings: UserSettingsModel = {
   compressEncoder: CompressEncoderMap.webP,
   themeMode: 'light',
   autoLightThemeTime: ['08:00', '19:00'],
-  elementPlusSize: 'default'
+  elementPlusSize: 'default',
+  externalLinkType: ExternalLinkType.staticaly
 }
 
 const initUserSettings = (): UserSettingsModel => {

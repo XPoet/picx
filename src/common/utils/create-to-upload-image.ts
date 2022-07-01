@@ -34,9 +34,8 @@ export default (): ToUploadImageModel => {
 
     externalLink: {
       github: '',
-      cdn: '',
-      markdown_gh: '',
-      markdown_cdn: ''
+      jsdelivr: '',
+      staticaly: ''
     }
   }
 }

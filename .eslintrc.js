@@ -1,3 +1,23 @@
+const path = require('path')
+const fs = require('fs')
+
+function parseAutoImportsDts(contents) {
+  const matchResults = contents.matchAll(/^\s+const (\w+): typeof import/gm)
+  return Array.from(matchResults, ([, word]) => word)
+}
+
+function dts2Globals() {
+  const SRC = path.resolve(__dirname, './auto-imports.d.ts')
+  const contents = fs.readFileSync(SRC, { encoding: 'utf-8' })
+  const parsed = parseAutoImportsDts(contents)
+
+  return parsed.reduce((acc, word) => {
+    // eslint-disable-next-line no-param-reassign
+    acc[word] = 'readonly'
+    return acc
+  }, {})
+}
+
 module.exports = {
   env: {
     browser: true,
@@ -28,5 +48,8 @@ module.exports = {
         ignorePropertyModificationsFor: ['store', 'state', 'config']
       }
     ]
+  },
+  globals: {
+    ...dts2Globals()
   }
 }

@@ -47,32 +47,33 @@
       </el-tooltip>
     </div>
     <div class="btn-box">
-      <el-tooltip content="点击复制 GitHub 外链" placement="top">
+      <el-tooltip content="点击复制 Staticaly CDN 外链" placement="top">
         <span
-          class="btn-item copy-url github flex-center"
-          @click="copyExternalLink(externalLinkType.gh)"
+          class="btn-item copy-url flex-center"
+          @click="copyLink(externalLinkType.staticaly)"
         >
-          GitHub
+          Staticaly
         </span>
       </el-tooltip>
-      <el-tooltip content="点击复制 CDN 外链" placement="top">
+      <el-tooltip content="点击复制 jsDelivr CDN 外链" placement="top">
         <span
-          class="btn-item copy-url cdn flex-center"
-          @click="copyExternalLink(externalLinkType.cdn)"
+          class="btn-item copy-url flex-center"
+          @click="copyLink(externalLinkType.jsdelivr)"
         >
-          CDN
+          jsDelivr
         </span>
       </el-tooltip>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { onMounted, computed, ref, onUpdated } from 'vue'
-import { ExternalLinkType } from '@/common/model/externalLink.model'
+import ExternalLinkType from '@/common/model/external-link.model'
 import { store } from '@/store'
+import { copyExternalLink } from '@/common/utils/external-link-handler'
+import { UploadedImageModel } from '@/common/model/upload.model'
 
-// eslint-disable-next-line no-undef
 const props = defineProps({
   imgObj: {
     type: Object,
@@ -80,63 +81,21 @@ const props = defineProps({
   }
 })
 
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
-const userSettings = computed(() => store.getters.getUserSettings)
+const userSettings = computed(() => store.getters.getUserSettings).value
 
-const img = ref(props.imgObj)
+let img = ref(props.imgObj as UploadedImageModel).value
 const externalLinkType = ExternalLinkType
 
-function copyExternalLink(type: ExternalLinkType) {
-  let externalLink = ''
-  let successInfo = ''
-
-  const isT = img.value.is_transform_md
-
-  // eslint-disable-next-line default-case
-  switch (type) {
-    case ExternalLinkType.gh:
-      if (isT) {
-        externalLink = img.value.md_gh_url
-        successInfo = 'Markdown 格式的 GitHub'
-      } else {
-        externalLink = img.value.github_url
-        successInfo = 'GitHub'
-      }
-      break
-
-    case ExternalLinkType.cdn:
-      if (isT) {
-        externalLink = img.value.md_cdn_url
-        successInfo = 'Markdown 格式的 CDN'
-      } else {
-        externalLink = img.value.cdn_url
-        successInfo = 'CDN'
-      }
-      break
-  }
-
-  let externalLinkDom: any = document.querySelector('.temp-external-link')
-  if (!externalLinkDom) {
-    externalLinkDom = document.createElement('textarea')
-    externalLinkDom.setAttribute('class', 'temp-external-link')
-    externalLinkDom.style.position = 'absolute'
-    externalLinkDom.style.top = '-99999rem'
-    externalLinkDom.style.left = '-99999rem'
-    document.body.appendChild(externalLinkDom)
-  }
-
-  externalLinkDom.value = externalLink
-  externalLinkDom.select()
-  document.execCommand('copy')
-  ElMessage.success(`${successInfo} 外链复制成功！`)
+const copyLink = (type: ExternalLinkType) => {
+  copyExternalLink(img, type)
 }
 
 onUpdated(() => {
-  img.value = props.imgObj
+  img = props.imgObj
 })
 
 onMounted(() => {
-  img.value.is_transform_md = userSettings.value.defaultMarkdown
+  img.is_transform_md = userSettings.defaultMarkdown
 })
 </script>
 

@@ -22,10 +22,8 @@
           v-for="(imgItem, index) in toUploadImage.list"
           :key="index"
         >
-          <div class="left-image-box flex-center">
-            <div class="image-box">
-              <img data-fancybox="gallery" :src="imgItem.imgData.base64Url" />
-            </div>
+          <div class="left-image-box">
+            <img data-fancybox="gallery" :src="imgItem.imgData.base64Url" />
           </div>
 
           <div class="right-operation-box">
@@ -74,7 +72,7 @@
               ></el-checkbox>
               <el-input
                 class="rename-input"
-                size="mini"
+                size="small"
                 v-if="imgItem.filename.isRename"
                 v-model="imgItem.filename.newName"
                 @input="rename($event, imgItem)"
