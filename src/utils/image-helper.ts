@@ -32,6 +32,11 @@ export default function structureImageObject(
       ExternalLinkType.staticaly,
       item,
       userConfigInfo
+    ),
+    cloudflare_cdn_url: generateExternalLink(
+      ExternalLinkType.cloudflare,
+      item,
+      userConfigInfo
     )
   }
 }

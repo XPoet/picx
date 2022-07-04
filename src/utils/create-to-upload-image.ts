@@ -35,7 +35,8 @@ export default (): ToUploadImageModel => {
     externalLink: {
       github: '',
       jsdelivr: '',
-      staticaly: ''
+      staticaly: '',
+      cloudflare: ''
     }
   }
 }

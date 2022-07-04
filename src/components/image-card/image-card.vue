@@ -114,6 +114,8 @@ const imgUrl = computed(() => {
       return props.imageObj.jsdelivr_cdn_url
     case ExternalLinkType.staticaly:
       return props.imageObj.staticaly_cdn_url
+    case ExternalLinkType.cloudflare:
+      return props.imageObj.cloudflare_cdn_url
     default:
       return props.imageObj.github_url
   }

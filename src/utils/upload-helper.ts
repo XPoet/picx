@@ -95,6 +95,14 @@ function uploadedHandle(
     userConfigInfo
   )
 
+  // 生成 Cloudflare CDN 外链
+  // eslint-disable-next-line no-param-reassign
+  img.externalLink.cloudflare = generateExternalLink(
+    ExternalLinkType.cloudflare,
+    res.data.content,
+    userConfigInfo
+  )
+
   const item: UploadedImageModel = {
     checked: false,
     type: 'image',
@@ -106,6 +114,7 @@ function uploadedHandle(
     github_url: img.externalLink.github,
     jsdelivr_cdn_url: img.externalLink.jsdelivr,
     staticaly_cdn_url: img.externalLink.staticaly,
+    cloudflare_cdn_url: img.externalLink.cloudflare,
     is_transform_md: userSettings.defaultMarkdown,
     deleting: false,
     size: img.fileInfo.size
