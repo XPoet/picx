@@ -156,13 +156,13 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs, onMounted } from 'vue'
 import { useStore } from '@/store'
-import { getFileSize } from '@/common/utils/file-handle-helper'
+import { getFileSize } from '@/utils/file-handle-helper'
 import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
 import { ToUploadImageModel, UploadStatusEnum } from '@/common/model/upload.model'
-import TimeHelper from '@/common/utils/time-helper'
+import TimeHelper from '@/utils/time-helper'
 import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
-import { uploadImage_single } from '@/common/utils/upload-helper'
+import { uploadImage_single } from '@/utils/upload-helper'
 
 export default defineComponent({
   name: 'to-upload-image-card',

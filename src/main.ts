@@ -7,7 +7,7 @@ import 'element-plus/theme-chalk/dark/css-vars.css'
 
 if (import.meta.env.MODE === 'production') {
   // @ts-ignore
-  import('@/common/utils/register-sw.ts')
+  import('@/utils/register-sw.ts')
 }
 
 const app = createApp(App)

@@ -9,7 +9,7 @@ import { defineComponent, onMounted, reactive, toRefs } from 'vue'
 import { ElConfigProvider } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import mainContainer from '@/components/main-container/main-container.vue'
-import userConfigInfoModel from '@/common/utils/set-theme-mode'
+import setTheme from '@/utils/set-theme-mode'
 import { useStore } from '@/store'
 
 export default defineComponent({
@@ -47,7 +47,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      userConfigInfoModel()
+      setTheme()
       elementPlusSizeHandle(window.innerWidth)
       window.addEventListener('resize', (e: any) => {
         elementPlusSizeHandle(e.target.innerWidth)

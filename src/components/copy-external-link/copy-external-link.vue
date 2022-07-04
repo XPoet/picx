@@ -55,12 +55,12 @@
           Staticaly
         </span>
       </el-tooltip>
-      <el-tooltip content="点击复制 jsDelivr CDN 外链" placement="top">
+      <el-tooltip content="点击复制 Cloudflare CDN 外链" placement="top">
         <span
           class="btn-item copy-url flex-center"
-          @click="copyLink(externalLinkType.jsdelivr)"
+          @click="copyLink(externalLinkType.cloudflare)"
         >
-          jsDelivr
+          Cloudflare
         </span>
       </el-tooltip>
     </div>
@@ -71,7 +71,7 @@
 import { onMounted, computed, ref, onUpdated } from 'vue'
 import ExternalLinkType from '@/common/model/external-link.model'
 import { store } from '@/store'
-import { copyExternalLink } from '@/common/utils/external-link-handler'
+import { copyExternalLink } from '@/utils/external-link-handler'
 import { UploadedImageModel } from '@/common/model/upload.model'
 
 const props = defineProps({

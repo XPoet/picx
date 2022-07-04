@@ -1,8 +1,8 @@
 import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
 import { ToUploadImageModel, UploadedImageModel } from '@/common/model/upload.model'
-import axios from '@/common/utils/axios'
+import axios from '@/utils/axios'
 import { store } from '@/store'
-import { generateExternalLink } from '@/common/utils/external-link-handler'
+import { generateExternalLink } from '@/utils/external-link-handler'
 import ExternalLinkType from '@/common/model/external-link.model'
 
 export const uploadUrlHandle = (
@@ -95,6 +95,14 @@ function uploadedHandle(
     userConfigInfo
   )
 
+  // 生成 Cloudflare CDN 外链
+  // eslint-disable-next-line no-param-reassign
+  img.externalLink.cloudflare = generateExternalLink(
+    ExternalLinkType.cloudflare,
+    res.data.content,
+    userConfigInfo
+  )
+
   const item: UploadedImageModel = {
     checked: false,
     type: 'image',
@@ -106,6 +114,7 @@ function uploadedHandle(
     github_url: img.externalLink.github,
     jsdelivr_cdn_url: img.externalLink.jsdelivr,
     staticaly_cdn_url: img.externalLink.staticaly,
+    cloudflare_cdn_url: img.externalLink.cloudflare,
     is_transform_md: userSettings.defaultMarkdown,
     deleting: false,
     size: img.fileInfo.size

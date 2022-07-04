@@ -1,4 +1,4 @@
-import { CompressEncoderMap } from '../utils/compress'
+import { CompressEncoderMap } from '../../utils/compress'
 import ExternalLinkType from '@/common/model/external-link.model'
 
 export interface UserSettingsModel {

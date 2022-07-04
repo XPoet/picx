@@ -1,12 +1,12 @@
 import { Module } from 'vuex'
 import { PICX_SETTINGS } from '@/common/model/storage.model'
-import { deepAssignObject } from '@/common/utils/object-helper'
+import { deepAssignObject } from '@/utils/object-helper'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
-import { CompressEncoderMap } from '@/common/utils/compress'
+import { CompressEncoderMap } from '@/utils/compress'
 import { UserSettingsModel } from '@/common/model/user-settings.model'
 import UserSettingsStateTypes from '@/store/modules/user-settings/types'
-import { getLocalItem } from '@/common/utils/common-utils'
+import { getLocalItem } from '@/utils/common-utils'
 import ExternalLinkType from '@/common/model/external-link.model'
 
 const initSettings: UserSettingsModel = {

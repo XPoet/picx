@@ -70,15 +70,11 @@ import { computed, nextTick, ref } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
-import axios from '@/common/utils/axios'
+import axios from '@/utils/axios'
 import { UploadedImageModel } from '@/common/model/upload.model'
-import { getBase64ByImageUrl, getImage } from '@/common/utils/rename-image'
-import { uploadImage_single } from '@/common/utils/upload-helper'
-import {
-  getFilename,
-  getFileSize,
-  getFileSuffix
-} from '@/common/utils/file-handle-helper'
+import { getBase64ByImageUrl, getImage } from '@/utils/rename-image'
+import { uploadImage_single } from '@/utils/upload-helper'
+import { getFilename, getFileSize, getFileSuffix } from '@/utils/file-handle-helper'
 import ExternalLinkType from '@/common/model/external-link.model'
 
 const props = defineProps({
@@ -118,6 +114,8 @@ const imgUrl = computed(() => {
       return props.imageObj.jsdelivr_cdn_url
     case ExternalLinkType.staticaly:
       return props.imageObj.staticaly_cdn_url
+    case ExternalLinkType.cloudflare:
+      return props.imageObj.cloudflare_cdn_url
     default:
       return props.imageObj.github_url
   }

@@ -1,8 +1,8 @@
 import { computed } from 'vue'
-import axios from '@/common/utils/axios'
+import axios from '@/utils/axios'
 import { store } from '@/store'
-import { getFileSuffix, isImage } from '@/common/utils/file-handle-helper'
-import structureImageObject from '@/common/utils/image-helper'
+import { getFileSuffix, isImage } from '@/utils/file-handle-helper'
+import structureImageObject from '@/utils/image-helper'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 

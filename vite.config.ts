@@ -2,7 +2,7 @@ import { loadEnv } from 'vite'
 import { resolve } from 'path'
 import type { UserConfig, ConfigEnv } from 'vite'
 import createVitePlugins from './src/plugins'
-import wrapperEnv from './src/common/utils/env'
+import wrapperEnv from './src/utils/env'
 
 function pathResolve(dir: string) {
   return resolve(__dirname, '.', dir)

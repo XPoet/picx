@@ -228,8 +228,8 @@ import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { DirModeEnum } from '@/common/model/dir.model'
 import { BranchModeEnum } from '@/common/model/user-config-info.model'
-import axios from '@/common/utils/axios'
-import TimeHelper from '@/common/utils/time-helper'
+import axios from '@/utils/axios'
+import TimeHelper from '@/utils/time-helper'
 import { getDirListByPath } from '@/common/api'
 
 const router = useRouter()

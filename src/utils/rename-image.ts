@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { store } from '@/store'
-import createToUploadImageObject from '@/common/utils/create-to-upload-image'
+import createToUploadImageObject from '@/utils/create-to-upload-image'
 import { filenameHandle } from './file-handle-helper'
 
 /**

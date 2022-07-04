@@ -43,8 +43,8 @@
           @change="saveUserSettings"
         >
           <el-option label="Staticaly" value="staticaly"></el-option>
+          <el-option label="Cloudflare" value="cloudflare"></el-option>
           <el-option label="jsDelivr" value="jsdelivr"></el-option>
-          <el-option label="GitHub" value="github"></el-option>
         </el-select>
       </li>
     </ul>
@@ -126,7 +126,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { store } from '@/store'
-import { CompressEncoderMap } from '@/common/utils/compress'
+import { CompressEncoderMap } from '@/utils/compress'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 

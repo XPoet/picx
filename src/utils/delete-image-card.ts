@@ -1,7 +1,7 @@
-import { UploadedImageModel } from '../model/upload.model'
-import { UserConfigInfoModel } from '../model/user-config-info.model'
-import axios from '@/common/utils/axios'
-import { deleteStatusEnum } from '../model/delete.model'
+import { UploadedImageModel } from '../common/model/upload.model'
+import { UserConfigInfoModel } from '../common/model/user-config-info.model'
+import axios from '@/utils/axios'
+import { deleteStatusEnum } from '../common/model/delete.model'
 import { store } from '@/store'
 
 let deleteIndex = 0
