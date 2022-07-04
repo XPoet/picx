@@ -126,7 +126,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { store } from '@/store'
-import { CompressEncoderMap } from '@/common/utils/compress'
+import { CompressEncoderMap } from '@/utils/compress'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 

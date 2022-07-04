@@ -1,6 +1,6 @@
 import ExternalLinkType from '@/common/model/external-link.model'
-import { UserConfigInfoModel } from '../model/user-config-info.model'
-import { getFilename } from '@/common/utils/file-handle-helper'
+import { UserConfigInfoModel } from '../common/model/user-config-info.model'
+import { getFilename } from '@/utils/file-handle-helper'
 import { UploadedImageModel } from '@/common/model/upload.model'
 
 /**

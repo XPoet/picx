@@ -1,5 +1,3 @@
-import ExternalLinkType from '@/common/model/external-link.model'
-
 export enum UploadStatusEnum {
   // eslint-disable-next-line no-unused-vars
   uploaded = 'uploaded',

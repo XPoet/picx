@@ -71,7 +71,7 @@
 import { onMounted, computed, ref, onUpdated } from 'vue'
 import ExternalLinkType from '@/common/model/external-link.model'
 import { store } from '@/store'
-import { copyExternalLink } from '@/common/utils/external-link-handler'
+import { copyExternalLink } from '@/utils/external-link-handler'
 import { UploadedImageModel } from '@/common/model/upload.model'
 
 const props = defineProps({

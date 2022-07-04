@@ -23,8 +23,8 @@
 import { computed, onMounted, watch, ref } from 'vue'
 import { useStore } from '@/store'
 import { UploadedImageModel } from '@/common/model/upload.model'
-import { batchCopyExternalLink } from '@/common/utils/external-link-handler'
-import { delelteBatchImage } from '@/common/utils/delete-image-card'
+import { batchCopyExternalLink } from '@/utils/external-link-handler'
+import { delelteBatchImage } from '@/utils/delete-image-card'
 import { deleteStatusEnum } from '@/common/model/delete.model'
 
 const props = defineProps({

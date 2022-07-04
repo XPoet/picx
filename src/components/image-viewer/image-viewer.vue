@@ -24,8 +24,8 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useStore } from '@/store'
-import { getFileSize } from '@/common/utils/file-handle-helper'
-import TimeHelper from '@/common/utils/time-helper'
+import { getFileSize } from '@/utils/file-handle-helper'
+import TimeHelper from '@/utils/time-helper'
 
 const store = useStore()
 const imageViewer = computed(() => store.getters.getImageViewer)

@@ -27,7 +27,7 @@ import headerContent from '@/components/header-content/header-content.vue'
 import navContent from '@/components/nav-content/nav-content.vue'
 import imageViewer from '@/components/image-viewer/image-viewer.vue'
 import { useStore } from '@/store'
-import userConfigInfoModel from '@/common/utils/set-theme-mode'
+import userConfigInfoModel from '@/utils/set-theme-mode'
 
 export default defineComponent({
   name: 'main-container',

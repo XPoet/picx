@@ -27,10 +27,10 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs } from 'vue'
 import { useStore } from '@/store'
-import { filenameHandle } from '@/common/utils/file-handle-helper'
-import selectedFileHandle, { handleResult } from '@/common/utils/selected-file-handle'
-import createToUploadImageObject from '@/common/utils/create-to-upload-image'
-import paste from '@/common/utils/paste'
+import { filenameHandle } from '@/utils/file-handle-helper'
+import selectedFileHandle, { handleResult } from '@/utils/selected-file-handle'
+import createToUploadImageObject from '@/utils/create-to-upload-image'
+import paste from '@/utils/paste'
 import Upload from '@/views/upload/upload.vue'
 
 export default defineComponent({

@@ -1,4 +1,4 @@
-import { ToUploadImageModel } from '../model/upload.model'
+import { ToUploadImageModel } from '../common/model/upload.model'
 
 export default (): ToUploadImageModel => {
   return {
