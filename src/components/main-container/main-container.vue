@@ -1,11 +1,11 @@
 <template>
   <main class="main-container" @click="changeUploadAreaActive">
-    <div class="top">
+    <div class="top-container">
       <header-content />
     </div>
 
-    <div class="bottom">
-      <div class="container">
+    <div class="bottom-container">
+      <div class="bottom-content">
         <div class="left">
           <nav-content />
         </div>
