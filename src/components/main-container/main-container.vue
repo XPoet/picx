@@ -18,14 +18,12 @@
       </div>
     </div>
   </main>
-  <image-viewer></image-viewer>
 </template>
 
 <script lang="ts">
 import { defineComponent, onMounted } from 'vue'
 import headerContent from '@/components/header-content/header-content.vue'
 import navContent from '@/components/nav-content/nav-content.vue'
-import imageViewer from '@/components/image-viewer/image-viewer.vue'
 import { useStore } from '@/store'
 import userConfigInfoModel from '@/utils/set-theme-mode'
 
@@ -34,8 +32,7 @@ export default defineComponent({
 
   components: {
     headerContent,
-    navContent,
-    imageViewer
+    navContent
   },
 
   setup() {
