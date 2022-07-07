@@ -36,7 +36,7 @@
         <div
           v-if="isManagementPage"
           :class="[imageObj.checked ? 'picked-btn' : 'pick-btn', 'operation-btn']"
-          @click="trigglePick(imageObj)"
+          @click="togglePick(imageObj)"
         >
           <el-icon v-if="imageObj.checked"><Check /></el-icon>
         </div>
@@ -188,7 +188,7 @@ const deleteImageTips = (imageObj: UploadedImageModel) => {
     })
 }
 
-const trigglePick = (imageObj: UploadedImageModel) => {
+const togglePick = (imageObj: UploadedImageModel) => {
   // eslint-disable-next-line no-param-reassign
   imageObj.checked = !imageObj.checked
   store.commit('IMAGE_CARD', { imageObj })
