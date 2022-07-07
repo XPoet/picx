@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, ref, onUpdated } from 'vue'
+import { onMounted, computed, ref, onUpdated, watch } from 'vue'
 import ExternalLinkType from '@/common/model/external-link.model'
 import { store } from '@/store'
 import { copyExternalLink } from '@/utils/external-link-handler'
@@ -91,12 +91,19 @@ const copyLink = (type: ExternalLinkType) => {
 }
 
 onUpdated(() => {
-  img = props.imgObj
+  img = props.imgObj as UploadedImageModel
 })
 
 onMounted(() => {
   img.is_transform_md = userSettings.defaultMarkdown
 })
+
+watch(
+  () => userSettings.defaultMarkdown,
+  (_n) => {
+    img.is_transform_md = _n
+  }
+)
 </script>
 
 <style scoped lang="stylus">

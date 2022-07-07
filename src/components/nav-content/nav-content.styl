@@ -6,35 +6,53 @@
   height 100%
   box-sizing border-box
   background var(--background-color)
+  display flex
+  flex-direction column
+  justify-content space-between
 
   ul.nav-list {
     padding 0
     margin 0
-
-    li.nav-item {
-      box-sizing border-box
-      width 100%
-      height 76rem
-      cursor pointer
-
-      &.active {
-        font-weight bold
-        background var(--second-background-color)
-      }
-
-      .nav-content {
-        display flex
-        flex-direction column
-        justify-content center
-        align-items center
-
-        .nav-name {
-          margin-top 5rem
-          font-size 12rem
-        }
-      }
-    }
-
   }
 
+  .nav-item {
+    position relative
+    box-sizing border-box
+    width 100%
+    height 76rem
+    cursor pointer
+    user-select none
+
+    &.active {
+      font-weight bold
+      background var(--second-background-color)
+    }
+
+    .nav-content {
+      display flex
+      flex-direction column
+      justify-content center
+      align-items center
+
+      .nav-name {
+        margin-top 5rem
+        font-size 12rem
+      }
+    }
+  }
+
+
+  .quick-actions {
+    .quick-actions-box {
+      position absolute
+      bottom 0
+      left 100%
+      box-sizing border-box
+      box-shadow: 1rem -1rem 2.5rem var(--shadow-color)
+      width 180rem
+      z-index $z-index-1
+      background var(--background-color)
+      padding 6rem 10rem
+    }
+  }
 }

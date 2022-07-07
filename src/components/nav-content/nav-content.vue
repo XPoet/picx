@@ -17,6 +17,37 @@
         </div>
       </li>
     </ul>
+    <div
+      class="nav-item quick-actions flex-center"
+      :class="{ active: isShowQuickActions }"
+    >
+      <div class="nav-content">
+        <el-icon :size="navIconSize">
+          <Operation />
+        </el-icon>
+        <span class="nav-name">快捷操作</span>
+      </div>
+      <div class="quick-actions-box" v-show="isShowQuickActions">
+        <el-switch
+          v-model="isOpenDarkMode"
+          class="mb-2"
+          active-text="暗夜模式"
+          @change="themeModeChange"
+        />
+        <el-switch
+          v-model="userSettings.isCompress"
+          class="mb-2"
+          active-text="压缩图片"
+          @change="persistUserSettings"
+        />
+        <el-switch
+          v-model="userSettings.defaultMarkdown"
+          class="mb-2"
+          active-text="转换 Markdown"
+          @change="persistUserSettings"
+        />
+      </div>
+    </div>
   </aside>
 </template>
 
@@ -41,6 +72,8 @@ const navIconSize = computed(() => {
       return 26
   }
 })
+
+const isOpenDarkMode = ref(userSettings.themeMode === 'dark')
 
 const navList = ref([
   {
@@ -87,6 +120,8 @@ const navList = ref([
   }
 ])
 
+const isShowQuickActions = ref<Boolean>(false)
+
 const navClick = (e: any) => {
   const { path } = e
 
@@ -112,6 +147,19 @@ const changeNavActive = (currentPath: string) => {
     temp.isActive = v.path === currentPath
     return temp
   })
+}
+
+const persistUserSettings = () => {
+  store.dispatch('USER_SETTINGS_PERSIST')
+}
+
+const themeModeChange = () => {
+  if (userSettings.themeMode === 'dark') {
+    userSettings.themeMode = 'light'
+  } else {
+    userSettings.themeMode = 'dark'
+  }
+  persistUserSettings()
 }
 
 watch(
@@ -143,6 +191,24 @@ watch(
 onMounted(() => {
   router.isReady().then(() => {
     changeNavActive(router.currentRoute.value.path)
+  })
+
+  document
+    .querySelector('.quick-actions .quick-actions-box')
+    ?.addEventListener('click', (e) => {
+      isShowQuickActions.value = true
+      e.stopPropagation()
+    })
+
+  document.querySelector('.quick-actions')?.addEventListener('click', (e) => {
+    isShowQuickActions.value = !isShowQuickActions.value
+    e.stopPropagation()
+  })
+
+  document.addEventListener('click', () => {
+    if (isShowQuickActions.value) {
+      isShowQuickActions.value = false
+    }
   })
 })
 </script>
