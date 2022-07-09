@@ -140,14 +140,37 @@ function toggleListing() {
   listing.value = !listing.value
 }
 
+function debounce(fn: Function, wait = 500, isImmediate = false) {
+  var timerId: any = null;
+  var flag = true;
+  return function () {
+    // @ts-ignore
+    var context = this
+    var args = arguments
+    if (timerId) clearTimeout(timerId);
+    if (isImmediate) {
+      if (flag) {
+        fn.apply(context, args)
+        flag = false
+      }
+      timerId = setTimeout(function () {
+        flag = true
+      }, wait)
+    } else {
+      timerId = setTimeout(function () {
+        fn.apply(context, args)
+      }, wait)
+    }
+  }
+}
 // 重新加载当前目录内容（网络请求）
-async function reloadCurrentDirContent() {
+const reloadCurrentDirContent=debounce(async function () {
   const { selectedDir } = userConfigInfo
   await store.dispatch('DIR_IMAGE_LIST_INIT_DIR', selectedDir)
   loadingImageList.value = true
   await getContentByReposPath(selectedDir)
   loadingImageList.value = false
-}
+},500,true)
 
 onMounted(() => {
   initDirImageList()
