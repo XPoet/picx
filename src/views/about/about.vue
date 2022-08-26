@@ -6,30 +6,6 @@
       无需下载！无需安装！打开网站即用！免费！极速！稳定！
     </div>
 
-    <div class="help-info-item">建议将本站添加至浏览器收藏夹，方便下次使用 😊</div>
-
-    <div class="help-info-item">
-      作者：
-      <el-link type="primary" href="https://xpoet.cn/" target="_blank">@XPoet</el-link>
-    </div>
-
-    <div class="help-info-item">
-      仓库：
-      <el-link type="primary" href="https://github.com/XPoet/picx" target="_blank">
-        https://github.com/XPoet/picx
-      </el-link>
-    </div>
-
-    <div class="help-info-item">
-      教程：
-      <el-link
-        type="primary"
-        href="https://github.com/XPoet/picx/blob/master/README.md"
-        target="_blank"
-      >
-        https://github.com/XPoet/picx/blob/master/README.md
-      </el-link>
-    </div>
 
     <div class="help-info-item">
       在使用过程中遇到问题，请仔细阅读文档，或者给作者提&nbsp;
