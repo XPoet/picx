@@ -4,7 +4,7 @@
     :class="{ focus: uploadAreaActive }"
     @dragover.prevent
     @drop.stop.prevent="onDrop"
-    @paste="onPaste"
+    @paste.stop="onPaste"
     v-loading="imageLoading"
     element-loading-text="图片上传中..."
     element-loading-background="rgba(0, 0, 0, 0.5)"
