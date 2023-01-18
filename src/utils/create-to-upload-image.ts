@@ -36,7 +36,7 @@ export default (): ToUploadImageModel => {
       github: '',
       jsdelivr: '',
       staticaly: '',
-      cloudflare: ''
+      chinajsdelivr: ''
     }
   }
 }

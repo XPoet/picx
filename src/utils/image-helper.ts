@@ -33,8 +33,8 @@ export default function structureImageObject(
       item,
       userConfigInfo
     ),
-    cloudflare_cdn_url: generateExternalLink(
-      ExternalLinkType.cloudflare,
+    chinajsdelivr_cdn_url: generateExternalLink(
+      ExternalLinkType.chinajsdelivr,
       item,
       userConfigInfo
     )

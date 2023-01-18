@@ -31,7 +31,7 @@ export const generateExternalLink = (
   config: UserConfigInfoModel
 ): string => {
   const staticalyLink: string = `https://cdn.staticaly.com/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
-  const cloudflareLink: string = `https://git.poker/${config.owner}/${config.selectedRepos}/blob/${config.selectedBranch}/${content.path}?raw=true`
+  const chinajsdelivrLink: string = `https://jsd.cdn.zzko.cn/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
   const jsdelivrLink: string = `https://cdn.jsdelivr.net/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
   const githubLink: string = decodeURI(content.download_url)
 
@@ -40,8 +40,8 @@ export const generateExternalLink = (
     case ExternalLinkType.staticaly:
       return staticalyLink
 
-    case ExternalLinkType.cloudflare:
-      return cloudflareLink
+    case ExternalLinkType.chinajsdelivr:
+      return chinajsdelivrLink
 
     case ExternalLinkType.jsdelivr:
       return jsdelivrLink
@@ -94,13 +94,13 @@ export const copyExternalLink = (img: UploadedImageModel, type: ExternalLinkType
       }
       break
 
-    case ExternalLinkType.cloudflare:
+    case ExternalLinkType.chinajsdelivr:
       if (isMD) {
-        externalLink = formatMarkdown(name, img.cloudflare_cdn_url)
-        successInfo = 'Markdown 格式的 Cloudflare CDN'
+        externalLink = formatMarkdown(name, img.chinajsdelivr_cdn_url)
+        successInfo = 'Markdown 格式的 Chinajsdelivr CDN'
       } else {
-        externalLink = img.cloudflare_cdn_url
-        successInfo = 'Cloudflare CDN'
+        externalLink = img.chinajsdelivr_cdn_url
+        successInfo = 'Chinajsdelivr CDN'
       }
       break
 
@@ -150,10 +150,10 @@ export const batchCopyExternalLink = (
             : item.staticaly_cdn_url
           break
 
-        case ExternalLinkType.cloudflare:
+        case ExternalLinkType.chinajsdelivr:
           externalLink = isMD
-            ? formatMarkdown(item.name, item.cloudflare_cdn_url)
-            : item.cloudflare_cdn_url
+            ? formatMarkdown(item.name, item.chinajsdelivr_cdn_url)
+            : item.chinajsdelivr_cdn_url
           break
 
         default:
