@@ -4,13 +4,13 @@
     :class="{ focus: uploadAreaActive }"
     @dragover.prevent
     @drop.stop.prevent="onDrop"
-    @paste="onPaste"
+    @paste.stop="onPaste"
     v-loading="imageLoading"
     element-loading-text="图片上传中..."
     element-loading-background="rgba(0, 0, 0, 0.5)"
   >
     <label for="uploader" class="active-upload" v-if="uploadAreaActive"></label>
-    <input id="uploader" type="file" @change="onSelect" multiple="multiple" />
+    <input id="uploader" type="file" @change="onSelect" multiple="multiple" autofocus />
     <div class="tips active-upload" v-if="!toUploadImage.curImgBase64Url">
       <el-icon class="icon active-upload"><UploadFilled /></el-icon>
       <div class="text active-upload">拖拽、粘贴、或点击此处上传</div>
@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRefs } from 'vue'
+import { computed, defineComponent, reactive, toRefs, onMounted, onUnmounted } from 'vue'
 import { useStore } from '@/store'
 import { filenameHandle } from '@/utils/file-handle-helper'
 import selectedFileHandle, { handleResult } from '@/utils/selected-file-handle'
@@ -136,8 +136,17 @@ export default defineComponent({
       }
     })
 
+    const dataRefs = toRefs(reactiveData)
+    const onPasteFromWin = reactiveData.onPaste.bind(reactiveData)
+    onMounted(() => {
+      window.addEventListener('paste', onPasteFromWin)
+    })
+    onUnmounted(() => {
+      window.removeEventListener('paste', onPasteFromWin)
+    })
+
     return {
-      ...toRefs(reactiveData)
+      ...dataRefs
     }
   }
 })
