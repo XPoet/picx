@@ -95,10 +95,10 @@ function uploadedHandle(
     userConfigInfo
   )
 
-  // 生成 Cloudflare CDN 外链
+  // 生成 Chinajsdelivr CDN 外链
   // eslint-disable-next-line no-param-reassign
-  img.externalLink.cloudflare = generateExternalLink(
-    ExternalLinkType.cloudflare,
+  img.externalLink.chinajsdelivr = generateExternalLink(
+    ExternalLinkType.chinajsdelivr,
     res.data.content,
     userConfigInfo
   )
@@ -114,7 +114,7 @@ function uploadedHandle(
     github_url: img.externalLink.github,
     jsdelivr_cdn_url: img.externalLink.jsdelivr,
     staticaly_cdn_url: img.externalLink.staticaly,
-    cloudflare_cdn_url: img.externalLink.cloudflare,
+    chinajsdelivr_cdn_url: img.externalLink.chinajsdelivr,
     is_transform_md: userSettings.defaultMarkdown,
     deleting: false,
     size: img.fileInfo.size
