@@ -35,7 +35,6 @@ package-lock.json
 npm-debug.log
 testem.log
 /typings
-.history
 
 # e2e
 /e2e/src/*.js
@@ -48,3 +47,6 @@ Thumbs.db
 
 # Other
 *.local
+
+auto-imports.d.ts
+components.d.ts
