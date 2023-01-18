@@ -33,10 +33,6 @@ export default function structureImageObject(
       item,
       userConfigInfo
     ),
-    chinajsdelivr_cdn_url: generateExternalLink(
-      ExternalLinkType.chinajsdelivr,
-      item,
-      userConfigInfo
-    )
+    zzko_cdn_url: generateExternalLink(ExternalLinkType.zzko, item, userConfigInfo)
   }
 }

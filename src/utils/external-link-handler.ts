@@ -31,17 +31,16 @@ export const generateExternalLink = (
   config: UserConfigInfoModel
 ): string => {
   const staticalyLink: string = `https://cdn.staticaly.com/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
-  const chinajsdelivrLink: string = `https://jsd.cdn.zzko.cn/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
+  const zzkoLink: string = `https://jsd.cdn.zzko.cn/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
   const jsdelivrLink: string = `https://cdn.jsdelivr.net/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
   const githubLink: string = decodeURI(content.download_url)
 
-  // eslint-disable-next-line default-case
   switch (type) {
     case ExternalLinkType.staticaly:
       return staticalyLink
 
-    case ExternalLinkType.chinajsdelivr:
-      return chinajsdelivrLink
+    case ExternalLinkType.zzko:
+      return zzkoLink
 
     case ExternalLinkType.jsdelivr:
       return jsdelivrLink
@@ -94,13 +93,13 @@ export const copyExternalLink = (img: UploadedImageModel, type: ExternalLinkType
       }
       break
 
-    case ExternalLinkType.chinajsdelivr:
+    case ExternalLinkType.zzko:
       if (isMD) {
-        externalLink = formatMarkdown(name, img.chinajsdelivr_cdn_url)
-        successInfo = 'Markdown 格式的 Chinajsdelivr CDN'
+        externalLink = formatMarkdown(name, img.zzko_cdn_url)
+        successInfo = 'Markdown 格式的 zzko CDN'
       } else {
-        externalLink = img.chinajsdelivr_cdn_url
-        successInfo = 'Chinajsdelivr CDN'
+        externalLink = img.zzko_cdn_url
+        successInfo = 'zzko CDN'
       }
       break
 
@@ -150,10 +149,10 @@ export const batchCopyExternalLink = (
             : item.staticaly_cdn_url
           break
 
-        case ExternalLinkType.chinajsdelivr:
+        case ExternalLinkType.zzko:
           externalLink = isMD
-            ? formatMarkdown(item.name, item.chinajsdelivr_cdn_url)
-            : item.chinajsdelivr_cdn_url
+            ? formatMarkdown(item.name, item.zzko_cdn_url)
+            : item.zzko_cdn_url
           break
 
         default:

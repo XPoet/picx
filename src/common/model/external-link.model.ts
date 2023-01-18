@@ -2,7 +2,7 @@ enum ExternalLinkType {
   staticaly = 'staticaly',
   jsdelivr = 'jsdelivr',
   github = 'github',
-  chinajsdelivr = 'chinajsdelivr'
+  zzko = 'zzko'
 }
 
 export default ExternalLinkType

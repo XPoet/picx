@@ -95,10 +95,10 @@ function uploadedHandle(
     userConfigInfo
   )
 
-  // 生成 Chinajsdelivr CDN 外链
+  // 生成 zzko CDN 外链
   // eslint-disable-next-line no-param-reassign
-  img.externalLink.chinajsdelivr = generateExternalLink(
-    ExternalLinkType.chinajsdelivr,
+  img.externalLink.zzko = generateExternalLink(
+    ExternalLinkType.zzko,
     res.data.content,
     userConfigInfo
   )
@@ -111,13 +111,13 @@ function uploadedHandle(
     name: res.data.content.name,
     path: res.data.content.path,
     sha: res.data.content.sha,
+    is_transform_md: userSettings.defaultMarkdown,
+    deleting: false,
+    size: img.fileInfo.size,
     github_url: img.externalLink.github,
     jsdelivr_cdn_url: img.externalLink.jsdelivr,
     staticaly_cdn_url: img.externalLink.staticaly,
-    chinajsdelivr_cdn_url: img.externalLink.chinajsdelivr,
-    is_transform_md: userSettings.defaultMarkdown,
-    deleting: false,
-    size: img.fileInfo.size
+    zzko_cdn_url: img.externalLink.zzko
   }
 
   // eslint-disable-next-line no-param-reassign

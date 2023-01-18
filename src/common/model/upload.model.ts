@@ -21,7 +21,7 @@ export interface UploadedImageModel {
   github_url: string
   jsdelivr_cdn_url: string
   staticaly_cdn_url: string
-  chinajsdelivr_cdn_url: string
+  zzko_cdn_url: string
 }
 
 export interface ToUploadImageModel {
@@ -61,7 +61,7 @@ export interface ToUploadImageModel {
     github: string
     jsdelivr: string
     staticaly: string
-    chinajsdelivr: string
+    zzko: string
   }
 
   uploadedImg?: UploadedImageModel

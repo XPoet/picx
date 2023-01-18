@@ -55,12 +55,12 @@
           Staticaly
         </span>
       </el-tooltip>
-      <el-tooltip content="点击复制 Cloudflare CDN 外链" placement="top">
+      <el-tooltip content="点击复制 zzko CDN 外链" placement="top">
         <span
           class="btn-item copy-url flex-center"
-          @click="copyLink(externalLinkType.cloudflare)"
+          @click="copyLink(externalLinkType.zzko)"
         >
-          Cloudflare
+          zzko
         </span>
       </el-tooltip>
     </div>
