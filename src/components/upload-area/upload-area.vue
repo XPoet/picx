@@ -10,7 +10,14 @@
     element-loading-background="rgba(0, 0, 0, 0.5)"
   >
     <label for="uploader" class="active-upload" v-if="uploadAreaActive"></label>
-    <input id="uploader" type="file" @change="onSelect" multiple="multiple" autofocus />
+    <input
+      id="uploader"
+      type="file"
+      @change="onSelect"
+      multiple="multiple"
+      autofocus
+      @focus="onFocus"
+    />
     <div class="tips active-upload" v-if="!toUploadImage.curImgBase64Url">
       <el-icon class="icon active-upload"><UploadFilled /></el-icon>
       <div class="text active-upload">拖拽、粘贴、或点击此处上传</div>
@@ -31,7 +38,6 @@ import { filenameHandle } from '@/utils/file-handle-helper'
 import selectedFileHandle, { handleResult } from '@/utils/selected-file-handle'
 import createToUploadImageObject from '@/utils/create-to-upload-image'
 import paste from '@/utils/paste'
-import Upload from '@/views/upload/upload.vue'
 
 export default defineComponent({
   name: 'upload-area',
@@ -52,7 +58,7 @@ export default defineComponent({
       uploadSettings: computed(() => store.getters.getUploadSettings).value,
       toUploadImage: computed(() => store.getters.getToUploadImage).value,
 
-      // 选择图片
+      // Select images
       onSelect(e: any) {
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
         // eslint-disable-next-line no-restricted-syntax
@@ -67,7 +73,7 @@ export default defineComponent({
         }
       },
 
-      // 拖拽图片
+      // Drop images
       onDrop(e: any) {
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
         // eslint-disable-next-line no-restricted-syntax
@@ -82,8 +88,9 @@ export default defineComponent({
         }
       },
 
-      // 复制图片
+      // Paste images
       async onPaste(e: any) {
+        store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
         const { base64, originalFile, compressFile }: handleResult = await paste(
           e,
           this.uploadSettings.imageMaxSize
@@ -91,7 +98,7 @@ export default defineComponent({
         this.getImage(base64, originalFile, compressFile)
       },
 
-      // 获取图片对象
+      // Get image object
       getImage(base64Data: string, originFile: File, compressFile?: File) {
         if (
           this.toUploadImage.list.length === this.toUploadImage.uploadedNumber &&
@@ -133,14 +140,21 @@ export default defineComponent({
           uuid: hash,
           base64Url: base64Data
         })
+      },
+
+      onFocus() {
+        store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
       }
     })
 
     const dataRefs = toRefs(reactiveData)
+
     const onPasteFromWin = reactiveData.onPaste.bind(reactiveData)
+
     onMounted(() => {
       window.addEventListener('paste', onPasteFromWin)
     })
+
     onUnmounted(() => {
       window.removeEventListener('paste', onPasteFromWin)
     })
