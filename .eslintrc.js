@@ -41,13 +41,7 @@ module.exports = {
     'no-unused-vars': 'off',
     'no-shadow': 'off',
     camelcase: 'off',
-    'no-param-reassign': [
-      'error',
-      {
-        props: true,
-        ignorePropertyModificationsFor: ['store', 'state', 'config']
-      }
-    ]
+    'no-param-reassign': 'off'
   },
   globals: {
     ...dts2Globals()
