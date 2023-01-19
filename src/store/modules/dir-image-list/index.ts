@@ -105,6 +105,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
       const addImg = (
         dirObj: DirObject,
         dir: string,
+        dirPath: string,
         Img: UploadedImageModel,
         isAdd: boolean = false
       ) => {
@@ -112,9 +113,17 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
           return state.dirObject
         }
 
-        const temp = dirObj.childrenDirs?.find((x: DirObject) => x.dir === dir)
+        let temp = dirObj.childrenDirs?.find((x: DirObject) => x.dir === dir)
         if (!temp) {
-          return state.dirObject
+          temp = {
+            type: 'dir',
+            dir,
+            dirPath,
+            childrenDirs: [],
+            imageList: []
+          }
+
+          dirObj.childrenDirs.push(temp)
         }
 
         if (isAdd && !temp.imageList.some((v) => v.name === Img.name)) {
@@ -132,10 +141,13 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
         }
       } else {
         const dirList: string[] = item.dir.split('/')
+        let dirPath = ''
         dirList.forEach((dir, i) => {
-          tempDirObj = addImg(tempDirObj, dir, item, i === dirList.length - 1)
+          dirPath += `${i > 0 ? '/' : ''}${dir}`
+          tempDirObj = addImg(tempDirObj, dir, dirPath, item, i === dirList.length - 1)
         })
       }
+
       dispatch('DIR_IMAGE_LIST_PERSIST')
     },
 
@@ -195,7 +207,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
             const dpc = getDirContent(dp, state.dirObject)
             if (dpc && !dpc.imageList.length && !dpc.childrenDirs.length) {
               const { dirPath } = getUpOneLevelDir(dp)
-              dispatch('SET_USER_CONFIG_INFO', { selectedDir: dirPath })
+              dispatch('SET_USER_CONFIG_INFO', { viewDir: dirPath })
               dispatch('DIR_IMAGE_LIST_REMOVE_DIR', dp)
             }
           })
@@ -203,7 +215,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
       })
     },
 
-    // 图床管理 - 初始化指定目录（即删除指定目录的子目录列表和图片列表）  -- OK
+    // 图床管理 - 初始化指定目录（即删除指定目录的子目录列表和图片列表）
     DIR_IMAGE_LIST_INIT_DIR({ state, dispatch }, dirPath: string) {
       let tempDirObj = state.dirObject
 
@@ -241,7 +253,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
       dispatch('DIR_IMAGE_LIST_PERSIST')
     },
 
-    // 图床管理 - 持久化存储  -- OK
+    // 图床管理 - 持久化存储
     DIR_IMAGE_LIST_PERSIST({ state }) {
       localStorage.setItem(PICX_MANAGEMENT, JSON.stringify(state.dirObject))
     },

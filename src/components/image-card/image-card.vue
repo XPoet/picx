@@ -134,7 +134,6 @@ const doDeleteImage = (
   isRename: boolean = false
 ): Promise<Boolean> => {
   if (!isRename) {
-    // eslint-disable-next-line no-param-reassign
     imageObj.deleting = true
   }
   const { owner, selectedRepos } = userConfigInfo
@@ -146,22 +145,19 @@ const doDeleteImage = (
           owner,
           repo: selectedRepos,
           path: imageObj.path,
-          message: 'Delete picture via PicX(https://github.com/XPoet/picx)',
+          message: 'Delete pictures via PicX (https://github.com/XPoet/picx)',
           sha: imageObj.sha
         }
       })
       .then((res) => {
-        console.log('[deleteImage] ', res)
+        console.log('deleteImage >> ', res)
         if (res && res.status === 200) {
-          // eslint-disable-next-line no-param-reassign
           imageObj.deleting = false
-          // eslint-disable-next-line no-unused-expressions
           ElMessage.success(`${isRename ? '更新' : '删除'}成功！`)
           store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
           store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
           resolve(true)
         } else {
-          // eslint-disable-next-line no-param-reassign
           imageObj.deleting = false
         }
       })

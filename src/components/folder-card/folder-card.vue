@@ -1,11 +1,6 @@
 <template>
   <div class="folder-card" @dblclick="dblclickFolder">
-    <el-tooltip
-      v-if="mode === 'dir'"
-      effect="dark"
-      content="双击进入下一级目录"
-      placement="top"
-    >
+    <el-tooltip v-if="mode === 'dir'" content="双击进入下一级目录" placement="top">
       <div class="icon">
         <svg
           t="1639999626518"
@@ -50,11 +45,11 @@
       </svg>
     </div>
     <div class="text" v-if="mode === 'dir'">{{ folderObj.dir }}</div>
-    <div class="text" v-if="mode === 'back'">双击返回</div>
+    <div class="text" v-if="mode === 'back'">双击后退</div>
   </div>
 </template>
 
-<script lang="ts" setup>
+<script setup lang="ts">
 import { computed } from 'vue'
 import { useStore } from '@/store'
 
@@ -62,7 +57,6 @@ const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
-// eslint-disable-next-line no-undef
 const props = defineProps({
   folderObj: {
     type: Object,
@@ -74,13 +68,11 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['update:modelValue'])
-
 const dblclickFolder = () => {
   const { folderObj, mode } = props
 
   if (mode === 'back') {
-    const currentDir = userConfigInfo.selectedDir
+    const currentDir = userConfigInfo.viewDir
 
     if (currentDir === '/') {
       return
@@ -89,25 +81,18 @@ const dblclickFolder = () => {
     const currentDirList = currentDir.split('/')
 
     if (currentDirList.length === 1) {
-      userConfigInfo.selectedDir = '/'
+      userConfigInfo.viewDir = '/'
     } else if (currentDirList.length > 1) {
       currentDirList.length -= 1
-      userConfigInfo.selectedDir = currentDirList.join('/')
+      userConfigInfo.viewDir = currentDirList.join('/')
     }
-  } else {
-    userConfigInfo.selectedDir = folderObj.dirPath
   }
 
-  const { selectedDir } = userConfigInfo
-
-  if (selectedDir === '/') {
-    userConfigInfo.selectedDirList = []
-    userConfigInfo.dirMode = 'rootDir'
-  } else {
-    userConfigInfo.selectedDirList = selectedDir.split('/')
-    userConfigInfo.dirMode = 'reposDir'
+  if (mode === 'dir') {
+    userConfigInfo.viewDir = folderObj.dirPath
   }
-  store.dispatch('USER_CONFIG_INFO_NOT_PERSIST')
+
+  store.dispatch('USER_CONFIG_INFO_PERSIST')
 }
 </script>
 

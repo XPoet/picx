@@ -57,7 +57,7 @@ export const getContentByReposPath = (path: string = '') => {
         }
       )
       .then((res: any) => {
-        if (res && res.status === 200 && res.data.length > 0) {
+        if (res && res.status === 200 && res.data.length) {
           res.data
             .filter((v: any) => v.type === 'dir')
             .forEach((x: any) => store.dispatch('DIR_IMAGE_LIST_ADD_DIR', x.path))
@@ -65,9 +65,9 @@ export const getContentByReposPath = (path: string = '') => {
           setTimeout(() => {
             res.data
               .filter((v: any) => v.type === 'file' && isImage(getFileSuffix(v.name)))
-              .forEach((x: any) =>
+              .forEach((x: any) => {
                 store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', structureImageObject(x, path))
-              )
+              })
           }, 100)
 
           resolve(true)
