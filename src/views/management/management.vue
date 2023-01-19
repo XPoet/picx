@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <template>
   <div class="page-container management-page-container">
     <div class="content-container">
@@ -15,7 +16,7 @@
               <Menu v-if="!listing" />
             </el-icon>
           </el-tooltip>
-          <el-tooltip placement="top" content="重新加载图片">
+          <el-tooltip placement="top" content="加载所有">
             <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
               <Refresh />
             </el-icon>
