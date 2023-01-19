@@ -1,8 +1,7 @@
 import { Module } from 'vuex'
 import UploadedImageListStateTypes from '@/store/modules/uploaded-image-list/types'
 import RootStateTypes from '@/store/types'
-import { PICX_UPLOADED } from '@/common/model/storage.model'
-import { UploadedImageModel } from '@/common/model/upload.model'
+import { PICX_UPLOADED, UploadedImageModel } from '@/common/model'
 
 const initUploadedImageList = (): UploadedImageModel[] => {
   const imageList: string | null = sessionStorage.getItem(PICX_UPLOADED)

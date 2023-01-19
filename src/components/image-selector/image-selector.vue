@@ -22,10 +22,9 @@
 <script lang="ts" setup>
 import { computed, onMounted, watch, ref } from 'vue'
 import { useStore } from '@/store'
-import { UploadedImageModel } from '@/common/model/upload.model'
+import { UploadedImageModel, DeleteStatusEnum } from '@/common/model'
 import { batchCopyExternalLink } from '@/utils/external-link-handler'
 import { delelteBatchImage } from '@/utils/delete-image-card'
-import { deleteStatusEnum } from '@/common/model/delete.model'
 
 const props = defineProps({
   currentDirImageList: {
@@ -72,7 +71,7 @@ async function batchDeleteImage() {
     })
       .then(async () => {
         const res = await delelteBatchImage(getImageCardCheckedArr.value, userConfigInfo)
-        if (res === deleteStatusEnum.allDeleted) {
+        if (res === DeleteStatusEnum.allDeleted) {
           ElMessage.success('批量删除成功！')
         }
       })

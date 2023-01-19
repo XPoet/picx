@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <template>
   <div class="page-container settings-page-container">
     <div class="setting-title">个性设置：</div>
@@ -43,7 +44,7 @@
           @change="saveUserSettings"
         >
           <el-option label="Staticaly" value="staticaly"></el-option>
-          <el-option label="Cloudflare" value="cloudflare"></el-option>
+          <el-option label="zzko" value="zzko"></el-option>
           <el-option label="jsDelivr" value="jsdelivr"></el-option>
         </el-select>
       </li>

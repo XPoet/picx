@@ -1,13 +1,13 @@
 import { Module } from 'vuex'
 import {
   BranchModeEnum,
-  UserConfigInfoModel
-} from '@/common/model/user-config-info.model'
-import { PICX_CONFIG } from '@/common/model/storage.model'
+  UserConfigInfoModel,
+  PICX_CONFIG,
+  DirModeEnum
+} from '@/common/model'
 import { deepAssignObject, cleanObject } from '@/utils/object-helper'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
-import { DirModeEnum } from '@/common/model/dir.model'
 import TimeHelper from '@/utils/time-helper'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
@@ -26,7 +26,8 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     dirMode: DirModeEnum.reposDir,
     dirList: [],
     loggingStatus: false,
-    selectedDirList: []
+    selectedDirList: [],
+    viewDir: ''
   }
 
   const LSConfig: string | null = localStorage.getItem(PICX_CONFIG)
@@ -54,7 +55,7 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
   return initConfig
 }
 
-const userConfigInfoUpdate = (state: UserConfigInfoStateTypes): void => {
+const convertSpecialCharacter = (state: UserConfigInfoStateTypes): void => {
   const { selectedDir, selectedBranch, dirMode } = state.userConfigInfo
   if (dirMode === 'newDir') {
     const strList = selectedDir.split('')
@@ -88,24 +89,17 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
     USER_CONFIG_INFO_RESET({ state }) {
       state.userConfigInfo = initUserConfigInfo()
     },
+
     // 设置用户配置信息
-    SET_USER_CONFIG_INFO(
-      { state, dispatch },
-      configInfo: UserConfigInfoStateTypes,
-      needPersist: boolean = true
-    ) {
+    SET_USER_CONFIG_INFO({ state, dispatch }, configInfo: UserConfigInfoStateTypes) {
       // eslint-disable-next-line no-restricted-syntax
       for (const key in configInfo) {
         // eslint-disable-next-line no-prototype-builtins
         if (state.userConfigInfo.hasOwnProperty(key)) {
           // @ts-ignore
           state.userConfigInfo[key] = configInfo[key]
-        } else if (key === 'needPersist') {
-          // eslint-disable-next-line
-          needPersist = false
         }
       }
-      if (!needPersist) return
       dispatch('USER_CONFIG_INFO_PERSIST')
     },
 
@@ -129,13 +123,8 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
 
     // 持久化用户配置信息
     USER_CONFIG_INFO_PERSIST({ state }) {
-      userConfigInfoUpdate(state)
+      convertSpecialCharacter(state)
       localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
-    },
-
-    // 修改 userConfigInfo 但无需持久化 (目前提供图床管理页面使用)
-    USER_CONFIG_INFO_NOT_PERSIST({ state }) {
-      userConfigInfoUpdate(state)
     },
 
     // 退出登录

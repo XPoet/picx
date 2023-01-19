@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <template>
   <div class="upload-page-container">
     <div
@@ -51,10 +52,10 @@
 import { computed, watch, ref, Ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import imageCard from '@/components/image-card/image-card.vue'
-import toUploadImageCard from '@/components/to-upload-image-card/to-upload-image-card.vue'
-import uploadArea from '@/components/upload-area/upload-area.vue'
-import { UploadStatusEnum } from '@/common/model/upload.model'
+import ImageCard from '@/components/image-card/image-card.vue'
+import ToUploadImageCard from '@/components/to-upload-image-card/to-upload-image-card.vue'
+import UploadArea from '@/components/upload-area/upload-area.vue'
+import { UploadStatusEnum } from '@/common/model'
 
 const store = useStore()
 const router = useRouter()

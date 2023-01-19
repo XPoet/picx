@@ -1,9 +1,6 @@
 export enum UploadStatusEnum {
-  // eslint-disable-next-line no-unused-vars
   uploaded = 'uploaded',
-  // eslint-disable-next-line no-unused-vars
   allUploaded = 'allUploaded',
-  // eslint-disable-next-line no-unused-vars
   uploadFail = 'uploadFail'
 }
 
@@ -21,7 +18,7 @@ export interface UploadedImageModel {
   github_url: string
   jsdelivr_cdn_url: string
   staticaly_cdn_url: string
-  cloudflare_cdn_url: string
+  zzko_cdn_url: string
 }
 
 export interface ToUploadImageModel {
@@ -61,7 +58,7 @@ export interface ToUploadImageModel {
     github: string
     jsdelivr: string
     staticaly: string
-    cloudflare: string
+    zzko: string
   }
 
   uploadedImg?: UploadedImageModel

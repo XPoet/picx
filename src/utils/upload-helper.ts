@@ -1,9 +1,12 @@
-import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
-import { ToUploadImageModel, UploadedImageModel } from '@/common/model/upload.model'
+import {
+  UserConfigInfoModel,
+  ExternalLinkType,
+  ToUploadImageModel,
+  UploadedImageModel
+} from '@/common/model'
 import axios from '@/utils/axios'
 import { store } from '@/store'
 import { generateExternalLink } from '@/utils/external-link-handler'
-import ExternalLinkType from '@/common/model/external-link.model'
 
 export const uploadUrlHandle = (
   config: UserConfigInfoModel,
@@ -95,10 +98,10 @@ function uploadedHandle(
     userConfigInfo
   )
 
-  // 生成 Cloudflare CDN 外链
+  // 生成 zzko CDN 外链
   // eslint-disable-next-line no-param-reassign
-  img.externalLink.cloudflare = generateExternalLink(
-    ExternalLinkType.cloudflare,
+  img.externalLink.zzko = generateExternalLink(
+    ExternalLinkType.zzko,
     res.data.content,
     userConfigInfo
   )
@@ -111,13 +114,13 @@ function uploadedHandle(
     name: res.data.content.name,
     path: res.data.content.path,
     sha: res.data.content.sha,
+    is_transform_md: userSettings.defaultMarkdown,
+    deleting: false,
+    size: img.fileInfo.size,
     github_url: img.externalLink.github,
     jsdelivr_cdn_url: img.externalLink.jsdelivr,
     staticaly_cdn_url: img.externalLink.staticaly,
-    cloudflare_cdn_url: img.externalLink.cloudflare,
-    is_transform_md: userSettings.defaultMarkdown,
-    deleting: false,
-    size: img.fileInfo.size
+    zzko_cdn_url: img.externalLink.zzko
   }
 
   // eslint-disable-next-line no-param-reassign

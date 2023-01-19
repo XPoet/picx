@@ -71,11 +71,10 @@ import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
 import axios from '@/utils/axios'
-import { UploadedImageModel } from '@/common/model/upload.model'
+import { UploadedImageModel, ExternalLinkType } from '@/common/model'
 import { getBase64ByImageUrl, getImage } from '@/utils/rename-image'
 import { uploadImage_single } from '@/utils/upload-helper'
 import { getFilename, getFileSize, getFileSuffix } from '@/utils/file-handle-helper'
-import ExternalLinkType from '@/common/model/external-link.model'
 
 const props = defineProps({
   listing: {
@@ -114,8 +113,8 @@ const imgUrl = computed(() => {
       return props.imageObj.jsdelivr_cdn_url
     case ExternalLinkType.staticaly:
       return props.imageObj.staticaly_cdn_url
-    case ExternalLinkType.cloudflare:
-      return props.imageObj.cloudflare_cdn_url
+    case ExternalLinkType.zzko:
+      return props.imageObj.zzko_cdn_url
     default:
       return props.imageObj.github_url
   }
@@ -134,7 +133,6 @@ const doDeleteImage = (
   isRename: boolean = false
 ): Promise<Boolean> => {
   if (!isRename) {
-    // eslint-disable-next-line no-param-reassign
     imageObj.deleting = true
   }
   const { owner, selectedRepos } = userConfigInfo
@@ -146,22 +144,19 @@ const doDeleteImage = (
           owner,
           repo: selectedRepos,
           path: imageObj.path,
-          message: 'Delete picture via PicX(https://github.com/XPoet/picx)',
+          message: 'Delete pictures via PicX (https://github.com/XPoet/picx)',
           sha: imageObj.sha
         }
       })
       .then((res) => {
-        console.log('[deleteImage] ', res)
+        console.log('deleteImage >> ', res)
         if (res && res.status === 200) {
-          // eslint-disable-next-line no-param-reassign
           imageObj.deleting = false
-          // eslint-disable-next-line no-unused-expressions
           ElMessage.success(`${isRename ? '更新' : '删除'}成功！`)
           store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
           store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
           resolve(true)
         } else {
-          // eslint-disable-next-line no-param-reassign
           imageObj.deleting = false
         }
       })

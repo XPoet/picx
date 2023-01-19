@@ -1,7 +1,7 @@
 import { Module } from 'vuex'
 import { ImageCardStateTypes } from './types'
 import RootStateTypes from '../../types'
-import { UploadedImageModel } from '@/common/model/upload.model'
+import { UploadedImageModel } from '@/common/model'
 
 const imageCardModule: Module<ImageCardStateTypes, RootStateTypes> = {
   state: {

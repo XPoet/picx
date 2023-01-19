@@ -1,5 +1,5 @@
 import Axios from 'axios'
-import { PICX_CONFIG } from '@/common/model/storage.model'
+import { PICX_CONFIG } from '@/common/model'
 
 const baseURL = 'https://api.github.com'
 

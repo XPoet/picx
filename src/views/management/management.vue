@@ -1,9 +1,10 @@
+<!-- eslint-disable -->
 <template>
   <div class="page-container management-page-container">
     <div class="content-container">
       <div class="top">
         <div class="left">
-          <selected-info-bar />
+          <selected-info-bar bar-type="management" />
         </div>
         <div class="right flex-start">
           <el-tooltip
@@ -15,7 +16,7 @@
               <Menu v-if="!listing" />
             </el-icon>
           </el-tooltip>
-          <el-tooltip placement="top" content="重新加载图片">
+          <el-tooltip placement="top" content="重新加载">
             <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
               <Refresh />
             </el-icon>
@@ -36,7 +37,7 @@
             height: isShowBatchTools ? 'calc(100% - 50rem)' : '100%'
           }"
         >
-          <li class="image-item" v-if="userConfigInfo.selectedDir !== '/'">
+          <li class="image-item" v-if="userConfigInfo.viewDir !== '/'">
             <folder-card mode="back" />
           </li>
           <li class="image-item" v-for="(dir, index) in currentPathDirList" :key="index">
@@ -70,17 +71,13 @@ import { computed, onMounted, watch, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { getContentByReposPath } from '@/common/api'
-import {
-  dirModeHandle,
-  filterDirContent,
-  getDirContent
-} from '@/views/management/management.util'
+import { filterDirContent, getDirContent } from '@/views/management/management.util'
 
-import imageCard from '@/components/image-card/image-card.vue'
-import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
-import folderCard from '@/components/folder-card/folder-card.vue'
-import imageSelector from '@/components/image-selector/image-selector.vue'
-import { UploadedImageModel } from '@/common/model/upload.model'
+import ImageCard from '@/components/image-card/image-card.vue'
+import SelectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
+import FolderCard from '@/components/folder-card/folder-card.vue'
+import ImageSelector from '@/components/image-selector/image-selector.vue'
+import { UploadedImageModel, DirModeEnum } from '@/common/model'
 
 const store = useStore()
 const router = useRouter()
@@ -118,22 +115,30 @@ async function dirContentHandle(dir: string) {
 }
 
 async function initDirImageList() {
-  const { selectedDir, dirMode } = userConfigInfo
+  const { selectedDir, viewDir, dirMode } = userConfigInfo
 
-  if (
-    (dirMode === 'newDir' || dirMode === 'autoDir') &&
-    !getDirContent(selectedDir, dirObject)
-  ) {
-    userConfigInfo.selectedDir = '/'
-    userConfigInfo.dirMode = 'rootDir'
+  if (viewDir === '') {
+    if (
+      (dirMode === DirModeEnum.newDir || dirMode === DirModeEnum.autoDir) &&
+      !getDirContent(selectedDir, dirObject)
+    ) {
+      userConfigInfo.selectedDir = '/'
+      userConfigInfo.dirMode = 'rootDir'
+    }
+
+    if (userConfigInfo.selectedDir) {
+      userConfigInfo.viewDir = userConfigInfo.selectedDir
+    } else {
+      userConfigInfo.viewDir = '/'
+    }
   }
 
   if (!dirObject.imageList.length && !dirObject.childrenDirs.length) {
-    await getContentByReposPath(userConfigInfo.selectedDir)
+    await getContentByReposPath(userConfigInfo.viewDir)
     return
   }
 
-  await dirContentHandle(userConfigInfo.selectedDir)
+  await dirContentHandle(userConfigInfo.viewDir)
 }
 
 function toggleListing() {
@@ -142,10 +147,10 @@ function toggleListing() {
 
 // 重新加载当前目录内容（网络请求）
 async function reloadCurrentDirContent() {
-  const { selectedDir } = userConfigInfo
-  await store.dispatch('DIR_IMAGE_LIST_INIT_DIR', selectedDir)
+  const { viewDir } = userConfigInfo
+  await store.dispatch('DIR_IMAGE_LIST_INIT_DIR', viewDir)
   loadingImageList.value = true
-  await getContentByReposPath(selectedDir)
+  await getContentByReposPath(viewDir)
   loadingImageList.value = false
 }
 
@@ -163,9 +168,8 @@ watch(
 )
 
 watch(
-  () => userConfigInfo.selectedDir,
+  () => userConfigInfo.viewDir,
   async (nDir) => {
-    dirModeHandle(nDir, store)
     await dirContentHandle(nDir)
     renderKey.value += 1
   },
@@ -175,11 +179,11 @@ watch(
 watch(
   () => dirObject,
   (nv: any) => {
-    const { selectedDir } = userConfigInfo
-    const dirContent = getDirContent(selectedDir, nv)
+    const { viewDir } = userConfigInfo
+    const dirContent = getDirContent(viewDir, nv)
     if (dirContent) {
-      currentPathDirList.value = filterDirContent(selectedDir, dirContent, 'dir')
-      currentPathImageList.value = filterDirContent(selectedDir, dirContent, 'image')
+      currentPathDirList.value = filterDirContent(viewDir, dirContent, 'dir')
+      currentPathImageList.value = filterDirContent(viewDir, dirContent, 'image')
       store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
     }
   },

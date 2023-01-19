@@ -1,4 +1,4 @@
-import { UploadedImageModel } from '@/common/model/upload.model'
+import { UploadedImageModel } from '@/common/model'
 
 export interface ImageCardStateTypes {
   imgCardArr: UploadedImageModel[]

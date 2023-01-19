@@ -1,5 +1,4 @@
-/* eslint-disable import/prefer-default-export */
-export enum deleteStatusEnum {
+export enum DeleteStatusEnum {
   deleted = 'deleted',
   allDeleted = 'allDeleted',
   deleteFail = 'deleteFail'

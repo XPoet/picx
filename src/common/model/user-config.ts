@@ -1,4 +1,4 @@
-import { DirModeEnum, DirModel } from './dir.model'
+import { DirModeEnum, DirModel } from './dir'
 
 export interface ReposModel {
   value: string
@@ -28,6 +28,7 @@ export interface UserConfigInfoModel {
   branchMode: BranchModeEnum
   branchList: BranchModel[]
   dirMode: DirModeEnum
+  viewDir: string
   selectedDir: string
   selectedDirList: string[]
   dirList: DirModel[]

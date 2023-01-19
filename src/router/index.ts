@@ -73,9 +73,6 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.title) (<any>window).document.title = to.meta.title
-  if (from.path === '/management') {
-    store.dispatch('USER_CONFIG_INFO_RESET')
-  }
   next()
 })
 

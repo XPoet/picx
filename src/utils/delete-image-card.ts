@@ -1,7 +1,5 @@
-import { UploadedImageModel } from '../common/model/upload.model'
-import { UserConfigInfoModel } from '../common/model/user-config-info.model'
+import { UploadedImageModel, UserConfigInfoModel, DeleteStatusEnum } from '@/common/model'
 import axios from '@/utils/axios'
-import { deleteStatusEnum } from '../common/model/delete.model'
 import { store } from '@/store'
 
 let deleteIndex = 0
@@ -48,17 +46,17 @@ export async function delelteBatchImage(
   userConfigInfo: UserConfigInfoModel
 ) {
   if (deleteIndex >= imgCardArr.length) {
-    return deleteStatusEnum.deleted
+    return DeleteStatusEnum.deleted
   }
   if (await deleteSingleImage(imgCardArr[deleteIndex], userConfigInfo)) {
     if (deleteIndex < imgCardArr.length) {
       deleteIndex += 1
       if (await delelteBatchImage(imgCardArr, userConfigInfo)) {
         deleteIndex = 0
-        return deleteStatusEnum.allDeleted
+        return DeleteStatusEnum.allDeleted
       }
     }
-    return deleteStatusEnum.deleted
+    return DeleteStatusEnum.deleted
   }
-  return deleteStatusEnum.deleteFail
+  return DeleteStatusEnum.deleteFail
 }

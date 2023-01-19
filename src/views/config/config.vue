@@ -1,3 +1,4 @@
+<!-- eslint-disable -->
 <template>
   <div class="page-container config-page-container">
     <!-- Token -->
@@ -226,8 +227,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { DirModeEnum } from '@/common/model/dir.model'
-import { BranchModeEnum } from '@/common/model/user-config-info.model'
+import { DirModeEnum, BranchModeEnum } from '@/common/model'
 import axios from '@/utils/axios'
 import TimeHelper from '@/utils/time-helper'
 import { getDirListByPath } from '@/common/api'

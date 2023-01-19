@@ -1,7 +1,5 @@
-import ExternalLinkType from '@/common/model/external-link.model'
-import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
+import { ExternalLinkType, UploadedImageModel, UserConfigInfoModel } from '@/common/model'
 import { getFilename } from '@/utils/file-handle-helper'
-import { UploadedImageModel } from '@/common/model/upload.model'
 
 /**
  * 创建承载图片外链文本的 DOM 元素
@@ -31,17 +29,16 @@ export const generateExternalLink = (
   config: UserConfigInfoModel
 ): string => {
   const staticalyLink: string = `https://cdn.staticaly.com/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
-  const cloudflareLink: string = `https://git.poker/${config.owner}/${config.selectedRepos}/blob/${config.selectedBranch}/${content.path}?raw=true`
+  const zzkoLink: string = `https://jsd.cdn.zzko.cn/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
   const jsdelivrLink: string = `https://cdn.jsdelivr.net/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
   const githubLink: string = decodeURI(content.download_url)
 
-  // eslint-disable-next-line default-case
   switch (type) {
     case ExternalLinkType.staticaly:
       return staticalyLink
 
-    case ExternalLinkType.cloudflare:
-      return cloudflareLink
+    case ExternalLinkType.zzko:
+      return zzkoLink
 
     case ExternalLinkType.jsdelivr:
       return jsdelivrLink
@@ -94,13 +91,13 @@ export const copyExternalLink = (img: UploadedImageModel, type: ExternalLinkType
       }
       break
 
-    case ExternalLinkType.cloudflare:
+    case ExternalLinkType.zzko:
       if (isMD) {
-        externalLink = formatMarkdown(name, img.cloudflare_cdn_url)
-        successInfo = 'Markdown 格式的 Cloudflare CDN'
+        externalLink = formatMarkdown(name, img.zzko_cdn_url)
+        successInfo = 'Markdown 格式的 zzko CDN'
       } else {
-        externalLink = img.cloudflare_cdn_url
-        successInfo = 'Cloudflare CDN'
+        externalLink = img.zzko_cdn_url
+        successInfo = 'zzko CDN'
       }
       break
 
@@ -150,10 +147,10 @@ export const batchCopyExternalLink = (
             : item.staticaly_cdn_url
           break
 
-        case ExternalLinkType.cloudflare:
+        case ExternalLinkType.zzko:
           externalLink = isMD
-            ? formatMarkdown(item.name, item.cloudflare_cdn_url)
-            : item.cloudflare_cdn_url
+            ? formatMarkdown(item.name, item.zzko_cdn_url)
+            : item.zzko_cdn_url
           break
 
         default:
