@@ -1,7 +1,5 @@
-import ExternalLinkType from '@/common/model/external-link.model'
-import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
+import { ExternalLinkType, UploadedImageModel, UserConfigInfoModel } from '@/common/model'
 import { getFilename } from '@/utils/file-handle-helper'
-import { UploadedImageModel } from '@/common/model/upload.model'
 
 /**
  * 创建承载图片外链文本的 DOM 元素

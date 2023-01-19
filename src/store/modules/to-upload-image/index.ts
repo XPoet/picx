@@ -1,5 +1,5 @@
-import { ToUploadImageModel } from '@/common/model/upload.model'
 import { Module } from 'vuex'
+import { ToUploadImageModel } from '@/common/model'
 import ToUploadImageStateTypes from '@/store/modules/to-upload-image/types'
 import RootStateTypes from '@/store/types'
 

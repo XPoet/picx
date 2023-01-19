@@ -1,5 +1,5 @@
-import { CompressEncoderMap } from '../../utils/compress'
-import ExternalLinkType from '@/common/model/external-link.model'
+import { CompressEncoderMap } from '@/utils/compress'
+import { ExternalLinkType } from '@/common/model'
 
 export interface UserSettingsModel {
   defaultHash: boolean

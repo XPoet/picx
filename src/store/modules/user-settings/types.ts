@@ -1,4 +1,4 @@
-import { UserSettingsModel } from '@/common/model/user-settings.model'
+import { UserSettingsModel } from '@/common/model'
 
 export default interface UserSettingsStateTypes {
   userSettings: UserSettingsModel

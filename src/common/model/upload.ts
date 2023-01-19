@@ -1,9 +1,6 @@
 export enum UploadStatusEnum {
-  // eslint-disable-next-line no-unused-vars
   uploaded = 'uploaded',
-  // eslint-disable-next-line no-unused-vars
   allUploaded = 'allUploaded',
-  // eslint-disable-next-line no-unused-vars
   uploadFail = 'uploadFail'
 }
 

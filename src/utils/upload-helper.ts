@@ -1,9 +1,12 @@
-import { UserConfigInfoModel } from '@/common/model/user-config-info.model'
-import { ToUploadImageModel, UploadedImageModel } from '@/common/model/upload.model'
+import {
+  UserConfigInfoModel,
+  ExternalLinkType,
+  ToUploadImageModel,
+  UploadedImageModel
+} from '@/common/model'
 import axios from '@/utils/axios'
 import { store } from '@/store'
 import { generateExternalLink } from '@/utils/external-link-handler'
-import ExternalLinkType from '@/common/model/external-link.model'
 
 export const uploadUrlHandle = (
   config: UserConfigInfoModel,

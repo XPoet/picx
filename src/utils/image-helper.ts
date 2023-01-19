@@ -1,8 +1,7 @@
 import { computed } from 'vue'
-import { UploadedImageModel } from '@/common/model/upload.model'
+import { UploadedImageModel, ExternalLinkType } from '@/common/model'
 import { getUuid } from '@/utils/common-utils'
 import { generateExternalLink } from '@/utils/external-link-handler'
-import ExternalLinkType from '@/common/model/external-link.model'
 import { store } from '@/store'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value

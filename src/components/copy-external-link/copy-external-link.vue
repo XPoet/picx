@@ -69,10 +69,9 @@
 
 <script setup lang="ts">
 import { onMounted, computed, ref, onUpdated, watch } from 'vue'
-import ExternalLinkType from '@/common/model/external-link.model'
+import { ExternalLinkType, UploadedImageModel } from '@/common/model'
 import { store } from '@/store'
 import { copyExternalLink } from '@/utils/external-link-handler'
-import { UploadedImageModel } from '@/common/model/upload.model'
 
 const props = defineProps({
   imgObj: {

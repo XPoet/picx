@@ -1,13 +1,13 @@
 import { Module } from 'vuex'
 import {
   BranchModeEnum,
-  UserConfigInfoModel
-} from '@/common/model/user-config-info.model'
-import { PICX_CONFIG } from '@/common/model/storage.model'
+  UserConfigInfoModel,
+  PICX_CONFIG,
+  DirModeEnum
+} from '@/common/model'
 import { deepAssignObject, cleanObject } from '@/utils/object-helper'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
-import { DirModeEnum } from '@/common/model/dir.model'
 import TimeHelper from '@/utils/time-helper'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {

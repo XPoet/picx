@@ -1,4 +1,4 @@
-import { DirModeEnum, DirModel } from './dir.model'
+import { DirModeEnum, DirModel } from './dir'
 
 export interface ReposModel {
   value: string

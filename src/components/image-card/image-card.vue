@@ -71,11 +71,10 @@ import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
 import axios from '@/utils/axios'
-import { UploadedImageModel } from '@/common/model/upload.model'
+import { UploadedImageModel, ExternalLinkType } from '@/common/model'
 import { getBase64ByImageUrl, getImage } from '@/utils/rename-image'
 import { uploadImage_single } from '@/utils/upload-helper'
 import { getFilename, getFileSize, getFileSuffix } from '@/utils/file-handle-helper'
-import ExternalLinkType from '@/common/model/external-link.model'
 
 const props = defineProps({
   listing: {

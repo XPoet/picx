@@ -1,5 +1,5 @@
 import { Module } from 'vuex'
-import { PICX_MANAGEMENT } from '@/common/model/storage.model'
+import { PICX_MANAGEMENT, UploadedImageModel } from '@/common/model'
 import DirImageListStateTypes, { DirObject } from './types'
 import RootStateTypes from '../../types'
 import {
@@ -7,7 +7,6 @@ import {
   getUpLevelDirList,
   getUpOneLevelDir
 } from '@/store/modules/dir-image-list/utils'
-import { UploadedImageModel } from '@/common/model/upload.model'
 import { getDirContent } from '@/views/management/management.util'
 
 const initDirObject = () => {

@@ -71,18 +71,13 @@ import { computed, onMounted, watch, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { getContentByReposPath } from '@/common/api'
-import {
-  dirModeHandle,
-  filterDirContent,
-  getDirContent
-} from '@/views/management/management.util'
+import { filterDirContent, getDirContent } from '@/views/management/management.util'
 
 import ImageCard from '@/components/image-card/image-card.vue'
 import SelectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 import FolderCard from '@/components/folder-card/folder-card.vue'
 import ImageSelector from '@/components/image-selector/image-selector.vue'
-import { UploadedImageModel } from '@/common/model/upload.model'
-import { DirModeEnum } from '@/common/model/dir.model'
+import { UploadedImageModel, DirModeEnum } from '@/common/model'
 
 const store = useStore()
 const router = useRouter()
