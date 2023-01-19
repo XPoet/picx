@@ -12,10 +12,12 @@
         {{ userConfigInfo.selectedBranch }}
       </el-tag>
     </span>
-    <span class="info-item" v-if="userConfigInfo.selectedDir">
+    <span class="info-item">
       目录：
       <el-tag disable-transitions>
-        {{ userConfigInfo.selectedDir }}
+        {{
+          barType === 'management' ? userConfigInfo.viewDir : userConfigInfo.selectedDir
+        }}
       </el-tag>
     </span>
   </div>
@@ -28,6 +30,13 @@ import { useStore } from '@/store'
 const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
 const userSettings = computed(() => store.getters.getUserSettings)
+
+defineProps({
+  barType: {
+    type: String,
+    default: 'upload'
+  }
+})
 </script>
 
 <style scoped lang="stylus">
