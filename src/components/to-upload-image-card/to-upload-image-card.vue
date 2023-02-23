@@ -161,7 +161,7 @@ import { UserConfigInfoModel, ToUploadImageModel, UploadStatusEnum } from '@/com
 import TimeHelper from '@/utils/time-helper'
 import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
-import { uploadImage_single } from '@/utils/upload-helper'
+import { uploadImage_single, uploadImages } from '@/utils/upload-helper'
 
 export default defineComponent({
   name: 'to-upload-image-card',
@@ -245,22 +245,19 @@ export default defineComponent({
       },
 
       async uploadImage_all(userConfigInfo: UserConfigInfoModel) {
-        const uploadIndex = this.toUploadImage.uploadedNumber
-
-        if (uploadIndex >= this.toUploadImage.list.length) {
-          return UploadStatusEnum.uploaded
-        }
-
-        if (
-          await uploadImage_single(userConfigInfo, this.toUploadImage.list[uploadIndex])
-        ) {
-          if (uploadIndex < this.toUploadImage.list.length) {
-            await this.uploadImage_all(userConfigInfo)
-            return UploadStatusEnum.allUploaded
+        if (this.toUploadImage.list.length === 1) {
+          if (await uploadImage_single(userConfigInfo, this.toUploadImage.list[0])) {
+            return UploadStatusEnum.uploaded
           }
-          return UploadStatusEnum.uploaded
+          return UploadStatusEnum.uploadFail
         }
-        return UploadStatusEnum.uploadFail
+        try {
+          await uploadImages(userConfigInfo, this.toUploadImage.list)
+          return UploadStatusEnum.allUploaded
+        } catch (error) {
+          console.error(error)
+          return UploadStatusEnum.uploadFail
+        }
       }
     })
 

@@ -19,6 +19,106 @@ export const uploadUrlHandle = (
   return `/repos/${config.owner}/${config.selectedRepos}/contents/${path}${filename}`
 }
 
+export async function uploadImages(
+  userConfigInfo: UserConfigInfoModel,
+  imgs: ToUploadImageModel[]
+): Promise<void> {
+  const {
+    selectedBranch: branch,
+    selectedRepos: repo,
+    selectedDir,
+    owner
+  } = userConfigInfo
+
+  imgs.forEach((img) => {
+    img.uploadStatus.uploading = true
+  })
+
+  // 上传图片文件，为仓库创建blobs
+  const blobs = await Promise.all(
+    imgs.map((img) => {
+      return axios
+        .post(`/repos/${owner}/${repo}/git/blobs`, {
+          owner,
+          repo,
+          content: img.imgData.base64Content,
+          encoding: 'base64'
+        })
+        .then((res) => {
+          store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
+          return res
+        })
+    })
+  )
+  blobs.forEach((blob, index) => {
+    imgs[index].uploadStatus.uploading = false
+    if (blob?.status !== 201) {
+      throw new Error('上传图片失败')
+    }
+  })
+
+  // 获取head，用于获取当前分支信息（根目录的tree sha以及head commit sha）
+  const head = await axios.get(`/repos/${owner}/${repo}/branches/${branch}`)
+  if (head?.status !== 200) {
+    throw new Error('获取分支信息失败')
+  }
+
+  // 过滤路径多余的斜杠
+  const path = selectedDir
+    .split('/')
+    .filter((item) => item !== '')
+    .join('/')
+  // 创建tree
+  const tree = await axios.post(`/repos/${owner}/${repo}/git/trees`, {
+    tree: blobs.map((blob, index) => ({
+      path: `${path}/${imgs[index].filename.now}`,
+      mode: '100644',
+      type: 'blob',
+      sha: blob.data.sha
+    })),
+    base_tree: head.data?.commit?.commit?.tree?.sha || null
+  })
+
+  // 创建commit节点
+  const commit = await axios.post(`/repos/${owner}/${repo}/git/commits`, {
+    tree: tree.data.sha,
+    parents: [head.data.commit.sha],
+    message: 'Upload picture via PicX(https://github.com/XPoet/picx)'
+  })
+  if (commit?.status !== 201) {
+    throw new Error('创建commit失败')
+  }
+
+  // 将当前分支ref指向新创建的commit
+  const refRes = await axios.patch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
+    sha: commit.data.sha
+  })
+  if (refRes?.status !== 200) {
+    throw new Error('更新ref失败')
+  }
+
+  const basePath = path ? `${path}/` : ''
+  imgs.forEach((img, index) => {
+    const name = img.filename.now
+    const path = basePath + name
+    // eslint-disable-next-line no-use-before-define
+    uploadedHandle(
+      {
+        data: {
+          content: {
+            name,
+            path,
+            sha: blobs[index].data.sha,
+            download_url: `https://github.com/${owner}/${repo}/raw/${branch}/${path}`
+          }
+        }
+      },
+      img,
+      userConfigInfo
+    )
+  })
+}
+
 export function uploadImage_single(
   userConfigInfo: UserConfigInfoModel,
   img: ToUploadImageModel
