@@ -19,6 +19,8 @@ export const uploadUrlHandle = (
   return `/repos/${config.owner}/${config.selectedRepos}/contents/${path}${filename}`
 }
 
+// ref: https://dev.to/bro3886/create-a-folder-and-push-multiple-files-under-a-single-commit-through-github-api-23kc
+// ref: https://gist.github.com/StephanHoyer/91d8175507fcae8fb31a
 export async function uploadImages(
   userConfigInfo: UserConfigInfoModel,
   imgs: ToUploadImageModel[]
