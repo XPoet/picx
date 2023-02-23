@@ -73,7 +73,7 @@ export async function uploadImages(
   // 创建tree
   const tree = await axios.post(`/repos/${owner}/${repo}/git/trees`, {
     tree: blobs.map((blob, index) => ({
-      path: `${path}/${imgs[index].filename.now}`,
+      path: `${path && `${path}/`}${imgs[index].filename.now}`,
       mode: '100644',
       type: 'blob',
       sha: blob.data.sha
