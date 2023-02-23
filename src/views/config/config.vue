@@ -230,6 +230,7 @@ import { useStore } from '@/store'
 import { DirModeEnum, BranchModeEnum } from '@/common/model'
 import axios from '@/utils/axios'
 import TimeHelper from '@/utils/time-helper'
+import { initRepo } from '@/utils/init-repo'
 import { getDirListByPath } from '@/common/api'
 
 const router = useRouter()
@@ -429,7 +430,7 @@ function reset() {
   store.dispatch('LOGOUT')
 }
 
-function goUpload() {
+async function goUpload() {
   const { selectedDir, dirMode } = userConfigInfo
   let warningMessage: string = '目录不能为空！'
 
@@ -447,7 +448,17 @@ function goUpload() {
     }
     ElMessage.warning(warningMessage)
   } else {
-    router.push('/upload')
+    const loading = ElLoading.service({
+      text: '正在初始化仓库...'
+    })
+    try {
+      await initRepo(userConfigInfo)
+      router.push('/upload')
+    } catch (err) {
+      ElMessage.error('仓库初始化失败')
+    } finally {
+      loading.close()
+    }
   }
 }
 
