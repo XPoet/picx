@@ -6,7 +6,6 @@ export async function deleteSingleImage(
   imageObj: UploadedImageModel,
   userConfigInfo: UserConfigInfoModel
 ): Promise<boolean> {
-  // eslint-disable-next-line no-param-reassign
   imageObj.deleting = true
   const { owner, selectedRepos } = userConfigInfo
   return new Promise((resolve, reject) => {
@@ -22,13 +21,11 @@ export async function deleteSingleImage(
       })
       .then((res) => {
         if (res && res.status === 200) {
-          // eslint-disable-next-line no-param-reassign
           imageObj.deleting = false
           store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
           store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
           resolve(true)
         } else {
-          // eslint-disable-next-line no-param-reassign
           imageObj.deleting = false
           resolve(false)
         }
@@ -70,9 +67,7 @@ export async function deleteMultiImages(
   // ref: https://stackoverflow.com/questions/23637961/how-do-i-mark-a-file-as-deleted-in-a-tree-using-the-github-api
   const tree = await axios.post(`/repos/${owner}/${repo}/git/trees`, {
     tree: content.data
-      .filter((item: { path: string }) =>
-        imgObjs.some((imgObj) => imgObj.path === item.path)
-      )
+      .filter((item: { path: string }) => imgObjs.some((imgObj) => imgObj.path === item.path))
       .map((item: any) => ({
         type: 'blob',
         path: item.path,
@@ -110,7 +105,7 @@ export async function deleteMultiImages(
   })
 }
 
-export async function delelteBatchImage(
+export async function deleteImagesOfGH(
   imgCardArr: Array<UploadedImageModel>,
   userConfigInfo: UserConfigInfoModel
 ) {

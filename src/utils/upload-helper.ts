@@ -10,7 +10,7 @@ import { store } from '@/store'
 import { generateExternalLink } from '@/utils/external-link-handler'
 
 const uploadedHandle = (
-  res: any,
+  res: { name: string; sha: string; path: string },
   img: ToUploadImageModel,
   userConfigInfo: UserConfigInfoModel
 ) => {
@@ -21,41 +21,33 @@ const uploadedHandle = (
   img.uploadStatus.uploading = false
 
   // 生成 GitHub 外链
-  img.externalLink.github = generateExternalLink(
-    ExternalLinkType.github,
-    res.data.content,
-    userConfigInfo
-  )
+  img.externalLink.github = generateExternalLink(ExternalLinkType.github, res.path, userConfigInfo)
 
   // 生成 jsDelivr CDN 外链
   img.externalLink.jsdelivr = generateExternalLink(
     ExternalLinkType.jsdelivr,
-    res.data.content,
+    res.path,
     userConfigInfo
   )
 
   // 生成 Staticaly CDN 外链
   img.externalLink.staticaly = generateExternalLink(
     ExternalLinkType.staticaly,
-    res.data.content,
+    res.path,
     userConfigInfo
   )
 
   // 生成 zzko CDN 外链
-  img.externalLink.zzko = generateExternalLink(
-    ExternalLinkType.zzko,
-    res.data.content,
-    userConfigInfo
-  )
+  img.externalLink.zzko = generateExternalLink(ExternalLinkType.zzko, res.path, userConfigInfo)
 
   const item: UploadedImageModel = {
     checked: false,
     type: 'image',
     uuid: img.uuid,
     dir: userConfigInfo.selectedDir,
-    name: res.data.content.name,
-    path: res.data.content.path,
-    sha: res.data.content.sha,
+    name: res.name,
+    sha: res.sha,
+    path: res.path,
     is_transform_md: userSettings.defaultMarkdown,
     deleting: false,
     size: img.fileInfo.size,
@@ -77,10 +69,7 @@ const uploadedHandle = (
   store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', item)
 }
 
-export const uploadUrlHandle = (
-  config: UserConfigInfoModel,
-  filename: string
-): string => {
+export const uploadUrlHandle = (config: UserConfigInfoModel, filename: string): string => {
   let path = ''
   if (config.selectedDir !== '/') {
     path = `${config.selectedDir}/`
@@ -170,18 +159,8 @@ export async function uploadImagesToGH(
 
   blobs.forEach((blob) => {
     const name = blob.img.filename.now
-    const path = tgtPath + name
     uploadedHandle(
-      {
-        data: {
-          content: {
-            name,
-            path,
-            sha: blob.data.sha,
-            download_url: `https://github.com/${owner}/${repo}/raw/${branch}/${path}`
-          }
-        }
-      },
+      { name, sha: blob.data.sha, path: `${tgtPath}${name}` },
       blob.img,
       userConfigInfo
     )
@@ -213,7 +192,11 @@ export function uploadImageToGH(
       .put(uploadUrlHandle(userConfigInfo, img.filename.now), data)
       .then((res) => {
         if (res && res.status === 201) {
-          uploadedHandle(res, img, userConfigInfo)
+          uploadedHandle(
+            { name: res.data.name, sha: res.data.sha, path: res.data.path },
+            img,
+            userConfigInfo
+          )
           store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
           resolve(true)
         } else {
