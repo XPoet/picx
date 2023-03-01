@@ -80,13 +80,7 @@ export async function uploadImagesToGH(
   userConfigInfo: UserConfigInfoModel,
   imgs: ToUploadImageModel[]
 ): Promise<void> {
-  const {
-    selectedBranch: branch,
-    selectedRepos: repo,
-    selectedDir,
-    dirMode,
-    owner
-  } = userConfigInfo
+  const { selectedBranch: branch, selectedRepos: repo, selectedDir, owner } = userConfigInfo
 
   imgs.forEach((img) => {
     img.uploadStatus.uploading = true
@@ -191,11 +185,8 @@ export function uploadImageToGH(
       .put(uploadUrlHandle(userConfigInfo, img.filename.now), data)
       .then((res) => {
         if (res && res.status === 201) {
-          uploadedHandle(
-            { name: res.data.name, sha: res.data.sha, path: res.data.path },
-            img,
-            userConfigInfo
-          )
+          const { name, sha, path } = res.data.content
+          uploadedHandle({ name, sha, path }, img, userConfigInfo)
           store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
           resolve(true)
         } else {
