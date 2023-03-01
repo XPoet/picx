@@ -15,7 +15,7 @@ export async function deleteSingleImage(
           owner,
           repo: selectedRepos,
           path: imageObj.path,
-          message: 'delete picture via PicX(https://github.com/XPoet/picx)',
+          message: 'Delete image via PicX(https://github.com/XPoet/picx)',
           sha: imageObj.sha
         }
       })
@@ -43,59 +43,56 @@ export async function deleteMultiImages(
   imgObjs.forEach((imgObj) => {
     imgObj.deleting = true
   })
-  const { owner, selectedRepos: repo, selectedBranch: branch, viewDir } = userConfigInfo
+  const { owner, selectedRepos: repo, selectedBranch: branch } = userConfigInfo
 
-  // 获取head，用于获取当前分支信息（根目录的tree sha以及head commit sha）
+  // 获取 head，用于获取当前分支信息（根目录的 tree sha 以及 head commit sha）
   const head = await axios.get(`/repos/${owner}/${repo}/branches/${branch}`)
   if (head?.status !== 200) {
+    imgObjs.forEach((imgObj) => {
+      imgObj.deleting = false
+    })
     throw new Error('获取分支信息失败')
   }
 
-  // 过滤路径多余的斜杠
-  const path = viewDir
-    .split('/')
-    .filter((item) => item !== '')
-    .join('/')
-
-  // 获取当前的文件夹content
-  const content = await axios.get(`/repos/${owner}/${repo}/contents/${path}`)
-  if (content?.status !== 200) {
-    throw new Error('获取文件夹内容失败')
-  }
-
-  // 创建tree，删除图片只需要将sha标记为null
-  // ref: https://stackoverflow.com/questions/23637961/how-do-i-mark-a-file-as-deleted-in-a-tree-using-the-github-api
+  // 创建 tree，删除图片只需要将 sha 标记为 null
   const tree = await axios.post(`/repos/${owner}/${repo}/git/trees`, {
-    tree: content.data
-      .filter((item: { path: string }) => imgObjs.some((imgObj) => imgObj.path === item.path))
-      .map((item: any) => ({
-        type: 'blob',
-        path: item.path,
-        mode: '100644',
-        sha: null
-      })),
+    tree: imgObjs.map((img) => ({
+      mode: '100644',
+      path: img.path,
+      sha: null,
+      type: 'blob'
+    })),
     base_tree: head?.data?.commit?.commit?.tree?.sha || null
   })
   if (tree?.status !== 201) {
-    throw new Error('创建tree失败')
+    imgObjs.forEach((imgObj) => {
+      imgObj.deleting = false
+    })
+    throw new Error('创建 tree 失败')
   }
 
-  // 提交commit
+  // 提交 commit
   const commit = await axios.post(`/repos/${owner}/${repo}/git/commits`, {
-    message: 'delete picture via PicX(https://github.com/XPoet/picx)',
+    message: 'Delete images via PicX(https://github.com/XPoet/picx)',
     parents: [head.data.commit.sha],
     tree: tree.data.sha
   })
   if (commit?.status !== 201) {
-    throw new Error('创建commit失败')
+    imgObjs.forEach((imgObj) => {
+      imgObj.deleting = false
+    })
+    throw new Error('创建 commit 失败')
   }
 
-  // 将当前分支ref指向新创建的commit
+  // 将当前分支 ref 指向新创建的 commit
   const refRes = await axios.patch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
     sha: commit.data.sha
   })
   if (refRes?.status !== 200) {
-    throw new Error('更新ref失败')
+    imgObjs.forEach((imgObj) => {
+      imgObj.deleting = false
+    })
+    throw new Error('更新 ref 失败')
   }
 
   imgObjs.forEach((imgObj) => {

@@ -70,8 +70,14 @@ async function batchDeleteImage() {
     })
       .then(async () => {
         const res = await deleteImagesOfGH(getImageCardCheckedArr.value, userConfigInfo)
+        if (res === DeleteStatusEnum.deleted) {
+          ElMessage.success('删除成功！')
+        }
         if (res === DeleteStatusEnum.allDeleted) {
           ElMessage.success('批量删除成功！')
+        }
+        if (res === DeleteStatusEnum.deleteFail) {
+          ElMessage.error('删除失败，请稍后重试！')
         }
       })
       .catch(() => {

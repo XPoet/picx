@@ -1,5 +1,4 @@
 import {
-  DirModeEnum,
   ExternalLinkType,
   ToUploadImageModel,
   UploadedImageModel,
@@ -123,7 +122,7 @@ export async function uploadImagesToGH(
   }
 
   blobs = blobs.filter((x) => x.status === 201)
-  const tgtPath = dirMode === DirModeEnum.rootDir ? '' : `${selectedDir}/`
+  const tgtPath = selectedDir === '/' ? '' : `${selectedDir}/`
 
   // 创建 tree
   const tree = await axios.post(`/repos/${owner}/${repo}/git/trees`, {
