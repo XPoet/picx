@@ -12,7 +12,6 @@ function dts2Globals() {
   const parsed = parseAutoImportsDts(contents)
 
   return parsed.reduce((acc, word) => {
-    // eslint-disable-next-line no-param-reassign
     acc[word] = 'readonly'
     return acc
   }, {})
