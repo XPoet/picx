@@ -230,6 +230,7 @@ import { useStore } from '@/store'
 import { DirModeEnum, BranchModeEnum } from '@/common/model'
 import axios from '@/utils/axios'
 import TimeHelper from '@/utils/time-helper'
+import { initRepos } from '@/utils/init-repos'
 import { getDirListByPath } from '@/common/api'
 
 const router = useRouter()
@@ -335,8 +336,8 @@ function dirModeChange(dirMode: DirModeEnum) {
 
 function getBranchList(repos: string) {
   branchLoading.value = true
-  axios.get(`/repos/${userConfigInfo.owner}/${repos}/branches`).then((res: any) => {
-    console.log('[getBranchList] ', res)
+  axios.get(`/repos/${userConfigInfo.owner}/${repos}/branches`).then(async (res: any) => {
+    console.log('getBranchList >> ', res)
     if (res && res.status === 200) {
       branchLoading.value = false
       if (res.data.length > 0) {
@@ -354,6 +355,9 @@ function getBranchList(repos: string) {
       } else {
         userConfigInfo.selectedBranch = 'master'
         userConfigInfo.branchMode = BranchModeEnum.newBranch
+
+        // 当分支列表为空时，判定该仓库为空仓库，需要初始化
+        await initRepos(userConfigInfo)
       }
       dirModeChange(userConfigInfo.dirMode)
       persistUserConfigInfo()
@@ -429,7 +433,7 @@ function reset() {
   store.dispatch('LOGOUT')
 }
 
-function goUpload() {
+async function goUpload() {
   const { selectedDir, dirMode } = userConfigInfo
   let warningMessage: string = '目录不能为空！'
 
@@ -447,7 +451,7 @@ function goUpload() {
     }
     ElMessage.warning(warningMessage)
   } else {
-    router.push('/upload')
+    await router.push('/upload')
   }
 }
 

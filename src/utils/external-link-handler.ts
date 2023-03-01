@@ -20,18 +20,19 @@ export const createExternalLinkDom = () => {
 /**
  * 生成图片外链
  * @param type
- * @param content
+ * @param path
  * @param config
  */
 export const generateExternalLink = (
   type: ExternalLinkType,
-  content: any,
+  path: string,
   config: UserConfigInfoModel
 ): string => {
-  const staticalyLink: string = `https://cdn.staticaly.com/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
-  const zzkoLink: string = `https://jsd.cdn.zzko.cn/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
-  const jsdelivrLink: string = `https://cdn.jsdelivr.net/gh/${config.owner}/${config.selectedRepos}@${config.selectedBranch}/${content.path}`
-  const githubLink: string = decodeURI(content.download_url)
+  const { owner, selectedRepos: repo, selectedBranch: branch } = config
+  const staticalyLink: string = `https://cdn.staticaly.com/gh/${owner}/${repo}@${branch}/${path}`
+  const zzkoLink: string = `https://jsd.cdn.zzko.cn/gh/${owner}/${repo}@${branch}/${path}`
+  const jsdelivrLink: string = `https://cdn.jsdelivr.net/gh/${owner}/${repo}@${branch}/${path}`
+  const githubLink: string = `https://github.com/${owner}/${repo}/raw/${branch}/${path}`
 
   switch (type) {
     case ExternalLinkType.staticaly:
@@ -148,15 +149,11 @@ export const batchCopyExternalLink = (
           break
 
         case ExternalLinkType.zzko:
-          externalLink = isMD
-            ? formatMarkdown(item.name, item.zzko_cdn_url)
-            : item.zzko_cdn_url
+          externalLink = isMD ? formatMarkdown(item.name, item.zzko_cdn_url) : item.zzko_cdn_url
           break
 
         default:
-          externalLink = isMD
-            ? formatMarkdown(item.name, item.github_url)
-            : item.github_url
+          externalLink = isMD ? formatMarkdown(item.name, item.github_url) : item.github_url
       }
 
       if (index < imgCardList.length - 1) {

@@ -24,7 +24,7 @@ import { computed, onMounted, watch, ref } from 'vue'
 import { useStore } from '@/store'
 import { UploadedImageModel, DeleteStatusEnum } from '@/common/model'
 import { batchCopyExternalLink } from '@/utils/external-link-handler'
-import { delelteBatchImage } from '@/utils/delete-image-card'
+import { deleteImagesOfGH } from '@/utils/delete-image-card'
 
 const props = defineProps({
   currentDirImageList: {
@@ -33,7 +33,7 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['update:initImageList'])
+defineEmits(['update:initImageList'])
 
 const store = useStore()
 const checked = ref(false)
@@ -56,9 +56,8 @@ function copyLink() {
 }
 
 function cancelPick() {
-  props.currentDirImageList.forEach((item: UploadedImageModel) => {
+  props.currentDirImageList.forEach((item: any) => {
     if (item.checked) {
-      // eslint-disable-next-line no-param-reassign
       item.checked = false
     }
   })
@@ -70,9 +69,15 @@ async function batchDeleteImage() {
       type: 'warning'
     })
       .then(async () => {
-        const res = await delelteBatchImage(getImageCardCheckedArr.value, userConfigInfo)
+        const res = await deleteImagesOfGH(getImageCardCheckedArr.value, userConfigInfo)
+        if (res === DeleteStatusEnum.deleted) {
+          ElMessage.success('删除成功！')
+        }
         if (res === DeleteStatusEnum.allDeleted) {
           ElMessage.success('批量删除成功！')
+        }
+        if (res === DeleteStatusEnum.deleteFail) {
+          ElMessage.error('删除失败，请稍后重试！')
         }
       })
       .catch(() => {
@@ -85,8 +90,7 @@ async function batchDeleteImage() {
 
 function triggleFullCheck() {
   let checkedImgArr: Array<UploadedImageModel> = []
-  props.currentDirImageList.forEach((item: UploadedImageModel) => {
-    // eslint-disable-next-line no-param-reassign
+  props.currentDirImageList.forEach((item: any) => {
     item.checked = checked.value
   })
   checkedImgArr = props.currentDirImageList as any
