@@ -161,7 +161,7 @@ import { UserConfigInfoModel, ToUploadImageModel, UploadStatusEnum } from '@/com
 import TimeHelper from '@/utils/time-helper'
 import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
-import { uploadImage_single, uploadImages } from '@/utils/upload-helper'
+import { uploadImageToGH, uploadImagesToGH } from '@/utils/upload-helper'
 
 export default defineComponent({
   name: 'to-upload-image-card',
@@ -193,45 +193,35 @@ export default defineComponent({
 
       hashRename(e: boolean, img: any) {
         if (e) {
-          // eslint-disable-next-line no-param-reassign
           img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
         } else {
-          // eslint-disable-next-line no-param-reassign
           img.filename.now = `${img.filename.name}.${img.filename.suffix}`
         }
       },
 
       prefixName(e: boolean, img: any) {
         if (e) {
-          // eslint-disable-next-line no-param-reassign
           img.filename.name = `${img.filename.prefixName}${img.filename.initName}`
         } else {
-          // eslint-disable-next-line no-param-reassign
           img.filename.name = `${img.filename.initName}`
         }
         if (img.filename.isHashRename) {
-          // eslint-disable-next-line no-param-reassign
           img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
         } else {
-          // eslint-disable-next-line no-param-reassign
           img.filename.now = `${img.filename.name}.${img.filename.suffix}`
         }
       },
 
       rename(e: boolean, img: any) {
         if (e) {
-          // eslint-disable-next-line no-param-reassign
           img.filename.name = img.filename.newName.trim().replace(/\s+/g, '-')
         } else {
-          // eslint-disable-next-line no-param-reassign
-          reactiveData.prefixName(img.filename.isPrefix, img) // 恢复列表prefix选项
+          reactiveData.prefixName(img.filename.isPrefix, img) // 恢复列表 prefix 选项
         }
 
         if (img.filename.isHashRename) {
-          // eslint-disable-next-line no-param-reassign
           img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
         } else {
-          // eslint-disable-next-line no-param-reassign
           img.filename.now = `${img.filename.name}.${img.filename.suffix}`
         }
       },
@@ -246,13 +236,13 @@ export default defineComponent({
 
       async uploadImage_all(userConfigInfo: UserConfigInfoModel) {
         if (this.toUploadImage.list.length === 1) {
-          if (await uploadImage_single(userConfigInfo, this.toUploadImage.list[0])) {
+          if (await uploadImageToGH(userConfigInfo, this.toUploadImage.list[0])) {
             return UploadStatusEnum.uploaded
           }
           return UploadStatusEnum.uploadFail
         }
         try {
-          await uploadImages(userConfigInfo, this.toUploadImage.list)
+          await uploadImagesToGH(userConfigInfo, this.toUploadImage.list)
           return UploadStatusEnum.allUploaded
         } catch (error) {
           console.error(error)
@@ -272,12 +262,9 @@ export default defineComponent({
         prefixName
       } = reactiveData.userSettings
       reactiveData.toUploadImage.list.forEach((v: ToUploadImageModel) => {
-        // eslint-disable-next-line no-param-reassign
         v.filename.isPrefix = isPrefix
-        // eslint-disable-next-line no-param-reassign
         v.filename.prefixName = prefixName
         reactiveData.prefixName(isPrefix, v)
-        // eslint-disable-next-line no-param-reassign
         v.filename.isHashRename = isHash
         reactiveData.hashRename(isHash, v)
       })

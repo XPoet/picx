@@ -73,7 +73,7 @@ import { useStore } from '@/store'
 import axios from '@/utils/axios'
 import { UploadedImageModel, ExternalLinkType } from '@/common/model'
 import { getBase64ByImageUrl, getImage } from '@/utils/rename-image'
-import { uploadImage_single } from '@/utils/upload-helper'
+import { uploadImageToGH } from '@/utils/upload-helper'
 import { getFilename, getFileSize, getFileSuffix } from '@/utils/file-handle-helper'
 
 const props = defineProps({
@@ -184,7 +184,6 @@ const deleteImageTips = (imageObj: UploadedImageModel) => {
 }
 
 const togglePick = (imageObj: UploadedImageModel) => {
-  // eslint-disable-next-line no-param-reassign
   imageObj.checked = !imageObj.checked
   store.commit('IMAGE_CARD', { imageObj })
 }
@@ -233,7 +232,7 @@ const updateRename = async () => {
     if (base64) {
       const newImgObj = getImage(base64, imgInfo)
       if (newImgObj) {
-        const isUploadSuccess = await uploadImage_single(userConfigInfo, newImgObj)
+        const isUploadSuccess = await uploadImageToGH(userConfigInfo, newImgObj)
 
         if (isUploadSuccess) {
           renameValue.value = ''
