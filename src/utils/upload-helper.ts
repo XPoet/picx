@@ -1,43 +1,15 @@
-import {
-  ExternalLinkType,
-  ToUploadImageModel,
-  UploadedImageModel,
-  UserConfigInfoModel
-} from '@/common/model'
+import { ToUploadImageModel, UploadedImageModel, UserConfigInfoModel } from '@/common/model'
 import axios from '@/utils/axios'
 import { store } from '@/store'
-import { generateExternalLink } from '@/utils/external-link-handler'
 
 const uploadedHandle = (
   res: { name: string; sha: string; path: string },
   img: ToUploadImageModel,
   userConfigInfo: UserConfigInfoModel
 ) => {
-  const userSettings = store.getters.getUserSettings
-
   // 上传状态处理
   img.uploadStatus.progress = 100
   img.uploadStatus.uploading = false
-
-  // 生成 GitHub 外链
-  img.externalLink.github = generateExternalLink(ExternalLinkType.github, res.path, userConfigInfo)
-
-  // 生成 jsDelivr CDN 外链
-  img.externalLink.jsdelivr = generateExternalLink(
-    ExternalLinkType.jsdelivr,
-    res.path,
-    userConfigInfo
-  )
-
-  // 生成 Staticaly CDN 外链
-  img.externalLink.staticaly = generateExternalLink(
-    ExternalLinkType.staticaly,
-    res.path,
-    userConfigInfo
-  )
-
-  // 生成 zzko CDN 外链
-  img.externalLink.zzko = generateExternalLink(ExternalLinkType.zzko, res.path, userConfigInfo)
 
   const item: UploadedImageModel = {
     checked: false,
@@ -47,13 +19,8 @@ const uploadedHandle = (
     name: res.name,
     sha: res.sha,
     path: res.path,
-    is_transform_md: userSettings.defaultMarkdown,
     deleting: false,
-    size: img.fileInfo.size,
-    github_url: img.externalLink.github,
-    jsdelivr_cdn_url: img.externalLink.jsdelivr,
-    staticaly_cdn_url: img.externalLink.staticaly,
-    zzko_cdn_url: img.externalLink.zzko
+    size: img.fileInfo.size
   }
 
   img.uploadedImg = item

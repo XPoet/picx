@@ -1,5 +1,5 @@
 import { CompressEncoderMap } from '@/utils/compress'
-import { ExternalLinkType } from '@/common/model'
+import { ExternalLinkRuleModel } from '@/common/model'
 
 export interface UserSettingsModel {
   defaultHash: boolean
@@ -11,5 +11,6 @@ export interface UserSettingsModel {
   isCompress: boolean
   compressEncoder: CompressEncoderMap
   elementPlusSize: 'large' | 'default' | 'small'
-  externalLinkType: ExternalLinkType
+  externalLinkType: string
+  externalLinkTypeList: Array<ExternalLinkRuleModel>
 }

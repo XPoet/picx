@@ -25,3 +25,9 @@ export const getLocalItem = (key: string) => {
   const temp = window.localStorage.getItem(key)
   return temp ? JSON.parse(temp) : null
 }
+
+export const copyText = (txt: string, callback: any) => {
+  navigator.clipboard.writeText(txt).then(() => {
+    callback()
+  })
+}

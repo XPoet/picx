@@ -13,14 +13,11 @@ const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 export const getDirListByPath = (path: string = '') => {
   return new Promise((resolve) => {
     axios
-      .get(
-        `/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepos}/contents/${path}`,
-        {
-          params: {
-            ref: userConfigInfo.selectedBranch
-          }
+      .get(`/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepos}/contents/${path}`, {
+        params: {
+          ref: userConfigInfo.selectedBranch
         }
-      )
+      })
       .then((res: any) => {
         if (res && res.status === 200 && res.data.length > 0) {
           resolve(
@@ -48,14 +45,11 @@ export const getDirListByPath = (path: string = '') => {
 export const getContentByReposPath = (path: string = '') => {
   return new Promise((resolve) => {
     axios
-      .get(
-        `/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepos}/contents/${path}`,
-        {
-          params: {
-            ref: userConfigInfo.selectedBranch
-          }
+      .get(`/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepos}/contents/${path}`, {
+        params: {
+          ref: userConfigInfo.selectedBranch
         }
-      )
+      })
       .then((res: any) => {
         if (res && res.status === 200 && res.data.length) {
           res.data

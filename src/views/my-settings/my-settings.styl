@@ -15,6 +15,17 @@
   .setting-item {
     margin-bottom 10rem
 
+    &.cdn {
+      display flex
+      align-items center
+
+      .add-external-link-type-rule {
+        cursor pointer
+        margin-left 10px
+        font-size 20px
+      }
+    }
+
     &.last-child {
       margin-bottom 0
     }
@@ -41,4 +52,18 @@
 
   }
 
+}
+
+.external-link-type-rule-option {
+
+  .left {
+    float left
+    margin-right 10px
+  }
+
+  .right {
+    float right
+    color var(--el-text-color-secondary)
+    font-size 12px
+  }
 }

@@ -1,6 +1,6 @@
-export enum ExternalLinkType {
-  staticaly = 'staticaly',
-  jsdelivr = 'jsdelivr',
-  github = 'github',
-  zzko = 'zzko'
+export interface ExternalLinkRuleModel {
+  id: string
+  type: string
+  rule: string
+  editable: boolean
 }

@@ -1,4 +1,3 @@
-<!-- eslint-disable -->
 <template>
   <div class="page-container settings-page-container">
     <div class="setting-title">个性设置：</div>
@@ -35,18 +34,37 @@
       </li>
     </ul>
 
-    <div class="setting-title">CDN 提供商：</div>
+    <div class="setting-title">CDN 外链规则：</div>
     <ul class="setting-list">
-      <li class="setting-item">
+      <li class="setting-item cdn">
         <el-select
           v-model="userSettings.externalLinkType"
-          placeholder="选择 CDN 提供商"
+          placeholder="选择一个 CDN 外链规则"
           @change="saveUserSettings"
         >
-          <el-option label="Staticaly" value="staticaly"></el-option>
-          <el-option label="zzko" value="zzko"></el-option>
-          <el-option label="jsDelivr" value="jsdelivr"></el-option>
+          <el-option
+            v-for="item in userSettings.externalLinkTypeList"
+            :key="item.type + item.id"
+            :label="item.type"
+            :value="item.type"
+            class="external-link-type-rule-option"
+          >
+            <span class="left">{{ item.type }}</span>
+            <span class="right">{{ item.rule }}</span>
+          </el-option>
         </el-select>
+        <el-tooltip
+          :content="(isAddRule ? '关闭' : '新增') + '自定义 CDN 加速规则'"
+          placement="top"
+        >
+          <el-icon class="add-external-link-type-rule" @click="toggleShowExternalRuleCard">
+            <Remove v-if="isAddRule" />
+            <CirclePlus v-else />
+          </el-icon>
+        </el-tooltip>
+      </li>
+      <li class="setting-item" v-if="isAddRule">
+        <external-link-rule-config />
       </li>
     </ul>
 
@@ -95,9 +113,7 @@
       </li>
     </ul>
 
-    <div class="setting-title" v-if="userSettings.themeMode === 'auto'">
-      设置白昼模式时间区间：
-    </div>
+    <div class="setting-title" v-if="userSettings.themeMode === 'auto'">设置白昼模式时间区间：</div>
     <ul class="setting-list" v-if="userSettings.themeMode === 'auto'">
       <li class="setting-item">
         <el-form ref="form">
@@ -125,11 +141,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { store } from '@/store'
 import { CompressEncoderMap } from '@/utils/compress'
+import ExternalLinkRuleConfig from '@/components/external-link-rule-config/external-link-rule-config.vue'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
+const isAddRule = ref<boolean>(false)
 
 const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
@@ -143,8 +161,12 @@ const saveUserSettings = () => {
   })
   persistUserSettings()
 }
+
+const toggleShowExternalRuleCard = () => {
+  isAddRule.value = !isAddRule.value
+}
 </script>
 
 <style scoped lang="stylus">
-@import "settings.styl"
+@import "my-settings.styl"
 </style>

@@ -10,32 +10,15 @@
   align-items flex-end
   padding 2rem
 
-  .markdown-icon-box {
-    width 26rem
-    height 20rem
-    position relative
-    cursor pointer
-
-    .markdown-icon {
-      path {
-        fill var(--markdown-icon-color)
-      }
-
-      &.active {
-        path {
-          fill var(--markdown-icon-active-color)
-        }
-      }
-    }
+  .left, .right {
+    display flex
+    align-items center
   }
-
 
   .btn-box {
     position relative
     box-sizing border-box
     height 100%
-    display flex
-    justify-content space-between
 
     .btn-item {
       height 20rem
@@ -51,7 +34,6 @@
       border 1rem solid var(--default-text-color)
       color var(--default-text-color)
       padding 1rem 2rem
-      margin-right 4rem
 
       &:hover {
         background var(--default-text-color)

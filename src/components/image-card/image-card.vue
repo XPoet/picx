@@ -28,10 +28,7 @@
       </div>
     </div>
 
-    <div
-      class="operation-box"
-      v-show="isShowDelBtn || dropdownVisible || imageObj.checked"
-    >
+    <div class="operation-box" v-show="isShowDelBtn || dropdownVisible || imageObj.checked">
       <div class="operation-left">
         <div
           v-if="isManagementPage"
@@ -48,15 +45,9 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="deleteImageTips(imageObj)">
-                删除
-              </el-dropdown-item>
-              <el-dropdown-item @click.self="renameImage(imageObj)">
-                重命名
-              </el-dropdown-item>
-              <el-dropdown-item @click="viewImageProperties(imageObj)">
-                属性
-              </el-dropdown-item>
+              <el-dropdown-item @click="deleteImageTips(imageObj)"> 删除 </el-dropdown-item>
+              <el-dropdown-item @click.self="renameImage(imageObj)"> 重命名 </el-dropdown-item>
+              <el-dropdown-item @click="viewImageProperties(imageObj)"> 属性 </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -71,10 +62,11 @@ import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
 import axios from '@/utils/axios'
-import { UploadedImageModel, ExternalLinkType } from '@/common/model'
+import { UploadedImageModel } from '@/common/model'
 import { getBase64ByImageUrl, getImage } from '@/utils/rename-image'
 import { uploadImageToGH } from '@/utils/upload-helper'
 import { getFilename, getFileSize, getFileSuffix } from '@/utils/file-handle-helper'
+import { generateImageLinks } from '@/utils/external-link-handler'
 
 const props = defineProps({
   listing: {
@@ -107,18 +99,7 @@ const isManagementPage = computed(() => {
   return router.path === '/management'
 })
 
-const imgUrl = computed(() => {
-  switch (userSettings.externalLinkType) {
-    case ExternalLinkType.jsdelivr:
-      return props.imageObj.jsdelivr_cdn_url
-    case ExternalLinkType.staticaly:
-      return props.imageObj.staticaly_cdn_url
-    case ExternalLinkType.zzko:
-      return props.imageObj.zzko_cdn_url
-    default:
-      return props.imageObj.github_url
-  }
-})
+const imgUrl = computed(() => generateImageLinks(props.imageObj.path))
 
 const renameInputRef = ref<InstanceType<typeof ElInput>>()
 

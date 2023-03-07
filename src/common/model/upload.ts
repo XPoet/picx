@@ -13,12 +13,7 @@ export interface UploadedImageModel {
   name: string
   size: any
   deleting: boolean
-  is_transform_md: boolean
   checked: boolean
-  github_url: string
-  jsdelivr_cdn_url: string
-  staticaly_cdn_url: string
-  zzko_cdn_url: string
 }
 
 export interface ToUploadImageModel {
@@ -52,13 +47,6 @@ export interface ToUploadImageModel {
     isHashRename: boolean
     isRename: boolean
     isPrefix: boolean
-  }
-
-  externalLink: {
-    github: string
-    jsdelivr: string
-    staticaly: string
-    zzko: string
   }
 
   uploadedImg?: UploadedImageModel
