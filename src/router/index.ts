@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import config from '@/views/config/config.vue'
 import upload from '@/views/upload/upload.vue'
 import management from '@/views/management/management.vue'
-import tutorials from '@/views/tutorials/tutorials.vue'
+import tutorials from '@/views/use-tutorials/use-tutorials.vue'
 import settings from '@/views/my-settings/my-settings.vue'
 
 const titleSuffix = ` | PicX 图床神器`

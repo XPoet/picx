@@ -11,7 +11,8 @@
       src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/image.746g75olruk0.png"
     />
     <br />
-    <p>3、选择一种目录方式（目录即仓库里存放图片的文件夹）</p>
+    <p>3、选择或新建仓库分支</p>
+    <p>4、选择一种目录方式（目录即仓库里存放图片的文件夹）</p>
     <img
       src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/image.5ydmhgxjhgo0.png"
     />

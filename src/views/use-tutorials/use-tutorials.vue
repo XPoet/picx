@@ -23,12 +23,12 @@
 
 <script lang="ts">
 import { defineComponent, ref, Ref } from 'vue'
-import Step1 from '@/components/tutorials-step/step1.vue'
-import Step2 from '@/components/tutorials-step/step2.vue'
-import Step3 from '@/components/tutorials-step/step3.vue'
+import Step1 from './components/tutorials-step1.vue'
+import Step2 from './components/tutorials-step2.vue'
+import Step3 from './components/tutorials-step3.vue'
 
 export default defineComponent({
-  name: 'tutorials',
+  name: 'use-tutorials',
 
   components: {
     Step1,
@@ -60,5 +60,5 @@ export default defineComponent({
 </script>
 
 <style scoped lang="stylus">
-@import "tutorials.styl"
+@import "use-tutorials.styl"
 </style>
