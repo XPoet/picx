@@ -48,9 +48,9 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/about',
-    name: 'about',
-    component: () => import('@/views/about/about.vue'),
+    path: '/help',
+    name: 'help',
+    component: () => import('@/views/help-info/help-info.vue'),
     meta: {
       title: `帮助反馈${titleSuffix}`
     }

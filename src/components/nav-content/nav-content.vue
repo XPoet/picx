@@ -17,10 +17,7 @@
         </div>
       </li>
     </ul>
-    <div
-      class="nav-item quick-actions flex-center"
-      :class="{ active: isShowQuickActions }"
-    >
+    <div class="nav-item quick-actions flex-center" :class="{ active: isShowQuickActions }">
       <div class="nav-content">
         <el-icon :size="navIconSize">
           <Operation />
@@ -115,7 +112,7 @@ const navList = ref([
     name: '帮助反馈',
     icon: 'chat-dot-round',
     isActive: false,
-    path: '/about',
+    path: '/help',
     isShow: true
   }
 ])
@@ -193,12 +190,10 @@ onMounted(() => {
     changeNavActive(router.currentRoute.value.path)
   })
 
-  document
-    .querySelector('.quick-actions .quick-actions-box')
-    ?.addEventListener('click', (e) => {
-      isShowQuickActions.value = true
-      e.stopPropagation()
-    })
+  document.querySelector('.quick-actions .quick-actions-box')?.addEventListener('click', (e) => {
+    isShowQuickActions.value = true
+    e.stopPropagation()
+  })
 
   document.querySelector('.quick-actions')?.addEventListener('click', (e) => {
     isShowQuickActions.value = !isShowQuickActions.value
