@@ -1,11 +1,11 @@
 <template>
-  <div class="copy-external-link-box">
+  <div class="copy-image-link-box">
     <div class="left">
       <el-icon><InfoFilled /></el-icon>
     </div>
     <div class="btn-box right">
       <el-tooltip
-        :content="'点击复制 ' + userSettings.externalLinkType + ' CDN 外链'"
+        :content="'点击复制 ' + userSettings.imageLinkType.selected + ' CDN 外链'"
         placement="top"
       >
         <span class="btn-item copy-url flex-center" @click="oneClickCopy"> 一键复制 </span>
@@ -18,7 +18,7 @@
 import { computed, ref, onUpdated } from 'vue'
 import { UploadedImageModel } from '@/common/model'
 import { store } from '@/store'
-import { generateImageLinks } from '@/utils/external-link-handler'
+import { generateImageLinks } from '@/utils'
 import { copyText } from '@/utils/common-utils'
 
 const props = defineProps({
@@ -36,7 +36,7 @@ const oneClickCopy = () => {
   const link = generateImageLinks(img.path)
   if (link) {
     copyText(link, () => {
-      ElMessage.success(`${userSettings.externalLinkType} CDN 图片外链复制成功`)
+      ElMessage.success(`${userSettings.imageLinkType.selected} CDN 图片外链复制成功`)
     })
   } else {
     ElMessage.error(`复制失败`)
@@ -49,5 +49,5 @@ onUpdated(() => {
 </script>
 
 <style scoped lang="stylus">
-@import "copy-external-link.styl"
+@import "copy-image-link.styl"
 </style>

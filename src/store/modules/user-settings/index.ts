@@ -1,5 +1,5 @@
 import { Module } from 'vuex'
-import { PICX_SETTINGS, UserSettingsModel, ExternalLinkRuleModel } from '@/common/model'
+import { PICX_SETTINGS, UserSettingsModel, ImageLinkRuleModel } from '@/common/model'
 import { deepAssignObject } from '@/utils/object-helper'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
@@ -17,33 +17,31 @@ const initSettings: UserSettingsModel = {
   themeMode: 'light',
   autoLightThemeTime: ['08:00', '19:00'],
   elementPlusSize: 'default',
-  externalLinkType: 'Staticaly',
-  externalLinkTypeList: [
-    {
-      id: getUuid(),
-      type: 'Staticaly',
-      rule: 'https://cdn.staticaly.com/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}',
-      editable: false
-    },
-    {
-      id: getUuid(),
-      type: 'ChinaJsDelivr',
-      rule: 'https://jsd.cdn.zzko.cn/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}',
-      editable: false
-    },
-    {
-      id: getUuid(),
-      type: 'jsDelivr',
-      rule: 'https://cdn.jsdelivr.net/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}',
-      editable: false
-    },
-    {
-      id: getUuid(),
-      type: 'GitHub',
-      rule: 'https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}',
-      editable: false
-    }
-  ]
+  imageLinkType: {
+    selected: 'Staticaly',
+    presetList: [
+      {
+        id: getUuid(),
+        name: 'Staticaly',
+        rule: 'https://cdn.staticaly.com/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+      },
+      {
+        id: getUuid(),
+        name: 'ChinaJsDelivr',
+        rule: 'https://jsd.cdn.zzko.cn/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+      },
+      {
+        id: getUuid(),
+        name: 'jsDelivr',
+        rule: 'https://cdn.jsdelivr.net/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+      },
+      {
+        id: getUuid(),
+        name: 'GitHub',
+        rule: 'https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}'
+      }
+    ]
+  }
 }
 
 const initUserSettings = (): UserSettingsModel => {
@@ -72,47 +70,47 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
       }
     },
 
-    // 增加规则
-    ADD_CDN_TYPE_RULE({ state, dispatch }, rule: ExternalLinkRuleModel) {
-      const list = state.userSettings.externalLinkTypeList
-      if (!list.some((x) => x.type === rule.type)) {
+    // 图片链接类型 - 增加规则
+    ADD_IMAGE_LINK_TYPE_RULE({ state, dispatch }, rule: ImageLinkRuleModel) {
+      const list = state.userSettings.imageLinkType.presetList
+      if (!list.some((x) => x.name === rule.name)) {
         if (
           rule.rule.includes('{{owner}}') &&
           rule.rule.includes('{{repo}}') &&
           rule.rule.includes('{{branch}}') &&
           rule.rule.includes('{{path}}')
         ) {
-          state.userSettings.externalLinkTypeList.push(rule)
+          state.userSettings.imageLinkType.presetList.push(rule)
           dispatch('USER_SETTINGS_PERSIST')
         } else {
-          ElMessage.error('添加失败，该 CDN 加速规则不合法！')
+          ElMessage.error('添加失败，该图片链接规则不合法！')
         }
       } else {
-        ElMessage.error('添加失败，该 CDN 加速规则已存在！')
+        ElMessage.error('添加失败，该图片链接规则规则已存在！')
       }
     },
 
-    // 修改规则
-    MODIFY_CDN_TYPE_RULE({ state, dispatch }, rule: ExternalLinkRuleModel) {
+    // 图片链接类型 - 修改规则
+    UPDATE_IMAGE_LINK_TYPE_RULE({ state, dispatch }, rule: ImageLinkRuleModel) {
       if (
         rule.rule.includes('{{owner}}') &&
         rule.rule.includes('{{repo}}') &&
         rule.rule.includes('{{branch}}') &&
         rule.rule.includes('{{path}}')
       ) {
-        const tgt = state.userSettings.externalLinkTypeList.find((x) => x.id === rule.id)
+        const tgt = state.userSettings.imageLinkType.presetList.find((x) => x.id === rule.id)
         if (tgt) {
           tgt.rule = rule.rule
           dispatch('USER_SETTINGS_PERSIST')
         }
       } else {
-        ElMessage.error('修改失败，CDN 加速规则不合法！')
+        ElMessage.error('修改失败，该图片链接规则不合法！')
       }
     },
 
-    // 删除规则
-    DEL_CDN_TYPE_RULE({ state, dispatch }, id: string) {
-      const list = state.userSettings.externalLinkTypeList
+    // 图片链接类型 - 删除规则
+    DEL_IMAGE_LINK_TYPE_RULE({ state, dispatch }, id: string) {
+      const list = state.userSettings.imageLinkType.presetList
       list.splice(
         list.findIndex((x) => x.id === id),
         1

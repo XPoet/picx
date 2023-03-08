@@ -23,7 +23,7 @@
 import { computed, onMounted, watch, ref } from 'vue'
 import { useStore } from '@/store'
 import { UploadedImageModel, DeleteStatusEnum } from '@/common/model'
-import { batchCopyExternalLink } from '@/utils/external-link-handler'
+import { batchCopyImageLinks } from '@/utils'
 import { deleteImagesOfGH } from '@/utils/delete-image-card'
 
 const props = defineProps({
@@ -52,7 +52,7 @@ watch(
 )
 
 const batchCopy = () => {
-  batchCopyExternalLink(getImageCardCheckedArr.value)
+  batchCopyImageLinks(getImageCardCheckedArr.value)
 }
 
 const cancelPick = () => {

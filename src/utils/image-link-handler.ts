@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { ExternalLinkRuleModel, UploadedImageModel } from '@/common/model'
+import { ImageLinkRuleModel, UploadedImageModel } from '@/common/model'
 import { store } from '@/store'
 import { copyText } from '@/utils/common-utils'
 
@@ -7,9 +7,9 @@ const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
 export const generateImageLinks = (imgPath: string): string | null => {
-  const cdnType = userSettings.externalLinkType
-  const rule = userSettings.externalLinkTypeList.find(
-    (x: ExternalLinkRuleModel) => x.type === cdnType
+  const selectedType = userSettings.imageLinkType.selected
+  const rule = userSettings.imageLinkType.presetList.find(
+    (x: ImageLinkRuleModel) => x.name === selectedType
   )?.rule
   if (rule) {
     const { owner, selectedRepos: repo, selectedBranch: branch } = userConfigInfo
@@ -26,7 +26,7 @@ export const generateImageLinks = (imgPath: string): string | null => {
  * 批量复制图片外链
  * @param imgCardList 图片对象列表
  */
-export const batchCopyExternalLink = (imgCardList: Array<UploadedImageModel>) => {
+export const batchCopyImageLinks = (imgCardList: Array<UploadedImageModel>) => {
   if (imgCardList?.length > 0) {
     let linksTxt = ''
     imgCardList.forEach((item: UploadedImageModel, index) => {

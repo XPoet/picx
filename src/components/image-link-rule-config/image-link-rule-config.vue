@@ -1,12 +1,12 @@
 <template>
   <el-card>
-    <el-table :data="userSettings.externalLinkTypeList" style="width: 100%">
-      <el-table-column prop="type" label="类型" width="100" />
+    <el-table :data="userSettings.imageLinkType.presetList" style="width: 100%">
+      <el-table-column prop="name" label="类型" width="100" />
       <el-table-column label="CDN 规则">
         <template #default="scope">
           <div
             :contenteditable="scope.row.editable"
-            @focusout="editExternalRule($event.target.innerHTML, scope.row.id)"
+            @focusout="editImageLinkRule($event.target.innerHTML, scope.row.id)"
           >
             {{ scope.row.rule }}
           </div>
@@ -19,7 +19,7 @@
             type="danger"
             size="small"
             :disabled="!scope.row.editable"
-            @click="removeExternalRule(scope.row.id)"
+            @click="removeImageLinkRule(scope.row.id)"
           >
             删除
           </el-button>
@@ -31,26 +31,26 @@
       <el-form
         ref="formRef"
         label-position="left"
-        :model="cdnRuleForm"
+        :model="imageLinkRuleForm"
         label-width="120px"
         size="default"
       >
         <el-form-item
-          label="CDN 类型名称"
-          prop="type"
-          :rules="[{ required: true, message: 'CDN 类型名称不能为空' }]"
+          label="图片链接类型"
+          prop="name"
+          :rules="[{ required: true, message: '图片链接类型名称不能为空' }]"
         >
-          <el-input v-model="cdnRuleForm.type" type="text" />
+          <el-input v-model="imageLinkRuleForm.name" type="text" />
         </el-form-item>
         <el-form-item
-          label="CDN 加速规则"
+          label="图片链接规则"
           prop="rule"
-          :rules="[{ required: true, message: 'CDN 加速规则不能为空' }]"
+          :rules="[{ required: true, message: '图片链接规则不能为空' }]"
         >
-          <el-input v-model="cdnRuleForm.rule" type="text" />
+          <el-input v-model="imageLinkRuleForm.rule" type="text" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="addExternalRule(formRef)">添加 CDN 规则</el-button>
+          <el-button type="primary" @click="addImageLinkRule(formRef)">添加图片链接规则</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -61,35 +61,34 @@
 import { computed, reactive, ref } from 'vue'
 import { FormInstance } from 'element-plus'
 import { store } from '@/store'
-import { ExternalLinkRuleModel } from '@/common/model'
 import { getUuid } from '@/utils/common-utils'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 
 const formRef = ref<FormInstance>()
 
-const cdnRuleForm = reactive({
+const imageLinkRuleForm = reactive({
   id: '',
-  type: '',
+  name: '',
   rule: '',
   editable: true
 })
 
-const editExternalRule = (rule: string, id: string) => {
-  store.dispatch('MODIFY_CDN_TYPE_RULE', { rule, id })
+const editImageLinkRule = (rule: string, id: string) => {
+  store.dispatch('UPDATE_IMAGE_LINK_TYPE_RULE', { rule, id })
 }
 
-const removeExternalRule = (id: string) => {
-  store.dispatch('DEL_CDN_TYPE_RULE', id)
+const removeImageLinkRule = (id: string) => {
+  store.dispatch('DEL_IMAGE_LINK_TYPE_RULE', id)
 }
 
-const addExternalRule = (formEl: FormInstance | undefined) => {
+const addImageLinkRule = (formEl: FormInstance | undefined) => {
   if (!formEl) return
   // eslint-disable-next-line consistent-return
   formEl.validate((valid) => {
     if (valid) {
-      cdnRuleForm.id = getUuid()
-      store.dispatch('ADD_CDN_TYPE_RULE', cdnRuleForm)
+      imageLinkRuleForm.id = getUuid()
+      store.dispatch('ADD_IMAGE_LINK_TYPE_RULE', imageLinkRuleForm)
     } else {
       return false
     }
@@ -98,5 +97,5 @@ const addExternalRule = (formEl: FormInstance | undefined) => {
 </script>
 
 <style scoped lang="stylus">
-@import "./external-link-rule-config.styl"
+@import "./image-link-rule-config.styl"
 </style>

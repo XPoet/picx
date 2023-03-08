@@ -38,10 +38,7 @@
                   </del>
                 </span>
 
-                <span
-                  class="file-size item"
-                  :class="{ compressed: userSettings.isCompress }"
-                >
+                <span class="file-size item" :class="{ compressed: userSettings.isCompress }">
                   {{ getFileSize(imgItem.fileInfo.size) }}
                 </span>
 
@@ -53,9 +50,7 @@
 
             <div
               class="bottom rename-operation"
-              v-if="
-                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100
-              "
+              v-if="!imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100"
             >
               <!-- 哈希化 -->
               <el-checkbox
@@ -94,11 +89,9 @@
 
             <div
               class="bottom rename-operation"
-              v-if="
-                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100
-              "
+              v-if="!imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100"
             >
-              <copy-externalLink :img-obj="imgItem.uploadedImg" />
+              <copy-image-link :img-obj="imgItem.uploadedImg" />
             </div>
           </div>
 
@@ -107,40 +100,28 @@
             :class="{
               'wait-upload':
                 !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100,
-              uploading:
-                imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100,
-              uploaded:
-                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100
+              uploading: imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100,
+              uploaded: !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100
             }"
           >
-            <el-icon
-              v-if="
-                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100
-              "
+            <el-icon v-if="!imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100"
               ><Upload
             /></el-icon>
 
             <el-icon
               class="is-loading"
-              v-if="
-                imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100
-              "
+              v-if="imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress !== 100"
               ><Loading
             /></el-icon>
 
-            <el-icon
-              v-if="
-                !imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100
-              "
+            <el-icon v-if="!imgItem.uploadStatus.uploading && imgItem.uploadStatus.progress === 100"
               ><Check
             /></el-icon>
           </div>
 
           <div
             class="remove-to-upload-image"
-            v-if="
-              imgItem.uploadStatus.progress !== 100 && !imgItem.uploadStatus.uploading
-            "
+            v-if="imgItem.uploadStatus.progress !== 100 && !imgItem.uploadStatus.uploading"
             @click="removeToUploadImage(imgItem)"
           >
             <el-tooltip effect="dark" content="移除" placement="top">
@@ -159,7 +140,7 @@ import { useStore } from '@/store'
 import { getFileSize } from '@/utils/file-handle-helper'
 import { UserConfigInfoModel, ToUploadImageModel, UploadStatusEnum } from '@/common/model'
 import TimeHelper from '@/utils/time-helper'
-import copyExternalLink from '@/components/copy-external-link/copy-external-link.vue'
+import copyImageLink from '@/components/copy-image-link/copy-image-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 import { uploadImageToGH, uploadImagesToGH } from '@/utils/upload-helper'
 
@@ -167,7 +148,7 @@ export default defineComponent({
   name: 'to-upload-image-card',
 
   components: {
-    copyExternalLink,
+    copyImageLink,
     selectedInfoBar
   },
 
@@ -256,11 +237,7 @@ export default defineComponent({
     }
 
     onMounted(() => {
-      const {
-        defaultHash: isHash,
-        defaultPrefix: isPrefix,
-        prefixName
-      } = reactiveData.userSettings
+      const { defaultHash: isHash, defaultPrefix: isPrefix, prefixName } = reactiveData.userSettings
       reactiveData.toUploadImage.list.forEach((v: ToUploadImageModel) => {
         v.filename.isPrefix = isPrefix
         v.filename.prefixName = prefixName

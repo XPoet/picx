@@ -23,7 +23,7 @@
         ></el-input>
         <div class="filename" v-else>{{ imageObj.name }}</div>
         <div class="image-operation">
-          <copy-external-link :img-obj="imageObj" />
+          <copy-image-link :img-obj="imageObj" />
         </div>
       </div>
     </div>
@@ -66,7 +66,7 @@ import { UploadedImageModel } from '@/common/model'
 import { getBase64ByImageUrl, getImage } from '@/utils/rename-image'
 import { uploadImageToGH } from '@/utils/upload-helper'
 import { getFilename, getFileSize, getFileSuffix } from '@/utils/file-handle-helper'
-import { generateImageLinks } from '@/utils/external-link-handler'
+import { generateImageLinks } from '@/utils/image-link-handler'
 
 const props = defineProps({
   listing: {
@@ -208,7 +208,7 @@ const updateRename = async () => {
       type: `image/${suffix}`
     }
 
-    const base64 = await getBase64ByImageUrl(imgUrl.value, suffix)
+    const base64 = await getBase64ByImageUrl(imgUrl.value || '', suffix)
 
     if (base64) {
       const newImgObj = getImage(base64, imgInfo)

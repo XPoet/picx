@@ -60,8 +60,6 @@ import { UploadStatusEnum } from '@/common/model'
 const store = useStore()
 const router = useRouter()
 
-const GitHubExternalLinkInput: Ref = ref<null | HTMLElement>(null)
-const CDNExternalLinkInput: Ref = ref<null | HTMLElement>(null)
 const toUploadImageCardDom: Ref = ref<null | HTMLElement>(null)
 const uploadAreaDom: Ref = ref<null | HTMLElement>(null)
 
