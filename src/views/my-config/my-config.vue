@@ -1,8 +1,7 @@
-<!-- eslint-disable -->
 <template>
   <div class="page-container config-page-container">
-    <!-- Token -->
-    <el-form label-width="70rem" :label-position="labelPosition" class="config-form">
+    <!-- GitHub Token -->
+    <el-form label-width="70rem" :label-position="labelPosition">
       <el-form-item label="Token">
         <el-input
           v-model="userConfigInfo.token"
@@ -15,12 +14,7 @@
       </el-form-item>
 
       <el-form-item class="operation">
-        <el-button
-          plain
-          type="primary"
-          native-type="submit"
-          @click.prevent="getUserInfo()"
-        >
+        <el-button plain type="primary" native-type="submit" @click.prevent="getUserInfo()">
           确认 Token
         </el-button>
       </el-form-item>
@@ -32,7 +26,7 @@
       :label-position="labelPosition"
       v-if="userConfigInfo.token"
       v-loading="loading"
-      element-loading-text="加载中..."
+      element-loading-text="正在加载用户信息..."
     >
       <el-form-item v-if="userConfigInfo.owner" label="用户名">
         <el-input v-model="userConfigInfo.owner" readonly></el-input>
@@ -42,10 +36,11 @@
         <el-input v-model="userConfigInfo.email" readonly></el-input>
       </el-form-item>
 
+      <!-- 仓库 -->
       <el-form-item v-if="userConfigInfo.repoList.length" label="选择仓库">
         <el-select
           v-model="userConfigInfo.selectedRepo"
-          filterable
+          :filterable="true"
           style="width: 100%"
           placeholder="请选择图床仓库..."
           @change="selectRepo"
@@ -67,9 +62,9 @@
       :label-position="labelPosition"
       v-if="userConfigInfo.selectedRepo && userConfigInfo.branchList.length"
       v-loading="branchLoading"
-      element-loading-text="加载中..."
+      element-loading-text="正在加载分支信息..."
     >
-      <!-- 因未验证 API 是否能创建空分支，暂时不开启分支选择方式 && 0 -->
+      <!-- 由于 GitHub API 目前不支持创建空分支，该功能暂时无法使用 -->
       <el-form-item v-if="userConfigInfo.selectedRepo && 0" label="分支方式">
         <el-radio-group v-model="userConfigInfo.branchMode" @change="branchModeChange">
           <el-tooltip
@@ -87,10 +82,11 @@
         </el-radio-group>
       </el-form-item>
 
+      <!-- 选择分支 -->
       <el-form-item
         v-if="
           userConfigInfo.branchList.length > 1 &&
-          userConfigInfo.branchMode === 'repoBranch'
+          userConfigInfo.branchMode === BranchModeEnum.repoBranch
         "
         label="选择分支"
       >
@@ -111,12 +107,14 @@
         </el-select>
       </el-form-item>
 
-      <el-form-item v-if="userConfigInfo.branchMode === 'newBranch'" label="新建分支">
+      <!-- 新建分支 -->
+      <el-form-item v-if="userConfigInfo.branchMode === BranchModeEnum.newBranch" label="新建分支">
         <el-input
-          v-model="userConfigInfo.selectedBranch"
-          @input="persistUserConfigInfo()"
+          v-model="newBranchInputVal"
+          @blur="onNewBranchInputBlur"
           clearable
           placeholder="请输入新建的分支..."
+          ref="newBranchInputRef"
         ></el-input>
       </el-form-item>
     </el-form>
@@ -127,7 +125,7 @@
       :label-position="labelPosition"
       v-if="userConfigInfo.selectedBranch"
       v-loading="dirLoading"
-      element-loading-text="加载中..."
+      element-loading-text="正在加载目录信息..."
     >
       <el-form-item v-if="userConfigInfo.selectedBranch" label="目录方式">
         <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
@@ -152,16 +150,12 @@
           </el-tooltip>
 
           <el-tooltip
-            v-if="
-              userConfigInfo.dirList.length && userConfigInfo.branchMode !== 'newBranch'
-            "
+            v-if="userConfigInfo.dirList.length && userConfigInfo.branchMode !== 'newBranch'"
             :content="'选择 ' + userConfigInfo.selectedBranch + ' 分支下的一个目录'"
             placement="top"
             :offset="-1"
           >
-            <el-radio label="repoDir">
-              选择 {{ userConfigInfo.selectedRepo }} 仓库目录
-            </el-radio>
+            <el-radio label="repoDir"> 选择 {{ userConfigInfo.selectedRepo }} 仓库目录 </el-radio>
           </el-tooltip>
         </el-radio-group>
       </el-form-item>
@@ -176,6 +170,7 @@
 
       <el-form-item v-if="userConfigInfo.dirMode === 'newDir'" label="新建目录">
         <el-input
+          ref="newDirInputRef"
           v-model="userConfigInfo.selectedDir"
           @input="persistUserConfigInfo()"
           clearable
@@ -210,12 +205,7 @@
         <el-button plain type="warning" @click="reset()" v-if="userConfigInfo.owner">
           重置
         </el-button>
-        <el-button
-          plain
-          type="success"
-          @click="goUpload"
-          v-if="userConfigInfo.selectedRepo"
-        >
+        <el-button plain type="success" @click="goUpload" v-if="userConfigInfo.selectedRepo">
           完成配置
         </el-button>
       </el-form-item>
@@ -227,10 +217,10 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { DirModeEnum, BranchModeEnum } from '@/common/model'
+import { DirModeEnum, BranchModeEnum, BranchModel } from '@/common/model'
 import axios from '@/utils/axios'
 import TimeHelper from '@/utils/time-helper'
-import { initRepo } from '@/utils/init-repo'
+import { initBranch, initRepo } from '@/utils'
 import { getDirListByPath } from '@/common/api'
 
 const router = useRouter()
@@ -249,6 +239,10 @@ const labelPosition = computed(() => {
 })
 
 const elCascaderKey = ref<string>('elCascaderKey')
+
+const newDirInputRef = ref<null | HTMLElement>(null)
+const newBranchInputRef = ref<null | HTMLElement>(null)
+const newBranchInputVal = ref<string>('')
 
 function persistUserConfigInfo() {
   store.dispatch('USER_CONFIG_INFO_PERSIST')
@@ -314,6 +308,7 @@ function dirModeChange(dirMode: DirModeEnum) {
     case DirModeEnum.newDir:
       // 手动输入的新建目录
       userConfigInfo.selectedDir = 'xxx'
+      newDirInputRef.value?.focus()
       break
 
     case DirModeEnum.repoDir:
@@ -348,10 +343,10 @@ function getBranchList(repo: string) {
             label: item.name
           })
         }
-        userConfigInfo.branchList.reverse()
+        // userConfigInfo.branchList.reverse()
         userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
         userConfigInfo.branchMode = BranchModeEnum.repoBranch
-        getDirList()
+        await getDirList()
       } else {
         userConfigInfo.selectedBranch = 'master'
         userConfigInfo.branchMode = BranchModeEnum.newBranch
@@ -373,7 +368,7 @@ function getUserInfo() {
         headers: { Authorization: `token ${userConfigInfo.token}` }
       })
       .then((res: any) => {
-        console.log('[getUserInfo] ', res)
+        console.log('getUserInfo >> ', res)
         if (res && res.status === 200) {
           saveUserInfo(res)
           getRepoList(res.data.repos_url)
@@ -408,9 +403,10 @@ function branchModeChange(mode: BranchModeEnum) {
 
   switch (mode) {
     case BranchModeEnum.newBranch:
-      userConfigInfo.selectedBranch = 'xxx'
       userConfigInfo.dirMode = DirModeEnum.newDir
-      userConfigInfo.selectedDir = 'xxx'
+      userConfigInfo.selectedBranch = ''
+      userConfigInfo.selectedDir = ''
+      newBranchInputRef.value?.focus()
       break
 
     case BranchModeEnum.repoBranch:
@@ -430,6 +426,7 @@ function branchModeChange(mode: BranchModeEnum) {
 function reset() {
   loading.value = false
   dirLoading.value = false
+  branchLoading.value = false
   store.dispatch('LOGOUT')
 }
 
@@ -486,17 +483,35 @@ function cascaderChange(e: string[]) {
   persistUserConfigInfo()
 }
 
+const onNewBranchInputBlur = () => {
+  const nb = newBranchInputVal.value
+  const list = userConfigInfo.branchList
+  if (nb) {
+    if (!list.find((x: BranchModel) => x.value === nb)) {
+      initBranch(userConfigInfo, nb, () => {
+        ElMessage.success(`新建 ${nb} 成功`)
+        userConfigInfo.branchList.push({ value: nb, label: nb })
+      })
+    } else {
+      ElMessage.warning(`${nb} 分支已存在，请在分支列表中选择`)
+    }
+  } else {
+    ElMessage.error('新建分支不能为空！')
+  }
+}
+
 watch(
   () => logined,
   (_n) => {
     if (!_n) {
       loading.value = false
       dirLoading.value = false
+      branchLoading.value = false
     }
   }
 )
 </script>
 
 <style scoped lang="stylus">
-@import "config.styl"
+@import "./my-config.styl"
 </style>
