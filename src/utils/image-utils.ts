@@ -4,7 +4,7 @@ import {
   UploadedImageModel,
   UserConfigInfoModel
 } from '@/common/model'
-import { generateUuid } from '@/utils/common-utils'
+import { getUuid } from '@/utils/common-utils'
 import axios from '@/utils/axios'
 import { store } from '@/store'
 
@@ -35,7 +35,7 @@ export const createToUploadImageObject = (): ToUploadImageModel => {
       hash: '',
       suffix: '',
       prefixName: '',
-      now: '',
+      final: '',
       initName: '',
       newName: 'xxx',
       isHashRename: true,
@@ -59,7 +59,7 @@ export const createToUploadImageObject = (): ToUploadImageModel => {
 export const createManagementImageObject = (item: any, selectedDir: string): UploadedImageModel => {
   return {
     type: 'image',
-    uuid: generateUuid(),
+    uuid: getUuid(),
     dir: selectedDir,
     name: item.name,
     sha: item.sha,
@@ -80,13 +80,13 @@ export async function deleteSingleImage(
   userConfigInfo: UserConfigInfoModel
 ): Promise<boolean> {
   imageObj.deleting = true
-  const { owner, selectedRepos } = userConfigInfo
+  const { owner, selectedRepo } = userConfigInfo
   return new Promise((resolve, reject) => {
     axios
-      .delete(`/repos/${owner}/${selectedRepos}/contents/${imageObj.path}`, {
+      .delete(`/repos/${owner}/${selectedRepo}/contents/${imageObj.path}`, {
         data: {
           owner,
-          repo: selectedRepos,
+          repo: selectedRepo,
           path: imageObj.path,
           message: 'Delete image via PicX(https://github.com/XPoet/picx)',
           sha: imageObj.sha
@@ -121,7 +121,7 @@ export async function deleteMultiImages(
   imgObjs.forEach((imgObj) => {
     imgObj.deleting = true
   })
-  const { owner, selectedRepos: repo, selectedBranch: branch } = userConfigInfo
+  const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
 
   // 获取 head，用于获取当前分支信息（根目录的 tree sha 以及 head commit sha）
   const head = await axios.get(`/repos/${owner}/${repo}/branches/${branch}`)

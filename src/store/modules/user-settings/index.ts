@@ -1,11 +1,15 @@
 import { Module } from 'vuex'
-import { PICX_SETTINGS, UserSettingsModel, ImageLinkRuleModel } from '@/common/model'
+import {
+  PICX_SETTINGS,
+  UserSettingsModel,
+  ImageLinkRuleModel,
+  CompressEncoderEnum
+} from '@/common/model'
 import { deepAssignObject } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
-import { CompressEncoderMap } from '@/utils/compress-image'
 import UserSettingsStateTypes from '@/store/modules/user-settings/types'
-import { getLocalItem, generateUuid } from '@/utils/common-utils'
+import { getLocalItem, getUuid } from '@/utils/common-utils'
 
 const initSettings: UserSettingsModel = {
   defaultHash: true,
@@ -13,7 +17,7 @@ const initSettings: UserSettingsModel = {
   defaultPrefix: false,
   prefixName: '',
   isCompress: true,
-  compressEncoder: CompressEncoderMap.webP,
+  compressEncoder: CompressEncoderEnum.webP,
   themeMode: 'light',
   autoLightThemeTime: ['08:00', '19:00'],
   elementPlusSize: 'default',
@@ -21,22 +25,22 @@ const initSettings: UserSettingsModel = {
     selected: 'Staticaly',
     presetList: [
       {
-        id: generateUuid(),
+        id: getUuid(),
         name: 'Staticaly',
         rule: 'https://cdn.staticaly.com/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
       },
       {
-        id: generateUuid(),
+        id: getUuid(),
         name: 'ChinaJsDelivr',
         rule: 'https://jsd.cdn.zzko.cn/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
       },
       {
-        id: generateUuid(),
+        id: getUuid(),
         name: 'jsDelivr',
         rule: 'https://cdn.jsdelivr.net/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
       },
       {
-        id: generateUuid(),
+        id: getUuid(),
         name: 'GitHub',
         rule: 'https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}'
       }

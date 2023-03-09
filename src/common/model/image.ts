@@ -1,9 +1,6 @@
-export enum UploadStatusEnum {
-  uploaded = 'uploaded',
-  allUploaded = 'allUploaded',
-  uploadFail = 'uploadFail'
-}
-
+/**
+ * 已上传的图片对象 Model
+ */
 export interface UploadedImageModel {
   type: string
   uuid: string
@@ -11,11 +8,14 @@ export interface UploadedImageModel {
   dir: string
   path: string
   name: string
-  size: any
+  size: number
   deleting: boolean
   checked: boolean
 }
 
+/**
+ * 等待上传的图片对象 Model
+ */
 export interface ToUploadImageModel {
   uuid: string
 
@@ -41,7 +41,7 @@ export interface ToUploadImageModel {
     hash: string
     suffix: string
     prefixName: string
-    now: string
+    final: string
     initName: string
     newName: string
     isHashRename: boolean
@@ -58,4 +58,41 @@ export interface ToUploadImageModel {
     path: string
     dir: string
   }
+}
+
+/**
+ * 图片上传状态枚举
+ */
+export enum UploadStatusEnum {
+  uploaded = 'uploaded',
+  allUploaded = 'allUploaded',
+  uploadFail = 'uploadFail'
+}
+
+/**
+ * 图片删除状态枚举
+ */
+export enum DeleteStatusEnum {
+  deleted = 'deleted',
+  allDeleted = 'allDeleted',
+  deleteFail = 'deleteFail'
+}
+
+/**
+ * 图片压缩编码器枚举
+ */
+export enum CompressEncoderEnum {
+  mozJPEG = 'mozJPEG',
+  avif = 'avif',
+  webP = 'webP'
+}
+
+/**
+ * 图片链接规则对象 Model
+ */
+export interface ImageLinkRuleModel {
+  id: string
+  name: string
+  rule: string
+  editable?: boolean
 }

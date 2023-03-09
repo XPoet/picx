@@ -6,7 +6,7 @@ import axios from '@/utils/axios'
  * @param userConfigInfo
  */
 export async function initRepos(userConfigInfo: UserConfigInfoModel) {
-  const { owner, selectedRepos: repo, selectedBranch: branch } = userConfigInfo
+  const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
 
   const initReposLoading = ElLoading.service({
     text: '正在初始化仓库...'

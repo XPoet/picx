@@ -123,7 +123,7 @@ const navClick = (e: any) => {
   const { path } = e
 
   if (path === '/management') {
-    if (userConfigInfo.selectedRepos === '') {
+    if (userConfigInfo.selectedRepo === '') {
       ElMessage.warning('请选择一个仓库！')
       router.push('/config')
       return

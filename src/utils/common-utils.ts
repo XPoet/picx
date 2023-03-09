@@ -1,7 +1,7 @@
 /**
  * 获取 JavaScript 数据类型
  * @param data
- * @returns {string} array | string | number ...
+ * @returns {string} array | string | number | boolean ...
  */
 export const getType = (data: string) => {
   const type = Object.prototype.toString.call(data).split(' ')[1]
@@ -9,10 +9,10 @@ export const getType = (data: string) => {
 }
 
 /**
- * 生成一个永不重复的 UUID
+ * 获取一个永不重复的 UUID
  * @returns uuid {string}
  */
-export const generateUuid = () => {
+export const getUuid = () => {
   return Number(Math.random().toString().substr(2, 5) + Date.now()).toString(36)
 }
 
@@ -51,22 +51,18 @@ export const cleanObject = (object: any) => {
         break
 
       case 'string':
-        // eslint-disable-next-line no-param-reassign
         object[key] = ''
         break
 
       case 'array':
-        // eslint-disable-next-line no-param-reassign
         object[key] = []
         break
 
       case 'number':
-        // eslint-disable-next-line no-param-reassign
         object[key] = 0
         break
 
       case 'boolean':
-        // eslint-disable-next-line no-param-reassign
         object[key] = false
         break
     }
@@ -85,7 +81,6 @@ export const deepAssignObject = (obj1: object, obj2: object): any => {
     if (getType(obj2[key]) !== 'object') {
       if (obj1) {
         // @ts-ignore
-        // eslint-disable-next-line no-param-reassign
         obj1[key] = obj2[key]
       }
     } else {

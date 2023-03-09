@@ -1,9 +1,9 @@
 <template>
-  <div class="selected-info-bar-box" v-if="userConfigInfo.selectedRepos">
+  <div class="selected-info-bar-box" v-if="userConfigInfo.selectedRepo">
     <span class="info-item">
       仓库：
       <el-tag disable-transitions>
-        {{ userConfigInfo.selectedRepos }}
+        {{ userConfigInfo.selectedRepo }}
       </el-tag>
     </span>
     <span class="info-item" v-if="userConfigInfo.selectedBranch">
@@ -15,9 +15,7 @@
     <span class="info-item">
       目录：
       <el-tag disable-transitions>
-        {{
-          barType === 'management' ? userConfigInfo.viewDir : userConfigInfo.selectedDir
-        }}
+        {{ barType === 'management' ? userConfigInfo.viewDir : userConfigInfo.selectedDir }}
       </el-tag>
     </span>
   </div>

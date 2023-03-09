@@ -5,19 +5,14 @@ import {
   encoderMap,
   EncoderState
 } from '@yireen/squoosh-browser/dist/client/lazy-app/feature-meta'
-
-export enum CompressEncoderMap {
-  mozJPEG = 'mozJPEG',
-  avif = 'avif',
-  webP = 'webP'
-}
+import { CompressEncoderEnum } from '@/common/model'
 
 /**
  * 压缩图片
  * @param file
  * @param encoder
  */
-export const compressImage = async (file: File, encoder: CompressEncoderMap) => {
+export const compressImage = async (file: File, encoder: CompressEncoderEnum) => {
   const compress = new Compress(file, {
     encoderState: {
       type: encoder,

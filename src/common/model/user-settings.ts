@@ -1,5 +1,4 @@
-import { CompressEncoderMap } from '@/utils/compress-image'
-import { ImageLinkRuleModel } from '@/common/model'
+import { CompressEncoderEnum, ImageLinkRuleModel } from '@/common/model'
 
 export interface UserSettingsModel {
   defaultHash: boolean
@@ -9,7 +8,7 @@ export interface UserSettingsModel {
   themeMode: 'auto' | 'light' | 'dark'
   autoLightThemeTime: string[]
   isCompress: boolean
-  compressEncoder: CompressEncoderMap
+  compressEncoder: CompressEncoderEnum
   elementPlusSize: 'large' | 'default' | 'small'
   imageLinkType: {
     selected: string

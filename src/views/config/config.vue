@@ -42,16 +42,16 @@
         <el-input v-model="userConfigInfo.email" readonly></el-input>
       </el-form-item>
 
-      <el-form-item v-if="userConfigInfo.reposList.length" label="选择仓库">
+      <el-form-item v-if="userConfigInfo.repoList.length" label="选择仓库">
         <el-select
-          v-model="userConfigInfo.selectedRepos"
+          v-model="userConfigInfo.selectedRepo"
           filterable
           style="width: 100%"
           placeholder="请选择图床仓库..."
           @change="selectRepos"
         >
           <el-option
-            v-for="(repos, index) in userConfigInfo.reposList"
+            v-for="(repos, index) in userConfigInfo.repoList"
             :key="index"
             :label="repos.label"
             :value="repos.value"
@@ -65,20 +65,20 @@
     <el-form
       label-width="70rem"
       :label-position="labelPosition"
-      v-if="userConfigInfo.selectedRepos && userConfigInfo.branchList.length"
+      v-if="userConfigInfo.selectedRepo && userConfigInfo.branchList.length"
       v-loading="branchLoading"
       element-loading-text="加载中..."
     >
       <!-- 因未验证 API 是否能创建空分支，暂时不开启分支选择方式 && 0 -->
-      <el-form-item v-if="userConfigInfo.selectedRepos && 0" label="分支方式">
+      <el-form-item v-if="userConfigInfo.selectedRepo && 0" label="分支方式">
         <el-radio-group v-model="userConfigInfo.branchMode" @change="branchModeChange">
           <el-tooltip
             v-if="userConfigInfo.branchList.length"
-            :content="'选择 ' + userConfigInfo.selectedRepos + ' 仓库下的一个分支'"
+            :content="'选择 ' + userConfigInfo.selectedRepo + ' 仓库下的一个分支'"
             placement="top"
           >
-            <el-radio label="reposBranch">
-              选择 {{ userConfigInfo.selectedRepos }} 仓库下的分支
+            <el-radio label="repoBranch">
+              选择 {{ userConfigInfo.selectedRepo }} 仓库下的分支
             </el-radio>
           </el-tooltip>
           <el-tooltip content="手动创建一个新分支" placement="top">
@@ -90,7 +90,7 @@
       <el-form-item
         v-if="
           userConfigInfo.branchList.length > 1 &&
-          userConfigInfo.branchMode === 'reposBranch'
+          userConfigInfo.branchMode === 'repoBranch'
         "
         label="选择分支"
       >
@@ -159,8 +159,8 @@
             placement="top"
             :offset="-1"
           >
-            <el-radio label="reposDir">
-              选择 {{ userConfigInfo.selectedRepos }} 仓库目录
+            <el-radio label="repoDir">
+              选择 {{ userConfigInfo.selectedRepo }} 仓库目录
             </el-radio>
           </el-tooltip>
         </el-radio-group>
@@ -186,7 +186,7 @@
       <el-form-item
         v-if="
           userConfigInfo.dirList.length &&
-          userConfigInfo.dirMode === 'reposDir' &&
+          userConfigInfo.dirMode === 'repoDir' &&
           userConfigInfo.branchMode !== 'newBranch'
         "
         label="选择目录"
@@ -214,7 +214,7 @@
           plain
           type="success"
           @click="goUpload"
-          v-if="userConfigInfo.selectedRepos"
+          v-if="userConfigInfo.selectedRepo"
         >
           完成配置
         </el-button>
@@ -263,7 +263,7 @@ function saveUserInfo(res: any) {
   persistUserConfigInfo()
 }
 
-function getReposList(reposUrl: string) {
+function getrepoList(reposUrl: string) {
   axios
     .get(reposUrl, {
       params: {
@@ -273,13 +273,13 @@ function getReposList(reposUrl: string) {
       }
     })
     .then((res: any) => {
-      console.log('[getReposList] ', res)
+      console.log('[getrepoList] ', res)
       if (res.status === 200 && res.data.length > 0) {
-        userConfigInfo.reposList = []
+        userConfigInfo.repoList = []
         // eslint-disable-next-line no-restricted-syntax
         for (const repos of res.data) {
           if (!repos.fork && !repos.private) {
-            userConfigInfo.reposList.push({
+            userConfigInfo.repoList.push({
               value: repos.name,
               label: repos.name,
               desc: repos.description
@@ -316,7 +316,7 @@ function dirModeChange(dirMode: DirModeEnum) {
       userConfigInfo.selectedDir = 'xxx'
       break
 
-    case DirModeEnum.reposDir:
+    case DirModeEnum.repoDir:
       // 仓库目录
       // eslint-disable-next-line no-case-declarations
       const { dirList } = userConfigInfo
@@ -350,7 +350,7 @@ function getBranchList(repos: string) {
         }
         userConfigInfo.branchList.reverse()
         userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
-        userConfigInfo.branchMode = BranchModeEnum.reposBranch
+        userConfigInfo.branchMode = BranchModeEnum.repoBranch
         getDirList()
       } else {
         userConfigInfo.selectedBranch = 'master'
@@ -376,7 +376,7 @@ function getUserInfo() {
         console.log('[getUserInfo] ', res)
         if (res && res.status === 200) {
           saveUserInfo(res)
-          getReposList(res.data.repos_url)
+          getrepoList(res.data.repos_url)
         } else {
           loading.value = false
         }
@@ -413,7 +413,7 @@ function branchModeChange(mode: BranchModeEnum) {
       userConfigInfo.selectedDir = 'xxx'
       break
 
-    case BranchModeEnum.reposBranch:
+    case BranchModeEnum.repoBranch:
       if (selBranch !== bv) {
         userConfigInfo.selectedBranch = bv
         getDirList()
@@ -442,8 +442,8 @@ async function goUpload() {
       case DirModeEnum.newDir:
         warningMessage = '请在输入框输入一个新目录！'
         break
-      case DirModeEnum.reposDir:
-        warningMessage = `请选择 ${userConfigInfo.selectedRepos} 仓库下的一个目录！`
+      case DirModeEnum.repoDir:
+        warningMessage = `请选择 ${userConfigInfo.selectedRepo} 仓库下的一个目录！`
         break
       default:
         warningMessage = '请在输入框输入一个新目录！'

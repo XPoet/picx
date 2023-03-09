@@ -12,7 +12,7 @@ const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 export const getDirListByPath = (path: string = '') => {
   return new Promise((resolve) => {
     axios
-      .get(`/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepos}/contents/${path}`, {
+      .get(`/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepo}/contents/${path}`, {
         params: {
           ref: userConfigInfo.selectedBranch
         }
@@ -44,7 +44,7 @@ export const getDirListByPath = (path: string = '') => {
 export const getContentByReposPath = (path: string = '') => {
   return new Promise((resolve) => {
     axios
-      .get(`/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepos}/contents/${path}`, {
+      .get(`/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepo}/contents/${path}`, {
         params: {
           ref: userConfigInfo.selectedBranch
         }

@@ -70,9 +70,9 @@ import {
   generateImageLinks,
   createToUploadImageObject,
   filenameHandle,
-  generateUuid
+  getUuid
 } from '@/utils'
-import { uploadImageToGitHub } from '@/utils/upload-helper'
+import { uploadImageToGitHub } from '@/utils/upload-utils'
 
 const props = defineProps({
   listing: {
@@ -124,14 +124,14 @@ const doDeleteImage = (
   if (!isRename) {
     imageObj.deleting = true
   }
-  const { owner, selectedRepos } = userConfigInfo
+  const { owner, selectedRepo } = userConfigInfo
 
   return new Promise((resolve) => {
     axios
-      .delete(`/repos/${owner}/${selectedRepos}/contents/${imageObj.path}`, {
+      .delete(`/repos/${owner}/${selectedRepo}/contents/${imageObj.path}`, {
         data: {
           owner,
-          repo: selectedRepos,
+          repo: selectedRepo,
           path: imageObj.path,
           message: 'Delete pictures via PicX (https://github.com/XPoet/picx)',
           sha: imageObj.sha
@@ -208,7 +208,7 @@ const updateRename = async () => {
     })
 
     const { suffix } = filenameHandle(imageObj.name)
-    const newUuid = generateUuid()
+    const newUuid = getUuid()
     const newFilename = `${renameValue.value}.${newUuid}.${suffix}`
     const base64 = await getBase64ByImageUrl(imgUrl.value || '', suffix)
 
@@ -217,7 +217,7 @@ const updateRename = async () => {
       const toUpdateImgObj = createToUploadImageObject()
       toUpdateImgObj.uuid = newUuid
       toUpdateImgObj.imgData.base64Content = base64.split(',')[1] as string
-      toUpdateImgObj.filename.now = newFilename
+      toUpdateImgObj.filename.final = newFilename
       toUpdateImgObj.reUploadImgPath = `${imageObj.dir}/${newFilename}`
       toUpdateImgObj.reUploadInfo.isReUpload = true
       toUpdateImgObj.reUploadInfo.dir = imageObj.dir

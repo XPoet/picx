@@ -1,6 +1,4 @@
-import { DirModeEnum, DirModel } from './dir'
-
-export interface ReposModel {
+export interface RepoModel {
   value: string
   label: string
   desc?: string
@@ -12,8 +10,20 @@ export interface BranchModel {
 }
 
 export enum BranchModeEnum {
-  newBranch = 'newBranch',
-  reposBranch = 'reposBranch'
+  newBranch = 'newBranch', // 新建分支
+  repoBranch = 'repoBranch' // 窗口分支
+}
+
+export interface DirModel {
+  value: string
+  label: string
+}
+
+export enum DirModeEnum {
+  autoDir = 'autoDir', // 自动目录
+  newDir = 'newDir', // 新建目录
+  rootDir = 'rootDir', // 根目录
+  repoDir = 'repoDir' // 仓库目录
 }
 
 export interface UserConfigInfoModel {
@@ -22,8 +32,8 @@ export interface UserConfigInfoModel {
   email: string
   name: string
   avatarUrl: string
-  selectedRepos: string
-  reposList: ReposModel[]
+  selectedRepo: string
+  repoList: RepoModel[]
   selectedBranch: string
   branchMode: BranchModeEnum
   branchList: BranchModel[]

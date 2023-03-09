@@ -71,7 +71,7 @@ const toUploadImage = computed(() => store.getters.getToUploadImage)
 const imageLoading = ref(false)
 
 const uploadImage = () => {
-  const { token, selectedRepos, selectedDir } = userConfigInfo.value
+  const { token, selectedRepo, selectedDir } = userConfigInfo.value
 
   if (!token) {
     ElMessage.error('请先完成图床配置！')
@@ -79,7 +79,7 @@ const uploadImage = () => {
     return
   }
 
-  if (!selectedRepos) {
+  if (!selectedRepo) {
     ElMessage.error('请选择一个仓库！')
     router.push('/config')
     return

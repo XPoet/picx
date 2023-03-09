@@ -140,7 +140,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { store } from '@/store'
-import { CompressEncoderMap } from '@/utils/compress-image'
+import { CompressEncoderEnum } from '@/common/model'
 import ImageLinkRuleConfig from '@/components/image-link-rule-config/image-link-rule-config.vue'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
@@ -150,7 +150,7 @@ const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
 }
 
-const compressEncoder = CompressEncoderMap
+const compressEncoder = CompressEncoderEnum
 
 const saveUserSettings = () => {
   store.dispatch('SET_USER_SETTINGS', {

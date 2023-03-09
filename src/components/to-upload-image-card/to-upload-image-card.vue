@@ -1,7 +1,7 @@
 <template>
   <div
     class="to-upload-image-list-card"
-    v-if="toUploadImage.list.length || userConfigInfo.selectedRepos"
+    v-if="toUploadImage.list.length || userConfigInfo.selectedRepo"
   >
     <div class="header">
       <div>
@@ -29,7 +29,7 @@
           <div class="right-operation-box">
             <div class="top">
               <div class="image-name">
-                {{ imgItem.filename.now }}
+                {{ imgItem.filename.final }}
               </div>
               <div class="image-info">
                 <span class="file-size item" v-if="userSettings.isCompress">
@@ -142,7 +142,7 @@ import { UserConfigInfoModel, ToUploadImageModel, UploadStatusEnum } from '@/com
 import TimeHelper from '@/utils/time-helper'
 import copyImageLink from '@/components/copy-image-link/copy-image-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
-import { uploadImageToGitHub, uploadImagesToGitHub } from '@/utils/upload-helper'
+import { uploadImageToGitHub, uploadImagesToGitHub } from '@/utils/upload-utils'
 
 export default defineComponent({
   name: 'to-upload-image-card',
@@ -174,9 +174,9 @@ export default defineComponent({
 
       hashRename(e: boolean, img: any) {
         if (e) {
-          img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
+          img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
         } else {
-          img.filename.now = `${img.filename.name}.${img.filename.suffix}`
+          img.filename.final = `${img.filename.name}.${img.filename.suffix}`
         }
       },
 
@@ -187,9 +187,9 @@ export default defineComponent({
           img.filename.name = `${img.filename.initName}`
         }
         if (img.filename.isHashRename) {
-          img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
+          img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
         } else {
-          img.filename.now = `${img.filename.name}.${img.filename.suffix}`
+          img.filename.final = `${img.filename.name}.${img.filename.suffix}`
         }
       },
 
@@ -201,9 +201,9 @@ export default defineComponent({
         }
 
         if (img.filename.isHashRename) {
-          img.filename.now = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
+          img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
         } else {
-          img.filename.now = `${img.filename.name}.${img.filename.suffix}`
+          img.filename.final = `${img.filename.name}.${img.filename.suffix}`
         }
       },
 

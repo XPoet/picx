@@ -61,7 +61,7 @@
 import { computed, reactive, ref } from 'vue'
 import { FormInstance } from 'element-plus'
 import { store } from '@/store'
-import { generateUuid } from '@/utils/common-utils'
+import { getUuid } from '@/utils/common-utils'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 
@@ -87,7 +87,7 @@ const addImageLinkRule = (formEl: FormInstance | undefined) => {
   // eslint-disable-next-line consistent-return
   formEl.validate((valid) => {
     if (valid) {
-      imageLinkRuleForm.id = generateUuid()
+      imageLinkRuleForm.id = getUuid()
       store.dispatch('ADD_IMAGE_LINK_TYPE_RULE', imageLinkRuleForm)
     } else {
       return false

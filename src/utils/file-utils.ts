@@ -1,4 +1,4 @@
-import { generateUuid } from './common-utils'
+import { getUuid } from './common-utils'
 import { store } from '@/store'
 import { compressImage } from '@/utils/compress-image'
 
@@ -43,7 +43,7 @@ export const getFileSize = (size: number) => {
 export const filenameHandle = (filename: string | undefined) => {
   return {
     name: filename ? getFilename(filename) : '',
-    hash: filename ? generateUuid() : '',
+    hash: filename ? getUuid() : '',
     suffix: filename ? getFileSuffix(filename) : ''
   }
 }

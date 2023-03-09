@@ -45,8 +45,8 @@ export const uploadUrlHandle = (
   config: UserConfigInfoModel,
   imgObj: ToUploadImageModel
 ): string => {
-  const { owner, selectedRepos: repo, selectedDir: dir } = config
-  const filename: string = imgObj.filename.now
+  const { owner, selectedRepo: repo, selectedDir: dir } = config
+  const filename: string = imgObj.filename.final
 
   let path = filename
 
@@ -65,7 +65,7 @@ export async function uploadImagesToGitHub(
   userConfigInfo: UserConfigInfoModel,
   imgs: ToUploadImageModel[]
 ): Promise<void> {
-  const { selectedBranch: branch, selectedRepos: repo, selectedDir, owner } = userConfigInfo
+  const { selectedBranch: branch, selectedRepo: repo, selectedDir, owner } = userConfigInfo
 
   imgs.forEach((img) => {
     img.uploadStatus.uploading = true
@@ -87,7 +87,7 @@ export async function uploadImagesToGitHub(
             store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
           } else {
             img.uploadStatus.uploading = false
-            ElMessage.error(`${img.filename.now} 上传失败`)
+            ElMessage.error(`${img.filename.final} 上传失败`)
           }
           return { img, ...res }
         })
@@ -106,7 +106,7 @@ export async function uploadImagesToGitHub(
   // 创建 tree
   const tree = await axios.post(`/repos/${owner}/${repo}/git/trees`, {
     tree: blobs.map((blob) => ({
-      path: `${tgtPath}${blob.img.filename.now}`,
+      path: `${tgtPath}${blob.img.filename.final}`,
       mode: '100644',
       type: 'blob',
       sha: blob.data.sha
@@ -136,7 +136,7 @@ export async function uploadImagesToGitHub(
   }
 
   blobs.forEach((blob) => {
-    const name = blob.img.filename.now
+    const name = blob.img.filename.final
     uploadedHandle(
       { name, sha: blob.data.sha, path: `${tgtPath}${name}`, size: 0 },
       blob.img,

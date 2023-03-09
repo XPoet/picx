@@ -132,7 +132,7 @@ export default defineComponent({
         curImg.filename.prefixName = prefixName
         curImg.filename.hash = hash
         curImg.filename.suffix = suffix
-        curImg.filename.now = defaultHash
+        curImg.filename.final = defaultHash
           ? `${curImg.filename.name}.${hash}.${suffix}`
           : `${curImg.filename.name}.${suffix}`
         curImg.filename.isHashRename = defaultHash

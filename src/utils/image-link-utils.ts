@@ -22,7 +22,7 @@ export const generateImageLinks = (
     (x: ImageLinkRuleModel) => x.name === selectedType
   )?.rule
   if (rule) {
-    const { owner, selectedRepos: repo, selectedBranch: branch } = userConfigInfo
+    const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
     return rule
       .replaceAll('{{owner}}', owner)
       .replaceAll('{{repo}}', repo)
