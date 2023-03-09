@@ -12,7 +12,12 @@ export enum CompressEncoderMap {
   webP = 'webP'
 }
 
-export const compress = async (file: File, encoder: CompressEncoderMap) => {
+/**
+ * 压缩图片
+ * @param file
+ * @param encoder
+ */
+export const compressImage = async (file: File, encoder: CompressEncoderMap) => {
   const compress = new Compress(file, {
     encoderState: {
       type: encoder,

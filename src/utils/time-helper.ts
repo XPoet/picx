@@ -19,8 +19,8 @@ export default class TimeHelper {
     const hh = date.getHours()
     const mm = date.getMinutes()
     const ss = date.getSeconds()
-    return `${YYYY}-${this.zerofill(MM)}-${this.zerofill(DD)} ${this.zerofill(
-      hh
-    )}:${this.zerofill(mm)}:${this.zerofill(ss)}`
+    return `${YYYY}-${this.zerofill(MM)}-${this.zerofill(DD)} ${this.zerofill(hh)}:${this.zerofill(
+      mm
+    )}:${this.zerofill(ss)}`
   }
 }

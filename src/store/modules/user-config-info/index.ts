@@ -1,11 +1,6 @@
 import { Module } from 'vuex'
-import {
-  BranchModeEnum,
-  UserConfigInfoModel,
-  PICX_CONFIG,
-  DirModeEnum
-} from '@/common/model'
-import { deepAssignObject, cleanObject } from '@/utils/object-helper'
+import { BranchModeEnum, UserConfigInfoModel, PICX_CONFIG, DirModeEnum } from '@/common/model'
+import { deepAssignObject, cleanObject } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 import TimeHelper from '@/utils/time-helper'

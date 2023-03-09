@@ -34,10 +34,13 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs, onMounted, onUnmounted } from 'vue'
 import { useStore } from '@/store'
-import { filenameHandle } from '@/utils/file-handle-helper'
-import selectedFileHandle, { handleResult } from '@/utils/selected-file-handle'
-import createToUploadImageObject from '@/utils/create-to-upload-image'
-import paste from '@/utils/paste'
+import {
+  filenameHandle,
+  createToUploadImageObject,
+  pasteFileHandle,
+  selectedFileHandle,
+  handleResult
+} from '@/utils'
 
 export default defineComponent({
   name: 'upload-area',
@@ -91,7 +94,7 @@ export default defineComponent({
       // Paste images
       async onPaste(e: any) {
         store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
-        const { base64, originalFile, compressFile }: handleResult = await paste(
+        const { base64, originalFile, compressFile }: handleResult = await pasteFileHandle(
           e,
           this.uploadSettings.imageMaxSize
         )

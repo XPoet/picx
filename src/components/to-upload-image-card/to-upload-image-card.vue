@@ -137,12 +137,12 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs, onMounted } from 'vue'
 import { useStore } from '@/store'
-import { getFileSize } from '@/utils/file-handle-helper'
+import { getFileSize } from '@/utils'
 import { UserConfigInfoModel, ToUploadImageModel, UploadStatusEnum } from '@/common/model'
 import TimeHelper from '@/utils/time-helper'
 import copyImageLink from '@/components/copy-image-link/copy-image-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
-import { uploadImageToGH, uploadImagesToGH } from '@/utils/upload-helper'
+import { uploadImageToGitHub, uploadImagesToGitHub } from '@/utils/upload-helper'
 
 export default defineComponent({
   name: 'to-upload-image-card',
@@ -217,13 +217,13 @@ export default defineComponent({
 
       async uploadImage_all(userConfigInfo: UserConfigInfoModel) {
         if (this.toUploadImage.list.length === 1) {
-          if (await uploadImageToGH(userConfigInfo, this.toUploadImage.list[0])) {
+          if (await uploadImageToGitHub(userConfigInfo, this.toUploadImage.list[0])) {
             return UploadStatusEnum.uploaded
           }
           return UploadStatusEnum.uploadFail
         }
         try {
-          await uploadImagesToGH(userConfigInfo, this.toUploadImage.list)
+          await uploadImagesToGitHub(userConfigInfo, this.toUploadImage.list)
           return UploadStatusEnum.allUploaded
         } catch (error) {
           console.error(error)

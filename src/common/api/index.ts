@@ -1,8 +1,7 @@
 import { computed } from 'vue'
 import axios from '@/utils/axios'
 import { store } from '@/store'
-import { getFileSuffix, isImage } from '@/utils/file-handle-helper'
-import structureImageObject from '@/utils/image-helper'
+import { getFileSuffix, isImage, createManagementImageObject } from '@/utils'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
@@ -60,7 +59,7 @@ export const getContentByReposPath = (path: string = '') => {
             res.data
               .filter((v: any) => v.type === 'file' && isImage(getFileSuffix(v.name)))
               .forEach((x: any) => {
-                store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', structureImageObject(x, path))
+                store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', createManagementImageObject(x, path))
               })
           }, 100)
 

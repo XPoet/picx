@@ -50,4 +50,12 @@ export interface ToUploadImageModel {
   }
 
   uploadedImg?: UploadedImageModel
+
+  reUploadImgPath?: string
+
+  reUploadInfo: {
+    isReUpload: boolean
+    path: string
+    dir: string
+  }
 }

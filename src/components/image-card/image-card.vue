@@ -62,11 +62,17 @@ import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
 import axios from '@/utils/axios'
-import { UploadedImageModel } from '@/common/model'
-import { getBase64ByImageUrl, getImage } from '@/utils/rename-image'
-import { uploadImageToGH } from '@/utils/upload-helper'
-import { getFilename, getFileSize, getFileSuffix } from '@/utils/file-handle-helper'
-import { generateImageLinks } from '@/utils/image-link-handler'
+import { ToUploadImageModel, UploadedImageModel } from '@/common/model'
+import {
+  getBase64ByImageUrl,
+  getFilename,
+  getFileSize,
+  generateImageLinks,
+  createToUploadImageObject,
+  filenameHandle,
+  generateUuid
+} from '@/utils'
+import { uploadImageToGitHub } from '@/utils/upload-helper'
 
 const props = defineProps({
   listing: {
@@ -99,7 +105,9 @@ const isManagementPage = computed(() => {
   return router.path === '/management'
 })
 
-const imgUrl = computed(() => generateImageLinks(props.imageObj.path))
+const imgUrl = computed(() =>
+  generateImageLinks(props.imageObj.path, userSettings.imageLinkType, userConfigInfo)
+)
 
 const renameInputRef = ref<InstanceType<typeof ElInput>>()
 
@@ -193,34 +201,44 @@ const updateRename = async () => {
     return
   }
 
-  const renameFn = async () => {
+  const renameImg = async () => {
     const loading = ElLoading.service({
       lock: true,
       text: '正在重命名...'
     })
 
-    const suffix = getFileSuffix(imageObj.name)
-
-    const imgInfo = {
-      name: renameValue.value + imageObj.name.substring(imageObj.name.indexOf('.')),
-      size: imageObj.size,
-      lastModified: Date.now(),
-      type: `image/${suffix}`
-    }
-
+    const { suffix } = filenameHandle(imageObj.name)
+    const newUuid = generateUuid()
+    const newFilename = `${renameValue.value}.${newUuid}.${suffix}`
     const base64 = await getBase64ByImageUrl(imgUrl.value || '', suffix)
 
+    // eslint-disable-next-line no-unreachable
     if (base64) {
-      const newImgObj = getImage(base64, imgInfo)
-      if (newImgObj) {
-        const isUploadSuccess = await uploadImageToGH(userConfigInfo, newImgObj)
-
-        if (isUploadSuccess) {
-          renameValue.value = ''
-          await doDeleteImage(imageObj, true)
-          await store.dispatch('UPLOADED_LIST_REMOVE', newImgObj.uuid)
-        }
+      const toUpdateImgObj = createToUploadImageObject()
+      toUpdateImgObj.uuid = newUuid
+      toUpdateImgObj.imgData.base64Content = base64.split(',')[1] as string
+      toUpdateImgObj.filename.now = newFilename
+      toUpdateImgObj.reUploadImgPath = `${imageObj.dir}/${newFilename}`
+      toUpdateImgObj.reUploadInfo.isReUpload = true
+      toUpdateImgObj.reUploadInfo.dir = imageObj.dir
+      let path = newFilename
+      if (imageObj.dir !== '/') {
+        path = `${imageObj.dir}/${newFilename}`
       }
+      toUpdateImgObj.reUploadInfo.path = path
+
+      // 重新上传重命名后的图片
+      const isUploadSuccess = await uploadImageToGitHub(userConfigInfo, toUpdateImgObj)
+
+      if (isUploadSuccess) {
+        renameValue.value = ''
+        await doDeleteImage(imageObj, true)
+        await store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
+      } else {
+        ElMessage.error('重命名失败')
+      }
+    } else {
+      ElMessage.error('重命名失败')
     }
     loading.close()
   }
@@ -229,7 +247,7 @@ const updateRename = async () => {
     type: 'warning'
   })
     .then(async () => {
-      await renameFn()
+      await renameImg()
     })
     .catch(() => {
       console.log('取消图片重命名')

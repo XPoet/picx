@@ -1,4 +1,4 @@
-import { CompressEncoderMap } from '@/utils/compress'
+import { CompressEncoderMap } from '@/utils/compress-image'
 import { ImageLinkRuleModel } from '@/common/model'
 
 export interface UserSettingsModel {

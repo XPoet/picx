@@ -3,10 +3,16 @@ import axios from '@/utils/axios'
 import { store } from '@/store'
 
 const uploadedHandle = (
-  res: { name: string; sha: string; path: string },
+  res: { name: string; sha: string; path: string; size: number },
   img: ToUploadImageModel,
   userConfigInfo: UserConfigInfoModel
 ) => {
+  let dir = userConfigInfo.selectedDir
+
+  if (img.reUploadInfo.isReUpload) {
+    dir = img.reUploadInfo.dir
+  }
+
   // 上传状态处理
   img.uploadStatus.progress = 100
   img.uploadStatus.uploading = false
@@ -15,12 +21,12 @@ const uploadedHandle = (
     checked: false,
     type: 'image',
     uuid: img.uuid,
-    dir: userConfigInfo.selectedDir,
+    dir,
     name: res.name,
     sha: res.sha,
     path: res.path,
     deleting: false,
-    size: img.fileInfo.size
+    size: res.size
   }
 
   img.uploadedImg = item
@@ -29,21 +35,33 @@ const uploadedHandle = (
   store.dispatch('UPLOADED_LIST_ADD', item)
 
   // dirImageList 增加目录
-  store.dispatch('DIR_IMAGE_LIST_ADD_DIR', userConfigInfo.selectedDir)
+  store.dispatch('DIR_IMAGE_LIST_ADD_DIR', dir)
 
   // dirImageList 增加图片
   store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', item)
 }
 
-export const uploadUrlHandle = (config: UserConfigInfoModel, filename: string): string => {
-  let path = ''
-  if (config.selectedDir !== '/') {
-    path = `${config.selectedDir}/`
+export const uploadUrlHandle = (
+  config: UserConfigInfoModel,
+  imgObj: ToUploadImageModel
+): string => {
+  const { owner, selectedRepos: repo, selectedDir: dir } = config
+  const filename: string = imgObj.filename.now
+
+  let path = filename
+
+  if (dir !== '/') {
+    path = `${dir}/${filename}`
   }
-  return `/repos/${config.owner}/${config.selectedRepos}/contents/${path}${filename}`
+
+  if (imgObj.reUploadInfo.isReUpload) {
+    path = imgObj.reUploadInfo.path
+  }
+
+  return `/repos/${owner}/${repo}/contents/${path}`
 }
 
-export async function uploadImagesToGH(
+export async function uploadImagesToGitHub(
   userConfigInfo: UserConfigInfoModel,
   imgs: ToUploadImageModel[]
 ): Promise<void> {
@@ -120,23 +138,22 @@ export async function uploadImagesToGH(
   blobs.forEach((blob) => {
     const name = blob.img.filename.now
     uploadedHandle(
-      { name, sha: blob.data.sha, path: `${tgtPath}${name}` },
+      { name, sha: blob.data.sha, path: `${tgtPath}${name}`, size: 0 },
       blob.img,
       userConfigInfo
     )
   })
 }
 
-export function uploadImageToGH(
+export function uploadImageToGitHub(
   userConfigInfo: UserConfigInfoModel,
   img: ToUploadImageModel
 ): Promise<Boolean> {
-  const { selectedBranch, email, owner } = userConfigInfo
-  img.uploadStatus.uploading = true
+  const { selectedBranch: branch, email, owner } = userConfigInfo
 
   const data: any = {
     message: 'Upload image via PicX(https://github.com/XPoet/picx)',
-    branch: selectedBranch,
+    branch,
     content: img.imgData.base64Content
   }
 
@@ -147,13 +164,16 @@ export function uploadImageToGH(
     }
   }
 
+  img.uploadStatus.uploading = true
+
   return new Promise((resolve, reject) => {
     axios
-      .put(uploadUrlHandle(userConfigInfo, img.filename.now), data)
+      .put(uploadUrlHandle(userConfigInfo, img), data)
       .then((res) => {
+        console.log('uploadImage >> ', res)
         if (res && res.status === 201) {
-          const { name, sha, path } = res.data.content
-          uploadedHandle({ name, sha, path }, img, userConfigInfo)
+          const { name, sha, path, size } = res.data.content
+          uploadedHandle({ name, sha, path, size }, img, userConfigInfo)
           store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
           resolve(true)
         } else {

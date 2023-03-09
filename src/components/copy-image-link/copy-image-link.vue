@@ -29,11 +29,12 @@ const props = defineProps({
 })
 
 const userSettings = computed(() => store.getters.getUserSettings).value
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
 let img = ref(props.imgObj as UploadedImageModel).value
 
 const oneClickCopy = () => {
-  const link = generateImageLinks(img.path)
+  const link = generateImageLinks(img.path, userSettings.imageLinkType, userConfigInfo)
   if (link) {
     copyText(link, () => {
       ElMessage.success(`${userSettings.imageLinkType.selected} CDN 图片外链复制成功`)

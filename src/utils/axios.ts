@@ -5,7 +5,7 @@ const baseURL = 'https://api.github.com'
 
 const axios = Axios.create({
   baseURL,
-  timeout: 300000 // request timeout 请求超时 5m
+  timeout: 300000 // 设置 HTTP 请求超时时间为 5 分钟
 })
 
 axios.defaults.headers['Content-Type'] = 'application/json'

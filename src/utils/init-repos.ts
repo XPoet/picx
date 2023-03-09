@@ -1,6 +1,10 @@
 import { UserConfigInfoModel } from '@/common/model'
 import axios from '@/utils/axios'
 
+/**
+ * 初始化一个空仓库
+ * @param userConfigInfo
+ */
 export async function initRepos(userConfigInfo: UserConfigInfoModel) {
   const { owner, selectedRepos: repo, selectedBranch: branch } = userConfigInfo
 
@@ -21,8 +25,6 @@ export async function initRepos(userConfigInfo: UserConfigInfoModel) {
 PicX is completely open source, and you can use it for free.
 
 If you like it, please give it a star on [GitHub](https://github.com/XPoet/picx).
-
-Thank you for your support!
         `)
   })
 

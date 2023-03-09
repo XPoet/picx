@@ -23,8 +23,7 @@
 import { computed, onMounted, watch, ref } from 'vue'
 import { useStore } from '@/store'
 import { UploadedImageModel, DeleteStatusEnum } from '@/common/model'
-import { batchCopyImageLinks } from '@/utils'
-import { deleteImagesOfGH } from '@/utils/delete-image-card'
+import { batchCopyImageLinks, deleteImageOfGitHub } from '@/utils'
 
 const props = defineProps({
   currentDirImageList: {
@@ -33,7 +32,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['update:initImageList'])
+const emits = defineEmits(['update:initImageList'])
 
 const store = useStore()
 const allChecked = ref(false)
@@ -52,7 +51,7 @@ watch(
 )
 
 const batchCopy = () => {
-  batchCopyImageLinks(getImageCardCheckedArr.value)
+  batchCopyImageLinks(getImageCardCheckedArr.value, userSettings.imageLinkType, userConfigInfo)
 }
 
 const cancelPick = () => {
@@ -69,7 +68,7 @@ const batchDeleteImage = () => {
       type: 'warning'
     })
       .then(async () => {
-        const res = await deleteImagesOfGH(getImageCardCheckedArr.value, userConfigInfo)
+        const res = await deleteImageOfGitHub(getImageCardCheckedArr.value, userConfigInfo)
         if (res === DeleteStatusEnum.deleted) {
           ElMessage.success('删除成功！')
         }

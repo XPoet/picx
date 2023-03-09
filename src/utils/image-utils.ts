@@ -1,7 +1,80 @@
-import { UploadedImageModel, UserConfigInfoModel, DeleteStatusEnum } from '@/common/model'
+import {
+  DeleteStatusEnum,
+  ToUploadImageModel,
+  UploadedImageModel,
+  UserConfigInfoModel
+} from '@/common/model'
+import { generateUuid } from '@/utils/common-utils'
 import axios from '@/utils/axios'
 import { store } from '@/store'
 
+/**
+ * 生成一个等待上传的图片对象
+ */
+export const createToUploadImageObject = (): ToUploadImageModel => {
+  return {
+    uuid: '',
+
+    uploadStatus: {
+      progress: 0,
+      uploading: false
+    },
+
+    imgData: {
+      base64Content: '',
+      base64Url: ''
+    },
+
+    fileInfo: {
+      size: 0,
+      lastModified: 0
+    },
+
+    filename: {
+      name: '',
+      hash: '',
+      suffix: '',
+      prefixName: '',
+      now: '',
+      initName: '',
+      newName: 'xxx',
+      isHashRename: true,
+      isRename: false,
+      isPrefix: false
+    },
+
+    reUploadInfo: {
+      path: '',
+      dir: '',
+      isReUpload: false
+    }
+  }
+}
+
+/**
+ * 生成一个图床管理中的图片对象
+ * @param item
+ * @param selectedDir
+ */
+export const createManagementImageObject = (item: any, selectedDir: string): UploadedImageModel => {
+  return {
+    type: 'image',
+    uuid: generateUuid(),
+    dir: selectedDir,
+    name: item.name,
+    sha: item.sha,
+    path: item.path,
+    deleting: false,
+    size: item.size,
+    checked: false
+  }
+}
+
+/**
+ * 删除单张图片
+ * @param imageObj
+ * @param userConfigInfo
+ */
 export async function deleteSingleImage(
   imageObj: UploadedImageModel,
   userConfigInfo: UserConfigInfoModel
@@ -36,6 +109,11 @@ export async function deleteSingleImage(
   })
 }
 
+/**
+ * 删除多张图片
+ * @param imgObjs
+ * @param userConfigInfo
+ */
 export async function deleteMultiImages(
   imgObjs: UploadedImageModel[],
   userConfigInfo: UserConfigInfoModel
@@ -102,7 +180,12 @@ export async function deleteMultiImages(
   })
 }
 
-export async function deleteImagesOfGH(
+/**
+ * 从 GitHub 中删除图片
+ * @param imgCardArr
+ * @param userConfigInfo
+ */
+export async function deleteImageOfGitHub(
   imgCardArr: Array<UploadedImageModel>,
   userConfigInfo: UserConfigInfoModel
 ) {
@@ -119,4 +202,28 @@ export async function deleteImagesOfGH(
     console.error(err)
     return DeleteStatusEnum.deleteFail
   }
+}
+
+/**
+ * 根据图片链接获取图片 base64 编码
+ * @param url 图片路径
+ * @param ext 图片格式
+ */
+export function getBase64ByImageUrl(url: string, ext: string): Promise<string | null> {
+  const canvas = document.createElement('canvas')
+  const ctx = canvas.getContext('2d')
+  const img = new Image()
+  img.crossOrigin = 'Anonymous'
+  img.src = url
+  return new Promise((resolve) => {
+    img.onload = () => {
+      const { width } = img
+      const { height } = img
+      canvas.width = width // 指定画板的高度，自定义
+      canvas.height = height // 指定画板的宽度，自定义
+      ctx?.drawImage(img, 0, 0, width, height) // 参数可自定义
+      const dataURL: string = canvas.toDataURL(`image/${ext}`)
+      resolve(dataURL)
+    }
+  })
 }

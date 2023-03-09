@@ -140,7 +140,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { store } from '@/store'
-import { CompressEncoderMap } from '@/utils/compress'
+import { CompressEncoderMap } from '@/utils/compress-image'
 import ImageLinkRuleConfig from '@/components/image-link-rule-config/image-link-rule-config.vue'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
