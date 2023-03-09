@@ -70,7 +70,7 @@
 import { computed, onMounted, watch, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { getContentByReposPath } from '@/common/api'
+import { getContentByRepoPath } from '@/common/api'
 import { filterDirContent, getDirContent } from '@/views/management/management.util'
 
 import ImageCard from '@/components/image-card/image-card.vue'
@@ -83,7 +83,7 @@ const store = useStore()
 const router = useRouter()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const loggingStatus = computed(() => store.getters.getUserLoggingStatus).value
+const loginStatus = computed(() => store.getters.getUserLoginStatus).value
 const dirObject = computed(() => store.getters.getDirObject).value
 
 const renderKey = ref(new Date().getTime()) // key for update image-selector component
@@ -102,14 +102,14 @@ async function dirContentHandle(dir: string) {
     const dirs = filterDirContent(dir, dirContent, 'dir')
     const images = filterDirContent(dir, dirContent, 'image')
     if (!dirs.length && !images.length) {
-      await getContentByReposPath(dir)
+      await getContentByRepoPath(dir)
     } else {
       currentPathDirList.value = dirs
       currentPathImageList.value = images
       store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
     }
   } else {
-    await getContentByReposPath(dir)
+    await getContentByRepoPath(dir)
   }
   loadingImageList.value = false
 }
@@ -134,7 +134,7 @@ async function initDirImageList() {
   }
 
   if (!dirObject.imageList.length && !dirObject.childrenDirs.length) {
-    await getContentByReposPath(userConfigInfo.viewDir)
+    await getContentByRepoPath(userConfigInfo.viewDir)
     return
   }
 
@@ -150,7 +150,7 @@ async function reloadCurrentDirContent() {
   const { viewDir } = userConfigInfo
   await store.dispatch('DIR_IMAGE_LIST_INIT_DIR', viewDir)
   loadingImageList.value = true
-  await getContentByReposPath(viewDir)
+  await getContentByRepoPath(viewDir)
   loadingImageList.value = false
 }
 
@@ -159,7 +159,7 @@ onMounted(() => {
 })
 
 watch(
-  () => loggingStatus,
+  () => loginStatus,
   (nv) => {
     if (nv === false) {
       router.push('/config')

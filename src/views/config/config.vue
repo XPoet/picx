@@ -48,13 +48,13 @@
           filterable
           style="width: 100%"
           placeholder="请选择图床仓库..."
-          @change="selectRepos"
+          @change="selectRepo"
         >
           <el-option
-            v-for="(repos, index) in userConfigInfo.repoList"
+            v-for="(repo, index) in userConfigInfo.repoList"
             :key="index"
-            :label="repos.label"
-            :value="repos.value"
+            :label="repo.label"
+            :value="repo.value"
           >
           </el-option>
         </el-select>
@@ -102,10 +102,10 @@
           @change="selectBranch"
         >
           <el-option
-            v-for="(repos, reposIndex) in userConfigInfo.branchList"
-            :key="reposIndex"
-            :label="repos.label"
-            :value="repos.value"
+            v-for="(repo, repoIndex) in userConfigInfo.branchList"
+            :key="repoIndex"
+            :label="repo.label"
+            :value="repo.value"
           >
           </el-option>
         </el-select>
@@ -230,14 +230,14 @@ import { useStore } from '@/store'
 import { DirModeEnum, BranchModeEnum } from '@/common/model'
 import axios from '@/utils/axios'
 import TimeHelper from '@/utils/time-helper'
-import { initRepos } from '@/utils/init-repos'
+import { initRepo } from '@/utils/init-repo'
 import { getDirListByPath } from '@/common/api'
 
 const router = useRouter()
 const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const loggingStatus = computed(() => store.getters.getUserConfigInfo).value
+const logined = computed(() => store.getters.getUserLoginStatus).value
 const userSettings = computed(() => store.getters.getUserSettings).value
 
 const loading = ref(false)
@@ -255,7 +255,7 @@ function persistUserConfigInfo() {
 }
 
 function saveUserInfo(res: any) {
-  userConfigInfo.loggingStatus = true
+  userConfigInfo.logined = true
   userConfigInfo.owner = res.data.login
   userConfigInfo.name = res.data.name
   userConfigInfo.email = res.data.email
@@ -263,9 +263,9 @@ function saveUserInfo(res: any) {
   persistUserConfigInfo()
 }
 
-function getrepoList(reposUrl: string) {
+function getRepoList(repoUrl: string) {
   axios
-    .get(reposUrl, {
+    .get(repoUrl, {
       params: {
         type: 'public',
         sort: 'created',
@@ -273,16 +273,16 @@ function getrepoList(reposUrl: string) {
       }
     })
     .then((res: any) => {
-      console.log('[getrepoList] ', res)
+      console.log('getRepoList >> ', res)
       if (res.status === 200 && res.data.length > 0) {
         userConfigInfo.repoList = []
         // eslint-disable-next-line no-restricted-syntax
-        for (const repos of res.data) {
-          if (!repos.fork && !repos.private) {
+        for (const repo of res.data) {
+          if (!repo.fork && !repo.private) {
             userConfigInfo.repoList.push({
-              value: repos.name,
-              label: repos.name,
-              desc: repos.description
+              value: repo.name,
+              label: repo.name,
+              desc: repo.description
             })
           }
         }
@@ -334,9 +334,9 @@ function dirModeChange(dirMode: DirModeEnum) {
   persistUserConfigInfo()
 }
 
-function getBranchList(repos: string) {
+function getBranchList(repo: string) {
   branchLoading.value = true
-  axios.get(`/repos/${userConfigInfo.owner}/${repos}/branches`).then(async (res: any) => {
+  axios.get(`/repos/${userConfigInfo.owner}/${repo}/branches`).then(async (res: any) => {
     console.log('getBranchList >> ', res)
     if (res && res.status === 200) {
       branchLoading.value = false
@@ -357,7 +357,7 @@ function getBranchList(repos: string) {
         userConfigInfo.branchMode = BranchModeEnum.newBranch
 
         // 当分支列表为空时，判定该仓库为空仓库，需要初始化
-        await initRepos(userConfigInfo)
+        await initRepo(userConfigInfo)
       }
       dirModeChange(userConfigInfo.dirMode)
       persistUserConfigInfo()
@@ -376,7 +376,7 @@ function getUserInfo() {
         console.log('[getUserInfo] ', res)
         if (res && res.status === 200) {
           saveUserInfo(res)
-          getrepoList(res.data.repos_url)
+          getRepoList(res.data.repos_url)
         } else {
           loading.value = false
         }
@@ -386,10 +386,10 @@ function getUserInfo() {
   }
 }
 
-function selectRepos(repos: string) {
+function selectRepo(repo: string) {
   userConfigInfo.branchList = []
   userConfigInfo.dirList = []
-  getBranchList(repos)
+  getBranchList(repo)
   persistUserConfigInfo()
 }
 
@@ -487,7 +487,7 @@ function cascaderChange(e: string[]) {
 }
 
 watch(
-  () => loggingStatus,
+  () => logined,
   (_n) => {
     if (!_n) {
       loading.value = false

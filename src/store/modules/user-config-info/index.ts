@@ -20,7 +20,7 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     selectedDir: '',
     dirMode: DirModeEnum.repoDir,
     dirList: [],
-    loggingStatus: false,
+    logined: false,
     selectedDirList: [],
     viewDir: ''
   }
@@ -129,8 +129,7 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
   },
 
   getters: {
-    getUserLoggingStatus: (state: UserConfigInfoStateTypes): boolean =>
-      state.userConfigInfo.loggingStatus,
+    getUserLoginStatus: (state: UserConfigInfoStateTypes): boolean => state.userConfigInfo.logined,
     getUserConfigInfo: (state: UserConfigInfoStateTypes): UserConfigInfoModel =>
       state.userConfigInfo
   }

@@ -167,7 +167,7 @@ watch(
 )
 
 watch(
-  () => userConfigInfo.loggingStatus,
+  () => userConfigInfo.logined,
   (_n) => {
     navList.value.forEach((v: any) => {
       // eslint-disable-next-line default-case

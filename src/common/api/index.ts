@@ -41,7 +41,7 @@ export const getDirListByPath = (path: string = '') => {
  * 获取指定路径（path）下的目录和图片
  * @param path
  */
-export const getContentByReposPath = (path: string = '') => {
+export const getContentByRepoPath = (path: string = '') => {
   return new Promise((resolve) => {
     axios
       .get(`/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepo}/contents/${path}`, {

@@ -42,5 +42,5 @@ export interface UserConfigInfoModel {
   selectedDir: string
   selectedDirList: string[]
   dirList: DirModel[]
-  loggingStatus: boolean
+  logined: boolean
 }

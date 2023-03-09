@@ -65,7 +65,7 @@ const uploadAreaDom: Ref = ref<null | HTMLElement>(null)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
 const userSettings = computed(() => store.getters.getUserSettings)
-const logoutStatus = computed(() => store.getters.getUserLoggingStatus)
+const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 const uploadedImageList = computed(() => store.getters.getUploadedImageList)
 const toUploadImage = computed(() => store.getters.getToUploadImage)
 const imageLoading = ref(false)
