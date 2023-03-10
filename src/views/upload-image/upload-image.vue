@@ -1,4 +1,3 @@
-<!-- eslint-disable -->
 <template>
   <div class="upload-page-container">
     <div
@@ -17,31 +16,26 @@
       <!-- 上传区域 -->
       <div class="row-item">
         <div class="content-box">
-          <upload-area :image-loading="imageLoading" ref="uploadAreaDom"></upload-area>
+          <upload-area :image-loading="uploading" ref="uploadAreaRef"></upload-area>
         </div>
       </div>
 
       <!-- 待上传的图片列表 -->
       <div class="row-item">
         <div class="content-box">
-          <to-upload-image-card
-            ref="toUploadImageCardDom"
-            :loading-all-image="imageLoading"
-          />
+          <to-upload-image-card ref="toUploadImageCardRef" :loading-all-image="uploading" />
         </div>
       </div>
 
       <!-- 重置 & 上传 -->
       <div class="row-item">
         <div class="content-box" style="text-align: right">
-          <el-button
-            plain
-            type="warning"
-            @click="resetUploadInfo"
-            v-if="toUploadImage.list.length"
-            >重置
+          <el-button v-if="toUploadImage.list.length" plain type="warning" @click="resetUploadInfo">
+            重置 {{ shortcutKey }} + A
           </el-button>
-          <el-button plain type="primary" @click="uploadImage"> 上传 </el-button>
+          <el-button :loading="uploading" plain type="primary" @click="uploadImage">
+            上传 {{ shortcutKey }} + S
+          </el-button>
         </div>
       </div>
     </div>
@@ -49,26 +43,33 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref, Ref } from 'vue'
+import { computed, watch, ref, Ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import ImageCard from '@/components/image-card/image-card.vue'
 import ToUploadImageCard from '@/components/to-upload-image-card/to-upload-image-card.vue'
 import UploadArea from '@/components/upload-area/upload-area.vue'
-import { UploadStatusEnum } from '@/common/model'
+import { ToUploadImageModel, UploadStatusEnum } from '@/common/model'
+import {
+  batchCopyImageLinks,
+  copyImageLink,
+  copyText,
+  generateImageLinks,
+  getOSName
+} from '@/utils'
 
 const store = useStore()
 const router = useRouter()
 
-const toUploadImageCardDom: Ref = ref<null | HTMLElement>(null)
-const uploadAreaDom: Ref = ref<null | HTMLElement>(null)
+const toUploadImageCardRef: Ref = ref<null | HTMLElement>(null)
+const uploadAreaRef: Ref = ref<null | HTMLElement>(null)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
 const userSettings = computed(() => store.getters.getUserSettings)
 const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 const uploadedImageList = computed(() => store.getters.getUploadedImageList)
 const toUploadImage = computed(() => store.getters.getToUploadImage)
-const imageLoading = ref(false)
+const uploading = ref(false)
+const shortcutKey = computed(() => (getOSName() === 'mac' ? 'Command' : 'Ctrl'))
 
 const uploadImage = () => {
   const { token, selectedRepo, selectedDir } = userConfigInfo.value
@@ -101,38 +102,52 @@ const uploadImage = () => {
     return
   }
 
-  imageLoading.value = true
-  toUploadImageCardDom.value
-    .uploadImage_all(userConfigInfo.value)
+  uploading.value = true
+  toUploadImageCardRef.value
+    .goUploadImages(userConfigInfo.value)
     .then((v: UploadStatusEnum) => {
+      uploading.value = false
       // eslint-disable-next-line default-case
       switch (v) {
         // 单张图片上传成功
         case UploadStatusEnum.uploaded:
+          store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
+          // 自动复制这这张图片链接到系统剪贴板
+          copyImageLink(
+            toUploadImage.value.list[0].uploadedImg.path,
+            userSettings.value.imageLinkType,
+            userConfigInfo.value,
+            true
+          )
+          break
 
         // 所有图片上传成功
-        // eslint-disable-next-line no-fallthrough
         case UploadStatusEnum.allUploaded:
-          imageLoading.value = false
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
+          batchCopyImageLinks(
+            toUploadImage.value.list.map((x: ToUploadImageModel) => x.uploadedImg),
+            userSettings.value.imageLinkType,
+            userConfigInfo.value,
+            true
+          )
           break
 
         // 上传失败（网络错误等原因）
         case UploadStatusEnum.uploadFail:
-          imageLoading.value = false
           store.dispatch('TO_UPLOAD_IMAGE_LIST_FAIL')
           break
       }
     })
     .catch((e: any) => {
       console.error('upload error: ', e)
-      imageLoading.value = false
+      uploading.value = false
     })
 }
 
 const resetUploadInfo = () => {
-  imageLoading.value = false
+  uploading.value = false
   store.dispatch('TO_UPLOAD_IMAGE_LOGOUT')
+  store.dispatch('UPLOADED_LIST_LOGOUT')
 }
 
 watch(
@@ -143,8 +158,31 @@ watch(
     !_n && resetUploadInfo()
   }
 )
+
+onMounted(() => {
+  document.addEventListener('keydown', (e) => {
+    const keyCode = e.keyCode || e.which || e.charCode
+    const ctrlKey = e.ctrlKey || e.metaKey
+
+    // 重置操作快捷组合键 Command + A
+    if (ctrlKey && keyCode === 65) {
+      if (toUploadImage.value.list.length) {
+        resetUploadInfo()
+        e.preventDefault()
+      }
+    }
+
+    // 上传操作快捷组合键 Command + S
+    if (ctrlKey && keyCode === 83) {
+      if (toUploadImage.value.list.length && !uploading.value) {
+        uploadImage()
+        e.preventDefault()
+      }
+    }
+  })
+})
 </script>
 
 <style lang="stylus">
-@import "upload.styl"
+@import "./upload-image.styl"
 </style>

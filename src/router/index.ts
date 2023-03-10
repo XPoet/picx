@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import config from '@/views/my-config/my-config.vue'
-import upload from '@/views/upload/upload.vue'
+import upload from '@/views/upload-image/upload-image.vue'
 import management from '@/views/management/management.vue'
 import tutorials from '@/views/use-tutorials/use-tutorials.vue'
 import settings from '@/views/my-settings/my-settings.vue'

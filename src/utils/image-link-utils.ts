@@ -33,24 +33,60 @@ export const generateImageLinks = (
 }
 
 /**
- * 批量复制图片外链
- * @param imgCardList 图片对象列表
+ * 复制单张图片链接
+ * @param imgPath
  * @param imageLinkType
  * @param userConfigInfo
+ * @param autoCopy
+ */
+export const copyImageLink = (
+  imgPath: string,
+  imageLinkType: UserSettingsModel['imageLinkType'],
+  userConfigInfo: UserConfigInfoModel,
+  autoCopy: boolean = false
+) => {
+  const link = generateImageLinks(imgPath, imageLinkType, userConfigInfo)
+  if (link) {
+    copyText(link, () => {
+      if (autoCopy) {
+        ElMessage.success({ message: '该图片链接已自动复制到系统剪贴板', duration: 3500 })
+      } else {
+        ElMessage.success(`${imageLinkType.selected} CDN 图片链接复制成功`)
+      }
+    })
+  } else {
+    ElMessage.error(`复制失败`)
+  }
+}
+
+/**
+ * 批量复制图片外链
+ * @param uploadedImgList 图片对象列表
+ * @param imageLinkType
+ * @param userConfigInfo
+ * @param autoCopy
  */
 export const batchCopyImageLinks = (
-  imgCardList: Array<UploadedImageModel>,
+  uploadedImgList: Array<UploadedImageModel>,
   imageLinkType: UserSettingsModel['imageLinkType'],
-  userConfigInfo: UserConfigInfoModel
+  userConfigInfo: UserConfigInfoModel,
+  autoCopy: boolean = false
 ) => {
-  if (imgCardList?.length > 0) {
+  if (uploadedImgList?.length > 0) {
     let linksTxt = ''
-    imgCardList.forEach((item: UploadedImageModel, index) => {
+    uploadedImgList.forEach((item: UploadedImageModel, index) => {
       const link = generateImageLinks(item.path, imageLinkType, userConfigInfo)
-      linksTxt += `${link}${index < imgCardList.length - 1 ? '\n' : ''}`
+      linksTxt += `${link}${index < uploadedImgList.length - 1 ? '\n' : ''}`
     })
     copyText(linksTxt, () => {
-      ElMessage.success(`批量复制图片链接成功`)
+      if (autoCopy) {
+        ElMessage.success({
+          message: `已成功将 ${uploadedImgList.length} 张图片链接复制到系统剪贴板`,
+          duration: 3500
+        })
+      } else {
+        ElMessage.success(`批量复制图片链接成功`)
+      }
     })
   } else {
     console.warn('请先选择图片')

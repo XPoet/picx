@@ -2,6 +2,12 @@ import { ToUploadImageModel, UploadedImageModel, UserConfigInfoModel } from '@/c
 import axios from '@/utils/axios'
 import { store } from '@/store'
 
+/**
+ * 图片上传成功之后的处理
+ * @param res
+ * @param img
+ * @param userConfigInfo
+ */
 const uploadedHandle = (
   res: { name: string; sha: string; path: string; size: number },
   img: ToUploadImageModel,
@@ -17,7 +23,7 @@ const uploadedHandle = (
   img.uploadStatus.progress = 100
   img.uploadStatus.uploading = false
 
-  const item: UploadedImageModel = {
+  const uploadedImg: UploadedImageModel = {
     checked: false,
     type: 'image',
     uuid: img.uuid,
@@ -29,16 +35,16 @@ const uploadedHandle = (
     size: res.size
   }
 
-  img.uploadedImg = item
+  img.uploadedImg = uploadedImg
 
   // uploadedList 增加图片
-  store.dispatch('UPLOADED_LIST_ADD', item)
+  store.dispatch('UPLOADED_LIST_ADD', uploadedImg)
 
   // dirImageList 增加目录
   store.dispatch('DIR_IMAGE_LIST_ADD_DIR', dir)
 
   // dirImageList 增加图片
-  store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', item)
+  store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', uploadedImg)
 }
 
 export const uploadUrlHandle = (

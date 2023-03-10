@@ -215,7 +215,7 @@ export default defineComponent({
         return TimeHelper.formatTimestamp(t)
       },
 
-      async uploadImage_all(userConfigInfo: UserConfigInfoModel) {
+      async goUploadImages(userConfigInfo: UserConfigInfoModel) {
         if (this.toUploadImage.list.length === 1) {
           if (await uploadImageToGitHub(userConfigInfo, this.toUploadImage.list[0])) {
             return UploadStatusEnum.uploaded

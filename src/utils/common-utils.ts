@@ -33,7 +33,8 @@ export const getLocalItem = (key: string) => {
  */
 export const copyText = (txt: string, callback: any) => {
   navigator.clipboard.writeText(txt).then(() => {
-    callback()
+    // eslint-disable-next-line no-unused-expressions
+    callback && callback()
   })
 }
 
@@ -88,4 +89,18 @@ export const deepAssignObject = (obj1: object, obj2: object): any => {
       deepAssignObject(obj1[key], obj2[key])
     }
   }
+}
+
+export const getOSName = (): 'mac' | 'win' | 'linux' | null => {
+  const { platform } = navigator
+  if (platform.includes('Mac')) {
+    return 'mac'
+  }
+  if (platform.includes('Win')) {
+    return 'win'
+  }
+  if (platform.includes('Linux')) {
+    return 'linux'
+  }
+  return null
 }
