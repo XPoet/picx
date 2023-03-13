@@ -19,7 +19,7 @@
             type="danger"
             size="small"
             :disabled="!scope.row.editable"
-            @click="removeImageLinkRule(scope.row.id)"
+            @click="removeImageLinkRule(scope.row)"
           >
             删除
           </el-button>
@@ -50,7 +50,13 @@
           <el-input v-model="imageLinkRuleForm.rule" type="text" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="addImageLinkRule(formRef)">添加图片链接规则</el-button>
+          <el-button
+            type="primary"
+            :disabled="!imageLinkRuleForm.name || !imageLinkRuleForm.rule"
+            @click="addImageLinkRule(formRef)"
+          >
+            添加图片链接规则
+          </el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -62,12 +68,13 @@ import { computed, reactive, ref } from 'vue'
 import { FormInstance } from 'element-plus'
 import { store } from '@/store'
 import { getUuid } from '@/utils/common-utils'
+import { ImageLinkRuleModel } from '@/common/model'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 
 const formRef = ref<FormInstance>()
 
-const imageLinkRuleForm = reactive({
+const imageLinkRuleForm: ImageLinkRuleModel = reactive({
   id: '',
   name: '',
   rule: '',
@@ -78,8 +85,21 @@ const editImageLinkRule = (rule: string, id: string) => {
   store.dispatch('UPDATE_IMAGE_LINK_TYPE_RULE', { rule, id })
 }
 
-const removeImageLinkRule = (id: string) => {
-  store.dispatch('DEL_IMAGE_LINK_TYPE_RULE', id)
+const removeImageLinkRule = (obj: ImageLinkRuleModel) => {
+  ElMessageBox.confirm(
+    `<span>此操作将永久删除图片链接规则：</span><strong>${obj.name}</strong>`,
+    `删除提示`,
+    {
+      dangerouslyUseHTMLString: true,
+      type: 'warning'
+    }
+  )
+    .then(() => {
+      store.dispatch('DEL_IMAGE_LINK_TYPE_RULE', obj.id)
+    })
+    .catch(() => {
+      console.log('取消删除')
+    })
 }
 
 const addImageLinkRule = (formEl: FormInstance | undefined) => {
