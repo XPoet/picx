@@ -20,7 +20,7 @@
     />
     <div class="tips active-upload" v-if="!toUploadImage.curImgBase64Url">
       <el-icon class="icon active-upload"><UploadFilled /></el-icon>
-      <div class="text active-upload">拖拽、粘贴、或点击此处上传</div>
+      <div class="text active-upload">拖拽 / 粘贴 / 点击此处选择图片</div>
     </div>
     <img
       class="active-upload"

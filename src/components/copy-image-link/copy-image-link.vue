@@ -8,7 +8,7 @@
         :content="'点击复制 ' + userSettings.imageLinkType.selected + ' CDN 外链'"
         placement="top"
       >
-        <span class="btn-item copy-url flex-center" @click="oneClickCopy"> 一键复制 </span>
+        <span class="btn-item copy-url flex-center" @click="oneClickCopy"> 复制链接 </span>
       </el-tooltip>
     </div>
   </div>

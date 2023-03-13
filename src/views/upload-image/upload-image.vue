@@ -112,7 +112,8 @@ const uploadImage = () => {
         // 单张图片上传成功
         case UploadStatusEnum.uploaded:
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
-          // 自动复制这这张图片链接到系统剪贴板
+          ElMessage.success('图片上传成功')
+          // 自动复制这张图片链接到系统剪贴板
           copyImageLink(
             toUploadImage.value.list[0].uploadedImg.path,
             userSettings.value.imageLinkType,
@@ -124,6 +125,8 @@ const uploadImage = () => {
         // 所有图片上传成功
         case UploadStatusEnum.allUploaded:
           store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
+          ElMessage.success('图片批量上传成功')
+          // 自动复制这些图片链接到系统剪贴板
           batchCopyImageLinks(
             toUploadImage.value.list.map((x: ToUploadImageModel) => x.uploadedImg),
             userSettings.value.imageLinkType,
@@ -135,6 +138,7 @@ const uploadImage = () => {
         // 上传失败（网络错误等原因）
         case UploadStatusEnum.uploadFail:
           store.dispatch('TO_UPLOAD_IMAGE_LIST_FAIL')
+          ElMessage.error('上传失败，请稍后重试！')
           break
       }
     })
@@ -174,7 +178,7 @@ onMounted(() => {
 
     // 上传操作快捷组合键 Command + S
     if (ctrlKey && keyCode === 83) {
-      if (toUploadImage.value.list.length && !uploading.value) {
+      if (!uploading.value) {
         uploadImage()
         e.preventDefault()
       }
