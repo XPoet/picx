@@ -91,6 +91,10 @@ export const deepAssignObject = (obj1: object, obj2: object): any => {
   }
 }
 
+/**
+ * 获取系统名称
+ * @returns 'mac' | 'win' | 'linux' | null
+ */
 export const getOSName = (): 'mac' | 'win' | 'linux' | null => {
   const { platform } = navigator
   if (platform.includes('Mac')) {
@@ -103,4 +107,41 @@ export const getOSName = (): 'mac' | 'win' | 'linux' | null => {
     return 'linux'
   }
   return null
+}
+
+/**
+ * 格式化时间日期
+ * @param fmt 格式
+ * @param timestamp 时间戳
+ */
+export const formatDatetime = (
+  fmt: string = 'yyyy-MM-dd hh:mm:ss',
+  timestamp: number = Date.now()
+) => {
+  function padLeftZero(str: string) {
+    return `00${str}`.substr(str.length)
+  }
+  const date = new Date(timestamp)
+
+  if (/(y+)/.test(fmt)) {
+    fmt = fmt.replace(RegExp.$1, `${date.getFullYear()}`.substr(4 - RegExp.$1.length))
+  }
+
+  const obj = {
+    'M+': date.getMonth() + 1,
+    'd+': date.getDay(),
+    'h+': date.getHours(),
+    'm+': date.getMinutes(),
+    's+': date.getSeconds()
+  }
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (const key in obj) {
+    if (new RegExp(`(${key})`).test(fmt)) {
+      // @ts-ignore
+      const str = `${obj[key]}`
+      fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? str : padLeftZero(str))
+    }
+  }
+  return fmt
 }

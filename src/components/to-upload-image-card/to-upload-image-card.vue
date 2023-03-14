@@ -137,9 +137,8 @@
 <script lang="ts">
 import { computed, defineComponent, reactive, toRefs, onMounted } from 'vue'
 import { useStore } from '@/store'
-import { getFileSize } from '@/utils'
+import { formatDatetime, getFileSize } from '@/utils'
 import { UserConfigInfoModel, ToUploadImageModel, UploadStatusEnum } from '@/common/model'
-import TimeHelper from '@/utils/time-helper'
 import copyImageLink from '@/components/copy-image-link/copy-image-link.vue'
 import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 import { uploadImageToGitHub, uploadImagesToGitHub } from '@/utils/upload-utils'
@@ -212,7 +211,7 @@ export default defineComponent({
       },
 
       formatLastModified(t: number) {
-        return TimeHelper.formatTimestamp(t)
+        return formatDatetime('yyyy-MM-dd hh:mm', t)
       },
 
       async goUploadImages(userConfigInfo: UserConfigInfoModel) {

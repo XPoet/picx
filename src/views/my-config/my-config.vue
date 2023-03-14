@@ -219,8 +219,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { DirModeEnum, BranchModeEnum, BranchModel } from '@/common/model'
 import axios from '@/utils/axios'
-import TimeHelper from '@/utils/time-helper'
-import { initBranch, initRepo } from '@/utils'
+import { formatDatetime, initBranch, initRepo } from '@/utils'
 import { getDirListByPath } from '@/common/api'
 
 const router = useRouter()
@@ -302,7 +301,7 @@ function dirModeChange(dirMode: DirModeEnum) {
 
     case DirModeEnum.autoDir:
       // 自动目录，根据当天日期自动生成
-      userConfigInfo.selectedDir = TimeHelper.getYyyyMmDd()
+      userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
       break
 
     case DirModeEnum.newDir:
