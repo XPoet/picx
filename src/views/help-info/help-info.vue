@@ -2,7 +2,7 @@
 <template>
   <div class="page-container feedback-page-container">
     <div class="help-info-item description">
-      🏞️ PicX 是一款基于 GitHub API 开发的图床管理工具，提供图片上传托管和自动生成图片链接。
+      🏞️ PicX 是一款基于 GitHub API 开发的图床工具，提供图片上传托管和生成图片链接服务。
       <br />
       🌟 无需下载！无需安装！网页端在线使用！免费！稳定！便捷！极速！
     </div>
