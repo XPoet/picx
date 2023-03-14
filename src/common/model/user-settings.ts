@@ -1,8 +1,8 @@
-import { CompressEncoderEnum, ImageLinkRuleModel } from '@/common/model'
+import { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
 
 export interface UserSettingsModel {
   defaultHash: boolean
-  defaultMarkdown: boolean
+  enableImageLinkFormat: boolean
   defaultPrefix: boolean
   prefixName: string
   themeMode: 'auto' | 'light' | 'dark'
@@ -13,5 +13,9 @@ export interface UserSettingsModel {
   imageLinkType: {
     selected: string
     presetList: Array<ImageLinkRuleModel>
+  }
+  imageLinkFormat: {
+    selected: string
+    presetList: Array<ImageLinkFormatModel>
   }
 }

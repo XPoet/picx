@@ -38,9 +38,9 @@
           @change="persistUserSettings"
         />
         <el-switch
-          v-model="userSettings.defaultMarkdown"
+          v-model="userSettings.enableImageLinkFormat"
           class="mb-2"
-          active-text="转换 Markdown"
+          :active-text="'转换 ' + userSettings.imageLinkFormat.selected"
           @change="persistUserSettings"
         />
       </div>

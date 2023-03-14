@@ -10,7 +10,7 @@
       <div class="item cancel-select-btn" @click="cancelPick">取消选择</div>
     </div>
     <div class="selector-right-box">
-      <el-tooltip placement="top" content="批量复制外链">
+      <el-tooltip placement="top" content="批量复制链接">
         <el-icon class="btn-icon" @click="batchCopy"><CopyDocument /></el-icon>
       </el-tooltip>
       <el-tooltip placement="top" content="批量删除图片">
@@ -51,7 +51,7 @@ watch(
 )
 
 const batchCopy = () => {
-  batchCopyImageLinks(getImageCardCheckedArr.value, userSettings.imageLinkType, userConfigInfo)
+  batchCopyImageLinks(getImageCardCheckedArr.value, userConfigInfo, userSettings)
 }
 
 const cancelPick = () => {

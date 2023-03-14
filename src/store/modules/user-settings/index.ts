@@ -13,7 +13,7 @@ import { getLocalItem, getUuid } from '@/utils/common-utils'
 
 const initSettings: UserSettingsModel = {
   defaultHash: true,
-  defaultMarkdown: false,
+  enableImageLinkFormat: false,
   defaultPrefix: false,
   prefixName: '',
   isCompress: true,
@@ -43,6 +43,19 @@ const initSettings: UserSettingsModel = {
         id: getUuid(),
         name: 'GitHub',
         rule: 'https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}'
+      }
+    ]
+  },
+  imageLinkFormat: {
+    selected: 'Markdown',
+    presetList: [
+      {
+        name: 'Markdown',
+        format: '![imageName](imageLink)'
+      },
+      {
+        name: 'HTML',
+        format: '<img src="imageLink" alt="imageName" />'
       }
     ]
   }

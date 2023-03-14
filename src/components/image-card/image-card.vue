@@ -62,7 +62,7 @@ import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
 import axios from '@/utils/axios'
-import { ToUploadImageModel, UploadedImageModel } from '@/common/model'
+import { UploadedImageModel } from '@/common/model'
 import {
   getBase64ByImageUrl,
   getFilename,
@@ -106,7 +106,7 @@ const isManagementPage = computed(() => {
 })
 
 const imgUrl = computed(() =>
-  generateImageLinks(props.imageObj.path, userSettings.imageLinkType, userConfigInfo)
+  generateImageLinks(props.imageObj as UploadedImageModel, userConfigInfo, userSettings)
 )
 
 const renameInputRef = ref<InstanceType<typeof ElInput>>()

@@ -96,3 +96,11 @@ export interface ImageLinkRuleModel {
   rule: string
   editable?: boolean
 }
+
+/**
+ * 图片链接格式对象 Model
+ */
+export interface ImageLinkFormatModel {
+  name: string
+  format: string
+}

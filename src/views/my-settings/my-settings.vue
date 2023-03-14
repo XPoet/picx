@@ -27,14 +27,16 @@
       </li>
       <li class="setting-item">
         <el-switch
-          v-model="userSettings.defaultMarkdown"
+          v-model="userSettings.enableImageLinkFormat"
           @change="persistUserSettings"
-          active-text="上传成功后复制的图片外链启用 Markdown 格式（![ ... ]( ... )）"
+          :active-text="
+            '上传成功后复制图片链接时启用 ' + userSettings.imageLinkFormat.selected + ' 格式'
+          "
         ></el-switch>
       </li>
     </ul>
 
-    <div class="setting-title">CDN 外链规则：</div>
+    <div class="setting-title">图片链接规则配置：</div>
     <ul class="setting-list">
       <li class="setting-item cdn">
         <el-select
@@ -62,6 +64,28 @@
       </li>
       <li class="setting-item" v-if="isAddRule">
         <image-link-rule-config />
+      </li>
+    </ul>
+
+    <div class="setting-title">图片链接格式设置：（例如：Markdown、HTML）</div>
+    <ul class="setting-list">
+      <li class="setting-item">
+        <el-select
+          v-model="userSettings.imageLinkFormat.selected"
+          placeholder="选择一个图片链接格式"
+          @change="saveUserSettings"
+        >
+          <el-option
+            v-for="item in userSettings.imageLinkFormat.presetList"
+            :key="item.name"
+            :label="item.name"
+            :value="item.name"
+            class="image-link-type-rule-option"
+          >
+            <span class="left">{{ item.name }}</span>
+            <span class="right">{{ item.format }}</span>
+          </el-option>
+        </el-select>
       </li>
     </ul>
 

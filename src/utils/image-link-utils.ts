@@ -1,4 +1,5 @@
 import {
+  ImageLinkFormatModel,
   ImageLinkRuleModel,
   UploadedImageModel,
   UserConfigInfoModel,
@@ -8,17 +9,17 @@ import { copyText } from '@/utils'
 
 /**
  * 生成一个图片链接
- * @param imgPath
- * @param imageLinkType
+ * @param imageObj
  * @param userConfigInfo
+ * @param userSettings
  */
 export const generateImageLinks = (
-  imgPath: string,
-  imageLinkType: UserSettingsModel['imageLinkType'],
-  userConfigInfo: UserConfigInfoModel
+  imageObj: UploadedImageModel,
+  userConfigInfo: UserConfigInfoModel,
+  userSettings: UserSettingsModel
 ): string | null => {
-  const selectedType = imageLinkType.selected
-  const rule = imageLinkType.presetList.find(
+  const selectedType = userSettings.imageLinkType.selected
+  const rule = userSettings.imageLinkType.presetList.find(
     (x: ImageLinkRuleModel) => x.name === selectedType
   )?.rule
   if (rule) {
@@ -27,31 +28,60 @@ export const generateImageLinks = (
       .replaceAll('{{owner}}', owner)
       .replaceAll('{{repo}}', repo)
       .replaceAll('{{branch}}', branch)
-      .replaceAll('{{path}}', imgPath)
+      .replaceAll('{{path}}', imageObj.path)
   }
   return null
 }
 
 /**
+ * 转换图片链接格式
+ * @param imageLink
+ * @param imageName
+ * @param userSettings
+ */
+const transformImageLink = (
+  imageLink: string | null,
+  imageName: string,
+  userSettings: UserSettingsModel
+) => {
+  if (userSettings.enableImageLinkFormat) {
+    const selectedFormat = userSettings.imageLinkFormat.selected
+    const format = userSettings.imageLinkFormat.presetList.find(
+      (x: ImageLinkFormatModel) => x.name === selectedFormat
+    )?.format
+    if (format) {
+      return format
+        .replaceAll('imageLink', imageLink || '')
+        .replaceAll('imageName', imageName.split('.')[0])
+    }
+  }
+  return imageLink
+}
+
+/**
  * 复制单张图片链接
- * @param imgPath
- * @param imageLinkType
+ * @param imgObj
  * @param userConfigInfo
+ * @param userSettings
  * @param autoCopy
  */
 export const copyImageLink = (
-  imgPath: string,
-  imageLinkType: UserSettingsModel['imageLinkType'],
+  imgObj: UploadedImageModel,
   userConfigInfo: UserConfigInfoModel,
+  userSettings: UserSettingsModel,
   autoCopy: boolean = false
 ) => {
-  const link = generateImageLinks(imgPath, imageLinkType, userConfigInfo)
+  const link = transformImageLink(
+    generateImageLinks(imgObj, userConfigInfo, userSettings),
+    imgObj.name,
+    userSettings
+  )
   if (link) {
     copyText(link, () => {
       if (autoCopy) {
         ElMessage.success({ message: '该图片链接已自动复制到系统剪贴板', duration: 6000 })
       } else {
-        ElMessage.success(`${imageLinkType.selected} 图片链接复制成功`)
+        ElMessage.success(`${userSettings.imageLinkType.selected} 图片链接复制成功`)
       }
     })
   } else {
@@ -60,22 +90,26 @@ export const copyImageLink = (
 }
 
 /**
- * 批量复制图片外链
+ * 批量复制图片链接
  * @param uploadedImgList 图片对象列表
- * @param imageLinkType
  * @param userConfigInfo
+ * @param userSettings
  * @param autoCopy
  */
 export const batchCopyImageLinks = (
   uploadedImgList: Array<UploadedImageModel>,
-  imageLinkType: UserSettingsModel['imageLinkType'],
   userConfigInfo: UserConfigInfoModel,
+  userSettings: UserSettingsModel,
   autoCopy: boolean = false
 ) => {
   if (uploadedImgList?.length > 0) {
     let linksTxt = ''
-    uploadedImgList.forEach((item: UploadedImageModel, index) => {
-      const link = generateImageLinks(item.path, imageLinkType, userConfigInfo)
+    uploadedImgList.forEach((img: UploadedImageModel, index) => {
+      const link = transformImageLink(
+        generateImageLinks(img, userConfigInfo, userSettings),
+        img.name,
+        userSettings
+      )
       linksTxt += `${link}${index < uploadedImgList.length - 1 ? '\n' : ''}`
     })
     copyText(linksTxt, () => {

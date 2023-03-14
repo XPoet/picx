@@ -1,11 +1,13 @@
 <template>
   <div class="copy-image-link-box">
     <div class="left">
-      <el-icon><InfoFilled /></el-icon>
+      <el-tooltip content="请在'我的设置'进行图片链接相关配置" placement="top">
+        <el-icon><InfoFilled /></el-icon>
+      </el-tooltip>
     </div>
     <div class="btn-box right">
       <el-tooltip
-        :content="'点击复制 ' + userSettings.imageLinkType.selected + ' CDN 外链'"
+        :content="'点击复制 ' + userSettings.imageLinkType.selected + ' 图片链接'"
         placement="top"
       >
         <span class="btn-item copy-url flex-center" @click="oneClickCopy"> 复制链接 </span>
@@ -33,7 +35,7 @@ const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 let img = ref(props.imgObj as UploadedImageModel).value
 
 const oneClickCopy = () => {
-  copyImageLink(img.path, userSettings.imageLinkType, userConfigInfo)
+  copyImageLink(img, userConfigInfo, userSettings)
 }
 
 onUpdated(() => {

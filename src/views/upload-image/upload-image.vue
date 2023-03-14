@@ -49,13 +49,7 @@ import { useStore } from '@/store'
 import ToUploadImageCard from '@/components/to-upload-image-card/to-upload-image-card.vue'
 import UploadArea from '@/components/upload-area/upload-area.vue'
 import { ToUploadImageModel, UploadStatusEnum } from '@/common/model'
-import {
-  batchCopyImageLinks,
-  copyImageLink,
-  copyText,
-  generateImageLinks,
-  getOSName
-} from '@/utils'
+import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
 
 const store = useStore()
 const router = useRouter()
@@ -115,9 +109,9 @@ const uploadImage = () => {
           ElMessage.success('图片上传成功')
           // 自动复制这张图片链接到系统剪贴板
           copyImageLink(
-            toUploadImage.value.list[0].uploadedImg.path,
-            userSettings.value.imageLinkType,
+            toUploadImage.value.list[0].uploadedImg,
             userConfigInfo.value,
+            userSettings.value,
             true
           )
           break
@@ -129,8 +123,8 @@ const uploadImage = () => {
           // 自动复制这些图片链接到系统剪贴板
           batchCopyImageLinks(
             toUploadImage.value.list.map((x: ToUploadImageModel) => x.uploadedImg),
-            userSettings.value.imageLinkType,
             userConfigInfo.value,
+            userSettings.value,
             true
           )
           break
