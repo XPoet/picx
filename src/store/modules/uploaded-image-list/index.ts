@@ -39,8 +39,9 @@ const uploadedImageListModule: Module<UploadedImageListStateTypes, RootStateType
     },
 
     // 上传完成的图片列表 - 退出登录
-    UPLOADED_LIST_LOGOUT({ state }) {
+    UPLOADED_LIST_LOGOUT({ state, dispatch }) {
       state.uploadedImageList = []
+      dispatch('UPLOADED_LIST_PERSIST')
     }
   },
 

@@ -30,7 +30,13 @@
       <!-- 重置 & 上传 -->
       <div class="row-item">
         <div class="content-box" style="text-align: right">
-          <el-button v-if="toUploadImage.list.length" plain type="warning" @click="resetUploadInfo">
+          <el-button
+            :disabled="uploading"
+            v-if="toUploadImage.list.length"
+            plain
+            type="warning"
+            @click="resetUploadInfo"
+          >
             重置 {{ shortcutKey }} + A
           </el-button>
           <el-button :loading="uploading" plain type="primary" @click="uploadImage">
