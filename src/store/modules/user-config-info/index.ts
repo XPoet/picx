@@ -1,5 +1,11 @@
 import { Module } from 'vuex'
-import { BranchModeEnum, UserConfigInfoModel, PICX_CONFIG, DirModeEnum } from '@/common/model'
+import {
+  BranchModeEnum,
+  UserConfigInfoModel,
+  PICX_CONFIG,
+  DirModeEnum,
+  newDirMaxCount
+} from '@/common/model'
 import { deepAssignObject, cleanObject, formatDatetime } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
@@ -55,15 +61,16 @@ const convertSpecialCharacter = (state: UserConfigInfoStateTypes): void => {
     const strList = selectedDir.split('')
     let count = 0
     let newStr = ''
+    const specStrList = [' ', '.', '、', ',', '，', '!', '？', '?']
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < strList.length; i++) {
-      if (strList[i] === ' ' || strList[i] === '.' || strList[i] === '、') {
+      if (specStrList.some((x) => x === strList[i])) {
         strList[i] = '-'
       }
       if (strList[i] === '/') {
         count += 1
       }
-      if (count >= 3) {
+      if (count >= newDirMaxCount) {
         break
       }
       newStr += strList[i]
