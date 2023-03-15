@@ -52,6 +52,7 @@
 import { onMounted, watch, computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
+import { ElementPlusSizeEnum } from '@/common/model'
 
 const router = useRouter()
 const store = useStore()
@@ -61,9 +62,9 @@ const userSettings = computed(() => store.getters.getUserSettings).value
 
 const navIconSize = computed(() => {
   switch (userSettings.elementPlusSize) {
-    case 'small':
+    case ElementPlusSizeEnum.small:
       return 22
-    case 'large':
+    case ElementPlusSizeEnum.large:
       return 30
     default:
       return 26

@@ -19,6 +19,7 @@
 import { computed } from 'vue'
 import { getDirListByPath } from '@/common/api'
 import { useStore } from '@/store'
+import { newDirMaxCount } from '@/common/model'
 
 const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
@@ -58,7 +59,7 @@ const cascaderProps = {
         dirs.map((x: any) => ({
           value: x.value,
           label: x.label,
-          leaf: level >= 2
+          leaf: level >= newDirMaxCount - 1
         }))
       )
     } else {

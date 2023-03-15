@@ -5,6 +5,12 @@ import { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@
  */
 export const newDirMaxCount: number = 5
 
+export enum ElementPlusSizeEnum {
+  large = 'large',
+  default = 'default',
+  small = 'small'
+}
+
 export interface UserSettingsModel {
   defaultHash: boolean
   enableImageLinkFormat: boolean
@@ -14,7 +20,7 @@ export interface UserSettingsModel {
   autoLightThemeTime: string[]
   isCompress: boolean
   compressEncoder: CompressEncoderEnum
-  elementPlusSize: 'large' | 'default' | 'small'
+  elementPlusSize: ElementPlusSizeEnum
   imageLinkType: {
     selected: string
     presetList: Array<ImageLinkRuleModel>

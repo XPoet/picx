@@ -208,7 +208,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { DirModeEnum, BranchModeEnum, BranchModel } from '@/common/model'
+import { DirModeEnum, BranchModeEnum, BranchModel, ElementPlusSizeEnum } from '@/common/model'
 import axios from '@/utils/axios'
 import { formatDatetime, initBranch, initRepo } from '@/utils'
 import { getDirListByPath } from '@/common/api'
@@ -225,7 +225,7 @@ const dirLoading = ref(false)
 const branchLoading = ref(false)
 
 const labelPosition = computed(() => {
-  return userSettings.elementPlusSize === 'large' ? 'right' : 'top'
+  return userSettings.elementPlusSize === ElementPlusSizeEnum.large ? 'right' : 'top'
 })
 
 const repoDirCascaderKey = ref<string>('repoDirCascaderKey')

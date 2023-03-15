@@ -2,7 +2,7 @@
   <div class="upload-page-container">
     <div
       class="upload-page-left page-container"
-      v-if="uploadedImageList.length && userSettings.elementPlusSize === 'large'"
+      v-if="uploadedImageList.length && userSettings.elementPlusSize === ElementPlusSizeEnum.large"
       :style="{
         width: '280rem'
       }"
@@ -54,7 +54,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import ToUploadImageCard from '@/components/to-upload-image-card/to-upload-image-card.vue'
 import UploadArea from '@/components/upload-area/upload-area.vue'
-import { ToUploadImageModel, UploadStatusEnum } from '@/common/model'
+import { ElementPlusSizeEnum, ToUploadImageModel, UploadStatusEnum } from '@/common/model'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
 
 const store = useStore()

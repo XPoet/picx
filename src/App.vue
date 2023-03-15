@@ -12,6 +12,7 @@ import mainContainer from '@/components/main-container/main-container.vue'
 import setTheme from '@/utils/set-theme-mode'
 import { useStore } from '@/store'
 import { throttle } from '@/utils'
+import { ElementPlusSizeEnum } from '@/common/model'
 
 export default defineComponent({
   name: 'App',
@@ -31,19 +32,19 @@ export default defineComponent({
     const elementPlusSizeHandle = (width: number) => {
       if (width <= 600) {
         store.dispatch('SET_USER_SETTINGS', {
-          elementPlusSize: 'small'
+          elementPlusSize: ElementPlusSizeEnum.small
         })
-        data.size = 'small'
+        data.size = ElementPlusSizeEnum.small
       } else if (width <= 800) {
         store.dispatch('SET_USER_SETTINGS', {
-          elementPlusSize: 'default'
+          elementPlusSize: ElementPlusSizeEnum.default
         })
-        data.size = 'default'
+        data.size = ElementPlusSizeEnum.default
       } else {
         store.dispatch('SET_USER_SETTINGS', {
-          elementPlusSize: 'large'
+          elementPlusSize: ElementPlusSizeEnum.large
         })
-        data.size = 'large'
+        data.size = ElementPlusSizeEnum.large
       }
     }
 
@@ -53,7 +54,6 @@ export default defineComponent({
       window.addEventListener(
         'resize',
         throttle((e: any) => {
-          console.log(e.target.innerWidth)
           elementPlusSizeHandle(e.target.innerWidth)
         }, 1500)
       )

@@ -22,7 +22,9 @@
       </el-tag>
       <repo-dir-cascader
         :el-size="
-          userSettings.elementPlusSize === 'large' ? 'default' : userSettings.elementPlusSize
+          userSettings.elementPlusSize === ElementPlusSizeEnum.large
+            ? ElementPlusSizeEnum.default
+            : userSettings.elementPlusSize
         "
         el-width=""
         :el-clearable="false"
@@ -35,7 +37,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useStore } from '@/store'
-import { DirModeEnum } from '@/common/model'
+import { DirModeEnum, ElementPlusSizeEnum } from '@/common/model'
 
 const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
