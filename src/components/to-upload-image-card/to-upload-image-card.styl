@@ -8,30 +8,30 @@ $image-width = $info-item-height - ($info-item-border * 2)
 
 .to-upload-image-list-card {
   position relative
-  width 100%
   box-sizing border-box
+  width 100%
   margin-top 6rem
 
   .header {
-    width 100%
-    height 30rem
-    box-sizing border-box
-    font-size 12rem
     display flex
     align-items center
     justify-content space-between
+    box-sizing border-box
+    width 100%
+    height 30rem
     padding-bottom 6rem
+    font-size 12rem
   }
 
   .body {
+    box-sizing border-box
     width 100%
     height 100%
     max-height 170rem
-    overflow-y auto
-    box-sizing border-box
-    padding 10rem
-    border 1rem solid var(--border-color)
     margin-top 10rem
+    padding 10rem
+    overflow-y auto
+    border 1rem solid var(--border-color)
 
     &::-webkit-scrollbar {
       width 5rem
@@ -43,27 +43,27 @@ $image-width = $info-item-height - ($info-item-border * 2)
 
     .image-uploading-info-box {
       position relative
-      width 100%
       box-sizing border-box
-      padding 0
+      width 100%
       margin 0
+      padding 0
 
       .image-uploading-info-item {
         position relative
         box-sizing border-box
         width 100%
         height $info-item-height
-        border $info-item-border solid var(--border-color)
-        border-radius 5rem
         margin-bottom 10rem
+        padding-left $image-width
         overflow hidden
         font-size 15rem
-        padding-left $image-width
+        border $info-item-border solid var(--border-color)
+        border-radius 5rem
         transition all 0.3s ease
 
         &.disable {
-          pointer-events none
           cursor not-allowed
+          pointer-events none
         }
 
         &:last-child {
@@ -78,34 +78,35 @@ $image-width = $info-item-height - ($info-item-border * 2)
           position absolute
           top 0
           left 0
+          box-sizing border-box
           width $image-width
           height 100%
-          box-sizing border-box
           margin-right 5rem
 
           img {
-            object-fit cover
             width 100%
             height 100%
+            object-fit cover
             overflow hidden
-            cursor pointer
             border-top-left-radius 5rem
             border-bottom-left-radius 5rem
+            cursor pointer
           }
         }
 
 
         .right-operation-box {
           position relative
+          box-sizing border-box
           width 100%
           height 100%
-          box-sizing border-box
           padding $info-item-padding 20rem $info-item-padding $info-item-padding
 
-          .top, .bottom {
+          .top
+          .bottom {
+            box-sizing border-box
             width 100%
             height 50%
-            box-sizing border-box
             padding 0 5rem
           }
 
@@ -113,7 +114,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
             display flex
             justify-content space-between
 
-            .image-name,
+            .image-name
             .image-info {
               display flex
               align-items center
@@ -122,20 +123,20 @@ $image-width = $info-item-height - ($info-item-border * 2)
             }
 
             .image-name {
-              font-size 13rem
               overflow hidden
-              text-overflow ellipsis
+              font-size 13rem
               white-space nowrap
+              text-overflow ellipsis
             }
 
             .image-info {
               font-size 12rem
 
               .item {
+                margin-left 10rem
                 padding 1rem 4rem
                 background var(--third-background-color)
                 border-radius 2rem
-                margin-left 10rem
 
                 &.compressed {
                   color $compressed-file-background-color
@@ -167,16 +168,16 @@ $image-width = $info-item-height - ($info-item-border * 2)
 
 
         .upload-status-box {
-          box-sizing border-box
-          color #fff
           position absolute
-          right -17rem
           top -7rem
+          right -17rem
+          box-sizing border-box
           width 46rem
           height 26rem
+          color #fff
           text-align center
-          transform rotate(45deg)
           box-shadow 0 1rem 1rem var(--border-color)
+          transform rotate(45deg)
 
           &.wait-upload {
             background var(--await-upload-color)
@@ -191,21 +192,19 @@ $image-width = $info-item-height - ($info-item-border * 2)
           }
 
           i {
-            font-size 12rem
             margin-top 12rem
+            font-size 12rem
             transform rotate(-45deg)
           }
         }
 
         .remove-to-upload-image {
           position absolute
-          bottom 5rem
           right 5rem
+          bottom 5rem
           cursor pointer
         }
-
       }
     }
-
   }
 }

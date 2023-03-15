@@ -2,15 +2,16 @@
 
 .copy-image-link-box {
   position relative
+  display flex
+  align-items flex-end
+  justify-content space-between
+  box-sizing border-box
   width 100%
   height 100%
-  box-sizing border-box
-  display flex
-  justify-content space-between
-  align-items flex-end
   padding 2rem
 
-  .left, .right {
+  .left
+  .right {
     display flex
     align-items center
   }
@@ -21,23 +22,23 @@
     height 100%
 
     .btn-item {
-      height 20rem
       box-sizing border-box
-      border-radius 5rem
+      height 20rem
       font-size 12rem
+      border-radius 5rem
       cursor pointer
       transition all 0.3s ease
     }
 
     .copy-url {
       box-sizing border-box
-      border 1rem solid var(--default-text-color)
-      color var(--default-text-color)
       padding 1rem 2rem
+      color var(--default-text-color)
+      border 1rem solid var(--default-text-color)
 
       &:hover {
-        background var(--default-text-color)
         color var(--background-color)
+        background var(--default-text-color)
       }
     }
   }

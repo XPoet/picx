@@ -97,5 +97,5 @@ const dblclickFolder = () => {
 </script>
 
 <style scoped lang="stylus">
-@import 'folder-card.styl';
+@import 'folder-card.styl'
 </style>

@@ -276,5 +276,5 @@ const viewImageProperties = (imgObj: UploadedImageModel) => {
 </script>
 
 <style scoped lang="stylus">
-@import 'image-card.styl';
+@import 'image-card.styl'
 </style>

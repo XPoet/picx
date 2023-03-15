@@ -2,17 +2,17 @@
 
 .nav {
   position relative
-  width 100%
-  height 100%
-  box-sizing border-box
-  background var(--background-color)
   display flex
   flex-direction column
   justify-content space-between
+  box-sizing border-box
+  width 100%
+  height 100%
+  background var(--background-color)
 
   ul.nav-list {
-    padding 0
     margin 0
+    padding 0
   }
 
   .nav-item {
@@ -31,8 +31,8 @@
     .nav-content {
       display flex
       flex-direction column
-      justify-content center
       align-items center
+      justify-content center
 
       .nav-name {
         margin-top 5rem
@@ -47,12 +47,12 @@
       position absolute
       bottom 0
       left 100%
-      box-sizing border-box
-      box-shadow: 1rem -1rem 2.5rem var(--shadow-color)
-      width 180rem
       z-index $z-index-1
-      background var(--background-color)
+      box-sizing border-box
+      width 180rem
       padding 6rem 10rem
+      background var(--background-color)
+      box-shadow 1rem -1rem 2.5rem var(--shadow-color)
     }
   }
 }

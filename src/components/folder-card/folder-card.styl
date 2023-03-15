@@ -2,15 +2,15 @@
 
 .folder-card {
   position relative
+  display flex
+  flex-direction column
+  align-items center
+  justify-content flex-start
+  box-sizing border-box
   width 110rem
   height 106rem
-  display flex
-  align-items center
-  flex-direction column
-  justify-content flex-start
-  cursor pointer
-  box-sizing border-box
   padding 3rem
+  cursor pointer
   user-select none
 
   &:hover {
@@ -32,16 +32,16 @@
 
 
   .text {
-    width 90%
-    font-size 14rem
-    margin-top 5rem
-    text-align center
-    overflow hidden
-    text-overflow ellipsis
     display -webkit-box
-    -webkit-box-orient vertical
-    -webkit-line-clamp 2
+    width 90%
+    margin-top 5rem
+    overflow hidden
+    font-size 14rem
+    text-align center
+    text-overflow ellipsis
     word-wrap break-word
     word-break break-all
+    -webkit-box-orient vertical
+    -webkit-line-clamp 2
   }
 }

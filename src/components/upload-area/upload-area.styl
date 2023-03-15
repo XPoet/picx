@@ -1,57 +1,56 @@
 @import "../../style/base.styl"
 
 .upload-area {
-  position: relative;
-  width: 100%;
-  height: 300rem;
-  border: 4rem dashed var(--third-text-color)
+  position relative
+  z-index 999
+  display flex
+  align-items center
+  justify-content center
   box-sizing border-box
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
+  width 100%
+  height 300rem
+  border 4rem dashed var(--third-text-color)
 
   &.focus {
-    border-color: var(--upload-area-focus-color);
+    border-color var(--upload-area-focus-color)
   }
 
   &:hover {
-    border-color: var(--upload-area-focus-color);
+    border-color var(--upload-area-focus-color)
   }
 
   label {
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-    cursor: pointer;
+    position absolute
+    z-index 1000
+    display block
+    width 100%
+    height 100%
+    cursor pointer
   }
 
   input[type="file"] {
-    position: absolute;
-    left: -9999rem;
-    top: -9999rem;
+    position absolute
+    top -9999rem
+    left -9999rem
   }
 
   .tips {
-    text-align: center;
-    color: #aaa;
+    color #aaa
+    text-align center
 
     .icon {
-      font-size: 100rem;
+      font-size 100rem
     }
 
     .text {
-      cursor: default;
-      font-size: 20rem;
+      font-size 20rem
+      cursor default
     }
   }
 
   img {
-    object-fit: cover;
-    width: 100%;
-    height: 100%;
+    width 100%
+    height 100%
+    object-fit cover
   }
-
 }

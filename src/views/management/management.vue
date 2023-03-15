@@ -201,5 +201,5 @@ watch(
 </script>
 
 <style scoped lang="stylus">
-@import 'management.styl';
+@import 'management.styl'
 </style>

@@ -102,5 +102,5 @@ onMounted(() => {
 </script>
 
 <style scoped lang="stylus">
-@import 'image-selector.styl';
+@import 'image-selector.styl'
 </style>

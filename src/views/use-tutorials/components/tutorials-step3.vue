@@ -39,8 +39,8 @@
   }
 
   p {
-    font-weight bold
     padding-top 20rem
+    font-weight bold
   }
 
 
@@ -58,6 +58,5 @@
       }
     }
   }
-
 }
 </style>

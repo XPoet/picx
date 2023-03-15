@@ -7,52 +7,51 @@ $infoBarHeight = 50rem
 
   .content-container {
     position relative
+    box-sizing border-box
     width 100%
     height 100%
     padding-top $infoBarHeight
-    box-sizing border-box
 
     .top {
       position absolute
       top 0
       left 0
-      width 100%
-      height $infoBarHeight
-      box-sizing border-box
       display flex
       align-items center
       justify-content space-between
-      font-size 14rem
+      box-sizing border-box
+      width 100%
+      height $infoBarHeight
       padding-bottom 20rem
+      font-size 14rem
 
       .right {
 
         .btn-icon {
-          cursor pointer
-          font-size 22rem
           margin-left 10rem
+          font-size 22rem
+          cursor pointer
         }
-
       }
     }
 
 
     .bottom {
       position relative
+      box-sizing border-box
       width 100%
       height 100%
-      box-sizing border-box
       border 1rem solid var(--border-color)
 
       .image-list {
+        box-sizing border-box
         width 100%
-        //height 100%
-        //max-height calc(100% - 60rem)
+        // height 100%
+        // max-height calc(100% - 60rem)
         margin 0
         padding 2rem
-        list-style none
         overflow-y auto
-        box-sizing border-box
+        list-style none
 
         li.image-item {
           float left
@@ -64,7 +63,6 @@ $infoBarHeight = 50rem
           }
         }
       }
-
     }
   }
 }

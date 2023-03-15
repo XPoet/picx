@@ -32,8 +32,8 @@ function goCreateToken() {
   width 800rem
 
   .go-create-token {
-    cursor pointer
     color #1c81e9
+    cursor pointer
 
     &:hover {
       color #085fb8
@@ -47,8 +47,8 @@ function goCreateToken() {
   }
 
   p {
-    font-weight bold
     padding-top 20rem
+    font-weight bold
   }
 }
 </style>

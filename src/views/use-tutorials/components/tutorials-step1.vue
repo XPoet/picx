@@ -24,8 +24,8 @@ function goCreateRepo() {
   width 800rem
 
   .go-create-repo {
-    cursor pointer
     color #1c81e9
+    cursor pointer
 
     &:hover {
       color #085fb8
