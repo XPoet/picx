@@ -145,3 +145,26 @@ export const formatDatetime = (
   }
   return fmt
 }
+
+/**
+ * 节流函数
+ * @param func
+ * @param wait
+ */
+export const throttle = <T extends (...args: any[]) => void>(func: T, wait: number = 1000): T => {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let lastArgs: any[]
+
+  function throttled(...args: any[]) {
+    lastArgs = args
+
+    if (!timer) {
+      timer = setTimeout(() => {
+        func(...lastArgs)
+        timer = undefined
+      }, wait)
+    }
+  }
+
+  return throttled as unknown as T
+}

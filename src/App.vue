@@ -11,6 +11,7 @@ import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import mainContainer from '@/components/main-container/main-container.vue'
 import setTheme from '@/utils/set-theme-mode'
 import { useStore } from '@/store'
+import { throttle } from '@/utils'
 
 export default defineComponent({
   name: 'App',
@@ -49,9 +50,13 @@ export default defineComponent({
     onMounted(() => {
       setTheme()
       elementPlusSizeHandle(window.innerWidth)
-      window.addEventListener('resize', (e: any) => {
-        elementPlusSizeHandle(e.target.innerWidth)
-      })
+      window.addEventListener(
+        'resize',
+        throttle((e: any) => {
+          console.log(e.target.innerWidth)
+          elementPlusSizeHandle(e.target.innerWidth)
+        }, 1500)
+      )
     })
 
     return {
