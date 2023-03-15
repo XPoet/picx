@@ -14,9 +14,20 @@
     </span>
     <span class="info-item">
       目录：
-      <el-tag disable-transitions>
+      <el-tag
+        disable-transitions
+        v-if="userConfigInfo.dirMode !== DirModeEnum.repoDir || barType === 'management'"
+      >
         {{ barType === 'management' ? userConfigInfo.viewDir : userConfigInfo.selectedDir }}
       </el-tag>
+      <repo-dir-cascader
+        :el-size="
+          userSettings.elementPlusSize === 'large' ? 'default' : userSettings.elementPlusSize
+        "
+        el-width=""
+        :el-clearable="false"
+        v-if="userConfigInfo.dirMode === DirModeEnum.repoDir && barType === 'upload'"
+      />
     </span>
   </div>
 </template>
@@ -24,6 +35,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useStore } from '@/store'
+import { DirModeEnum } from '@/common/model'
 
 const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)

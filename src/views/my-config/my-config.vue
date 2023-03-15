@@ -186,16 +186,7 @@
         "
         label="选择目录"
       >
-        <el-cascader
-          style="width: 100%"
-          :props="cascaderProps"
-          :key="elCascaderKey"
-          v-model="userConfigInfo.selectedDirList"
-          filterable
-          placeholder="请选择一个目录..."
-          clearable
-          @change="cascaderChange"
-        />
+        <repo-dir-cascader :el-key="repoDirCascaderKey" :el-size="userSettings.elementPlusSize" />
       </el-form-item>
     </el-form>
 
@@ -237,7 +228,7 @@ const labelPosition = computed(() => {
   return userSettings.elementPlusSize === 'large' ? 'right' : 'top'
 })
 
-const elCascaderKey = ref<string>('elCascaderKey')
+const repoDirCascaderKey = ref<string>('repoDirCascaderKey')
 
 const newDirInputRef = ref<null | HTMLElement>(null)
 const newBranchInputRef = ref<null | HTMLElement>(null)
@@ -390,7 +381,7 @@ function selectRepo(repo: string) {
 async function selectBranch(branch: string) {
   userConfigInfo.selectedBranch = branch
   await getDirList()
-  elCascaderKey.value = userConfigInfo.selectedBranch
+  repoDirCascaderKey.value = userConfigInfo.selectedBranch
   userConfigInfo.selectedDir = userConfigInfo.dirList[0].value
   userConfigInfo.selectedDirList = [userConfigInfo.selectedDir]
   persistUserConfigInfo()
@@ -449,37 +440,6 @@ async function goUpload() {
   } else {
     await router.push('/upload')
   }
-}
-
-const cascaderProps = {
-  lazy: true,
-  checkStrictly: true,
-  async lazyLoad(node: any, resolve: any) {
-    const { level, pathLabels } = node
-    let dirs: any
-    if (level === 0) {
-      dirs = userConfigInfo.dirList
-    } else {
-      dirs = await getDirListByPath(pathLabels.join('/'))
-    }
-    if (dirs) {
-      resolve(
-        dirs.map((x: any) => ({
-          value: x.value,
-          label: x.label,
-          leaf: level >= 2
-        }))
-      )
-    } else {
-      resolve([])
-    }
-  }
-}
-
-function cascaderChange(e: string[]) {
-  userConfigInfo.selectedDirList = e
-  userConfigInfo.selectedDir = e.join('/')
-  persistUserConfigInfo()
 }
 
 const onNewBranchInputBlur = () => {
