@@ -209,9 +209,15 @@ import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { DirModeEnum, BranchModeEnum, BranchModel, ElementPlusSizeEnum } from '@/common/model'
-import axios from '@/utils/axios'
-import { formatDatetime, initBranch, initRepo } from '@/utils'
-import { getDirListByPath } from '@/common/api'
+import { formatDatetime } from '@/utils'
+import {
+  getBranchInfoList,
+  getDirListByPath,
+  getRepoInfoList,
+  getUserInfoByToken,
+  initEmptyRepo,
+  initBranch
+} from '@/common/api'
 
 const router = useRouter()
 const store = useStore()
@@ -228,52 +234,44 @@ const labelPosition = computed(() => {
   return userSettings.elementPlusSize === ElementPlusSizeEnum.large ? 'right' : 'top'
 })
 
-const repoDirCascaderKey = ref<string>('repoDirCascaderKey')
-
 const newDirInputRef = ref<null | HTMLElement>(null)
 const newBranchInputRef = ref<null | HTMLElement>(null)
 const newBranchInputVal = ref<string>('')
+const repoDirCascaderKey = ref<string>('repoDirCascaderKey')
 
 function persistUserConfigInfo() {
   store.dispatch('USER_CONFIG_INFO_PERSIST')
 }
 
-function saveUserInfo(res: any) {
+function saveUserInfo(userInfo: any) {
   userConfigInfo.logined = true
-  userConfigInfo.owner = res.data.login
-  userConfigInfo.name = res.data.name
-  userConfigInfo.email = res.data.email
-  userConfigInfo.avatarUrl = res.data.avatar_url
+  userConfigInfo.owner = userInfo.login
+  userConfigInfo.name = userInfo.name
+  userConfigInfo.email = userInfo.email
+  userConfigInfo.avatarUrl = userInfo.avatar_url
   persistUserConfigInfo()
 }
 
 function getRepoList(repoUrl: string) {
-  axios
-    .get(repoUrl, {
-      params: {
-        type: 'public',
-        sort: 'created',
-        per_page: 100
-      }
-    })
-    .then((res: any) => {
-      console.log('getRepoList >> ', res)
-      if (res.status === 200 && res.data.length > 0) {
-        userConfigInfo.repoList = []
-        // eslint-disable-next-line no-restricted-syntax
-        for (const repo of res.data) {
-          if (!repo.fork && !repo.private) {
-            userConfigInfo.repoList.push({
-              value: repo.name,
-              label: repo.name,
-              desc: repo.description
-            })
-          }
+  getRepoInfoList(repoUrl, (repoList: any[]) => {
+    loading.value = false
+    if (repoList) {
+      userConfigInfo.repoList = []
+      // eslint-disable-next-line no-restricted-syntax
+      for (const repo of repoList) {
+        if (!repo.fork && !repo.private) {
+          userConfigInfo.repoList.push({
+            value: repo.name,
+            label: repo.name,
+            desc: repo.description
+          })
         }
-        loading.value = false
-        persistUserConfigInfo()
       }
-    })
+      persistUserConfigInfo()
+    } else {
+      ElMessage.error('仓库信息获取失败，请稍后重试')
+    }
+  })
 }
 
 async function getDirList() {
@@ -321,19 +319,19 @@ function dirModeChange(dirMode: DirModeEnum) {
 
 function getBranchList(repo: string) {
   branchLoading.value = true
-  axios.get(`/repos/${userConfigInfo.owner}/${repo}/branches`).then(async (res: any) => {
-    console.log('getBranchList >> ', res)
-    if (res && res.status === 200) {
+  const { owner, dirMode } = userConfigInfo
+  getBranchInfoList(owner, repo, async (branchInfoList) => {
+    if (branchInfoList) {
       branchLoading.value = false
-      if (res.data.length > 0) {
+      if (branchInfoList.length > 0) {
         // eslint-disable-next-line no-restricted-syntax
-        for (const item of res.data) {
+        for (const item of branchInfoList) {
           userConfigInfo.branchList.push({
             value: item.name,
             label: item.name
           })
         }
-        // userConfigInfo.branchList.reverse()
+        userConfigInfo.branchList.reverse()
         userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
         userConfigInfo.branchMode = BranchModeEnum.repoBranch
         await getDirList()
@@ -342,10 +340,12 @@ function getBranchList(repo: string) {
         userConfigInfo.branchMode = BranchModeEnum.newBranch
 
         // 当分支列表为空时，判定该仓库为空仓库，需要初始化
-        await initRepo(userConfigInfo)
+        await initEmptyRepo(userConfigInfo)
       }
-      dirModeChange(userConfigInfo.dirMode)
+      dirModeChange(dirMode)
       persistUserConfigInfo()
+    } else {
+      ElMessage.error('分支信息获取失败，请稍后再试')
     }
   })
 }
@@ -353,19 +353,15 @@ function getBranchList(repo: string) {
 function getUserInfo() {
   if (userConfigInfo.token) {
     loading.value = true
-    axios
-      .get('/user', {
-        headers: { Authorization: `token ${userConfigInfo.token}` }
-      })
-      .then((res: any) => {
-        console.log('getUserInfo >> ', res)
-        if (res && res.status === 200) {
-          saveUserInfo(res)
-          getRepoList(res.data.repos_url)
-        } else {
-          loading.value = false
-        }
-      })
+    getUserInfoByToken(userConfigInfo.token, (userInfo) => {
+      loading.value = false
+      if (userInfo) {
+        saveUserInfo(userInfo)
+        getRepoList(userInfo.repos_url)
+      } else {
+        ElMessage.error('用户信息获取失败，请稍后重试')
+      }
+    })
   } else {
     ElMessage.warning('Token 不能为空！')
   }
