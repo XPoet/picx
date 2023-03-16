@@ -50,7 +50,7 @@
 
 官方文档入口 >> https://picx-docs.xpoet.cn
 
-通过阅读官方文档的 **[快速开始](https://picx-docs.xpoet.cn/tutorial/get-start.html)** 教程，可帮助你迅速上手 PicX 图床工具。
+通过阅读官方文档的 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX 图床。
 
 
 ## 贡献 | Contribution
@@ -60,7 +60,7 @@
 
 ##  反馈 | Feedback
 
-在使用过程中，如遇问题，请仔细阅读 **[官方文档](https://picx-docs.xpoet.cn)** ，或给作者提 **[Issue](https://github.com/XPoet/picx/issues)**。
+在使用过程中，如遇问题，请仔细阅读 **[官方文档](https://picx-docs.xpoet.cn)**，或给作者提 **[Issue](https://github.com/XPoet/picx/issues)**。
 
 
 ## 许可 | License
