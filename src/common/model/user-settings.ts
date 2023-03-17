@@ -1,9 +1,9 @@
 import { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
 
 /**
- * 最大的新建目录数
+ * 新建目录时最大的目录层级数
  */
-export const newDirMaxCount: number = 5
+export const NEW_DIR_COUNT_MAX: number = 5
 
 export enum ElementPlusSizeEnum {
   large = 'large',

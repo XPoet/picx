@@ -1,9 +1,10 @@
 import { Module } from 'vuex'
 import {
-  PICX_SETTINGS,
-  UserSettingsModel,
+  CompressEncoderEnum,
+  ElementPlusSizeEnum,
   ImageLinkRuleModel,
-  CompressEncoderEnum
+  PICX_SETTINGS,
+  UserSettingsModel
 } from '@/common/model'
 import { deepAssignObject } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
@@ -20,7 +21,7 @@ const initSettings: UserSettingsModel = {
   compressEncoder: CompressEncoderEnum.webP,
   themeMode: 'light',
   autoLightThemeTime: ['08:00', '19:00'],
-  elementPlusSize: 'default',
+  elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
     selected: 'Staticaly',
     presetList: [

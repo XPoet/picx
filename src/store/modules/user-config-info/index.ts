@@ -4,7 +4,7 @@ import {
   UserConfigInfoModel,
   PICX_CONFIG,
   DirModeEnum,
-  newDirMaxCount
+  NEW_DIR_COUNT_MAX
 } from '@/common/model'
 import { deepAssignObject, cleanObject, formatDatetime } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
@@ -70,7 +70,7 @@ const convertSpecialCharacter = (state: UserConfigInfoStateTypes): void => {
       if (strList[i] === '/') {
         count += 1
       }
-      if (count >= newDirMaxCount) {
+      if (count >= NEW_DIR_COUNT_MAX) {
         break
       }
       newStr += strList[i]

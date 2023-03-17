@@ -19,7 +19,7 @@
 import { computed } from 'vue'
 import { getDirListByPath } from '@/common/api'
 import { useStore } from '@/store'
-import { newDirMaxCount } from '@/common/model'
+import { ElementPlusSizeEnum, NEW_DIR_COUNT_MAX } from '@/common/model'
 
 const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
@@ -31,7 +31,7 @@ defineProps({
   },
   elSize: {
     type: String,
-    default: 'default'
+    default: ElementPlusSizeEnum.default
   },
   elWidth: {
     type: String,
@@ -59,7 +59,7 @@ const cascaderProps = {
         dirs.map((x: any) => ({
           value: x.value,
           label: x.label,
-          leaf: level >= newDirMaxCount - 1
+          leaf: level >= NEW_DIR_COUNT_MAX - 1
         }))
       )
     } else {
