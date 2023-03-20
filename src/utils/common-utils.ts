@@ -129,7 +129,7 @@ export const formatDatetime = (
 
   const obj = {
     'M+': date.getMonth() + 1,
-    'd+': date.getDay(),
+    'd+': date.getDate(),
     'h+': date.getHours(),
     'm+': date.getMinutes(),
     's+': date.getSeconds()
