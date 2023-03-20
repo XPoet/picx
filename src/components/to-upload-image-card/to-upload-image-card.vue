@@ -215,12 +215,14 @@ export default defineComponent({
       },
 
       async goUploadImages(userConfigInfo: UserConfigInfoModel) {
+        // 单张图片
         if (this.toUploadImage.list.length === 1) {
           if (await uploadImageToGitHub(userConfigInfo, this.toUploadImage.list[0])) {
             return UploadStatusEnum.uploaded
           }
           return UploadStatusEnum.uploadFail
         }
+        // 多种图片
         try {
           await uploadImagesToGitHub(userConfigInfo, this.toUploadImage.list)
           return UploadStatusEnum.allUploaded

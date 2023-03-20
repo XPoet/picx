@@ -1,6 +1,13 @@
 import { ToUploadImageModel, UploadedImageModel, UserConfigInfoModel } from '@/common/model'
-import axios from '@/utils/axios'
 import { store } from '@/store'
+import {
+  createCommit,
+  createRef,
+  createTree,
+  uploadSingleImage,
+  uploadImageBlob
+} from '@/common/api/upload'
+import { getBranchInfo } from '@/common/api'
 
 /**
  * 图片上传成功之后的处理
@@ -73,78 +80,52 @@ export async function uploadImagesToGitHub(
 ): Promise<void> {
   const { selectedBranch: branch, selectedRepo: repo, selectedDir, owner } = userConfigInfo
 
-  imgs.forEach((img) => {
+  const blobs = []
+  // eslint-disable-next-line no-restricted-syntax
+  for (const img of imgs) {
     img.uploadStatus.uploading = true
-  })
-
-  // 上传图片文件，为仓库创建 blobs
-  let blobs = await Promise.all(
-    imgs.map((img) => {
-      return axios
-        .post(`/repos/${owner}/${repo}/git/blobs`, {
-          owner,
-          repo,
-          content: img.imgData.base64Content,
-          encoding: 'base64'
-        })
-        .then((res) => {
-          if (res && res.status === 201) {
-            // 已上传数量 +1
-            store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
-          } else {
-            img.uploadStatus.uploading = false
-            ElMessage.error(`${img.filename.final} 上传失败`)
-          }
-          return { img, ...res }
-        })
-    })
-  )
+    // 上传图片文件，为仓库创建 blobs
+    const blobRes = await uploadImageBlob(img, owner, repo)
+    img.uploadStatus.uploading = false
+    if (blobRes) {
+      blobs.push({ img, ...blobRes })
+      // 已上传数量 +1
+      store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
+    } else {
+      ElMessage.error(`${img.filename.final} 上传失败`)
+    }
+  }
 
   // 获取 head，用于获取当前分支信息（根目录的 tree sha 以及 head commit sha）
-  const head = await axios.get(`/repos/${owner}/${repo}/branches/${branch}`)
-  if (head?.status !== 200) {
+  const branchRes: any = await getBranchInfo(owner, repo, branch)
+  if (!branchRes) {
     throw new Error('获取分支信息失败')
   }
 
-  blobs = blobs.filter((x) => x.status === 201)
-  const tgtPath = selectedDir === '/' ? '' : `${selectedDir}/`
+  const finalPath = selectedDir === '/' ? '' : `${selectedDir}/`
 
   // 创建 tree
-  const tree = await axios.post(`/repos/${owner}/${repo}/git/trees`, {
-    tree: blobs.map((blob) => ({
-      path: `${tgtPath}${blob.img.filename.final}`,
-      mode: '100644',
-      type: 'blob',
-      sha: blob.data.sha
-    })),
-    base_tree: head.data?.commit?.commit?.tree?.sha || null
-  })
-  if (tree?.status !== 201) {
+  const treeRes = await createTree(owner, repo, blobs, finalPath, branchRes)
+  if (!treeRes) {
     throw new Error('创建 tree 失败')
   }
 
   // 创建 commit 节点
-  const commit = await axios.post(`/repos/${owner}/${repo}/git/commits`, {
-    tree: tree.data.sha,
-    parents: [head.data.commit.sha],
-    message: 'Upload images via PicX(https://github.com/XPoet/picx)'
-  })
-  if (commit?.status !== 201) {
+  const commitRes = await createCommit(owner, repo, treeRes, branchRes)
+  if (!commitRes) {
     throw new Error('创建 commit 失败')
   }
 
   // 将当前分支 ref 指向新创建的 commit
-  const refRes = await axios.patch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
-    sha: commit.data.sha
-  })
-  if (refRes?.status !== 200) {
+  const refRes = await createRef(owner, repo, branch, commitRes)
+  if (!refRes) {
     throw new Error('更新 ref 失败')
   }
 
-  blobs.forEach((blob) => {
+  blobs.forEach((blob: any) => {
     const name = blob.img.filename.final
     uploadedHandle(
-      { name, sha: blob.data.sha, path: `${tgtPath}${name}`, size: 0 },
+      { name, sha: blob.sha, path: `${finalPath}${name}`, size: 0 },
       blob.img,
       userConfigInfo
     )
@@ -172,23 +153,17 @@ export function uploadImageToGitHub(
 
   img.uploadStatus.uploading = true
 
-  return new Promise((resolve, reject) => {
-    axios
-      .put(uploadUrlHandle(userConfigInfo, img), data)
-      .then((res) => {
-        console.log('uploadImage >> ', res)
-        if (res && res.status === 201) {
-          const { name, sha, path, size } = res.data.content
-          uploadedHandle({ name, sha, path, size }, img, userConfigInfo)
-          store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
-          resolve(true)
-        } else {
-          img.uploadStatus.uploading = false
-          resolve(false)
-        }
-      })
-      .catch((error) => {
-        reject(error)
-      })
+  return new Promise((resolve) => {
+    uploadSingleImage(uploadUrlHandle(userConfigInfo, img), data, (uploadRes: any) => {
+      img.uploadStatus.uploading = false
+      if (uploadRes) {
+        const { name, sha, path, size } = uploadRes.content
+        uploadedHandle({ name, sha, path, size }, img, userConfigInfo)
+        store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
+        resolve(true)
+      } else {
+        resolve(false)
+      }
+    })
   })
 }

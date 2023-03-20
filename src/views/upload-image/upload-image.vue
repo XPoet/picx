@@ -103,49 +103,43 @@ const uploadImage = () => {
   }
 
   uploading.value = true
-  toUploadImageCardRef.value
-    .goUploadImages(userConfigInfo.value)
-    .then((v: UploadStatusEnum) => {
-      uploading.value = false
-      // eslint-disable-next-line default-case
-      switch (v) {
-        // 单张图片上传成功
-        case UploadStatusEnum.uploaded:
-          store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
-          ElMessage.success('图片上传成功')
-          // 自动复制这张图片链接到系统剪贴板
-          copyImageLink(
-            toUploadImage.value.list[0].uploadedImg,
-            userConfigInfo.value,
-            userSettings.value,
-            true
-          )
-          break
+  toUploadImageCardRef?.value?.goUploadImages(userConfigInfo.value).then((v: UploadStatusEnum) => {
+    uploading.value = false
+    // eslint-disable-next-line default-case
+    switch (v) {
+      // 单张图片上传成功
+      case UploadStatusEnum.uploaded:
+        store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
+        ElMessage.success('图片上传成功')
+        // 自动复制这张图片链接到系统剪贴板
+        copyImageLink(
+          toUploadImage.value.list[0].uploadedImg,
+          userConfigInfo.value,
+          userSettings.value,
+          true
+        )
+        break
 
-        // 所有图片上传成功
-        case UploadStatusEnum.allUploaded:
-          store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
-          ElMessage.success('图片批量上传成功')
-          // 自动复制这些图片链接到系统剪贴板
-          batchCopyImageLinks(
-            toUploadImage.value.list.map((x: ToUploadImageModel) => x.uploadedImg),
-            userConfigInfo.value,
-            userSettings.value,
-            true
-          )
-          break
+      // 所有图片上传成功
+      case UploadStatusEnum.allUploaded:
+        store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
+        ElMessage.success('图片批量上传成功')
+        // 自动复制这些图片链接到系统剪贴板
+        batchCopyImageLinks(
+          toUploadImage.value.list.map((x: ToUploadImageModel) => x.uploadedImg),
+          userConfigInfo.value,
+          userSettings.value,
+          true
+        )
+        break
 
-        // 上传失败（网络错误等原因）
-        case UploadStatusEnum.uploadFail:
-          store.dispatch('TO_UPLOAD_IMAGE_LIST_FAIL')
-          ElMessage.error('上传失败，请稍后重试！')
-          break
-      }
-    })
-    .catch((e: any) => {
-      console.error('upload error: ', e)
-      uploading.value = false
-    })
+      // 上传失败（网络错误等原因）
+      case UploadStatusEnum.uploadFail:
+        store.dispatch('TO_UPLOAD_IMAGE_LIST_FAIL')
+        ElMessage.error('上传失败，请稍后重试！')
+        break
+    }
+  })
 }
 
 const resetUploadInfo = () => {

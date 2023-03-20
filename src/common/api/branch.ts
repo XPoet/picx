@@ -5,6 +5,30 @@ import { UserConfigInfoModel } from '@/common/model'
  * 获取分支信息列表
  * @param owner
  * @param repo
+ * @param branch
+ */
+export const getBranchInfo = (owner: string, repo: string, branch: string) => {
+  return new Promise((resolve) => {
+    axios
+      .get(`/repos/${owner}/${repo}/branches/${branch}`)
+      .then(async (res: any) => {
+        console.log('getBranchInfo >> ', res)
+        if (res && res.status === 200) {
+          resolve(res.data)
+        } else {
+          resolve(null)
+        }
+      })
+      .catch(() => {
+        resolve(null)
+      })
+  })
+}
+
+/**
+ * 获取分支信息列表
+ * @param owner
+ * @param repo
  * @param callback
  */
 export const getBranchInfoList = <T extends (...args: any) => void>(
