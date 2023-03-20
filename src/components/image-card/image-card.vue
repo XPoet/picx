@@ -61,7 +61,6 @@ import { computed, nextTick, ref } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
-import axios from '@/utils/axios'
 import { UploadedImageModel } from '@/common/model'
 import {
   getBase64ByImageUrl,
@@ -73,6 +72,7 @@ import {
   getUuid
 } from '@/utils'
 import { uploadImageToGitHub } from '@/utils/upload-utils'
+import { deleteSingleImage } from '@/common/api'
 
 const props = defineProps({
   listing: {
@@ -117,38 +117,28 @@ const renameValue = ref('')
 
 const dropdownVisible = ref<Boolean>(false)
 
-const doDeleteImage = (
+const deleteOriginImage = (
   imageObj: UploadedImageModel,
   isRename: boolean = false
 ): Promise<Boolean> => {
   if (!isRename) {
     imageObj.deleting = true
   }
-  const { owner, selectedRepo } = userConfigInfo
+  const { owner, selectedRepo: repo } = userConfigInfo
+  const { path, sha } = imageObj
 
   return new Promise((resolve) => {
-    axios
-      .delete(`/repos/${owner}/${selectedRepo}/contents/${imageObj.path}`, {
-        data: {
-          owner,
-          repo: selectedRepo,
-          path: imageObj.path,
-          message: 'Delete pictures via PicX (https://github.com/XPoet/picx)',
-          sha: imageObj.sha
-        }
-      })
-      .then((res) => {
-        console.log('deleteImage >> ', res)
-        if (res && res.status === 200) {
-          imageObj.deleting = false
-          ElMessage.success(`${isRename ? '更新' : '删除'}成功！`)
-          store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
-          store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
-          resolve(true)
-        } else {
-          imageObj.deleting = false
-        }
-      })
+    deleteSingleImage(owner, repo, path, sha, (res: any) => {
+      imageObj.deleting = false
+      if (res) {
+        ElMessage.success(`${isRename ? '更新' : '删除'}成功！`)
+        store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
+        store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
+        resolve(true)
+      } else {
+        resolve(false)
+      }
+    })
   })
 }
 
@@ -165,7 +155,7 @@ const deleteImageTips = (imageObj: UploadedImageModel) => {
     }
   )
     .then(() => {
-      doDeleteImage(imageObj)
+      deleteOriginImage(imageObj)
     })
     .catch(() => {
       console.log('取消删除')
@@ -232,7 +222,7 @@ const updateRename = async () => {
 
       if (isUploadSuccess) {
         renameValue.value = ''
-        await doDeleteImage(imageObj, true)
+        await deleteOriginImage(imageObj, true)
         await store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
       } else {
         ElMessage.error('重命名失败')

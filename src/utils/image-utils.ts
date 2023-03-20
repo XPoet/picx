@@ -5,8 +5,8 @@ import {
   UserConfigInfoModel
 } from '@/common/model'
 import { getUuid } from '@/utils/common-utils'
-import axios from '@/utils/axios'
 import { store } from '@/store'
+import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo } from '@/common/api'
 
 /**
  * 生成一个等待上传的图片对象
@@ -71,41 +71,34 @@ export const createManagementImageObject = (item: any, selectedDir: string): Upl
 }
 
 /**
- * 删除单张图片
+ * 从 GitHub 中删除单张图片
  * @param imageObj
  * @param userConfigInfo
  */
-export async function deleteSingleImage(
+export async function deleteImageFromGitHub(
   imageObj: UploadedImageModel,
   userConfigInfo: UserConfigInfoModel
 ): Promise<boolean> {
   imageObj.deleting = true
-  const { owner, selectedRepo } = userConfigInfo
-  return new Promise((resolve, reject) => {
-    axios
-      .delete(`/repos/${owner}/${selectedRepo}/contents/${imageObj.path}`, {
-        data: {
-          owner,
-          repo: selectedRepo,
-          path: imageObj.path,
-          message: 'Delete image via PicX(https://github.com/XPoet/picx)',
-          sha: imageObj.sha
-        }
-      })
-      .then((res) => {
-        if (res && res.status === 200) {
-          imageObj.deleting = false
-          store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
-          store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
-          resolve(true)
-        } else {
-          imageObj.deleting = false
-          resolve(false)
-        }
-      })
-      .catch((err) => {
-        reject(err)
-      })
+  const { owner, selectedRepo: repo } = userConfigInfo
+  const { path, sha } = imageObj
+  return new Promise((resolve) => {
+    deleteSingleImage(owner, repo, path, sha, (res: any) => {
+      imageObj.deleting = false
+      if (res) {
+        resolve(true)
+        store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
+        store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
+      } else {
+        resolve(false)
+      }
+    })
+  })
+}
+
+const imgListDeleteStatus = (imgList: UploadedImageModel[], deleting: boolean = false) => {
+  imgList.forEach((img) => {
+    img.deleting = deleting
   })
 }
 
@@ -114,62 +107,47 @@ export async function deleteSingleImage(
  * @param imgObjs
  * @param userConfigInfo
  */
-export async function deleteMultiImages(
+export async function deleteImagesFromGitHub(
   imgObjs: UploadedImageModel[],
   userConfigInfo: UserConfigInfoModel
 ): Promise<void> {
-  imgObjs.forEach((imgObj) => {
-    imgObj.deleting = true
-  })
+  imgListDeleteStatus(imgObjs, true)
   const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
 
   // 获取 head，用于获取当前分支信息（根目录的 tree sha 以及 head commit sha）
-  const head = await axios.get(`/repos/${owner}/${repo}/branches/${branch}`)
-  if (head?.status !== 200) {
-    imgObjs.forEach((imgObj) => {
-      imgObj.deleting = false
-    })
+  const headRes: any = await getBranchInfo(owner, repo, branch)
+  if (!headRes) {
+    imgListDeleteStatus(imgObjs, false)
     throw new Error('获取分支信息失败')
   }
 
   // 创建 tree，删除图片只需要将 sha 标记为 null
-  const tree = await axios.post(`/repos/${owner}/${repo}/git/trees`, {
-    tree: imgObjs.map((img) => ({
-      mode: '100644',
-      path: img.path,
-      sha: null,
-      type: 'blob'
+  const treeRes = await createTree(
+    owner,
+    repo,
+    imgObjs.map((x) => ({
+      path: x.path,
+      sha: null
     })),
-    base_tree: head?.data?.commit?.commit?.tree?.sha || null
-  })
-  if (tree?.status !== 201) {
-    imgObjs.forEach((imgObj) => {
-      imgObj.deleting = false
-    })
+    headRes
+  )
+  if (!treeRes) {
+    imgListDeleteStatus(imgObjs, false)
     throw new Error('创建 tree 失败')
   }
 
   // 提交 commit
-  const commit = await axios.post(`/repos/${owner}/${repo}/git/commits`, {
-    message: 'Delete images via PicX(https://github.com/XPoet/picx)',
-    parents: [head.data.commit.sha],
-    tree: tree.data.sha
-  })
-  if (commit?.status !== 201) {
-    imgObjs.forEach((imgObj) => {
-      imgObj.deleting = false
-    })
+  const commitRes = await createCommit(owner, repo, treeRes, headRes)
+  if (!commitRes) {
+    imgListDeleteStatus(imgObjs, false)
     throw new Error('创建 commit 失败')
   }
 
   // 将当前分支 ref 指向新创建的 commit
-  const refRes = await axios.patch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
-    sha: commit.data.sha
-  })
-  if (refRes?.status !== 200) {
-    imgObjs.forEach((imgObj) => {
-      imgObj.deleting = false
-    })
+  // @ts-ignore
+  const refRes = await createRef(owner, repo, branch, commitRes.sha)
+  if (!refRes) {
+    imgListDeleteStatus(imgObjs, false)
     throw new Error('更新 ref 失败')
   }
 
@@ -190,13 +168,13 @@ export async function deleteImageOfGitHub(
   userConfigInfo: UserConfigInfoModel
 ) {
   if (imgCardArr.length === 1) {
-    if (await deleteSingleImage(imgCardArr[0], userConfigInfo)) {
+    if (await deleteImageFromGitHub(imgCardArr[0], userConfigInfo)) {
       return DeleteStatusEnum.deleted
     }
     return DeleteStatusEnum.deleteFail
   }
   try {
-    await deleteMultiImages(imgCardArr, userConfigInfo)
+    await deleteImagesFromGitHub(imgCardArr, userConfigInfo)
     return DeleteStatusEnum.allDeleted
   } catch (err) {
     console.error(err)

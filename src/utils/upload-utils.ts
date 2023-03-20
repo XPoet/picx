@@ -5,9 +5,9 @@ import {
   createRef,
   createTree,
   uploadSingleImage,
-  uploadImageBlob
-} from '@/common/api/upload'
-import { getBranchInfo } from '@/common/api'
+  uploadImageBlob,
+  getBranchInfo
+} from '@/common/api'
 
 /**
  * 图片上传成功之后的处理
@@ -105,19 +105,27 @@ export async function uploadImagesToGitHub(
   const finalPath = selectedDir === '/' ? '' : `${selectedDir}/`
 
   // 创建 tree
-  const treeRes = await createTree(owner, repo, blobs, finalPath, branchRes)
+  const treeRes = await createTree(
+    owner,
+    repo,
+    blobs.map((x: any) => ({
+      sha: x.sha,
+      path: `${finalPath}${x.img.filename.final}`
+    })),
+    branchRes
+  )
   if (!treeRes) {
     throw new Error('创建 tree 失败')
   }
 
   // 创建 commit 节点
-  const commitRes = await createCommit(owner, repo, treeRes, branchRes)
+  const commitRes: any = await createCommit(owner, repo, treeRes, branchRes)
   if (!commitRes) {
     throw new Error('创建 commit 失败')
   }
 
   // 将当前分支 ref 指向新创建的 commit
-  const refRes = await createRef(owner, repo, branch, commitRes)
+  const refRes = await createRef(owner, repo, branch, commitRes.sha)
   if (!refRes) {
     throw new Error('更新 ref 失败')
   }
