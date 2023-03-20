@@ -13,9 +13,9 @@
         ></el-input>
       </el-form-item>
 
-      <el-form-item class="operation">
+      <el-form-item class="operation" v-if="!userConfigInfo.owner || !userConfigInfo.token">
         <el-button plain type="primary" native-type="submit" @click.prevent="getUserInfo()">
-          确认 Token
+          绑定 Token
         </el-button>
       </el-form-item>
     </el-form>
@@ -24,7 +24,7 @@
     <el-form
       label-width="70rem"
       :label-position="labelPosition"
-      v-if="userConfigInfo.token"
+      v-if="userConfigInfo.token && userConfigInfo.owner"
       v-loading="loading"
       element-loading-text="正在加载用户信息..."
     >
@@ -60,7 +60,7 @@
     <el-form
       label-width="70rem"
       :label-position="labelPosition"
-      v-if="userConfigInfo.selectedRepo && userConfigInfo.branchList.length"
+      v-if="userConfigInfo.token && userConfigInfo.selectedRepo && userConfigInfo.branchList.length"
       v-loading="branchLoading"
       element-loading-text="正在加载分支信息..."
     >
@@ -123,7 +123,7 @@
     <el-form
       label-width="70rem"
       :label-position="labelPosition"
-      v-if="userConfigInfo.selectedBranch"
+      v-if="userConfigInfo.token && userConfigInfo.selectedBranch"
       v-loading="dirLoading"
       element-loading-text="正在加载目录信息..."
     >
@@ -190,14 +190,14 @@
       </el-form-item>
     </el-form>
 
-    <!-- 操作（重置、完成配置） -->
-    <el-form label-width="70rem" :label-position="labelPosition">
+    <!-- 操作（重置、确认配置） -->
+    <el-form label-width="70rem" v-if="userConfigInfo.token" :label-position="labelPosition">
       <el-form-item class="operation">
         <el-button plain type="warning" @click="reset()" v-if="userConfigInfo.owner">
           重置
         </el-button>
         <el-button plain type="success" @click="goUpload" v-if="userConfigInfo.selectedRepo">
-          完成配置
+          确认
         </el-button>
       </el-form-item>
     </el-form>
