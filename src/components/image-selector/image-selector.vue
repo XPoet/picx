@@ -64,9 +64,13 @@ const cancelPick = () => {
 
 const batchDeleteImage = () => {
   if (getImageCardCheckedArr.value?.length > 0) {
-    ElMessageBox.confirm('是否批量删除已选中的图片？', '删除提示', {
-      type: 'warning'
-    })
+    ElMessageBox.confirm(
+      `已选中 ${getImageCardCheckedArr.value?.length} 张图片，是否批量删除？`,
+      '删除提示',
+      {
+        type: 'warning'
+      }
+    )
       .then(async () => {
         const res = await deleteImageOfGitHub(getImageCardCheckedArr.value, userConfigInfo)
         if (res === DeleteStatusEnum.deleted) {
