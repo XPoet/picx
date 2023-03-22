@@ -9,7 +9,8 @@
       </div>
       <div>
         <span v-if="toUploadImage.list.length">
-          已上传：{{ toUploadImage.uploadedNumber }} / {{ toUploadImage.list.length }}
+          {{ i18nConfig().uploaded }}：{{ toUploadImage.uploadedNumber }} /
+          {{ toUploadImage.list.length }}
         </span>
       </div>
     </div>
@@ -54,14 +55,14 @@
             >
               <!-- 哈希化 -->
               <el-checkbox
-                label="哈希化"
+                :label="i18nConfig().hashmap"
                 v-model="imgItem.filename.isHashRename"
                 @change="hashRename($event, imgItem)"
               ></el-checkbox>
 
               <!-- 重命名 -->
               <el-checkbox
-                label="重命名"
+                :label="i18nConfig().rename"
                 v-model="imgItem.filename.isRename"
                 @change="rename($event, imgItem)"
               ></el-checkbox>
@@ -76,7 +77,7 @@
 
               <!-- 命名前缀 -->
               <el-checkbox
-                label="命名前缀"
+                :label="i18nConfig().nameBefore"
                 v-if="
                   !imgItem.filename.isRename &&
                   userConfigInfo.defaultPrefix &&
@@ -124,7 +125,7 @@
             v-if="imgItem.uploadStatus.progress !== 100 && !imgItem.uploadStatus.uploading"
             @click="removeToUploadImage(imgItem)"
           >
-            <el-tooltip effect="dark" content="移除" placement="top">
+            <el-tooltip effect="dark" :content="i18nConfig().remove" placement="top">
               <el-icon><Delete /></el-icon>
             </el-tooltip>
           </div>
@@ -135,7 +136,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, toRefs, onMounted } from 'vue'
+import { computed, defineComponent, reactive, toRefs, onMounted, getCurrentInstance } from 'vue'
 import { useStore } from '@/store'
 import { formatDatetime, getFileSize } from '@/utils'
 import { UserConfigInfoModel, ToUploadImageModel, UploadStatusEnum } from '@/common/model'
@@ -159,6 +160,7 @@ export default defineComponent({
   },
 
   setup() {
+    const instance = getCurrentInstance()
     const store = useStore()
 
     const reactiveData = reactive({
@@ -237,6 +239,16 @@ export default defineComponent({
       store.dispatch('TO_UPLOAD_IMAGE_LIST_REMOVE', imgItem.uuid)
     }
 
+    const i18nConfig = () => {
+      return {
+        uploaded: instance?.proxy?.$t('uploaded'),
+        hashmap: instance?.proxy?.$t('hashmap'),
+        rename: instance?.proxy?.$t('rename'),
+        nameBefore: instance?.proxy?.$t('nameBefore'),
+        remove: instance?.proxy?.$t('remove')
+      }
+    }
+
     onMounted(() => {
       const { defaultHash: isHash, defaultPrefix: isPrefix, prefixName } = reactiveData.userSettings
       reactiveData.toUploadImage.list.forEach((v: ToUploadImageModel) => {
@@ -250,7 +262,8 @@ export default defineComponent({
 
     return {
       ...toRefs(reactiveData),
-      removeToUploadImage
+      removeToUploadImage,
+      i18nConfig
     }
   }
 })

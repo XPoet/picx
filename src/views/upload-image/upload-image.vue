@@ -37,7 +37,7 @@
             type="warning"
             @click="resetUploadInfo"
           >
-            重置 {{ shortcutKey }} + A
+            {{ i18nConfig().reset }} {{ shortcutKey }} + A
           </el-button>
           <el-button :loading="uploading" plain type="primary" @click="uploadImage">
             {{ $t('uploadImg.uploadButton') }} {{ shortcutKey }} + S
@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref, Ref, onMounted } from 'vue'
+import { computed, watch, ref, Ref, onMounted, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import ToUploadImageCard from '@/components/to-upload-image-card/to-upload-image-card.vue'
@@ -57,6 +57,7 @@ import UploadArea from '@/components/upload-area/upload-area.vue'
 import { ElementPlusSizeEnum, ToUploadImageModel, UploadStatusEnum } from '@/common/model'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
 
+const instance = getCurrentInstance()
 const store = useStore()
 const router = useRouter()
 
@@ -156,6 +157,12 @@ watch(
     !_n && resetUploadInfo()
   }
 )
+
+const i18nConfig = () => {
+  return {
+    reset: instance?.proxy?.$t('reset')
+  }
+}
 
 onMounted(() => {
   document.addEventListener('keydown', (e) => {

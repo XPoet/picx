@@ -32,7 +32,7 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="logout"> 退出登录 </el-dropdown-item>
+              <el-dropdown-item command="logout"> {{ $t('returnLogin') }} </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -57,10 +57,12 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const store = useStore()
-    const instance = getCurrentInstance()
+    // const instance = getCurrentInstance()
 
     // const nameData = () => {
-    // return instance?.proxy?.$t('header.right1')
+    //   setTimeout(() => {
+    //     return instance?.proxy?.$t('header.right1')
+    //   }, 200)
     // }
 
     const reactiveData = reactive({
