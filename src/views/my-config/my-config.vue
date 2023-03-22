@@ -9,13 +9,13 @@
           :autofocus="!userConfigInfo.token"
           type="password"
           show-password
-          placeholder="请输入 GitHub Token"
+          :placeholder="placeholderI18n()"
         ></el-input>
       </el-form-item>
 
       <el-form-item class="operation" v-if="!userConfigInfo.owner || !userConfigInfo.token">
         <el-button plain type="primary" native-type="submit" @click.prevent="getUserInfo()">
-          绑定 Token
+          {{ $t('imgBedConfig.buttonSubmit') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -26,23 +26,23 @@
       :label-position="labelPosition"
       v-if="userConfigInfo.token && userConfigInfo.owner"
       v-loading="loading"
-      element-loading-text="正在加载用户信息..."
+      :element-loading-text="configPage().loadUser"
     >
-      <el-form-item v-if="userConfigInfo.owner" label="用户名">
+      <el-form-item v-if="userConfigInfo.owner" :label="configPage().username">
         <el-input v-model="userConfigInfo.owner" readonly></el-input>
       </el-form-item>
 
-      <el-form-item v-if="userConfigInfo.email" label="邮箱">
+      <el-form-item v-if="userConfigInfo.email" :label="configPage().email">
         <el-input v-model="userConfigInfo.email" readonly></el-input>
       </el-form-item>
 
       <!-- 仓库 -->
-      <el-form-item v-if="userConfigInfo.repoList.length" label="选择仓库">
+      <el-form-item v-if="userConfigInfo.repoList.length" :label="configPage().selectRepo">
         <el-select
           v-model="userConfigInfo.selectedRepo"
           :filterable="true"
           style="width: 100%"
-          placeholder="请选择图床仓库..."
+          :placeholder="configPage().pleaseSelectRepo"
           @change="selectRepo"
         >
           <el-option
@@ -62,22 +62,23 @@
       :label-position="labelPosition"
       v-if="userConfigInfo.token && userConfigInfo.selectedRepo && userConfigInfo.branchList.length"
       v-loading="branchLoading"
-      element-loading-text="正在加载分支信息..."
+      :element-loading-text="configPage().loadBranch"
     >
       <!-- 由于 GitHub API 目前不支持创建空分支，该功能暂时无法使用 -->
-      <el-form-item v-if="userConfigInfo.selectedRepo && 0" label="分支方式">
+      <el-form-item v-if="userConfigInfo.selectedRepo && 0" :label="configPage().branchType">
         <el-radio-group v-model="userConfigInfo.branchMode" @change="branchModeChange">
           <el-tooltip
             v-if="userConfigInfo.branchList.length"
-            :content="'选择 ' + userConfigInfo.selectedRepo + ' 仓库下的一个分支'"
+            :content="configPage().choose + userConfigInfo.selectedRepo + configPage().branchOne"
             placement="top"
           >
             <el-radio label="repoBranch">
-              选择 {{ userConfigInfo.selectedRepo }} 仓库下的分支
+              {{ configPage().choose }} {{ userConfigInfo.selectedRepo }}
+              {{ configPage().BranchRepo }}
             </el-radio>
           </el-tooltip>
-          <el-tooltip content="手动创建一个新分支" placement="top">
-            <el-radio label="newBranch">新建分支</el-radio>
+          <el-tooltip :content="configPage().createBranch" placement="top">
+            <el-radio label="newBranch"> {{ configPage().newBranch }}</el-radio>
           </el-tooltip>
         </el-radio-group>
       </el-form-item>
@@ -88,13 +89,13 @@
           userConfigInfo.branchList.length > 1 &&
           userConfigInfo.branchMode === BranchModeEnum.repoBranch
         "
-        label="选择分支"
+        :label="configPage().chooseBranch"
       >
         <el-select
           v-model="userConfigInfo.selectedBranch"
           filterable
           style="width: 100%"
-          placeholder="请选择分支..."
+          :placeholder="configPage().pleaseChooseBranch"
           @change="selectBranch"
         >
           <el-option
@@ -108,12 +109,15 @@
       </el-form-item>
 
       <!-- 新建分支 -->
-      <el-form-item v-if="userConfigInfo.branchMode === BranchModeEnum.newBranch" label="新建分支">
+      <el-form-item
+        v-if="userConfigInfo.branchMode === BranchModeEnum.newBranch"
+        :label="configPage().newBranch"
+      >
         <el-input
           v-model="newBranchInputVal"
           @blur="onNewBranchInputBlur"
           clearable
-          placeholder="请输入新建的分支..."
+          :placeholder="configPage().mkdirPlease"
           ref="newBranchInputRef"
         ></el-input>
       </el-form-item>
@@ -125,56 +129,55 @@
       :label-position="labelPosition"
       v-if="userConfigInfo.token && userConfigInfo.selectedBranch"
       v-loading="dirLoading"
-      element-loading-text="正在加载目录信息..."
+      :element-loading-text="configPage().loadMsg"
     >
-      <el-form-item v-if="userConfigInfo.selectedBranch" label="目录方式">
+      <el-form-item v-if="userConfigInfo.selectedBranch" :label="configPage().catalog">
         <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
-          <el-tooltip content="手动输入一个新目录" placement="top" :offset="-1">
-            <el-radio label="newDir">新建目录</el-radio>
+          <el-tooltip :content="configPage().toast1" placement="top" :offset="-1">
+            <el-radio label="newDir">{{ configPage().mkdir }}</el-radio>
           </el-tooltip>
 
           <el-tooltip
-            :content="'图片存储在 ' + userConfigInfo.selectedBranch + ' 分支的根目录下'"
+            :content="configPage().toast2 + userConfigInfo.selectedBranch + configPage().toast3"
             placement="top"
             :offset="-1"
           >
-            <el-radio label="rootDir">根目录</el-radio>
+            <el-radio label="rootDir">{{ configPage().root }}</el-radio>
           </el-tooltip>
 
-          <el-tooltip
-            :content="'根据日期自动创建格式 YYYYMMDD 的目录'"
-            placement="top"
-            :offset="-1"
-          >
-            <el-radio label="autoDir">自动目录</el-radio>
+          <el-tooltip :content="configPage().toast4" placement="top" :offset="-1">
+            <el-radio label="autoDir">{{ configPage().automaticDirectory }}</el-radio>
           </el-tooltip>
 
           <el-tooltip
             v-if="userConfigInfo.dirList.length && userConfigInfo.branchMode !== 'newBranch'"
-            :content="'选择 ' + userConfigInfo.selectedBranch + ' 分支下的一个目录'"
+            :content="configPage().choose + userConfigInfo.selectedBranch + configPage().toast5"
             placement="top"
             :offset="-1"
           >
-            <el-radio label="repoDir"> 选择 {{ userConfigInfo.selectedRepo }} 仓库目录 </el-radio>
+            <el-radio label="repoDir">
+              {{ configPage().choose }} {{ userConfigInfo.selectedRepo }}
+              {{ configPage().storageDirectory }}
+            </el-radio>
           </el-tooltip>
         </el-radio-group>
       </el-form-item>
 
-      <el-form-item v-if="userConfigInfo.dirMode === 'autoDir'" label="自动目录">
+      <el-form-item v-if="userConfigInfo.dirMode === 'autoDir'" :label="configPage().directory">
         <el-input v-model="userConfigInfo.selectedDir" readonly></el-input>
       </el-form-item>
 
-      <el-form-item v-if="userConfigInfo.dirMode === 'rootDir'" label="根目录">
+      <el-form-item v-if="userConfigInfo.dirMode === 'rootDir'" :label="configPage().root">
         <el-input v-model="userConfigInfo.selectedDir" readonly></el-input>
       </el-form-item>
 
-      <el-form-item v-if="userConfigInfo.dirMode === 'newDir'" label="新建目录">
+      <el-form-item v-if="userConfigInfo.dirMode === 'newDir'" :label="configPage().mkdir">
         <el-input
           ref="newDirInputRef"
           v-model="userConfigInfo.selectedDir"
           @input="persistUserConfigInfo()"
           clearable
-          placeholder="请输入新建的目录..."
+          :placeholder="configPage().inNew"
         ></el-input>
       </el-form-item>
 
@@ -184,7 +187,7 @@
           userConfigInfo.dirMode === 'repoDir' &&
           userConfigInfo.branchMode !== 'newBranch'
         "
-        label="选择目录"
+        :label="configPage().selectDirectory"
       >
         <repo-dir-cascader :el-key="repoDirCascaderKey" :el-size="userSettings.elementPlusSize" />
       </el-form-item>
@@ -194,10 +197,10 @@
     <el-form label-width="70rem" v-if="userConfigInfo.token" :label-position="labelPosition">
       <el-form-item class="operation">
         <el-button plain type="warning" @click="reset()" v-if="userConfigInfo.owner">
-          重置
+          {{ configPage().reset }}
         </el-button>
         <el-button plain type="success" @click="goUpload" v-if="userConfigInfo.selectedRepo">
-          确认
+          {{ configPage().confirm }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -205,7 +208,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref, watch, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { DirModeEnum, BranchModeEnum, BranchModel, ElementPlusSizeEnum } from '@/common/model'
@@ -219,6 +222,7 @@ import {
   initBranch
 } from '@/common/api'
 
+const instance = getCurrentInstance()
 const router = useRouter()
 const store = useStore()
 
@@ -452,6 +456,46 @@ const onNewBranchInputBlur = () => {
     }
   } else {
     ElMessage.error('新建分支不能为空！')
+  }
+}
+
+const placeholderI18n = () => {
+  return instance?.proxy?.$t('imgBedConfig.defaultInput')
+}
+
+const configPage = () => {
+  return {
+    username: instance?.proxy?.$t('username'),
+    selectRepo: instance?.proxy?.$t('selectRepo'),
+    pleaseSelectRepo: instance?.proxy?.$t('pleaseSelectRepo'),
+    reset: instance?.proxy?.$t('reset'),
+    confirm: instance?.proxy?.$t('confirm'),
+    catalog: instance?.proxy?.$t('catalog'),
+    automaticDirectory: instance?.proxy?.$t('automaticDirectory'),
+    root: instance?.proxy?.$t('root'),
+    choose: instance?.proxy?.$t('choose'),
+    storageDirectory: instance?.proxy?.$t('storageDirectory'),
+    mkdir: instance?.proxy?.$t('mkdir'),
+    selectDirectory: instance?.proxy?.$t('selectDirectory'),
+    mkdirPlease: instance?.proxy?.$t('mkdirPlease'),
+    directory: instance?.proxy?.$t('directory'),
+    toast1: instance?.proxy?.$t('toast1'),
+    toast2: instance?.proxy?.$t('toast2'),
+    toast3: instance?.proxy?.$t('toast3'),
+    toast4: instance?.proxy?.$t('toast4'),
+    toast5: instance?.proxy?.$t('toast5'),
+    loadUser: instance?.proxy?.$t('loadUser'),
+    email: instance?.proxy?.$t('email'),
+    loadBranch: instance?.proxy?.$t('loadBranch'),
+    branchType: instance?.proxy?.$t('branchType'),
+    branchOne: instance?.proxy?.$t('branchOne'),
+    BranchRepo: instance?.proxy?.$t('BranchRepo'),
+    createBranch: instance?.proxy?.$t('createBranch'),
+    newBranch: instance?.proxy?.$t('newBranch'),
+    chooseBranch: instance?.proxy?.$t('chooseBranch'),
+    pleaseChooseBranch: instance?.proxy?.$t('pleaseChooseBranch'),
+    loadMsg: instance?.proxy?.$t('loadMsg'),
+    inNew: instance?.proxy?.$t('inNew')
   }
 }
 

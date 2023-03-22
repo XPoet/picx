@@ -1,20 +1,20 @@
 <template>
   <div class="tutorials-step-2">
     <h3>
-      创建一个有 repo 权限的
+      {{ $t('useCourse.step1.title') }}
       <span class="go-create-token" @click="goCreateToken"> GitHub Token</span>
     </h3>
     <img
       src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/image.lpt1xl9fu.png"
       alt="Create GitHub Token"
     />
-    <p>然后点击 Generate token 按钮，即可生成一个token，如下图：</p>
+    <p>{{ $t('useCourse.step1.content1') }}</p>
     <img
       src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/image.pzmcp6b80fk.png"
       alt="token-demo"
     />
     <p style="color: red">
-      <em>新生成的 Token 只会显示一次，请妥善保存！如有遗失，重新生成即可。</em>
+      <em>{{ $t('useCourse.step1.content2') }}</em>
     </p>
   </div>
 </template>

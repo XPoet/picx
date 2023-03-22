@@ -40,7 +40,7 @@
             重置 {{ shortcutKey }} + A
           </el-button>
           <el-button :loading="uploading" plain type="primary" @click="uploadImage">
-            上传 {{ shortcutKey }} + S
+            {{ $t('uploadImg.uploadButton') }} {{ shortcutKey }} + S
           </el-button>
         </div>
       </div>

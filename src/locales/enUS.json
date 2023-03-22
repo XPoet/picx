@@ -1,0 +1,107 @@
+{
+  "header": {
+    "left1": "more then",
+    "left2": "times used",
+    "right1": "en未登录"
+  },
+  "imgBedConfig": {
+    "sideValue":  "Figure bed configuration",
+    "defaultInput": "Please Input Github Token",
+    "buttonSubmit": "Bind Token"
+  },
+  "uploadImg": {
+    "sideValue": "Upload Photo",
+    "uploadText": "drag / paste / Click here to select the image",
+    "uploadButton": "Upload"
+  },
+  "useCourse": {
+    "sideValue": "Tutorials",
+    "lastStep": "last step",
+    "nextStep": "next step",  
+    "step0": {
+      "contentLeft": "Create one to store the picture",
+      "contentRight": " GitHub Repository"
+    },
+    "step1": {
+      "tip": "Create GitHub Repository",
+      "title": "Create a repo permissions",
+      "titleLink": "GitHub Token",
+      "content1": "And then click Generate token button，generate a token，as following picture shows：",
+      "content2": "Newly generated Token will be displayed only once, please keep!If lost, can be regenerated。"
+    },
+    "step2": {
+      "tip": "Get GitHub Token",
+      "title": "Configure the graph bed (binding GitHub Token, the repository and directory where the images are stored)",
+      "content1": "1、Fill in the Token to automatically get the repository under the user",
+      "content2": "2、In the drop-down list for the warehouse, select one of the warehouses as the diagram bed",
+      "content3": "3、Select or create a new warehouse branch",
+      "content4": "4、Select a directory (that is, the folder in the warehouse where the pictures are stored)",
+      "li1": "New Directory: You Need to enter a new directory manually.",
+      "li2": "Root: images will be stored directly in the warehouse root.",
+      "li3": "Automatic Directory: automatically generates a directory for the date format YYYMMDD. Example: 20200909",
+      "li4": "Select the warehouse directory: automatically get under the warehouse all directories, select one can."
+    },
+    "step3": {
+      "tip": "Configure the drawing bed",
+      "title": "Congratulations on completing the diagram bed tutorial",
+      "title2": "Go and try it~"
+    }
+  },
+  "help": {
+    "sideValue": "Help with feedback",
+    "paragraph1": "PicX is a graphics tool based on GitHub API, which provides image upload hosting and image link generation services.",
+    "paragraph2": "No download required! No installation required! Web-side online use! Free! Steady! Convenient! Zoom!",
+    "paragraph4": "It is recommended to add this site to the browser favorites for your next visit.",
+    "paragraph5": "author: ",
+    "paragraph6": "repository： ",
+    "paragraph7": "document:  ",
+    "paragraph8": "If you encounter a problem using it, read the document carefully or Issue it to the author ",
+    "paragraph9": "Picture uploads slowly or does not load out and so on, can use ",
+    "paragraph10": "Serious Statement: Please do not upload through this site in violation of your local laws of the picture, caused by all the consequences and this site has nothing to do."
+  },
+  "quickOperation": {
+    "value": "Quick operation",
+    "enModel": "English Model",
+    "nightModel": "Night Model",
+    "compressPic": "image compression",
+    "changeMD": "transform "
+  },
+  "imageManager": {
+    "sideValue": "Figure bed management"
+  },
+  "myConfig": {
+    "sideValue": "My Config"
+  },
+  "username": "Username",
+  "selectRepo": "Repository",
+  "pleaseSelectRepo": "Please select the drawing bed warehouse...",
+  "reset": "Reset",
+  "confirm": "Confirm",
+  "catalog": "Catalog",
+  "automaticDirectory": "Automatic Directory",
+  "directory": "Directory",
+  "root": "Root",
+  "choose": "Choose",
+  "storageDirectory": "Storage Directory",
+  "mkdir": "Mkdir",
+  "selectDirectory": "Directory",
+  "mkdirPlease": "Please enter a new directory...",
+  "selectARepo": "Please select a directory...",
+  "toast1": "Enter a new directory manually",
+  "toast2": "The picture is stored in ",
+  "toast3": " The root directory of the branch",
+  "toast4": "Automatically create a directory with the format YYYMMDD based on the date",
+  "toast5": "A directory under the branch",
+  "loadUser": "正在加载用户信息...",
+  "email": "email",
+  "loadBranch": "Loading branch information...",
+  "branchType": "Branch Way",
+  "branchOne": "A branch of a warehouse",
+  "BranchRepo": "The branch under the warehouse",
+  "createBranch": "Create a new branch manually",
+  "newBranch": "Create a new branch",
+  "chooseBranch": "Select the branch",
+  "pleaseChooseBranch": "Please select a branch...",
+  "loadMsg": "Loading directory information...",
+  "inNew": "Please enter the new directory..."
+}

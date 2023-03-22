@@ -1,8 +1,10 @@
 <template>
   <div class="tutorials-step-1">
     <h3>
-      创建一个用来存储图片的
-      <span class="go-create-repo" @click="goCreateRepo"> GitHub 仓库</span>
+      {{ $t('useCourse.step0.contentLeft') }}
+      <span class="go-create-repo" @click="goCreateRepo">
+        {{ $t('useCourse.step0.contentRight') }}</span
+      >
     </h3>
     <img
       src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/image.j1486dtk68n.png"
