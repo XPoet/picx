@@ -127,18 +127,17 @@ const deleteOriginImage = (
   const { owner, selectedRepo: repo } = userConfigInfo
   const { path, sha } = imageObj
 
-  return new Promise((resolve) => {
-    deleteSingleImage(owner, repo, path, sha, (res: any) => {
-      imageObj.deleting = false
-      if (res) {
-        ElMessage.success(`${isRename ? '更新' : '删除'}成功！`)
-        store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
-        store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
-        resolve(true)
-      } else {
-        resolve(false)
-      }
-    })
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    const res = await deleteSingleImage(owner, repo, path, sha)
+    if (res) {
+      ElMessage.success(`${isRename ? '更新' : '删除'}成功！`)
+      await store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
+      await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
+      resolve(true)
+    } else {
+      resolve(false)
+    }
   })
 }
 

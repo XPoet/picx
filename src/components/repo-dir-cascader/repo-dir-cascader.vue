@@ -17,7 +17,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { getDirListByPath } from '@/common/api'
+import { getDirInfoList } from '@/common/api'
 import { useStore } from '@/store'
 import { ElementPlusSizeEnum, NEW_DIR_COUNT_MAX } from '@/common/model'
 
@@ -52,7 +52,7 @@ const cascaderProps = {
     if (level === 0) {
       dirs = userConfigInfo.dirList
     } else {
-      dirs = await getDirListByPath(pathLabels.join('/'))
+      dirs = await getDirInfoList(userConfigInfo, pathLabels.join('/'))
     }
     if (dirs) {
       resolve(

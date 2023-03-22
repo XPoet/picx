@@ -1,3 +1,5 @@
+import { AxiosRequestConfig } from 'axios'
+
 export interface RepoModel {
   value: string
   label: string
@@ -43,4 +45,9 @@ export interface UserConfigInfoModel {
   selectedDirList: string[]
   dirList: DirModel[]
   logined: boolean
+}
+
+export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
+  success422?: boolean
+  noShowErrorMsg?: boolean
 }

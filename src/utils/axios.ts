@@ -14,14 +14,12 @@ axios.defaults.headers['Content-Type'] = 'application/json'
 axios.interceptors.request.use(
   (config) => {
     const userConfig = localStorage.getItem(PICX_CONFIG)
-
     if (userConfig) {
       const { token } = JSON.parse(userConfig)
       if (token) {
         config.headers.Authorization = `token ${token}`
       }
     }
-
     return config
   },
   (error) => {
@@ -35,16 +33,10 @@ axios.interceptors.response.use(
     return response
   },
   (error) => {
-    if (error.response && error.response.data) {
-      const code = error.response.status
-      const msg = error.response.data.message
-      ElMessage.error(`Code: ${code}, Message: ${msg}`)
-      console.error(`[PicX Error]`, error.response)
-    } else {
-      ElMessage.error(`${error}`)
+    if (!error?.response) {
+      ElMessage.error({ duration: 6000, message: `${error}` })
     }
-
-    return error.response
+    return Promise.reject(error.response)
   }
 )
 
