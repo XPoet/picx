@@ -1,3 +1,4 @@
+export const PICX_REPO_NAME = 'XPoet/picx'
 export const INIT_REPO_NAME = 'picx-images-hosting'
 export const INIT_REPO_DESC = 'PicX images hosting repository'
 export const INIT_REPO_BARNCH = 'master'

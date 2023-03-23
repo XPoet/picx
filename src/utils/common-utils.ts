@@ -151,7 +151,7 @@ export const formatDatetime = (
  * @param func
  * @param wait
  */
-export const throttle = <T extends (...args: any[]) => void>(func: T, wait: number = 1000): T => {
+export const throttle = <T extends (...args: any[]) => void>(func: T, wait: number = 500): T => {
   let timer: ReturnType<typeof setTimeout> | undefined
   let lastArgs: any[]
 

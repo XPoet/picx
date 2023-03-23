@@ -55,6 +55,11 @@ const uploadedHandle = (
   store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', uploadedImg)
 }
 
+/**
+ * 上传图片的 URL 处理
+ * @param config
+ * @param imgObj
+ */
 export const uploadUrlHandle = (
   config: UserConfigInfoModel,
   imgObj: ToUploadImageModel
@@ -75,6 +80,11 @@ export const uploadUrlHandle = (
   return `/repos/${owner}/${repo}/contents/${path}`
 }
 
+/**
+ * 上传多张图片到 GitHub
+ * @param userConfigInfo
+ * @param imgs
+ */
 export async function uploadImagesToGitHub(
   userConfigInfo: UserConfigInfoModel,
   imgs: ToUploadImageModel[]
@@ -141,6 +151,11 @@ export async function uploadImagesToGitHub(
   })
 }
 
+/**
+ * 上传一张图片到 GitHub
+ * @param userConfigInfo
+ * @param img
+ */
 export function uploadImageToGitHub(
   userConfigInfo: UserConfigInfoModel,
   img: ToUploadImageModel

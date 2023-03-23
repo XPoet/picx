@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { PICX_REPO_NAME } from '@/common/constant'
 
 /**
  * 获取 GitHub 用户信息
@@ -9,5 +10,14 @@ export const getGitHubUserInfo = (token: string) => {
     url: '/user',
     method: 'GET',
     headers: { Authorization: `token ${token}` }
+  })
+}
+
+export const starredRepo = (repo: string = PICX_REPO_NAME) => {
+  return request({
+    url: `/user/starred/${repo}`,
+    method: 'PUT',
+    data: {},
+    noShowErrorMsg: true
   })
 }

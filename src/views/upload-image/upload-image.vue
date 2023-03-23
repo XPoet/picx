@@ -56,6 +56,7 @@ import ToUploadImageCard from '@/components/to-upload-image-card/to-upload-image
 import UploadArea from '@/components/upload-area/upload-area.vue'
 import { ElementPlusSizeEnum, ToUploadImageModel, UploadStatusEnum } from '@/common/model'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
+import { starredPicX } from './upload-image.util'
 
 const store = useStore()
 const router = useRouter()
@@ -63,16 +64,16 @@ const router = useRouter()
 const toUploadImageCardRef: Ref = ref<null | HTMLElement>(null)
 const uploadAreaRef: Ref = ref<null | HTMLElement>(null)
 
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
-const userSettings = computed(() => store.getters.getUserSettings)
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const userSettings = computed(() => store.getters.getUserSettings).value
+const toUploadImage = computed(() => store.getters.getToUploadImage).value
 const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 const uploadedImageList = computed(() => store.getters.getUploadedImageList)
-const toUploadImage = computed(() => store.getters.getToUploadImage)
 const uploading = ref(false)
 const shortcutKey = computed(() => (getOSName() === 'mac' ? 'Command' : 'Ctrl'))
 
 const uploadImage = () => {
-  const { token, selectedRepo, selectedDir } = userConfigInfo.value
+  const { token, selectedRepo, selectedDir } = userConfigInfo
 
   if (!token) {
     ElMessage.error('请先完成图床配置！')
@@ -92,18 +93,18 @@ const uploadImage = () => {
     return
   }
 
-  if (toUploadImage.value.list.length === 0) {
+  if (toUploadImage.list.length === 0) {
     ElMessage.error('图片不能为空！')
     return
   }
 
-  if (toUploadImage.value.list.length === toUploadImage.value.uploadedNumber) {
+  if (toUploadImage.list.length === toUploadImage.uploadedNumber) {
     ElMessage.error('请选择要上传的图片！')
     return
   }
 
   uploading.value = true
-  toUploadImageCardRef?.value?.goUploadImages(userConfigInfo.value).then((v: UploadStatusEnum) => {
+  toUploadImageCardRef?.value?.goUploadImages(userConfigInfo).then((v: UploadStatusEnum) => {
     uploading.value = false
     // eslint-disable-next-line default-case
     switch (v) {
@@ -112,12 +113,8 @@ const uploadImage = () => {
         store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
         ElMessage.success('图片上传成功')
         // 自动复制这张图片链接到系统剪贴板
-        copyImageLink(
-          toUploadImage.value.list[0].uploadedImg,
-          userConfigInfo.value,
-          userSettings.value,
-          true
-        )
+        copyImageLink(toUploadImage.list[0].uploadedImg, userConfigInfo, userSettings, true)
+        starredPicX(userSettings)
         break
 
       // 所有图片上传成功
@@ -126,11 +123,12 @@ const uploadImage = () => {
         ElMessage.success('图片批量上传成功')
         // 自动复制这些图片链接到系统剪贴板
         batchCopyImageLinks(
-          toUploadImage.value.list.map((x: ToUploadImageModel) => x.uploadedImg),
-          userConfigInfo.value,
-          userSettings.value,
+          toUploadImage.list.map((x: ToUploadImageModel) => x.uploadedImg),
+          userConfigInfo,
+          userSettings,
           true
         )
+        starredPicX(userSettings)
         break
 
       // 上传失败（网络错误等原因）
@@ -164,7 +162,7 @@ onMounted(() => {
 
     // 重置操作快捷组合键 Command + A
     if (ctrlKey && keyCode === 65) {
-      if (toUploadImage.value.list.length) {
+      if (toUploadImage.list.length) {
         resetUploadInfo()
         e.preventDefault()
       }
