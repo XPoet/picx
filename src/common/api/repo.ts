@@ -7,13 +7,30 @@ import request from '@/utils/request'
  * @param url
  */
 export const getRepoInfoList = (url: string) => {
-  return request({
-    url,
-    method: 'GET',
-    data: {
-      type: 'public',
-      sort: 'created',
-      per_page: 100
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    const tmpList: any[] = await request({
+      url,
+      method: 'GET',
+      data: {
+        type: 'public',
+        sort: 'created',
+        per_page: 100
+      }
+    })
+
+    if (tmpList && tmpList.length) {
+      resolve(
+        tmpList
+          .filter((v: any) => !v.fork && !v.private)
+          .map((x: any) => ({
+            value: x.name,
+            label: x.name,
+            desc: x.description
+          }))
+      )
+    } else {
+      resolve(null)
     }
   })
 }

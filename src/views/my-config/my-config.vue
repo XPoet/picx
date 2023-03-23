@@ -48,7 +48,7 @@
         <el-select
           v-model="userConfigInfo.selectedRepo"
           :filterable="true"
-          style="width: 100%"
+          :style="{ width: 'calc(100% - ' + refreshBoxWidth + 'rem)' }"
           placeholder="请选择图床仓库..."
           @change="selectRepo"
         >
@@ -60,6 +60,7 @@
           >
           </el-option>
         </el-select>
+        <refresh-config :box-width="refreshBoxWidth" data-type="repo" />
       </el-form-item>
     </el-form>
 
@@ -99,8 +100,8 @@
       >
         <el-select
           v-model="userConfigInfo.selectedBranch"
-          filterable
-          style="width: 100%"
+          :filterable="true"
+          :style="{ width: 'calc(100% - ' + refreshBoxWidth + 'rem)' }"
           placeholder="请选择分支..."
           @change="selectBranch"
         >
@@ -112,6 +113,7 @@
           >
           </el-option>
         </el-select>
+        <refresh-config :box-width="refreshBoxWidth" data-type="branch" />
       </el-form-item>
 
       <!-- 新建分支 -->
@@ -239,6 +241,7 @@ const reConfig = computed(() => !userConfigInfo.token || !userConfigInfo.owner)
 const loading = ref(false)
 const dirLoading = ref(false)
 const branchLoading = ref(false)
+const refreshBoxWidth = ref(32)
 
 const labelPosition = computed(() => {
   return userSettings.elementPlusSize === ElementPlusSizeEnum.large ? 'right' : 'top'
@@ -303,17 +306,7 @@ async function getRepoList(repoUrl: string) {
   console.log('getRepoInfoList >> ', repoList)
   loading.value = false
   if (repoList) {
-    userConfigInfo.repoList = []
-    // eslint-disable-next-line no-restricted-syntax
-    for (const repo of repoList) {
-      if (!repo.fork && !repo.private) {
-        userConfigInfo.repoList.push({
-          value: repo.name,
-          label: repo.name,
-          desc: repo.description
-        })
-      }
-    }
+    userConfigInfo.repoList = repoList
     persistUserConfigInfo()
   } else {
     ElMessage.error('仓库信息获取失败，请稍后重试')
@@ -339,14 +332,7 @@ async function getBranchList(repo: string) {
   branchLoading.value = false
   if (branchInfoList) {
     if (branchInfoList.length > 0) {
-      // eslint-disable-next-line no-restricted-syntax
-      for (const item of branchInfoList) {
-        userConfigInfo.branchList.push({
-          value: item.name,
-          label: item.name
-        })
-      }
-      userConfigInfo.branchList.reverse()
+      userConfigInfo.branchList = branchInfoList
       userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
       userConfigInfo.branchMode = BranchModeEnum.repoBranch
       await getDirList()
@@ -380,6 +366,7 @@ async function getUserInfo() {
   }
 
   saveUserInfo(userInfo)
+  console.log('xx ', userInfo.repos_url)
   await getRepoList(userInfo.repos_url)
 }
 

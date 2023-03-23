@@ -19,10 +19,26 @@ export const getBranchInfo = (owner: string, repo: string, branch: string) => {
  * @param owner
  * @param repo
  */
-export const getBranchInfoList = (owner: string, repo: string) => {
-  return request({
-    url: `/repos/${owner}/${repo}/branches`,
-    method: 'GET'
+export const getBranchInfoList = (owner: string, repo: string): Promise<any> => {
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    const tmpList: any[] = await request({
+      url: `/repos/${owner}/${repo}/branches`,
+      method: 'GET'
+    })
+
+    if (tmpList && tmpList.length) {
+      resolve(
+        tmpList
+          .filter((x) => !x.protected)
+          .map((v) => ({
+            value: v.name,
+            label: v.name
+          }))
+      )
+    } else {
+      resolve(null)
+    }
   })
 }
 
