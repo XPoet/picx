@@ -13,11 +13,17 @@
         ></el-input>
       </el-form-item>
 
-      <el-form-item class="operation" v-if="!userConfigInfo.owner || !userConfigInfo.token">
-        <el-button plain type="primary" @click.prevent="autoConfig()"> 一键自动配置 </el-button>
-        <el-button plain type="primary" native-type="submit" @click.prevent="getUserInfo(true)">
-          绑定 Token
-        </el-button>
+      <el-form-item class="operation">
+        <el-tooltip placement="top" content="自动创建 GitHub 仓库">
+          <el-button plain type="primary" @click.prevent="autoConfig()">
+            {{ reConfig ? '' : '重新' }}一键自动配置
+          </el-button>
+        </el-tooltip>
+        <el-tooltip placement="top" content="选择现有的 GitHub 仓库">
+          <el-button plain type="primary" native-type="submit" @click.prevent="getUserInfo()">
+            {{ reConfig ? '' : '重新' }}手动配置
+          </el-button>
+        </el-tooltip>
       </el-form-item>
     </el-form>
 
@@ -228,6 +234,7 @@ const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const logined = computed(() => store.getters.getUserLoginStatus).value
 const userSettings = computed(() => store.getters.getUserSettings).value
+const reConfig = computed(() => !userConfigInfo.token || !userConfigInfo.owner)
 
 const loading = ref(false)
 const dirLoading = ref(false)
@@ -357,23 +364,23 @@ async function getBranchList(repo: string) {
   }
 }
 
-async function getUserInfo(isGetRepo: boolean, callback?: any) {
-  if (userConfigInfo.token) {
-    loading.value = true
-    const userInfo = await getGitHubUserInfo(userConfigInfo.token)
-    console.log('getGitHubUserInfo >> ', userInfo)
-    if (userInfo) {
-      saveUserInfo(userInfo)
-      // eslint-disable-next-line no-unused-expressions
-      isGetRepo && (await getRepoList(userInfo.repos_url))
-      // eslint-disable-next-line no-unused-expressions
-      callback && callback()
-    } else {
-      ElMessage.error('用户信息获取失败，请确认 Token 是否正确')
-    }
-  } else {
-    ElMessage.warning('Token 不能为空！')
+async function getUserInfo() {
+  if (!userConfigInfo.token) {
+    ElMessage.error('GitHub Token 不能为空！')
+    return
   }
+
+  loading.value = true
+  const userInfo = await getGitHubUserInfo(userConfigInfo.token)
+  console.log('getGitHubUserInfo >> ', userInfo)
+
+  if (!userInfo) {
+    ElMessage.error('用户信息获取失败，请确认 Token 是否正确')
+    return
+  }
+
+  saveUserInfo(userInfo)
+  await getRepoList(userInfo.repos_url)
 }
 
 function selectRepo(repo: string) {
@@ -465,31 +472,51 @@ const onNewBranchInputBlur = () => {
 }
 
 // 一键自动配置图床
-const autoConfig = () => {
-  getUserInfo(false, async () => {
-    const loading = ElLoading.service({
-      lock: true,
-      text: '正在自动配置...'
-    })
-    const res = await createRepo(userConfigInfo.token)
-    console.log('createRepo >> ', res)
-    if (res) {
-      userConfigInfo.repoList = [{ value: PICX_REPO_NAME, label: PICX_REPO_NAME }]
-      userConfigInfo.selectedRepo = PICX_REPO_NAME
-      userConfigInfo.branchList = [{ value: PICX_REPO_INIT_BARNCH, label: PICX_REPO_INIT_BARNCH }]
-      userConfigInfo.selectedBranch = PICX_REPO_INIT_BARNCH
-      userConfigInfo.branchMode = BranchModeEnum.repoBranch
-      userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
-      userConfigInfo.dirMode = DirModeEnum.autoDir
-      persistUserConfigInfo()
-      await initEmptyRepo(userConfigInfo, false)
-      loading.close()
-      ElMessage.success('自动配置图床完成')
-      await router.push('/upload')
-    } else {
-      loading.close()
-    }
+const autoConfig = async () => {
+  const { token } = userConfigInfo
+
+  if (!token) {
+    ElMessage.error('GitHub Token 不能为空！')
+    return
+  }
+
+  const loading = ElLoading.service({
+    lock: true,
+    text: '正在自动配置...'
   })
+
+  const userInfo = await getGitHubUserInfo(userConfigInfo.token)
+  console.log('getGitHubUserInfo >> ', userInfo)
+
+  if (!userInfo) {
+    loading.close()
+    ElMessage.error('用户信息获取失败，请确认 Token 是否正确')
+    return
+  }
+
+  saveUserInfo(userInfo)
+
+  const repoInfo = await createRepo(userConfigInfo.token)
+  console.log('createRepo >> ', repoInfo)
+
+  if (!repoInfo) {
+    loading.close()
+    ElMessage.error('自动创建 GitHub 仓库失败，请稍后再试！')
+    return
+  }
+
+  userConfigInfo.repoList = [{ value: PICX_REPO_NAME, label: PICX_REPO_NAME }]
+  userConfigInfo.selectedRepo = PICX_REPO_NAME
+  userConfigInfo.branchList = [{ value: PICX_REPO_INIT_BARNCH, label: PICX_REPO_INIT_BARNCH }]
+  userConfigInfo.selectedBranch = PICX_REPO_INIT_BARNCH
+  userConfigInfo.branchMode = BranchModeEnum.repoBranch
+  userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
+  userConfigInfo.dirMode = DirModeEnum.autoDir
+  persistUserConfigInfo()
+  await initEmptyRepo(userConfigInfo, false)
+  loading.close()
+  ElMessage.success('自动配置成功')
+  await router.push('/upload')
 }
 
 watch(
