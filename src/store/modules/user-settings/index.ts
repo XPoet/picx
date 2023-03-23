@@ -3,7 +3,6 @@ import {
   CompressEncoderEnum,
   ElementPlusSizeEnum,
   ImageLinkRuleModel,
-  PICX_SETTINGS,
   UserSettingsModel
 } from '@/common/model'
 import { deepAssignObject } from '@/utils'
@@ -11,6 +10,7 @@ import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 import UserSettingsStateTypes from '@/store/modules/user-settings/types'
 import { getLocalItem, getUuid } from '@/utils/common-utils'
+import { LS_PICX_SETTINGS } from '@/common/constant'
 
 const initSettings: UserSettingsModel = {
   defaultHash: true,
@@ -59,11 +59,12 @@ const initSettings: UserSettingsModel = {
         format: '<img src="imageLink" alt="imageName" />'
       }
     ]
-  }
+  },
+  starred: false
 }
 
 const initUserSettings = (): UserSettingsModel => {
-  const LSSettings = getLocalItem(PICX_SETTINGS)
+  const LSSettings = getLocalItem(LS_PICX_SETTINGS)
   if (LSSettings) {
     deepAssignObject(initSettings, LSSettings)
   }
@@ -138,7 +139,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
 
     // 持久化
     USER_SETTINGS_PERSIST({ state }) {
-      localStorage.setItem(PICX_SETTINGS, JSON.stringify(state.userSettings))
+      localStorage.setItem(LS_PICX_SETTINGS, JSON.stringify(state.userSettings))
     },
 
     // 退出登录

@@ -170,7 +170,7 @@ export function uploadImageToGitHub(
     if (uploadRes) {
       const { name, sha, path, size } = uploadRes.content
       uploadedHandle({ name, sha, path, size }, img, userConfigInfo)
-      store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
+      await store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
       resolve(true)
     } else {
       resolve(false)

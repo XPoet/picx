@@ -1,10 +1,11 @@
 import { Module } from 'vuex'
 import UploadedImageListStateTypes from '@/store/modules/uploaded-image-list/types'
 import RootStateTypes from '@/store/types'
-import { PICX_UPLOADED, UploadedImageModel } from '@/common/model'
+import { UploadedImageModel } from '@/common/model'
+import { SS_PICX_UPLOADED } from '@/common/constant'
 
 const initUploadedImageList = (): UploadedImageModel[] => {
-  const imageList: string | null = sessionStorage.getItem(PICX_UPLOADED)
+  const imageList: string | null = sessionStorage.getItem(SS_PICX_UPLOADED)
   return imageList ? JSON.parse(imageList) : []
 }
 
@@ -35,7 +36,7 @@ const uploadedImageListModule: Module<UploadedImageListStateTypes, RootStateType
 
     // 上传完成的图片列表 - 持久化
     UPLOADED_LIST_PERSIST({ state }) {
-      sessionStorage.setItem(PICX_UPLOADED, JSON.stringify(state.uploadedImageList))
+      sessionStorage.setItem(SS_PICX_UPLOADED, JSON.stringify(state.uploadedImageList))
     },
 
     // 上传完成的图片列表 - 退出登录

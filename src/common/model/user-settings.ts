@@ -29,4 +29,6 @@ export interface UserSettingsModel {
     selected: string
     presetList: Array<ImageLinkFormatModel>
   }
+
+  starred?: boolean
 }

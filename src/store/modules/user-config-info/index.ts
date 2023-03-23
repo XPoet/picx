@@ -1,14 +1,9 @@
 import { Module } from 'vuex'
-import {
-  BranchModeEnum,
-  UserConfigInfoModel,
-  PICX_CONFIG,
-  DirModeEnum,
-  NEW_DIR_COUNT_MAX
-} from '@/common/model'
+import { BranchModeEnum, UserConfigInfoModel, DirModeEnum, NEW_DIR_COUNT_MAX } from '@/common/model'
 import { deepAssignObject, cleanObject, formatDatetime } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
+import { LS_PICX_CONFIG } from '@/common/constant'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {
@@ -30,7 +25,7 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     viewDir: ''
   }
 
-  const LSConfig: string | null = localStorage.getItem(PICX_CONFIG)
+  const LSConfig: string | null = localStorage.getItem(LS_PICX_CONFIG)
 
   if (LSConfig) {
     // Assign: oldConfig -> initConfig
@@ -125,7 +120,7 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
     // 持久化用户配置信息
     USER_CONFIG_INFO_PERSIST({ state }) {
       convertSpecialCharacter(state)
-      localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
+      localStorage.setItem(LS_PICX_CONFIG, JSON.stringify(state.userConfigInfo))
     },
 
     // 退出登录

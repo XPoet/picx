@@ -79,7 +79,7 @@ export const copyImageLink = (
   if (link) {
     copyText(link, () => {
       if (autoCopy) {
-        ElMessage.success({ message: '图片链接已自动复制到系统剪贴板', duration: 6000 })
+        ElMessage.success({ message: '图片链接已复制到系统剪贴板', duration: 6000 })
       } else {
         ElMessage.success(`${userSettings.imageLinkType.selected} 图片链接复制成功`)
       }

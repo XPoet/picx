@@ -25,8 +25,9 @@ export default function request(config: CustomAxiosRequestConfig): Promise<any> 
     axios
       .request(requestConfig)
       .then((res) => {
-        if (res && (res?.status === 200 || res?.status === 201)) {
-          resolve(res?.data || 'SUCCESS')
+        const { status, data } = res
+        if (res && (status === 200 || status === 201 || status === 204)) {
+          resolve(data || 'SUCCESS')
         } else {
           resolve(null)
         }

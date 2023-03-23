@@ -228,7 +228,7 @@ import {
   initEmptyRepo,
   getDirInfoList
 } from '@/common/api'
-import { PICX_REPO_INIT_BARNCH, PICX_REPO_NAME } from '@/common/constant'
+import { INIT_REPO_BARNCH, INIT_REPO_NAME } from '@/common/constant'
 
 const router = useRouter()
 const store = useStore()
@@ -337,7 +337,7 @@ async function getBranchList(repo: string) {
       userConfigInfo.branchMode = BranchModeEnum.repoBranch
       await getDirList()
     } else {
-      userConfigInfo.selectedBranch = PICX_REPO_INIT_BARNCH
+      userConfigInfo.selectedBranch = INIT_REPO_BARNCH
       userConfigInfo.branchMode = BranchModeEnum.newBranch
 
       // 当分支列表为空时，判定该仓库为空仓库，需要初始化
@@ -491,10 +491,10 @@ const autoConfig = async () => {
     return
   }
 
-  userConfigInfo.repoList = [{ value: PICX_REPO_NAME, label: PICX_REPO_NAME }]
-  userConfigInfo.selectedRepo = PICX_REPO_NAME
-  userConfigInfo.branchList = [{ value: PICX_REPO_INIT_BARNCH, label: PICX_REPO_INIT_BARNCH }]
-  userConfigInfo.selectedBranch = PICX_REPO_INIT_BARNCH
+  userConfigInfo.repoList = [{ value: INIT_REPO_NAME, label: INIT_REPO_NAME }]
+  userConfigInfo.selectedRepo = INIT_REPO_NAME
+  userConfigInfo.branchList = [{ value: INIT_REPO_BARNCH, label: INIT_REPO_BARNCH }]
+  userConfigInfo.selectedBranch = INIT_REPO_BARNCH
   userConfigInfo.branchMode = BranchModeEnum.repoBranch
   userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
   userConfigInfo.dirMode = DirModeEnum.autoDir

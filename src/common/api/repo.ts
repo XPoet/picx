@@ -1,5 +1,5 @@
 import { UserConfigInfoModel } from '@/common/model'
-import { PICX_REPO_DESC, PICX_REPO_NAME } from '@/common/constant'
+import { INIT_REPO_DESC, INIT_REPO_NAME } from '@/common/constant'
 import request from '@/utils/request'
 
 /**
@@ -92,8 +92,8 @@ export const createRepo = (token: string) => {
     url: '/user/repos',
     method: 'POST',
     params: {
-      name: PICX_REPO_NAME,
-      description: PICX_REPO_DESC,
+      name: INIT_REPO_NAME,
+      description: INIT_REPO_DESC,
       private: false
     },
     headers: { Authorization: `token ${token}` },

@@ -1,11 +1,11 @@
 import Axios from 'axios'
-import { PICX_CONFIG } from '@/common/model'
+import { LS_PICX_CONFIG, AXIOS_BASE_URL, AXIOS_TIMEOUT } from '@/common/constant'
 
-const baseURL = 'https://api.github.com'
+const baseURL = AXIOS_BASE_URL
 
 const axios = Axios.create({
   baseURL,
-  timeout: 300000 // 设置 HTTP 请求超时时间为 5 分钟
+  timeout: AXIOS_TIMEOUT
 })
 
 axios.defaults.headers['Content-Type'] = 'application/json'
@@ -13,7 +13,7 @@ axios.defaults.headers['Content-Type'] = 'application/json'
 // 发起请求之前的拦截器（前置拦截）
 axios.interceptors.request.use(
   (config) => {
-    const userConfig = localStorage.getItem(PICX_CONFIG)
+    const userConfig = localStorage.getItem(LS_PICX_CONFIG)
     if (userConfig) {
       const { token } = JSON.parse(userConfig)
       if (token) {
