@@ -35,6 +35,7 @@ export const getBranchInfoList = (owner: string, repo: string): Promise<any> => 
             value: v.name,
             label: v.name
           }))
+          .reverse()
       )
     } else {
       resolve(null)

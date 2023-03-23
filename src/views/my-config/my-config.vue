@@ -366,7 +366,6 @@ async function getUserInfo() {
   }
 
   saveUserInfo(userInfo)
-  console.log('xx ', userInfo.repos_url)
   await getRepoList(userInfo.repos_url)
 }
 
@@ -499,6 +498,7 @@ const autoConfig = async () => {
   userConfigInfo.branchMode = BranchModeEnum.repoBranch
   userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
   userConfigInfo.dirMode = DirModeEnum.autoDir
+  userConfigInfo.dirList = []
   persistUserConfigInfo()
   await initEmptyRepo(userConfigInfo, false)
   loading.close()
