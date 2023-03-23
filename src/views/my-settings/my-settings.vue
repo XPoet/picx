@@ -105,19 +105,22 @@
       <li class="setting-item">
         <div class="img-encoder-title">选择图像编码器（压缩算法）：</div>
         <el-radio-group
+          class="img-encoder-group"
           :disabled="!userSettings.isCompress"
           v-model="userSettings.compressEncoder"
           @change="persistUserSettings"
         >
           <el-radio :label="compressEncoder.webP">
-            {{ compressEncoder.webP }} （压缩后图片格式为 webp，大多数现代浏览器支持）
+            {{ compressEncoder.webP }}
+            <span class="desc">压缩后图片格式为 webp，压缩率较高，大多数浏览器支持</span>
           </el-radio>
           <el-radio :label="compressEncoder.mozJPEG">
-            {{ compressEncoder.mozJPEG }} （压缩后图片格式为 jpg，兼容性最好）
+            {{ compressEncoder.mozJPEG }}
+            <span class="desc">压缩后图片格式为 jpg，兼容性最好</span>
           </el-radio>
           <el-radio :label="compressEncoder.avif">
             {{ compressEncoder.avif }}
-            （压缩后图片格式为 avif，压缩比最高，目前仅谷歌浏览器支持）
+            <span class="desc">压缩后图片格式为 avif，压缩率最高，目前仅谷歌浏览器支持</span>
           </el-radio>
         </el-radio-group>
       </li>

@@ -1,3 +1,5 @@
+@import "../../style/base.styl"
+
 .setting-title {
   margin 40rem 0 20rem 0
   font-weight bold
@@ -24,8 +26,13 @@
 
       .desc {
         margin-left 10rem
+
+        +picx-mobile() {
+          display none
+        }
       }
     }
+
 
     &.cdn {
       display flex
@@ -37,6 +44,7 @@
         cursor pointer
       }
     }
+
 
     &.last-child {
       margin-bottom 0
@@ -51,6 +59,17 @@
       margin-bottom 12rem
     }
 
+    .img-encoder-group {
+
+      .desc {
+        margin-left 10rem
+        color var(--third-text-color)
+        font-size 12rem
+      }
+    }
+
+
+
     :deep() .el-radio-group {
 
       display inline-block
@@ -58,6 +77,10 @@
       .el-radio {
         display block
       }
+    }
+
+    :deep() .el-switch {
+      user-select none
     }
   }
 }

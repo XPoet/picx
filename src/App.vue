@@ -55,7 +55,7 @@ export default defineComponent({
         'resize',
         throttle((e: any) => {
           elementPlusSizeHandle(e.target.innerWidth)
-        }, 1000)
+        }, 800)
       )
     })
 

@@ -32,7 +32,7 @@
                 {{ imgItem.filename.final }}
               </div>
               <div class="image-info">
-                <span class="file-size item" v-if="userSettings.isCompress">
+                <span class="file-size original-file-size item" v-if="userSettings.isCompress">
                   <del>
                     {{ getFileSize(imgItem.fileInfo.originSize) }}
                   </del>

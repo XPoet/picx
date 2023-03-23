@@ -1,3 +1,5 @@
+@import "../../style/base.styl"
+
 .selected-info-bar-box {
   display flex
   align-items center
@@ -8,6 +10,12 @@
 
   .info-item {
     margin-right 10rem
+
+    +picx-mobile() {
+      &.repo {
+        display none
+      }
+    }
 
     &:last-child {
       margin-right 0

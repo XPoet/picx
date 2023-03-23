@@ -138,6 +138,19 @@ $image-width = $info-item-height - ($info-item-border * 2)
                 background var(--third-background-color)
                 border-radius 2rem
 
+
+                +picx-mobile() {
+                  &.last-modified {
+                    display none
+                  }
+                }
+
+                +picx-tablet() {
+                  &.original-file-size {
+                    display none
+                  }
+                }
+
                 &.compressed {
                   color $compressed-file-background-color
                 }
