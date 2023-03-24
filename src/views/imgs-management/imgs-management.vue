@@ -1,4 +1,3 @@
-<!-- eslint-disable -->
 <template>
   <div class="page-container management-page-container">
     <div class="content-container">
@@ -7,10 +6,7 @@
           <selected-info-bar bar-type="management" />
         </div>
         <div class="right flex-start">
-          <el-tooltip
-            placement="top"
-            :content="listing ? '切换方块展示' : '切换列表展示'"
-          >
+          <el-tooltip placement="top" :content="listing ? '切换方块展示' : '切换列表展示'">
             <el-icon class="btn-icon" @click.stop="toggleListing">
               <Tickets v-if="listing" />
               <Menu v-if="!listing" />
@@ -32,20 +28,20 @@
           :key="renderKey"
         ></image-selector>
         <ul
-          class="image-list"
+          class="image-management-list"
           :style="{
             height: isShowBatchTools ? 'calc(100% - 50rem)' : '100%'
           }"
         >
-          <li class="image-item" v-if="userConfigInfo.viewDir !== '/'">
+          <li class="image-management-item" v-if="userConfigInfo.viewDir !== '/'">
             <folder-card mode="back" />
           </li>
-          <li class="image-item" v-for="(dir, index) in currentPathDirList" :key="index">
+          <li class="image-management-item" v-for="(dir, index) in currentPathDirList" :key="index">
             <folder-card :folder-obj="dir" />
           </li>
           <div class="clear"></div>
           <li
-            class="image-item"
+            class="image-management-item"
             v-for="(image, index) in currentPathImageList"
             :key="index"
             :style="{
@@ -71,7 +67,7 @@ import { computed, onMounted, watch, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { getRepoPathContent } from '@/common/api'
-import { filterDirContent, getDirContent } from '@/views/management/management.util'
+import { filterDirContent, getDirContent } from '@/views/imgs-management/imgs-management.util'
 
 import ImageCard from '@/components/image-card/image-card.vue'
 import SelectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
@@ -201,5 +197,5 @@ watch(
 </script>
 
 <style scoped lang="stylus">
-@import 'management.styl'
+@import './imgs-management.styl'
 </style>

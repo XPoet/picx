@@ -25,6 +25,7 @@
         </svg>
       </div>
     </el-tooltip>
+    <div class="text" v-if="mode === 'dir'">{{ folderObj.dir }}</div>
 
     <div class="icon" v-if="mode === 'back'">
       <svg
@@ -44,7 +45,6 @@
         ></path>
       </svg>
     </div>
-    <div class="text" v-if="mode === 'dir'">{{ folderObj.dir }}</div>
     <div class="text" v-if="mode === 'back'">双击后退</div>
   </div>
 </template>

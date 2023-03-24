@@ -1,4 +1,3 @@
-import { Store } from 'vuex'
 import { DirObject } from '@/store/modules/dir-image-list/types'
 
 function getContent(targetContent: any, dirList: string[], n: number): any {

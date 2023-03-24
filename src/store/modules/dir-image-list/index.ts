@@ -8,7 +8,7 @@ import {
   getUpLevelDirList,
   getUpOneLevelDir
 } from '@/store/modules/dir-image-list/utils'
-import { getDirContent } from '@/views/management/management.util'
+import { getDirContent } from '@/views/imgs-management/imgs-management.util'
 
 const initDirObject = () => {
   const dirObj = localStorage.getItem(LS_PICX_MANAGEMENT)
