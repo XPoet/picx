@@ -372,6 +372,7 @@ async function getUserInfo() {
 function selectRepo(repo: string) {
   userConfigInfo.branchList = []
   userConfigInfo.dirList = []
+  store.dispatch('DIR_IMAGE_LOGOUT')
   getBranchList(repo)
   persistUserConfigInfo()
 }

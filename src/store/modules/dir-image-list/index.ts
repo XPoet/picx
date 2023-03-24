@@ -254,8 +254,9 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
     },
 
     // 图床管理 - 退出登录
-    DIR_IMAGE_LOGOUT({ state }) {
+    DIR_IMAGE_LOGOUT({ state, dispatch }) {
       state.dirObject = createDirObject('/', '/')
+      dispatch('DIR_IMAGE_LIST_PERSIST')
     }
   },
 
