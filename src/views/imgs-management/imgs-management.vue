@@ -32,6 +32,7 @@
           :style="{
             height: isShowBatchTools ? 'calc(100% - 50rem)' : '100%'
           }"
+          v-contextmenu
         >
           <li class="image-management-item" v-if="userConfigInfo.viewDir !== '/'">
             <folder-card mode="back" />
@@ -41,9 +42,9 @@
             v-for="(dir, index) in currentPathDirList"
             :key="'folder-card-' + dir.dir + '-' + index"
           >
-            <folder-card :folder-obj="dir" v-contextmenu="{ dir: toUploadDir + dir.dir }" />
+            <folder-card :folder-obj="dir" v-contextmenu="dir.dir" />
           </li>
-          <div class="clear"></div>
+          <div style="width: 100%" />
           <li
             class="image-management-item"
             v-for="(image, index) in currentPathImageList"
@@ -85,9 +86,6 @@ const router = useRouter()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const loginStatus = computed(() => store.getters.getUserLoginStatus).value
 const dirObject = computed(() => store.getters.getDirObject).value
-const toUploadDir = computed(() =>
-  userConfigInfo.viewDir === '/' ? '' : `${userConfigInfo.viewDir}/`
-)
 
 const renderKey = ref(new Date().getTime()) // key for update image-selector component
 const loadingImageList = ref(false)

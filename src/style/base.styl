@@ -43,7 +43,6 @@ ul
 ol
 li {
   margin 0
-  padding 0
   list-style none
 }
 
@@ -89,7 +88,7 @@ li {
   border-top-right-radius $box-border-radius
 }
 
-.clear {
+.clearfix {
   &::after {
     display block
     clear both
@@ -103,18 +102,18 @@ li {
 .custom-contextmenu-container {
   position relative
   box-sizing border-box
+  padding 0
   color var(--el-text-color-regular)
   background var(--second-background-color)
   border 1rem solid var(--border-color)
   border-radius 2rem
 
-  .contextmenu-item {
+  .custom-contextmenu-item {
     position relative
     display flex
     align-items center
     justify-content flex-start
     box-sizing border-box
-    width 100rem
     padding 10rem
     background var(--second-background-color)
     cursor pointer

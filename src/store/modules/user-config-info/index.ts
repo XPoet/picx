@@ -132,7 +132,8 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
   getters: {
     getUserLoginStatus: (state: UserConfigInfoStateTypes): boolean => state.userConfigInfo.logined,
     getUserConfigInfo: (state: UserConfigInfoStateTypes): UserConfigInfoModel =>
-      state.userConfigInfo
+      state.userConfigInfo,
+    getUserViewDir: (state: UserConfigInfoStateTypes): string => state.userConfigInfo.viewDir
   }
 }
 
