@@ -4,6 +4,7 @@ import router from '@/router/index'
 import { key, store } from '@/store'
 import App from './App.vue'
 import 'element-plus/theme-chalk/dark/css-vars.css'
+import contextmenuDirective from '@/common/directive/contextmenu'
 
 if (import.meta.env.MODE === 'production') {
   // @ts-ignore
@@ -11,6 +12,7 @@ if (import.meta.env.MODE === 'production') {
 }
 
 const app = createApp(App)
+app.directive('contextmenu', contextmenuDirective)
 
 // import element-plus icons
 // eslint-disable-next-line no-restricted-syntax

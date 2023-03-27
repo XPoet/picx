@@ -100,4 +100,29 @@ li {
   }
 }
 
+.custom-contextmenu-container {
+  position relative
+  box-sizing border-box
+  color var(--el-text-color-regular)
+  background var(--second-background-color)
+  border 1rem solid var(--border-color)
+  border-radius 2rem
+
+  .contextmenu-item {
+    position relative
+    display flex
+    align-items center
+    justify-content flex-start
+    box-sizing border-box
+    width 100rem
+    padding 10rem
+    background var(--second-background-color)
+    cursor pointer
+
+    &:hover {
+      color var(--el-color-primary)
+    }
+  }
+}
+
 
