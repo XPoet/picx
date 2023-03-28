@@ -8,8 +8,9 @@
     @mouseleave="isShowDelBtn = false"
   >
     <div class="image-box">
-      <img data-fancybox="gallery" :src="imgUrl" />
+      <el-image :src="imgUrl" fit="cover" loading="lazy" lazy data-fancybox="gallery" />
     </div>
+
     <div class="info-box">
       <div class="image-info">
         <el-input
