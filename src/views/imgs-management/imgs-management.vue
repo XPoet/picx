@@ -12,7 +12,7 @@
               <Menu v-if="!listing" />
             </el-icon>
           </el-tooltip>
-          <el-tooltip placement="top" content="重新加载">
+          <el-tooltip placement="top" :content="'重新加载 ' + userConfigInfo.viewDir + ' 目录内容'">
             <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
               <Refresh />
             </el-icon>
