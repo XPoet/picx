@@ -9,14 +9,14 @@
         <div class="right flex-start">
           <el-tooltip
             placement="top"
-            :content="listing ? '切换方块展示' : '切换列表展示'"
+            :content="listing ? i18nConfig().changeQ : i18nConfig().changeList"
           >
             <el-icon class="btn-icon" @click.stop="toggleListing">
               <Tickets v-if="listing" />
               <Menu v-if="!listing" />
             </el-icon>
           </el-tooltip>
-          <el-tooltip placement="top" content="重新加载">
+          <el-tooltip placement="top" :content="i18nConfig().reLoad">
             <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
               <Refresh />
             </el-icon>
@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <div class="bottom" v-loading="loadingImageList" element-loading-text="加载中...">
+      <div class="bottom" v-loading="loadingImageList" :element-loading-text="i18nConfig().loading">
         <image-selector
           v-if="currentPathImageList.length"
           :currentDirImageList="currentPathImageList"
@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, watch, ref } from 'vue'
+import { computed, onMounted, watch, ref, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { getRepoPathContent } from '@/common/api'
@@ -79,6 +79,7 @@ import FolderCard from '@/components/folder-card/folder-card.vue'
 import ImageSelector from '@/components/image-selector/image-selector.vue'
 import { UploadedImageModel, DirModeEnum } from '@/common/model'
 
+const instance = getCurrentInstance()
 const store = useStore()
 const router = useRouter()
 
@@ -152,6 +153,15 @@ async function reloadCurrentDirContent() {
   loadingImageList.value = true
   await getRepoPathContent(userConfigInfo, viewDir)
   loadingImageList.value = false
+}
+
+const i18nConfig = () => {
+  return {
+    changeQ: instance?.proxy?.$t('changeQ'),
+    changeList: instance?.proxy?.$t('changeList'),
+    reLoad: instance?.proxy?.$t('reLoad'),
+    loading: instance?.proxy?.$t('loading')
+  }
 }
 
 onMounted(() => {

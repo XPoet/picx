@@ -32,7 +32,7 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="logout"> 退出登录 </el-dropdown-item>
+              <el-dropdown-item command="logout"> {{ $t('returnLogin') }} </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, computed, toRefs } from 'vue'
+import { defineComponent, reactive, computed, toRefs, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import siteCount from '@/components/site-count/site-count.vue'
@@ -57,9 +57,17 @@ export default defineComponent({
   setup() {
     const router = useRouter()
     const store = useStore()
+    // const instance = getCurrentInstance()
+
+    // const nameData = () => {
+    //   setTimeout(() => {
+    //     return instance?.proxy?.$t('header.right1')
+    //   }, 200)
+    // }
 
     const reactiveData = reactive({
       defaultUsername: '未登录',
+      // defaultUsername: nameData(),
       userConfigInfo: computed(() => store.state.userConfigInfoModule.userConfigInfo)
     })
 
