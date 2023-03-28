@@ -5,8 +5,8 @@ import { ContextmenuEnum, DirModeEnum } from '@/common/model'
 import { copyImageLink } from '@/utils'
 
 const menuClass = 'custom-contextmenu-container'
-let menuDom: any = null
-let isAddEventListenerByBtns: boolean = false
+let menuEle: any = null
+let isAddEventListenerOfContextmenu: boolean = false
 
 const contextmenuDirective: Directive = {
   mounted(el: any, binding: any) {
@@ -20,37 +20,51 @@ const contextmenuDirective: Directive = {
 
       const selectedDir = dir ? `${viewDir === '/' ? '' : `${viewDir}/`}${dir}` : viewDir
 
-      menuDom = document.querySelector(`.${menuClass}`)
+      menuEle = document.querySelector(`.${menuClass}`)
 
-      if (!menuDom) {
-        menuDom = document.createElement('ul')
-        menuDom.setAttribute('class', menuClass)
-        menuDom.style.position = 'fixed'
-        menuDom.style.zIndex = '1000'
-        menuDom.innerHTML = `<li class="custom-contextmenu-item upload-image"></li><li class="custom-contextmenu-item copy-link">复制图片链接</li>`
-        document.body.appendChild(menuDom)
+      if (!menuEle) {
+        menuEle = document.createElement('ul')
+        menuEle.setAttribute('class', menuClass)
+        menuEle.style.position = 'fixed'
+        menuEle.style.zIndex = '1000'
+        menuEle.innerHTML = `<li class="custom-contextmenu-item upload-image"></li><li class="custom-contextmenu-item copy-link">复制图片链接</li>`
+        document.body.appendChild(menuEle)
       }
 
-      const uploadBtnDom = menuDom?.querySelector('.upload-image')
-      const copyBtnDom = menuDom?.querySelector('.copy-link')
-
-      menuDom.style.top = `${e.clientY}px`
-      menuDom.style.left = `${e.clientX}px`
+      const uploadItem = menuEle?.querySelector('.upload-image')
+      const copyItem = menuEle?.querySelector('.copy-link')
 
       if (type === ContextmenuEnum.img) {
-        copyBtnDom.style.display = 'block'
-        uploadBtnDom.innerHTML = `从当前位置上传新图片`
+        copyItem.style.display = 'block'
+        uploadItem.innerHTML = `从当前位置上传新图片`
       } else {
-        copyBtnDom.style.display = 'none'
-        uploadBtnDom.innerHTML = `上传图片到 < ${
-          selectedDir === '/' ? '根目录' : selectedDir
-        } > 目录`
+        copyItem.style.display = 'none'
+        uploadItem.innerHTML = `上传图片到 < ${selectedDir === '/' ? '根目录' : selectedDir} > 目录`
       }
 
-      if (!isAddEventListenerByBtns) {
-        isAddEventListenerByBtns = true
+      let setLeft = e.clientX
+      let setTop = e.clientY
+      const menuWidth = menuEle.clientWidth
+      const menuHeight = menuEle.clientHeight
+      const documentWidth = document.documentElement.clientWidth
+      const documentHeight = document.documentElement.clientHeight
+      const offset = 6
 
-        uploadBtnDom?.addEventListener('click', async () => {
+      if (menuWidth + setLeft > documentWidth) {
+        setLeft = documentWidth - menuWidth - offset
+      }
+
+      if (menuHeight + setTop > documentHeight) {
+        setTop = documentHeight - menuHeight - offset
+      }
+
+      menuEle.style.top = `${setTop}px`
+      menuEle.style.left = `${setLeft}px`
+
+      if (!isAddEventListenerOfContextmenu) {
+        isAddEventListenerOfContextmenu = true
+
+        uploadItem?.addEventListener('click', async () => {
           const dirMode = selectedDir === '/' ? DirModeEnum.rootDir : DirModeEnum.repoDir
           const selectedDirList = selectedDir === '/' ? [] : selectedDir.split('/')
           await store.dispatch('SET_USER_CONFIG_INFO', {
@@ -61,7 +75,7 @@ const contextmenuDirective: Directive = {
           await router.push('/upload')
         })
 
-        copyBtnDom?.addEventListener('click', async () => {
+        copyItem?.addEventListener('click', async () => {
           const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
           const userSettings = computed(() => store.getters.getUserSettings).value
           copyImageLink(img, userConfigInfo, userSettings)
@@ -69,11 +83,11 @@ const contextmenuDirective: Directive = {
       }
 
       const closeMenu = () => {
-        if (menuDom) {
+        if (menuEle) {
           document.removeEventListener('click', closeMenu)
-          document.body.removeChild(menuDom)
-          menuDom = null
-          isAddEventListenerByBtns = false
+          document.body.removeChild(menuEle)
+          menuEle = null
+          isAddEventListenerOfContextmenu = false
         }
       }
       document.addEventListener('click', closeMenu)
