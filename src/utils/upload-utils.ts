@@ -8,6 +8,7 @@ import {
   uploadImageBlob,
   getBranchInfo
 } from '@/common/api'
+import { PICX_UPLOAD_IMG_DESC } from '@/common/constant'
 
 /**
  * 图片上传成功之后的处理
@@ -147,7 +148,7 @@ export function uploadImageToGitHub(
   const { selectedBranch: branch, email, owner } = userConfigInfo
 
   const data: any = {
-    message: 'Upload image via PicX(https://github.com/XPoet/picx)',
+    message: PICX_UPLOAD_IMG_DESC,
     branch,
     content: img.imgData.base64Content
   }
@@ -161,17 +162,18 @@ export function uploadImageToGitHub(
 
   img.uploadStatus.uploading = true
 
-  return new Promise((resolve) => {
-    uploadSingleImage(uploadUrlHandle(userConfigInfo, img), data, (uploadRes: any) => {
-      img.uploadStatus.uploading = false
-      if (uploadRes) {
-        const { name, sha, path, size } = uploadRes.content
-        uploadedHandle({ name, sha, path, size }, img, userConfigInfo)
-        store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
-        resolve(true)
-      } else {
-        resolve(false)
-      }
-    })
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    const uploadRes = await uploadSingleImage(uploadUrlHandle(userConfigInfo, img), data)
+    console.log('uploadSingleImage >> ', uploadRes)
+    img.uploadStatus.uploading = false
+    if (uploadRes) {
+      const { name, sha, path, size } = uploadRes.content
+      uploadedHandle({ name, sha, path, size }, img, userConfigInfo)
+      store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
+      resolve(true)
+    } else {
+      resolve(false)
+    }
   })
 }

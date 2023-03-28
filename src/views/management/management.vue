@@ -70,7 +70,7 @@
 import { computed, onMounted, watch, ref, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { getContentByRepoPath } from '@/common/api'
+import { getRepoPathContent } from '@/common/api'
 import { filterDirContent, getDirContent } from '@/views/management/management.util'
 
 import ImageCard from '@/components/image-card/image-card.vue'
@@ -103,14 +103,14 @@ async function dirContentHandle(dir: string) {
     const dirs = filterDirContent(dir, dirContent, 'dir')
     const images = filterDirContent(dir, dirContent, 'image')
     if (!dirs.length && !images.length) {
-      await getContentByRepoPath(dir)
+      await getRepoPathContent(userConfigInfo, dir)
     } else {
       currentPathDirList.value = dirs
       currentPathImageList.value = images
       store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
     }
   } else {
-    await getContentByRepoPath(dir)
+    await getRepoPathContent(userConfigInfo, dir)
   }
   loadingImageList.value = false
 }
@@ -135,7 +135,7 @@ async function initDirImageList() {
   }
 
   if (!dirObject.imageList.length && !dirObject.childrenDirs.length) {
-    await getContentByRepoPath(userConfigInfo.viewDir)
+    await getRepoPathContent(userConfigInfo, userConfigInfo.viewDir)
     return
   }
 
@@ -151,7 +151,7 @@ async function reloadCurrentDirContent() {
   const { viewDir } = userConfigInfo
   await store.dispatch('DIR_IMAGE_LIST_INIT_DIR', viewDir)
   loadingImageList.value = true
-  await getContentByRepoPath(viewDir)
+  await getRepoPathContent(userConfigInfo, viewDir)
   loadingImageList.value = false
 }
 

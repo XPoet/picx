@@ -1,75 +1,74 @@
-import { computed } from 'vue'
-import axios from '@/utils/axios'
 import { store } from '@/store'
 import { getFileSuffix, isImage, createManagementImageObject } from '@/utils'
-
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+import request from '@/utils/request'
+import { UserConfigInfoModel } from '@/common/model'
 
 /**
- * 获取指定路径（path）下的目录列表
+ * 获取指定路径 Path 下的目录列表
+ * @param userConfigInfo
  * @param path 路径
  */
-export const getDirListByPath = (path: string = '') => {
-  return new Promise((resolve) => {
-    axios
-      .get(`/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepo}/contents/${path}`, {
-        params: {
-          ref: userConfigInfo.selectedBranch
-        }
-      })
-      .then((res: any) => {
-        if (res && res.status === 200 && res.data.length > 0) {
-          resolve(
-            res.data
-              .filter((v: any) => v.type === 'dir')
-              .map((x: any) => ({
-                value: x.name,
-                label: x.name
-              }))
-          )
-        } else {
-          resolve(null)
-        }
-      })
-      .catch(() => {
-        resolve(null)
-      })
+export const getDirInfoList = (userConfigInfo: UserConfigInfoModel, path: string = '') => {
+  const { owner, selectedRepo: repo, selectedBranch: ref } = userConfigInfo
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    const tmpList = await request({
+      url: `/repos/${owner}/${repo}/contents/${path}`,
+      method: 'GET',
+      data: {
+        ref
+      }
+    })
+
+    if (tmpList && tmpList.length) {
+      resolve(
+        tmpList
+          .filter((v: any) => v.type === 'dir')
+          .map((x: any) => ({
+            value: x.name,
+            label: x.name
+          }))
+      )
+    } else {
+      resolve(null)
+    }
   })
 }
 
 /**
- * 获取指定路径（path）下的目录和图片
+ * 获取指定路径 Path 下的目录和图片
+ * @param userConfigInfo
  * @param path
  */
-export const getContentByRepoPath = (path: string = '') => {
-  return new Promise((resolve) => {
-    axios
-      .get(`/repos/${userConfigInfo.owner}/${userConfigInfo.selectedRepo}/contents/${path}`, {
-        params: {
-          ref: userConfigInfo.selectedBranch
-        }
-      })
-      .then((res: any) => {
-        if (res && res.status === 200 && res.data.length) {
-          res.data
-            .filter((v: any) => v.type === 'dir')
-            .forEach((x: any) => store.dispatch('DIR_IMAGE_LIST_ADD_DIR', x.path))
+export const getRepoPathContent = (userConfigInfo: UserConfigInfoModel, path: string = '') => {
+  const { owner, selectedRepo: repo, selectedBranch: ref } = userConfigInfo
 
-          setTimeout(() => {
-            res.data
-              .filter((v: any) => v.type === 'file' && isImage(getFileSuffix(v.name)))
-              .forEach((x: any) => {
-                store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', createManagementImageObject(x, path))
-              })
-          }, 100)
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    const res = await request({
+      url: `/repos/${owner}/${repo}/contents/${path}`,
+      method: 'GET',
+      data: {
+        ref
+      }
+    })
 
-          resolve(true)
-        } else {
-          resolve(null)
-        }
-      })
-      .catch(() => {
-        resolve(null)
-      })
+    if (res && res.length) {
+      res
+        .filter((v: any) => v.type === 'dir')
+        .forEach((x: any) => store.dispatch('DIR_IMAGE_LIST_ADD_DIR', x.path))
+
+      setTimeout(() => {
+        res
+          .filter((v: any) => v.type === 'file' && isImage(getFileSuffix(v.name)))
+          .forEach((x: any) => {
+            store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', createManagementImageObject(x, path))
+          })
+      }, 120)
+
+      resolve(true)
+    } else {
+      resolve(null)
+    }
   })
 }

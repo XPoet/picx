@@ -82,17 +82,17 @@ export async function deleteImageFromGitHub(
   imageObj.deleting = true
   const { owner, selectedRepo: repo } = userConfigInfo
   const { path, sha } = imageObj
-  return new Promise((resolve) => {
-    deleteSingleImage(owner, repo, path, sha, (res: any) => {
-      imageObj.deleting = false
-      if (res) {
-        resolve(true)
-        store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
-        store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
-      } else {
-        resolve(false)
-      }
-    })
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    const res = await deleteSingleImage(owner, repo, path, sha)
+    imageObj.deleting = false
+    if (res) {
+      resolve(true)
+      await store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
+      await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
+    } else {
+      resolve(false)
+    }
   })
 }
 

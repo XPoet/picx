@@ -79,7 +79,7 @@ export const copyImageLink = (
   if (link) {
     copyText(link, () => {
       if (autoCopy) {
-        ElMessage.success({ message: '该图片链接已自动复制到系统剪贴板', duration: 6000 })
+        ElMessage.success({ message: '图片链接已自动复制到系统剪贴板', duration: 6000 })
       } else {
         ElMessage.success(`${userSettings.imageLinkType.selected} 图片链接复制成功`)
       }
@@ -115,11 +115,11 @@ export const batchCopyImageLinks = (
     copyText(linksTxt, () => {
       if (autoCopy) {
         ElMessage.success({
-          message: `已成功将 ${uploadedImgList.length} 张图片链接复制到系统剪贴板`,
+          message: `成功复制 ${uploadedImgList.length} 张图片链接到系统剪贴板`,
           duration: 6000
         })
       } else {
-        ElMessage.success(`批量复制图片链接成功`)
+        ElMessage.success(`成功复制 ${uploadedImgList.length} 张图片链接`)
       }
     })
   } else {

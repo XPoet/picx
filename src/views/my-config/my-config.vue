@@ -13,10 +13,17 @@
         ></el-input>
       </el-form-item>
 
-      <el-form-item class="operation" v-if="!userConfigInfo.owner || !userConfigInfo.token">
-        <el-button plain type="primary" native-type="submit" @click.prevent="getUserInfo()">
-          {{ $t('imgBedConfig.buttonSubmit') }}
-        </el-button>
+      <el-form-item class="operation">
+        <el-tooltip placement="top" content="自动创建 GitHub 仓库">
+          <el-button plain type="primary" @click.prevent="autoConfig()">
+            {{ reConfig ? '' : '重新' }}一键自动配置
+          </el-button>
+        </el-tooltip>
+        <el-tooltip placement="top" content="选择现有的 GitHub 仓库">
+          <el-button plain type="primary" native-type="submit" @click.prevent="getUserInfo()">
+            {{ reConfig ? '' : '重新' }}手动配置
+          </el-button>
+        </el-tooltip>
       </el-form-item>
     </el-form>
 
@@ -41,8 +48,8 @@
         <el-select
           v-model="userConfigInfo.selectedRepo"
           :filterable="true"
-          style="width: 100%"
-          :placeholder="configPage().pleaseSelectRepo"
+          :style="{ width: 'calc(100% - ' + refreshBoxWidth + 'rem)' }"
+          placeholder="请选择图床仓库..."
           @change="selectRepo"
         >
           <el-option
@@ -53,6 +60,7 @@
           >
           </el-option>
         </el-select>
+        <refresh-config :box-width="refreshBoxWidth" data-type="repo" />
       </el-form-item>
     </el-form>
 
@@ -86,16 +94,16 @@
       <!-- 选择分支 -->
       <el-form-item
         v-if="
-          userConfigInfo.branchList.length > 1 &&
+          userConfigInfo.branchList.length &&
           userConfigInfo.branchMode === BranchModeEnum.repoBranch
         "
         :label="configPage().chooseBranch"
       >
         <el-select
           v-model="userConfigInfo.selectedBranch"
-          filterable
-          style="width: 100%"
-          :placeholder="configPage().pleaseChooseBranch"
+          :filterable="true"
+          :style="{ width: 'calc(100% - ' + refreshBoxWidth + 'rem)' }"
+          placeholder="请选择分支..."
           @change="selectBranch"
         >
           <el-option
@@ -106,6 +114,7 @@
           >
           </el-option>
         </el-select>
+        <refresh-config :box-width="refreshBoxWidth" data-type="branch" />
       </el-form-item>
 
       <!-- 新建分支 -->
@@ -211,16 +220,18 @@
 import { computed, ref, watch, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { DirModeEnum, BranchModeEnum, BranchModel, ElementPlusSizeEnum } from '@/common/model'
+import { BranchModeEnum, BranchModel, DirModeEnum, ElementPlusSizeEnum } from '@/common/model'
 import { formatDatetime } from '@/utils'
 import {
+  createRepo,
   getBranchInfoList,
-  getDirListByPath,
   getRepoInfoList,
-  getUserInfoByToken,
+  getGitHubUserInfo,
+  createNewBranch,
   initEmptyRepo,
-  initBranch
+  getDirInfoList
 } from '@/common/api'
+import { PICX_REPO_INIT_BARNCH, PICX_REPO_NAME } from '@/common/constant'
 
 const instance = getCurrentInstance()
 const router = useRouter()
@@ -229,10 +240,12 @@ const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const logined = computed(() => store.getters.getUserLoginStatus).value
 const userSettings = computed(() => store.getters.getUserSettings).value
+const reConfig = computed(() => !userConfigInfo.token || !userConfigInfo.owner)
 
 const loading = ref(false)
 const dirLoading = ref(false)
 const branchLoading = ref(false)
+const refreshBoxWidth = ref(32)
 
 const labelPosition = computed(() => {
   return userSettings.elementPlusSize === ElementPlusSizeEnum.large ? 'right' : 'top'
@@ -254,35 +267,6 @@ function saveUserInfo(userInfo: any) {
   userConfigInfo.email = userInfo.email
   userConfigInfo.avatarUrl = userInfo.avatar_url
   persistUserConfigInfo()
-}
-
-function getRepoList(repoUrl: string) {
-  getRepoInfoList(repoUrl, (repoList: any[]) => {
-    loading.value = false
-    if (repoList) {
-      userConfigInfo.repoList = []
-      // eslint-disable-next-line no-restricted-syntax
-      for (const repo of repoList) {
-        if (!repo.fork && !repo.private) {
-          userConfigInfo.repoList.push({
-            value: repo.name,
-            label: repo.name,
-            desc: repo.description
-          })
-        }
-      }
-      persistUserConfigInfo()
-    } else {
-      ElMessage.error('仓库信息获取失败，请稍后重试')
-    }
-  })
-}
-
-async function getDirList() {
-  dirLoading.value = true
-  userConfigInfo.dirList = await getDirListByPath()
-  persistUserConfigInfo()
-  dirLoading.value = false
 }
 
 function dirModeChange(dirMode: DirModeEnum) {
@@ -321,54 +305,73 @@ function dirModeChange(dirMode: DirModeEnum) {
   persistUserConfigInfo()
 }
 
-function getBranchList(repo: string) {
-  branchLoading.value = true
-  const { owner, dirMode } = userConfigInfo
-  getBranchInfoList(owner, repo, async (branchInfoList) => {
-    if (branchInfoList) {
-      branchLoading.value = false
-      if (branchInfoList.length > 0) {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const item of branchInfoList) {
-          userConfigInfo.branchList.push({
-            value: item.name,
-            label: item.name
-          })
-        }
-        userConfigInfo.branchList.reverse()
-        userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
-        userConfigInfo.branchMode = BranchModeEnum.repoBranch
-        await getDirList()
-      } else {
-        userConfigInfo.selectedBranch = 'master'
-        userConfigInfo.branchMode = BranchModeEnum.newBranch
-
-        // 当分支列表为空时，判定该仓库为空仓库，需要初始化
-        await initEmptyRepo(userConfigInfo)
-      }
-      dirModeChange(dirMode)
-      persistUserConfigInfo()
-    } else {
-      ElMessage.error('分支信息获取失败，请稍后再试')
-    }
-  })
+async function getRepoList(repoUrl: string) {
+  const repoList = await getRepoInfoList(repoUrl)
+  console.log('getRepoInfoList >> ', repoList)
+  loading.value = false
+  if (repoList) {
+    userConfigInfo.repoList = repoList
+    persistUserConfigInfo()
+  } else {
+    ElMessage.error('仓库信息获取失败，请稍后重试')
+  }
 }
 
-function getUserInfo() {
-  if (userConfigInfo.token) {
-    loading.value = true
-    getUserInfoByToken(userConfigInfo.token, (userInfo) => {
-      loading.value = false
-      if (userInfo) {
-        saveUserInfo(userInfo)
-        getRepoList(userInfo.repos_url)
-      } else {
-        ElMessage.error('用户信息获取失败，请稍后重试')
-      }
-    })
-  } else {
-    ElMessage.warning('Token 不能为空！')
+async function getDirList() {
+  dirLoading.value = true
+  const dirList = await getDirInfoList(userConfigInfo)
+  console.log('getDirInfoList >> ', dirList)
+  dirLoading.value = false
+  if (dirList) {
+    userConfigInfo.dirList = dirList
   }
+  persistUserConfigInfo()
+}
+
+async function getBranchList(repo: string) {
+  branchLoading.value = true
+  const { owner, dirMode } = userConfigInfo
+  const branchInfoList = await getBranchInfoList(owner, repo)
+  console.log('getBranchInfoList >> ', branchInfoList)
+  branchLoading.value = false
+  if (branchInfoList) {
+    if (branchInfoList.length > 0) {
+      userConfigInfo.branchList = branchInfoList
+      userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
+      userConfigInfo.branchMode = BranchModeEnum.repoBranch
+      await getDirList()
+    } else {
+      userConfigInfo.selectedBranch = PICX_REPO_INIT_BARNCH
+      userConfigInfo.branchMode = BranchModeEnum.newBranch
+
+      // 当分支列表为空时，判定该仓库为空仓库，需要初始化
+      await initEmptyRepo(userConfigInfo)
+    }
+    dirModeChange(dirMode)
+    persistUserConfigInfo()
+  } else {
+    ElMessage.error('分支信息获取失败，请稍后再试')
+  }
+}
+
+async function getUserInfo() {
+  if (!userConfigInfo.token) {
+    ElMessage.error('GitHub Token 不能为空！')
+    return
+  }
+
+  loading.value = true
+  const userInfo = await getGitHubUserInfo(userConfigInfo.token)
+  console.log('getGitHubUserInfo >> ', userInfo)
+
+  if (!userInfo) {
+    ElMessage.error('用户信息获取失败，请确认 Token 是否正确')
+    return
+  }
+
+  saveUserInfo(userInfo)
+  console.log('xx ', userInfo.repos_url)
+  await getRepoList(userInfo.repos_url)
 }
 
 function selectRepo(repo: string) {
@@ -447,7 +450,7 @@ const onNewBranchInputBlur = () => {
   const list = userConfigInfo.branchList
   if (nb) {
     if (!list.find((x: BranchModel) => x.value === nb)) {
-      initBranch(userConfigInfo, nb, () => {
+      createNewBranch(userConfigInfo, nb, () => {
         ElMessage.success(`新建 ${nb} 成功`)
         userConfigInfo.branchList.push({ value: nb, label: nb })
       })
@@ -497,6 +500,53 @@ const configPage = () => {
     loadMsg: instance?.proxy?.$t('loadMsg'),
     inNew: instance?.proxy?.$t('inNew')
   }
+
+// 一键自动配置图床
+const autoConfig = async () => {
+  const { token } = userConfigInfo
+
+  if (!token) {
+    ElMessage.error('GitHub Token 不能为空！')
+    return
+  }
+
+  const loading = ElLoading.service({
+    lock: true,
+    text: '正在自动配置...'
+  })
+
+  const userInfo = await getGitHubUserInfo(userConfigInfo.token)
+  console.log('getGitHubUserInfo >> ', userInfo)
+
+  if (!userInfo) {
+    loading.close()
+    ElMessage.error('用户信息获取失败，请确认 Token 是否正确')
+    return
+  }
+
+  saveUserInfo(userInfo)
+
+  const repoInfo = await createRepo(userConfigInfo.token)
+  console.log('createRepo >> ', repoInfo)
+
+  if (!repoInfo) {
+    loading.close()
+    ElMessage.error('自动创建 GitHub 仓库失败，请稍后再试！')
+    return
+  }
+
+  userConfigInfo.repoList = [{ value: PICX_REPO_NAME, label: PICX_REPO_NAME }]
+  userConfigInfo.selectedRepo = PICX_REPO_NAME
+  userConfigInfo.branchList = [{ value: PICX_REPO_INIT_BARNCH, label: PICX_REPO_INIT_BARNCH }]
+  userConfigInfo.selectedBranch = PICX_REPO_INIT_BARNCH
+  userConfigInfo.branchMode = BranchModeEnum.repoBranch
+  userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
+  userConfigInfo.dirMode = DirModeEnum.autoDir
+  persistUserConfigInfo()
+  await initEmptyRepo(userConfigInfo, false)
+  loading.close()
+  ElMessage.success('自动配置成功')
+  await router.push('/upload')
 }
 
 watch(

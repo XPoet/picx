@@ -1,5 +1,5 @@
-import axios from '@/utils/axios'
 import { UserConfigInfoModel } from '@/common/model'
+import request from '@/utils/request'
 
 /**
  * 获取分支信息列表
@@ -8,20 +8,9 @@ import { UserConfigInfoModel } from '@/common/model'
  * @param branch
  */
 export const getBranchInfo = (owner: string, repo: string, branch: string) => {
-  return new Promise((resolve) => {
-    axios
-      .get(`/repos/${owner}/${repo}/branches/${branch}`)
-      .then(async (res: any) => {
-        console.log('getBranchInfo >> ', res)
-        if (res && res.status === 200) {
-          resolve(res.data)
-        } else {
-          resolve(null)
-        }
-      })
-      .catch(() => {
-        resolve(null)
-      })
+  return request({
+    url: `/repos/${owner}/${repo}/branches/${branch}`,
+    method: 'GET'
   })
 }
 
@@ -29,26 +18,28 @@ export const getBranchInfo = (owner: string, repo: string, branch: string) => {
  * 获取分支信息列表
  * @param owner
  * @param repo
- * @param callback
  */
-export const getBranchInfoList = <T extends (...args: any) => void>(
-  owner: string,
-  repo: string,
-  callback: T
-) => {
-  axios
-    .get(`/repos/${owner}/${repo}/branches`)
-    .then(async (res: any) => {
-      console.log('getBranchList >> ', res)
-      if (res && res.status === 200) {
-        callback(res.data)
-      } else {
-        callback(null)
-      }
+export const getBranchInfoList = (owner: string, repo: string): Promise<any> => {
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    const tmpList: any[] = await request({
+      url: `/repos/${owner}/${repo}/branches`,
+      method: 'GET'
     })
-    .catch(() => {
-      callback(null)
-    })
+
+    if (tmpList && tmpList.length) {
+      resolve(
+        tmpList
+          .filter((x) => !x.protected)
+          .map((v) => ({
+            value: v.name,
+            label: v.name
+          }))
+      )
+    } else {
+      resolve(null)
+    }
+  })
 }
 
 /**
@@ -57,7 +48,7 @@ export const getBranchInfoList = <T extends (...args: any) => void>(
  * @param branch
  * @param callback
  */
-export const initBranch = async (
+export const createNewBranch = async (
   userConfigInfo: UserConfigInfoModel,
   branch: string,
   callback: any
@@ -71,10 +62,13 @@ export const initBranch = async (
   try {
     // 1、获取现有分支的 sha
     let sha = ''
-    const res1 = await axios.get(`/repos/${owner}/${repo}/git/refs/heads/${branchList[0].value}`)
-    console.log('res 1 - ', res1)
-    if (res1?.status === 200) {
-      sha = res1.data.object.sha
+    const res1 = await request({
+      url: `/repos/${owner}/${repo}/git/refs/heads/${branchList[0].value}`,
+      method: 'GET'
+    })
+
+    if (res1) {
+      sha = res1.object.sha
     }
 
     if (!sha) {
@@ -85,14 +79,17 @@ export const initBranch = async (
 
     // 2、新建分支
     let newBranchSha = ''
-    const res2 = await axios.post(`/repos/${owner}/${repo}/git/refs`, {
-      ref: `refs/heads/${branch}`, // 新分支的名称
-      sha
+    const res2 = await request({
+      url: `/repos/${owner}/${repo}/git/refs`,
+      method: 'POST',
+      params: {
+        ref: `refs/heads/${branch}`, // 新分支的名称
+        sha
+      }
     })
-    console.log('res2 - ', res2)
 
-    if (res2?.status === 201) {
-      newBranchSha = res2.data.object.sha
+    if (res2) {
+      newBranchSha = res2.object.sha
     }
 
     if (!newBranchSha) {
@@ -102,13 +99,16 @@ export const initBranch = async (
     }
 
     // 3、强制更新分支
-    const res3 = await axios.patch(`/repos/${owner}/${repo}/git/refs/heads/${branch}`, {
-      force: true,
-      sha: newBranchSha
+    const res3 = await request({
+      url: `/repos/${owner}/${repo}/git/refs/heads/${branch}`,
+      method: 'PATCH',
+      params: {
+        force: true,
+        sha: newBranchSha
+      }
     })
-    console.log('res3 - ', res3)
 
-    if (res3.status === 200) {
+    if (res3) {
       callback()
     }
 

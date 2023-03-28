@@ -2,22 +2,25 @@
   <div class="page-container settings-page-container">
     <div class="setting-title">{{ $t('uptitle1') }}</div>
     <ul class="setting-list">
-      <li class="setting-item">
+      <li class="setting-item upload-settings">
         <el-switch
           v-model="userSettings.defaultHash"
           @change="persistUserSettings"
           :active-text="i18nUploadConfig().upli1"
         ></el-switch>
+        <span class="desc">上传前自动给图片名加上哈希码，确保图片名唯一，强烈建议开启</span>
       </li>
-      <li class="setting-item">
+      <li class="setting-item upload-settings">
         <el-switch
           v-model="userSettings.defaultPrefix"
           @change="persistUserSettings"
           :active-text="i18nUploadConfig().upli2"
         ></el-switch>
+        <span class="desc">上传前给图片名加上配置的前缀，示例：abc-image.jpg，abc- 为前缀</span>
+      </li>
+      <li class="setting-item upload-settings" v-if="userSettings.defaultPrefix">
         <el-input
           class="prefix-input"
-          v-if="userSettings.defaultPrefix"
           v-model="userSettings.prefixName"
           :placeholder="i18nUploadConfig().upli3"
           @input="persistUserSettings"
@@ -25,7 +28,7 @@
           autofocus
         ></el-input>
       </li>
-      <li class="setting-item">
+      <li class="setting-item upload-settings">
         <el-switch
           v-model="userSettings.enableImageLinkFormat"
           @change="persistUserSettings"
@@ -35,6 +38,9 @@
             i18nUploadConfig().upli5
           "
         ></el-switch>
+        <span class="desc">
+          上传成功后复制的图片链接时启用 {{ userSettings.imageLinkFormat.selected }} 格式
+        </span>
       </li>
     </ul>
 
