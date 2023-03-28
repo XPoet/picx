@@ -20,39 +20,21 @@
   </main>
 </template>
 
-<script lang="ts">
-import { defineComponent, onMounted } from 'vue'
-import headerContent from '@/components/header-content/header-content.vue'
-import navContent from '@/components/nav-content/nav-content.vue'
+<script setup lang="ts">
+import { onMounted } from 'vue'
+import HeaderContent from '@/components/header-content/header-content.vue'
+import NavContent from '@/components/nav-content/nav-content.vue'
 import { useStore } from '@/store'
 import userConfigInfoModel from '@/utils/set-theme-mode'
 
-export default defineComponent({
-  name: 'main-container',
+const store = useStore()
 
-  components: {
-    headerContent,
-    navContent
-  },
+const changeUploadAreaActive = (e: any) => {
+  store.commit('CHANGE_UPLOAD_AREA_ACTIVE', e.target.classList.contains('active-upload'))
+}
 
-  setup() {
-    const store = useStore()
-
-    const changeUploadAreaActive = (e: any) => {
-      store.commit(
-        'CHANGE_UPLOAD_AREA_ACTIVE',
-        e.target.classList.contains('active-upload')
-      )
-    }
-
-    onMounted(() => {
-      userConfigInfoModel()
-    })
-
-    return {
-      changeUploadAreaActive
-    }
-  }
+onMounted(() => {
+  userConfigInfoModel()
 })
 </script>
 
