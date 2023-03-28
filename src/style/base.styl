@@ -102,7 +102,7 @@ li {
 .custom-contextmenu-container {
   position relative
   box-sizing border-box
-  padding 0
+  padding 5rem 0
   color var(--el-text-color-regular)
   background var(--second-background-color)
   border 1rem solid var(--border-color)
@@ -114,9 +114,13 @@ li {
     align-items center
     justify-content flex-start
     box-sizing border-box
-    padding 10rem
+    padding 5rem 10rem
     background var(--second-background-color)
     cursor pointer
+
+    &.copy-link {
+      display none
+    }
 
     &:hover {
       color var(--el-color-primary)

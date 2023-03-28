@@ -12,7 +12,9 @@ export interface BranchModel {
 }
 
 export enum BranchModeEnum {
+  // eslint-disable-next-line no-unused-vars
   newBranch = 'newBranch', // 新建分支
+  // eslint-disable-next-line no-unused-vars
   repoBranch = 'repoBranch' // 窗口分支
 }
 
@@ -22,9 +24,13 @@ export interface DirModel {
 }
 
 export enum DirModeEnum {
+  // eslint-disable-next-line no-unused-vars
   autoDir = 'autoDir', // 自动目录
+  // eslint-disable-next-line no-unused-vars
   newDir = 'newDir', // 新建目录
+  // eslint-disable-next-line no-unused-vars
   rootDir = 'rootDir', // 根目录
+  // eslint-disable-next-line no-unused-vars
   repoDir = 'repoDir' // 仓库目录
 }
 

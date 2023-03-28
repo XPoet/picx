@@ -32,7 +32,7 @@
           :style="{
             height: isShowBatchTools ? 'calc(100% - 50rem)' : '100%'
           }"
-          v-contextmenu
+          v-contextmenu="{ type: ContextmenuEnum.parentDir }"
         >
           <li class="image-management-item" v-if="userConfigInfo.viewDir !== '/'">
             <folder-card mode="back" />
@@ -41,8 +41,9 @@
             class="image-management-item"
             v-for="(dir, index) in currentPathDirList"
             :key="'folder-card-' + dir.dir + '-' + index"
+            v-contextmenu="{ type: ContextmenuEnum.childDir, dir: dir.dir }"
           >
-            <folder-card :folder-obj="dir" v-contextmenu="dir.dir" />
+            <folder-card :folder-obj="dir" />
           </li>
           <div style="width: 100%" />
           <li
@@ -53,6 +54,7 @@
               width: listing ? '50%' : '230rem',
               height: listing ? '80rem' : '240rem'
             }"
+            v-contextmenu="{ type: ContextmenuEnum.img, img: image }"
           >
             <image-card
               :image-obj="image"
@@ -78,7 +80,7 @@ import ImageCard from '@/components/image-card/image-card.vue'
 import SelectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 import FolderCard from '@/components/folder-card/folder-card.vue'
 import ImageSelector from '@/components/image-selector/image-selector.vue'
-import { UploadedImageModel, DirModeEnum } from '@/common/model'
+import { UploadedImageModel, DirModeEnum, ContextmenuEnum } from '@/common/model'
 
 const store = useStore()
 const router = useRouter()
