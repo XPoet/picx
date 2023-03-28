@@ -1,28 +1,28 @@
 <template>
   <div class="tutorials-step-3">
-    <h3>进行图床配置（绑定 GitHub Token、存储图片的仓库和目录）</h3>
-    <p>1、填写 Token，自动获取该用户下的仓库</p>
+    <h3>{{ $t('useCourse.step2.title') }}</h3>
+    <p>{{ $t('useCourse.step2.content1') }}</p>
     <img
       src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/image.4g8q5m7c8sq0.png"
     />
     <br />
-    <p>2、在仓库的下拉列表中，选择一个作为图床的仓库</p>
+    <p>{{ $t('useCourse.step2.content2') }}</p>
     <img
       src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/image.746g75olruk0.png"
     />
     <br />
-    <p>3、选择或新建仓库分支</p>
-    <p>4、选择一种目录方式（目录即仓库里存放图片的文件夹）</p>
+    <p>{{ $t('useCourse.step2.content3') }}</p>
+    <p>{{ $t('useCourse.step2.content4') }}</p>
     <img
       src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/image.5ydmhgxjhgo0.png"
     />
 
     <div class="dir-desc-box">
       <ul>
-        <li>新建目录：需手动输入一个新目录。</li>
-        <li>根目录：图片将直接存储在仓库根目录下。</li>
-        <li>自动目录：自动生成日期格式 YYYYMMDD 的目录。例如：20200909</li>
-        <li>选择仓库目录：自动获取仓库下所有目录，选择一个即可。</li>
+        <li>{{ $t('useCourse.step2.li1') }}</li>
+        <li>{{ $t('useCourse.step2.li2') }}</li>
+        <li>{{ $t('useCourse.step2.li3') }}</li>
+        <li>{{ $t('useCourse.step2.li4') }}</li>
       </ul>
     </div>
   </div>

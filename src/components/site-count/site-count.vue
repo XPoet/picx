@@ -1,9 +1,9 @@
 <template>
   <span class="site-count" ref="siteCountDom" v-show="isShow">
-    超过
+    {{ $t('header.left1') }}
     <span id="busuanzi_value_site_uv" class="uv" v-show="isuv"></span>
     <span id="busuanzi_value_site_pv" class="pv" v-show="!isuv"></span>
-    次被使用
+    {{ $t('header.left2') }}
   </span>
 </template>
 
@@ -20,7 +20,7 @@ export default defineComponent({
     }
   },
 
-  setup(props, ctx) {
+  setup(props) {
     const siteCountDom: Ref = ref<null | HTMLElement>(null)
     const isShow: Ref<boolean> = ref(false)
 

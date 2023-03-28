@@ -4,6 +4,7 @@ import router from '@/router/index'
 import { key, store } from '@/store'
 import App from './App.vue'
 import 'element-plus/theme-chalk/dark/css-vars.css'
+import i18n from '@/plugins/i18n'
 import contextmenuDirective from '@/common/directive/contextmenu'
 
 if (import.meta.env.MODE === 'production') {
@@ -20,4 +21,4 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 // @ts-ignore
-app.use(router).use(store, key).mount('#app')
+app.use(router).use(store, key).use(i18n).mount('#app')
