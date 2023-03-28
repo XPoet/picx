@@ -15,12 +15,23 @@
 
       <el-form-item class="operation">
         <el-tooltip placement="top" content="自动创建 GitHub 仓库">
-          <el-button plain type="primary" @click.prevent="autoConfig()">
+          <el-button
+            plain
+            :disabled="btnDisabled"
+            type="primary"
+            @click.prevent="oneClickAutoConfig()"
+          >
             {{ reConfig ? '' : '重新' }}一键自动配置
           </el-button>
         </el-tooltip>
         <el-tooltip placement="top" content="选择现有的 GitHub 仓库">
-          <el-button plain type="primary" native-type="submit" @click.prevent="getUserInfo()">
+          <el-button
+            :disabled="btnDisabled"
+            plain
+            type="primary"
+            native-type="submit"
+            @click.prevent="getUserInfo()"
+          >
             {{ reConfig ? '' : '重新' }}手动配置
           </el-button>
         </el-tooltip>
@@ -32,7 +43,7 @@
       label-width="70rem"
       :label-position="labelPosition"
       v-if="userConfigInfo.token && userConfigInfo.owner"
-      v-loading="loading"
+      v-loading="userInfoLoading"
       element-loading-text="正在加载用户信息..."
     >
       <el-form-item v-if="userConfigInfo.owner" label="用户名">
@@ -202,10 +213,22 @@
     <!-- 操作（重置、确认配置） -->
     <el-form label-width="70rem" v-if="userConfigInfo.token" :label-position="labelPosition">
       <el-form-item class="operation">
-        <el-button plain type="warning" @click="reset()" v-if="userConfigInfo.owner">
+        <el-button
+          plain
+          :disabled="btnDisabled"
+          type="warning"
+          @click="resetConfig()"
+          v-if="userConfigInfo.owner"
+        >
           重置
         </el-button>
-        <el-button plain type="success" @click="goUpload" v-if="userConfigInfo.selectedRepo">
+        <el-button
+          plain
+          :disabled="btnDisabled"
+          type="success"
+          @click="goUploadPage()"
+          v-if="userConfigInfo.selectedRepo"
+        >
           确认
         </el-button>
       </el-form-item>
@@ -215,12 +238,10 @@
 
 <script lang="ts" setup>
 import { computed, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { BranchModeEnum, BranchModel, DirModeEnum, ElementPlusSizeEnum } from '@/common/model'
 import { formatDatetime } from '@/utils'
 import {
-  createRepo,
   getBranchInfoList,
   getRepoInfoList,
   getGitHubUserInfo,
@@ -228,44 +249,38 @@ import {
   initEmptyRepo,
   getDirInfoList
 } from '@/common/api'
-import { INIT_REPO_BARNCH, INIT_REPO_NAME } from '@/common/constant'
+import { INIT_REPO_BARNCH } from '@/common/constant'
+import {
+  goUploadPage,
+  persistUserConfigInfo,
+  initReHandConfig,
+  resetConfig,
+  saveUserInfo,
+  oneClickAutoConfig
+} from '@/views/my-config/my-config.util'
 
-const router = useRouter()
 const store = useStore()
+
+const userInfoLoading = ref(false)
+const dirLoading = ref(false)
+const branchLoading = ref(false)
+const refreshBoxWidth = ref(32)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const logined = computed(() => store.getters.getUserLoginStatus).value
 const userSettings = computed(() => store.getters.getUserSettings).value
 const reConfig = computed(() => !userConfigInfo.token || !userConfigInfo.owner)
-
-const loading = ref(false)
-const dirLoading = ref(false)
-const branchLoading = ref(false)
-const refreshBoxWidth = ref(32)
-
 const labelPosition = computed(() => {
   return userSettings.elementPlusSize === ElementPlusSizeEnum.large ? 'right' : 'top'
 })
+const btnDisabled = computed(() => userInfoLoading.value || dirLoading.value || branchLoading.value)
 
 const newDirInputRef = ref<null | HTMLElement>(null)
 const newBranchInputRef = ref<null | HTMLElement>(null)
 const newBranchInputVal = ref<string>('')
 const repoDirCascaderKey = ref<string>('repoDirCascaderKey')
 
-function persistUserConfigInfo() {
-  store.dispatch('USER_CONFIG_INFO_PERSIST')
-}
-
-function saveUserInfo(userInfo: any) {
-  userConfigInfo.logined = true
-  userConfigInfo.owner = userInfo.login
-  userConfigInfo.name = userInfo.name
-  userConfigInfo.email = userInfo.email
-  userConfigInfo.avatarUrl = userInfo.avatar_url
-  persistUserConfigInfo()
-}
-
-function dirModeChange(dirMode: DirModeEnum) {
+const dirModeChange = (dirMode: DirModeEnum) => {
   switch (dirMode) {
     case DirModeEnum.rootDir:
       // 根目录
@@ -304,7 +319,7 @@ function dirModeChange(dirMode: DirModeEnum) {
 async function getRepoList(repoUrl: string) {
   const repoList = await getRepoInfoList(repoUrl)
   console.log('getRepoInfoList >> ', repoList)
-  loading.value = false
+  userInfoLoading.value = false
   if (repoList) {
     userConfigInfo.repoList = repoList
     persistUserConfigInfo()
@@ -320,6 +335,32 @@ async function getDirList() {
   dirLoading.value = false
   if (dirList) {
     userConfigInfo.dirList = dirList
+  }
+  persistUserConfigInfo()
+}
+
+const branchModeChange = (mode: BranchModeEnum) => {
+  const selBranch = userConfigInfo.selectedBranch
+  const bv = userConfigInfo.branchList[0].value
+
+  switch (mode) {
+    case BranchModeEnum.newBranch:
+      userConfigInfo.dirMode = DirModeEnum.newDir
+      userConfigInfo.selectedBranch = ''
+      userConfigInfo.selectedDir = ''
+      newBranchInputRef.value?.focus()
+      break
+
+    case BranchModeEnum.repoBranch:
+      if (selBranch !== bv) {
+        userConfigInfo.selectedBranch = bv
+        getDirList()
+      }
+      break
+
+    default:
+      userConfigInfo.selectedBranch = ''
+      break
   }
   persistUserConfigInfo()
 }
@@ -356,7 +397,11 @@ async function getUserInfo() {
     return
   }
 
-  loading.value = true
+  if (!reConfig.value) {
+    initReHandConfig()
+  }
+
+  userInfoLoading.value = true
   const userInfo = await getGitHubUserInfo(userConfigInfo.token)
   console.log('getGitHubUserInfo >> ', userInfo)
 
@@ -386,61 +431,6 @@ async function selectBranch(branch: string) {
   persistUserConfigInfo()
 }
 
-function branchModeChange(mode: BranchModeEnum) {
-  const selBranch = userConfigInfo.selectedBranch
-  const bv = userConfigInfo.branchList[0].value
-
-  switch (mode) {
-    case BranchModeEnum.newBranch:
-      userConfigInfo.dirMode = DirModeEnum.newDir
-      userConfigInfo.selectedBranch = ''
-      userConfigInfo.selectedDir = ''
-      newBranchInputRef.value?.focus()
-      break
-
-    case BranchModeEnum.repoBranch:
-      if (selBranch !== bv) {
-        userConfigInfo.selectedBranch = bv
-        getDirList()
-      }
-      break
-
-    default:
-      userConfigInfo.selectedBranch = ''
-      break
-  }
-  persistUserConfigInfo()
-}
-
-function reset() {
-  loading.value = false
-  dirLoading.value = false
-  branchLoading.value = false
-  store.dispatch('LOGOUT')
-}
-
-async function goUpload() {
-  const { selectedDir, dirMode } = userConfigInfo
-  let warningMessage: string = '目录不能为空！'
-
-  if (selectedDir === '') {
-    switch (dirMode) {
-      case DirModeEnum.newDir:
-        warningMessage = '请在输入框输入一个新目录！'
-        break
-      case DirModeEnum.repoDir:
-        warningMessage = `请选择 ${userConfigInfo.selectedRepo} 仓库下的一个目录！`
-        break
-      default:
-        warningMessage = '请在输入框输入一个新目录！'
-        break
-    }
-    ElMessage.warning(warningMessage)
-  } else {
-    await router.push('/upload')
-  }
-}
-
 const onNewBranchInputBlur = () => {
   const nb = newBranchInputVal.value
   const list = userConfigInfo.branchList
@@ -458,60 +448,11 @@ const onNewBranchInputBlur = () => {
   }
 }
 
-// 一键自动配置图床
-const autoConfig = async () => {
-  const { token } = userConfigInfo
-
-  if (!token) {
-    ElMessage.error('GitHub Token 不能为空！')
-    return
-  }
-
-  const loading = ElLoading.service({
-    lock: true,
-    text: '正在自动配置...'
-  })
-
-  const userInfo = await getGitHubUserInfo(userConfigInfo.token)
-  console.log('getGitHubUserInfo >> ', userInfo)
-
-  if (!userInfo) {
-    loading.close()
-    ElMessage.error('用户信息获取失败，请确认 Token 是否正确')
-    return
-  }
-
-  saveUserInfo(userInfo)
-
-  const repoInfo = await createRepo(userConfigInfo.token)
-  console.log('createRepo >> ', repoInfo)
-
-  if (!repoInfo) {
-    loading.close()
-    ElMessage.error('自动创建 GitHub 仓库失败，请稍后再试！')
-    return
-  }
-
-  userConfigInfo.repoList = [{ value: INIT_REPO_NAME, label: INIT_REPO_NAME }]
-  userConfigInfo.selectedRepo = INIT_REPO_NAME
-  userConfigInfo.branchList = [{ value: INIT_REPO_BARNCH, label: INIT_REPO_BARNCH }]
-  userConfigInfo.selectedBranch = INIT_REPO_BARNCH
-  userConfigInfo.branchMode = BranchModeEnum.repoBranch
-  userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
-  userConfigInfo.dirMode = DirModeEnum.autoDir
-  userConfigInfo.dirList = []
-  persistUserConfigInfo()
-  await initEmptyRepo(userConfigInfo, false)
-  loading.close()
-  ElMessage.success('自动配置成功')
-  await router.push('/upload')
-}
-
 watch(
   () => logined,
   (_n) => {
     if (!_n) {
-      loading.value = false
+      userInfoLoading.value = false
       dirLoading.value = false
       branchLoading.value = false
     }
