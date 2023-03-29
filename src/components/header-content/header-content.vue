@@ -7,10 +7,8 @@
         </div>
         <div class="title">PicX</div>
       </div>
-      <div class="website-count" @click="goGitHubRepo">
-        <el-tooltip content="感觉好用，点 Star 支持作者(*￣︶￣)" placement="bottom">
-          <site-count :isuv="false" />
-        </el-tooltip>
+      <div class="website-count">
+        <site-count :isuv="false" />
       </div>
     </div>
 
@@ -32,7 +30,7 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="logout"> {{ $t('returnLogin') }} </el-dropdown-item>
+              <el-dropdown-item command="logout"> 退出登录 </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -41,81 +39,49 @@
   </header>
 </template>
 
-<script lang="ts">
-import { defineComponent, reactive, computed, toRefs } from 'vue'
+<script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import siteCount from '@/components/site-count/site-count.vue'
+import SiteCount from '@/components/site-count/site-count.vue'
 
-export default defineComponent({
-  name: 'header-content',
+const router = useRouter()
+const store = useStore()
 
-  components: {
-    siteCount
-  },
+const defaultUsername = ref('未登录')
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
-  setup() {
-    const router = useRouter()
-    const store = useStore()
-    // const instance = getCurrentInstance()
-
-    // const nameData = () => {
-    //   setTimeout(() => {
-    //     return instance?.proxy?.$t('header.right1')
-    //   }, 200)
-    // }
-
-    const reactiveData = reactive({
-      defaultUsername: '未登录',
-      // defaultUsername: nameData(),
-      userConfigInfo: computed(() => store.state.userConfigInfoModule.userConfigInfo)
-    })
-
-    const onUserInfoClick = () => {
-      if (!reactiveData.userConfigInfo.logined && router.currentRoute.value.path !== '/config') {
-        router.push('/config')
-      }
-    }
-
-    const logout = () => {
-      store.dispatch('LOGOUT')
-      router.push('/config')
-    }
-
-    const handleCommand = (command: string) => {
-      // eslint-disable-next-line default-case
-      switch (command) {
-        case 'upload':
-          router.push('/')
-          break
-
-        case 'config':
-          router.push('/config')
-          break
-
-        case 'management':
-          router.push('/management')
-          break
-
-        case 'logout':
-          logout()
-          break
-      }
-    }
-
-    const goGitHubRepo = () => {
-      window.open('https://github.com/XPoet/picx')
-    }
-
-    return {
-      ...toRefs(reactiveData),
-      router,
-      onUserInfoClick,
-      handleCommand,
-      goGitHubRepo
-    }
+const onUserInfoClick = () => {
+  if (!userConfigInfo.logined && router.currentRoute.value.path !== '/config') {
+    router.push('/config')
   }
-})
+}
+
+const logout = () => {
+  store.dispatch('LOGOUT')
+  router.push('/config')
+}
+
+const handleCommand = (command: string) => {
+  // eslint-disable-next-line default-case
+  switch (command) {
+    case 'upload':
+      router.push('/')
+      break
+
+    case 'config':
+      router.push('/config')
+      break
+
+    case 'management':
+      router.push('/management')
+      break
+
+    case 'logout':
+      logout()
+      break
+  }
+}
 </script>
 
 <style scoped lang="stylus">

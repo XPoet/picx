@@ -304,6 +304,7 @@ const dirModeChange = (dirMode: DirModeEnum) => {
       const { dirList } = userConfigInfo
       if (dirList.length) {
         userConfigInfo.selectedDir = dirList[0].value
+        userConfigInfo.selectedDirList = [dirList[0].value]
       } else {
         userConfigInfo.selectedDir = ''
       }
