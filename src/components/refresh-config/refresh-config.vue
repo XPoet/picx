@@ -37,7 +37,7 @@ const reloadData = async () => {
   const { owner, selectedRepo: repo } = userConfigInfo
 
   if (props.dataType === 'repo') {
-    const repoList = await getRepoInfoList(`users/${owner}/repos`)
+    const repoList = await getRepoInfoList(owner)
     // eslint-disable-next-line no-unused-expressions
     repoList && (userConfigInfo.repoList = repoList)
   } else if (props.dataType === 'branch') {

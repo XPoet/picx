@@ -14,16 +14,6 @@
       </el-form-item>
 
       <el-form-item class="operation">
-        <el-tooltip placement="top" content="自动创建 GitHub 仓库">
-          <el-button
-            plain
-            :disabled="btnDisabled"
-            type="primary"
-            @click.prevent="oneClickAutoConfig()"
-          >
-            {{ reConfig ? '' : '重新' }}一键自动配置
-          </el-button>
-        </el-tooltip>
         <el-tooltip placement="top" content="选择现有的 GitHub 仓库">
           <el-button
             :disabled="btnDisabled"
@@ -33,6 +23,16 @@
             @click.prevent="getUserInfo()"
           >
             {{ reConfig ? '' : '重新' }}手动配置
+          </el-button>
+        </el-tooltip>
+        <el-tooltip placement="top" content="自动创建 GitHub 仓库">
+          <el-button
+            plain
+            :disabled="btnDisabled"
+            type="primary"
+            @click.prevent="oneClickAutoConfig()"
+          >
+            {{ reConfig ? '' : '重新' }}一键自动配置
           </el-button>
         </el-tooltip>
       </el-form-item>
@@ -316,8 +316,8 @@ const dirModeChange = (dirMode: DirModeEnum) => {
   persistUserConfigInfo()
 }
 
-async function getRepoList(repoUrl: string) {
-  const repoList = await getRepoInfoList(repoUrl)
+async function getRepoList(owner: string) {
+  const repoList = await getRepoInfoList(owner)
   console.log('getRepoInfoList >> ', repoList)
   userInfoLoading.value = false
   if (repoList) {
@@ -411,7 +411,7 @@ async function getUserInfo() {
   }
 
   saveUserInfo(userInfo)
-  await getRepoList(userInfo.repos_url)
+  await getRepoList(userInfo.login)
 }
 
 function selectRepo(repo: string) {
