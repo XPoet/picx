@@ -103,13 +103,6 @@ const navList = ref([
     isShow: true
   },
   {
-    name: '使用教程',
-    icon: 'magic-stick',
-    isActive: false,
-    path: '/tutorials',
-    isShow: true
-  },
-  {
     name: '帮助反馈',
     icon: 'chat-dot-round',
     isActive: false,
