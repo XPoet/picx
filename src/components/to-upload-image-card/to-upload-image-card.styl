@@ -32,6 +32,12 @@ $image-width = $info-item-height - ($info-item-border * 2)
     padding 10rem
     overflow-y auto
     border 1rem solid var(--border-color)
+    border-radius 6rem
+
+    &.no-border {
+      padding 2rem
+      border none
+    }
 
     &::-webkit-scrollbar {
       width 5rem
@@ -57,8 +63,8 @@ $image-width = $info-item-height - ($info-item-border * 2)
         padding-left $image-width
         overflow hidden
         font-size 15rem
-        border $info-item-border solid var(--border-color)
         border-radius 5rem
+        box-shadow 0 0 3rem var(--shadow-hover-color)
         transition all 0.3s ease
 
         &.disable {
@@ -71,7 +77,7 @@ $image-width = $info-item-height - ($info-item-border * 2)
         }
 
         &:hover {
-          box-shadow 0 0 5rem var(--shadow-hover-color)
+          box-shadow 0 0 6rem var(--shadow-hover-color)
         }
 
         .left-image-box {

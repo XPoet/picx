@@ -5,6 +5,6 @@ module.exports = {
   ],
   rules: {
     'stylus/pythonic': 'never', // Stylus 保留尖括号({})
-    'stylus/no-eol-whitespace': null,
+    'stylus/no-eol-whitespace': null
   }
 }

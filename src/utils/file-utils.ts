@@ -1,6 +1,7 @@
 import { getUuid } from './common-utils'
 import { store } from '@/store'
 import { compressImage } from '@/utils/compress-image'
+import { ImageFileHandleResult, IMG_UPLOAD_MAX_SIZE } from '@/common/model'
 
 /**
  * 获取文件名
@@ -21,11 +22,11 @@ export const getFileSuffix = (filename: string) => {
 }
 
 /**
- * 判断后缀是否是图片格式
- * @param suffix
+ * 判断文件类型是否为图片格式
+ * @param fileType
  */
-export const isImage = (suffix: string): boolean => {
-  return /(png|jpg|gif|jpeg|webp|avif|svg\+xml|image\/x-icon)$/.test(suffix)
+export const isImage = (fileType: string): boolean => {
+  return /(png|jpg|gif|jpeg|webp|awebp|avif|svg\+xml|image\/x-icon)$/.test(fileType)
 }
 
 /**
@@ -48,97 +49,45 @@ export const filenameHandle = (filename: string | undefined) => {
   }
 }
 
-export type handleResult = { base64: string; originalFile: File; compressFile?: File }
-
 /**
  * 处理选择的文件
  * @param file
- * @param maxsize
  */
-export const selectedFileHandle = async (
-  file: File,
-  maxsize: number
-): Promise<handleResult | null> => {
-  if (!file) {
-    return null
-  }
+export const selectedFileHandle = async (file: File): Promise<ImageFileHandleResult | null> => {
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    if (!file) {
+      resolve(null)
+    }
 
-  if (!isImage(file.type)) {
-    ElMessage.error('该文件格式不支持上传！')
-    return null
-  }
-  let compressFile: NonNullable<File>
-  const { isCompress, compressEncoder } = store.getters.getUserSettings
-  const isGif = file.type === 'image/gif'
-  if (!isGif && isCompress) {
-    const loadingInstance = ElLoading.service({
-      target: '.upload-area',
-      text: '正在压缩图片'
-    })
-    compressFile = await compressImage(file, compressEncoder)
-    loadingInstance.close()
-  }
+    if (!isImage(file.type)) {
+      ElMessage.error('该文件格式不支持上传！')
+      resolve(null)
+    }
 
-  return new Promise((resolve) => {
+    let compressFile: NonNullable<File>
+    const { isCompress, compressEncoder } = store.getters.getUserSettings
+    const isNoCompress = file.type === 'image/gif'
+
+    if (!isNoCompress && isCompress) {
+      compressFile = await compressImage(file, compressEncoder)
+    }
+
     const reader = new FileReader()
-    reader.readAsDataURL(!isGif && isCompress ? compressFile : file)
+    // @ts-ignore
+    reader.readAsDataURL(!isNoCompress && isCompress ? compressFile : file)
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const base64: any = e.target?.result
       const curImgSize = getFileSize(base64.length)
 
-      if (curImgSize >= maxsize) {
-        // 给出提示，引导用户自行去压缩图片
-        ElMessageBox.confirm(
-          `当前图片 ${(curImgSize / 1024).toFixed(
-            2
-          )} M，CDN 只能加速小于 50 MB 的图片，建议使用第三方工具 TinyPNG 压缩`,
-          '图片过大，禁止上传',
-          {
-            confirmButtonText: '前往 TinyPNG',
-            cancelButtonText: '放弃上传'
-          }
-        )
-          .then(() => {
-            window.open('https://tinypng.com/')
-          })
-          .catch(() => {
-            console.log('放弃上传')
-          })
+      if (curImgSize >= IMG_UPLOAD_MAX_SIZE * 1024) {
+        ElMessage.error(`该图片超过 ${IMG_UPLOAD_MAX_SIZE} MB，不允许上传！`)
+        resolve(null)
       } else {
         resolve({
           base64,
           originalFile: file,
-          compressFile: !isGif && isCompress ? compressFile : file
-        })
-      }
-    }
-  })
-}
-
-/**
- * 处理复制的文件
- * @param e
- * @param maxsize
- */
-export const pasteFileHandle = (e: any, maxsize: number): Promise<any> | null => {
-  if (!(e.clipboardData && e.clipboardData.items)) {
-    return null
-  }
-
-  // eslint-disable-next-line consistent-return
-  return new Promise((resolve) => {
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0, len = e.clipboardData.items.length; i < len; i++) {
-      const item = e.clipboardData.items[i]
-      if (item.kind === 'file') {
-        const pasteFile = item.getAsFile()
-
-        selectedFileHandle(pasteFile, maxsize)?.then((result) => {
-          if (!result) {
-            return
-          }
-          const { base64, originalFile, compressFile } = result
-          resolve({ base64, originalFile, compressFile })
+          compressFile: !isNoCompress && isCompress ? compressFile : file
         })
       }
     }

@@ -18,17 +18,15 @@
 
 ## 产品亮点 | Highlights
 
-- **简单** - 无需下载，无需安装，不限平台，浏览器[在线使用](https://picx.xpoet.cn)。
-- **免费** - PicX 巧妙结合多种开源技术搭建，完全免费。
-- **安全** - Token 信息和图片数据均保存在用户端，安全可靠。
-
+- **简单** - 无需下载，无需安装，不限平台，浏览器在线使用。
+- **免费** - PicX 巧妙结合多种开源技术搭建而成，完全免费。
+- **安全** - Token、用户信息和图片数据均保存在用户端，安全可靠。
 
 ## 如何使用 | How to use
 
-只需选择或[新建](https://github.com/new)一个 GitHub 仓库，在 **[PicX 官网](https://picx.xpoet.cn)** 使用 GitHub Token 登录，完成仓库绑定后即可使用，如此简单~
+只需 [创建一个 GitHub Token](https://github.com/settings/tokens/new)，在 [PicX 官网](https://picx.xpoet.cn) 使用 Token 完成图床配置即可。
 
-在线使用入口 >> **https://picx.xpoet.cn**
-
+PicX 在线使用入口 >> **https://picx.xpoet.cn**
 
 ## 功能 | Features
 
@@ -42,7 +40,7 @@
 - [x] 支持 **图片压缩** (内置高效压缩算法，可配置在上传前自动压缩)
 - [x] 支持 **暗夜模式** (自由切换 / 自动切换)
 - [x] 支持 **PWA**
-- [ ] 设置图片水印
+- [ ] 配置图片水印
 - [ ] i18n
 
 
@@ -65,6 +63,6 @@
 
 ## 许可 | License
 
-**[GPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)** 
+**[AGPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)** 
 
 Copyright © 2020-Present XPoet

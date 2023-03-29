@@ -5,9 +5,17 @@ import { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@
  */
 export const NEW_DIR_COUNT_MAX: number = 5
 
+/**
+ * 允许上传图片的最大尺寸
+ */
+export const IMG_UPLOAD_MAX_SIZE: number = 30 // MB
+
 export enum ElementPlusSizeEnum {
+  // eslint-disable-next-line no-unused-vars
   large = 'large',
+  // eslint-disable-next-line no-unused-vars
   default = 'default',
+  // eslint-disable-next-line no-unused-vars
   small = 'small'
 }
 

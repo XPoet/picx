@@ -20,7 +20,7 @@
         </div>
       </div>
 
-      <!-- 待上传的图片列表 -->
+      <!-- 等待上传的图片列表 -->
       <div class="row-item">
         <div class="content-box">
           <to-upload-image-card ref="toUploadImageCardRef" :loading-all-image="uploading" />
@@ -28,19 +28,13 @@
       </div>
 
       <!-- 重置 & 上传 -->
-      <div class="row-item">
+      <div class="row-item" v-if="toUploadImage.list.length">
         <div class="content-box" style="text-align: right">
-          <el-button
-            :disabled="uploading"
-            v-if="toUploadImage.list.length"
-            plain
-            type="warning"
-            @click="resetUploadInfo"
-          >
-            {{ i18nConfig().reset }} {{ shortcutKey }} + A
+          <el-button :disabled="uploading" plain type="warning" @click="resetUploadInfo">
+            重置 <span class="shortcut-key">{{ shortcutKey }} + A</span>
           </el-button>
           <el-button :loading="uploading" plain type="primary" @click="uploadImage">
-            {{ $t('uploadImg.uploadButton') }} {{ shortcutKey }} + S
+            上传 <span class="shortcut-key">{{ shortcutKey }} + S</span>
           </el-button>
         </div>
       </div>
@@ -49,7 +43,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref, Ref, onMounted, getCurrentInstance } from 'vue'
+import { computed, watch, ref, Ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import ToUploadImageCard from '@/components/to-upload-image-card/to-upload-image-card.vue'
@@ -58,7 +52,6 @@ import { ElementPlusSizeEnum, ToUploadImageModel, UploadStatusEnum } from '@/com
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
 import { starredPicX } from './upload-image.util'
 
-const instance = getCurrentInstance()
 const store = useStore()
 const router = useRouter()
 
@@ -67,7 +60,7 @@ const uploadAreaRef: Ref = ref<null | HTMLElement>(null)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const userSettings = computed(() => store.getters.getUserSettings).value
-const toUploadImage = computed(() => store.getters.getToUploadImage).value
+const toUploadImage = computed(() => store.getters.getToUploadImages).value
 const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 const uploadedImageList = computed(() => store.getters.getUploadedImageList)
 const uploading = ref(false)
@@ -118,7 +111,7 @@ const uploadImage = () => {
         starredPicX(userSettings)
         break
 
-      // 所有图片上传成功
+      // 多张图片上传成功
       case UploadStatusEnum.allUploaded:
         store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
         ElMessage.success('图片批量上传成功')
@@ -136,7 +129,6 @@ const uploadImage = () => {
       case UploadStatusEnum.uploadFail:
         store.dispatch('TO_UPLOAD_IMAGE_LIST_FAIL')
         ElMessage.error('上传失败，请稍后重试！')
-        break
     }
   })
 }
@@ -155,12 +147,6 @@ watch(
     !_n && resetUploadInfo()
   }
 )
-
-const i18nConfig = () => {
-  return {
-    reset: instance?.proxy?.$t('reset')
-  }
-}
 
 onMounted(() => {
   document.addEventListener('keydown', (e) => {

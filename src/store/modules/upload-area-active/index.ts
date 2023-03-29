@@ -16,7 +16,6 @@ const uploadAreaActiveModule: Module<UploadAreaActiveStateTypes, RootStateTypes>
       state.uploadAreaActive = false
     }
   },
-  actions: {},
   getters: {
     getUploadAreaActive: (state: UploadAreaActiveStateTypes) => state.uploadAreaActive
   }
