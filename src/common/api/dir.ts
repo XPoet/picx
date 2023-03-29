@@ -15,7 +15,7 @@ export const getDirInfoList = (userConfigInfo: UserConfigInfoModel, path: string
     const tmpList = await request({
       url: `/repos/${owner}/${repo}/contents/${path}`,
       method: 'GET',
-      data: {
+      params: {
         ref
       }
     })
@@ -48,7 +48,7 @@ export const getRepoPathContent = (userConfigInfo: UserConfigInfoModel, path: st
     const res = await request({
       url: `/repos/${owner}/${repo}/contents/${path}`,
       method: 'GET',
-      data: {
+      params: {
         ref
       }
     })

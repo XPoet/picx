@@ -4,18 +4,20 @@ import request from '@/utils/request'
 
 /**
  * 获取仓库信息列表
- * @param url
+ * @param owner
  */
-export const getRepoInfoList = (url: string) => {
+export const getRepoInfoList = (owner: string) => {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const tmpList: any[] = await request({
-      url,
+      url: `users/${owner}/repos`,
       method: 'GET',
-      data: {
-        type: 'public',
-        sort: 'created',
-        per_page: 100
+      params: {
+        type: 'owner', // all | owner | member
+        sort: 'created', // created | updated | pushed | full_name
+        direction: 'desc', // asc | desc
+        per_page: 100,
+        page: 1
       }
     })
 
@@ -25,8 +27,7 @@ export const getRepoInfoList = (url: string) => {
           .filter((v: any) => !v.fork && !v.private)
           .map((x: any) => ({
             value: x.name,
-            label: x.name,
-            desc: x.description
+            label: x.name
           }))
       )
     } else {
