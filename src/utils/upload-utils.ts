@@ -88,7 +88,7 @@ export const uploadUrlHandle = (
 export async function uploadImagesToGitHub(
   userConfigInfo: UserConfigInfoModel,
   imgs: ToUploadImageModel[]
-): Promise<void> {
+): Promise<boolean> {
   const { selectedBranch: branch, selectedRepo: repo, selectedDir, owner } = userConfigInfo
 
   const blobs = []
@@ -97,12 +97,12 @@ export async function uploadImagesToGitHub(
     img.uploadStatus.uploading = true
     // 上传图片文件，为仓库创建 blobs
     const blobRes = await uploadImageBlob(img, owner, repo)
-    img.uploadStatus.uploading = false
     if (blobRes) {
       blobs.push({ img, ...blobRes })
       // 已上传数量 +1
-      store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
+      await store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
     } else {
+      img.uploadStatus.uploading = false
       ElMessage.error(`${img.filename.final} 上传失败`)
     }
   }
@@ -110,7 +110,7 @@ export async function uploadImagesToGitHub(
   // 获取 head，用于获取当前分支信息（根目录的 tree sha 以及 head commit sha）
   const branchRes: any = await getBranchInfo(owner, repo, branch)
   if (!branchRes) {
-    throw new Error('获取分支信息失败')
+    return Promise.resolve(false)
   }
 
   const finalPath = selectedDir === '/' ? '' : `${selectedDir}/`
@@ -126,19 +126,19 @@ export async function uploadImagesToGitHub(
     branchRes
   )
   if (!treeRes) {
-    throw new Error('创建 tree 失败')
+    return Promise.resolve(false)
   }
 
   // 创建 commit 节点
   const commitRes: any = await createCommit(owner, repo, treeRes, branchRes)
   if (!commitRes) {
-    throw new Error('创建 commit 失败')
+    return Promise.resolve(false)
   }
 
   // 将当前分支 ref 指向新创建的 commit
   const refRes = await createRef(owner, repo, branch, commitRes.sha)
   if (!refRes) {
-    throw new Error('更新 ref 失败')
+    return Promise.resolve(false)
   }
 
   blobs.forEach((blob: any) => {
@@ -149,6 +149,7 @@ export async function uploadImagesToGitHub(
       userConfigInfo
     )
   })
+  return Promise.resolve(true)
 }
 
 /**

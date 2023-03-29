@@ -10,7 +10,7 @@
         :content="'点击复制 ' + userSettings.imageLinkType.selected + ' 图片链接'"
         placement="top"
       >
-        <span class="btn-item copy-url flex-center" @click="oneClickCopy"> 复制链接 </span>
+        <span class="btn-item flex-center" @click="oneClickCopy"> 复制链接 </span>
       </el-tooltip>
     </div>
   </div>

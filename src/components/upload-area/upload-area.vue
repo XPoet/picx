@@ -45,7 +45,7 @@ const store = useStore()
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 const uploadAreaActive = computed((): boolean => store.getters.getUploadAreaActive)
-const toUploadImage = computed(() => store.getters.getToUploadImage).value
+const toUploadImage = computed(() => store.getters.getToUploadImages).value
 
 const preUploadHandle = (base64Data: string, originFile: File, compressFile?: File) => {
   if (

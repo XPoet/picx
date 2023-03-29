@@ -1,25 +1,25 @@
 <template>
   <div
     class="to-upload-image-list-card"
-    v-if="toUploadImage.list.length || userConfigInfo.selectedRepo"
+    v-if="toUploadImages.list.length || userConfigInfo.selectedRepo"
   >
     <div class="header">
       <div>
         <selected-info-bar />
       </div>
       <div>
-        <span v-if="toUploadImage.list.length">
-          已上传：{{ toUploadImage.uploadedNumber }} / {{ toUploadImage.list.length }}
+        <span v-if="toUploadImages.list.length">
+          已上传：{{ toUploadImages.uploadedNumber }} / {{ toUploadImages.list.length }}
         </span>
       </div>
     </div>
 
-    <div class="body" v-if="toUploadImage.list.length">
+    <div class="body" v-if="toUploadImages.list.length">
       <ul class="image-uploading-info-box">
         <li
           class="image-uploading-info-item"
           :class="{ disable: loadingAllImage }"
-          v-for="(imgItem, index) in toUploadImage.list"
+          v-for="(imgItem, index) in toUploadImages.list"
           :key="index"
         >
           <div class="left-image-box">
@@ -33,9 +33,7 @@
               </div>
               <div class="image-info">
                 <span class="file-size original-file-size item" v-if="userSettings.isCompress">
-                  <del>
-                    {{ getFileSize(imgItem.fileInfo.originSize) }}
-                  </del>
+                  <del> {{ getFileSize(imgItem.fileInfo.originSize) }}KB </del>
                 </span>
 
                 <span class="file-size item" :class="{ compressed: userSettings.isCompress }">
@@ -43,7 +41,7 @@
                 </span>
 
                 <span class="last-modified item">
-                  {{ formatLastModified(imgItem.fileInfo.lastModified) }}
+                  {{ formatDatetime('yyyy-MM-dd hh:mm', imgItem.fileInfo.lastModified) }}
                 </span>
               </div>
             </div>
@@ -79,8 +77,8 @@
                 label="命名前缀"
                 v-if="
                   !imgItem.filename.isRename &&
-                  userConfigInfo.defaultPrefix &&
-                  userConfigInfo.prefixName
+                  userSettings.defaultPrefix &&
+                  userSettings.prefixName
                 "
                 v-model="imgItem.filename.isPrefix"
                 @change="prefixName($event, imgItem)"
@@ -134,126 +132,94 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, reactive, toRefs, onMounted } from 'vue'
+<script setup lang="ts">
+import { computed, onMounted } from 'vue'
 import { useStore } from '@/store'
 import { formatDatetime, getFileSize } from '@/utils'
 import { UserConfigInfoModel, ToUploadImageModel, UploadStatusEnum } from '@/common/model'
-import copyImageLink from '@/components/copy-image-link/copy-image-link.vue'
-import selectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
+import CopyImageLink from '@/components/copy-image-link/copy-image-link.vue'
+import SelectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 import { uploadImageToGitHub, uploadImagesToGitHub } from '@/utils/upload-utils'
 
-export default defineComponent({
-  name: 'to-upload-image-card',
-
-  components: {
-    copyImageLink,
-    selectedInfoBar
-  },
-
-  props: {
-    loadingAllImage: {
-      type: Boolean,
-      default: false
-    }
-  },
-
-  setup() {
-    const store = useStore()
-
-    const reactiveData = reactive({
-      isShowDialog: false,
-      curImgInfo: {
-        size: ''
-      },
-
-      userConfigInfo: computed(() => store.getters.getUserConfigInfo).value,
-      userSettings: computed(() => store.getters.getUserSettings).value,
-      toUploadImage: computed(() => store.getters.getToUploadImage).value,
-
-      hashRename(e: boolean, img: any) {
-        if (e) {
-          img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
-        } else {
-          img.filename.final = `${img.filename.name}.${img.filename.suffix}`
-        }
-      },
-
-      prefixName(e: boolean, img: any) {
-        if (e) {
-          img.filename.name = `${img.filename.prefixName}${img.filename.initName}`
-        } else {
-          img.filename.name = `${img.filename.initName}`
-        }
-        if (img.filename.isHashRename) {
-          img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
-        } else {
-          img.filename.final = `${img.filename.name}.${img.filename.suffix}`
-        }
-      },
-
-      rename(e: boolean, img: any) {
-        if (e) {
-          img.filename.name = img.filename.newName.trim().replace(/\s+/g, '-')
-        } else {
-          reactiveData.prefixName(img.filename.isPrefix, img) // 恢复列表 prefix 选项
-        }
-
-        if (img.filename.isHashRename) {
-          img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
-        } else {
-          img.filename.final = `${img.filename.name}.${img.filename.suffix}`
-        }
-      },
-
-      getFileSize(size: number) {
-        return `${getFileSize(size)} KB`
-      },
-
-      formatLastModified(t: number) {
-        return formatDatetime('yyyy-MM-dd hh:mm', t)
-      },
-
-      async goUploadImages(userConfigInfo: UserConfigInfoModel) {
-        // 单张图片
-        if (this.toUploadImage.list.length === 1) {
-          if (await uploadImageToGitHub(userConfigInfo, this.toUploadImage.list[0])) {
-            return UploadStatusEnum.uploaded
-          }
-          return UploadStatusEnum.uploadFail
-        }
-        // 多种图片
-        try {
-          await uploadImagesToGitHub(userConfigInfo, this.toUploadImage.list)
-          return UploadStatusEnum.allUploaded
-        } catch (error) {
-          console.error(error)
-          return UploadStatusEnum.uploadFail
-        }
-      }
-    })
-
-    const removeToUploadImage = (imgItem: ToUploadImageModel) => {
-      store.dispatch('TO_UPLOAD_IMAGE_LIST_REMOVE', imgItem.uuid)
-    }
-
-    onMounted(() => {
-      const { defaultHash: isHash, defaultPrefix: isPrefix, prefixName } = reactiveData.userSettings
-      reactiveData.toUploadImage.list.forEach((v: ToUploadImageModel) => {
-        v.filename.isPrefix = isPrefix
-        v.filename.prefixName = prefixName
-        reactiveData.prefixName(isPrefix, v)
-        v.filename.isHashRename = isHash
-        reactiveData.hashRename(isHash, v)
-      })
-    })
-
-    return {
-      ...toRefs(reactiveData),
-      removeToUploadImage
-    }
+defineProps({
+  loadingAllImage: {
+    type: Boolean,
+    default: false
   }
 })
+
+const store = useStore()
+
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const userSettings = computed(() => store.getters.getUserSettings).value
+const toUploadImages = computed(() => store.getters.getToUploadImages).value
+
+const hashRename = (e: boolean, img: any) => {
+  if (e) {
+    img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
+  } else {
+    img.filename.final = `${img.filename.name}.${img.filename.suffix}`
+  }
+}
+
+const prefixNaming = (e: boolean, img: any) => {
+  if (e) {
+    img.filename.name = `${img.filename.prefixName}${img.filename.initName}`
+  } else {
+    img.filename.name = `${img.filename.initName}`
+  }
+  if (img.filename.isHashRename) {
+    img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
+  } else {
+    img.filename.final = `${img.filename.name}.${img.filename.suffix}`
+  }
+}
+
+const rename = (e: boolean, img: any) => {
+  if (e) {
+    img.filename.name = img.filename.newName.trim().replace(/\s+/g, '-')
+  } else {
+    prefixNaming(img.filename.isPrefix, img) // 恢复列表 prefix 选项
+  }
+
+  if (img.filename.isHashRename) {
+    img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
+  } else {
+    img.filename.final = `${img.filename.name}.${img.filename.suffix}`
+  }
+}
+
+const goUploadImages = async (userConfigInfo: UserConfigInfoModel) => {
+  // 单张图片
+  if (toUploadImages.list.length === 1) {
+    if (await uploadImageToGitHub(userConfigInfo, toUploadImages.list[0])) {
+      return UploadStatusEnum.uploaded
+    }
+    return UploadStatusEnum.uploadFail
+  }
+  // 多张图片
+  if (await uploadImagesToGitHub(userConfigInfo, toUploadImages.list)) {
+    return UploadStatusEnum.allUploaded
+  }
+  return UploadStatusEnum.uploadFail
+}
+
+const removeToUploadImage = (imgItem: ToUploadImageModel) => {
+  store.dispatch('TO_UPLOAD_IMAGE_LIST_REMOVE', imgItem.uuid)
+}
+
+onMounted(() => {
+  const { defaultHash: isHash, defaultPrefix: isPrefix, prefixName } = userSettings
+  toUploadImages.list.forEach((v: ToUploadImageModel) => {
+    v.filename.isPrefix = isPrefix
+    v.filename.prefixName = prefixName
+    prefixNaming(isPrefix, v)
+    v.filename.isHashRename = isHash
+    hashRename(isHash, v)
+  })
+})
+
+defineExpose({ goUploadImages })
 </script>
 
 <style lang="stylus">

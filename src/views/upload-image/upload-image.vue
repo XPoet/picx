@@ -20,7 +20,7 @@
         </div>
       </div>
 
-      <!-- 待上传的图片列表 -->
+      <!-- 等待上传的图片列表 -->
       <div class="row-item">
         <div class="content-box">
           <to-upload-image-card ref="toUploadImageCardRef" :loading-all-image="uploading" />
@@ -37,10 +37,10 @@
             type="warning"
             @click="resetUploadInfo"
           >
-            重置 {{ shortcutKey }} + A
+            重置 <span class="shortcut-key">{{ shortcutKey }} + A</span>
           </el-button>
           <el-button :loading="uploading" plain type="primary" @click="uploadImage">
-            上传 {{ shortcutKey }} + S
+            上传 <span class="shortcut-key">{{ shortcutKey }} + S</span>
           </el-button>
         </div>
       </div>
@@ -66,7 +66,7 @@ const uploadAreaRef: Ref = ref<null | HTMLElement>(null)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const userSettings = computed(() => store.getters.getUserSettings).value
-const toUploadImage = computed(() => store.getters.getToUploadImage).value
+const toUploadImage = computed(() => store.getters.getToUploadImages).value
 const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 const uploadedImageList = computed(() => store.getters.getUploadedImageList)
 const uploading = ref(false)
@@ -117,7 +117,7 @@ const uploadImage = () => {
         starredPicX(userSettings)
         break
 
-      // 所有图片上传成功
+      // 多张图片上传成功
       case UploadStatusEnum.allUploaded:
         store.dispatch('TO_UPLOAD_IMAGE_CLEAN_URL')
         ElMessage.success('图片批量上传成功')
@@ -135,7 +135,6 @@ const uploadImage = () => {
       case UploadStatusEnum.uploadFail:
         store.dispatch('TO_UPLOAD_IMAGE_LIST_FAIL')
         ElMessage.error('上传失败，请稍后重试！')
-        break
     }
   })
 }
