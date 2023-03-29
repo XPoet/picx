@@ -9,7 +9,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useStore } from '@/store'
-import { getBranchInfoList, getRepoInfoList } from '@/common/api'
+import { getAllRepoList, getBranchInfoList } from '@/common/api'
 
 const store = useStore()
 
@@ -37,7 +37,7 @@ const reloadData = async () => {
   const { owner, selectedRepo: repo } = userConfigInfo
 
   if (props.dataType === 'repo') {
-    const repoList = await getRepoInfoList(owner)
+    const repoList = await getAllRepoList(owner)
     // eslint-disable-next-line no-unused-expressions
     repoList && (userConfigInfo.repoList = repoList)
   } else if (props.dataType === 'branch') {
