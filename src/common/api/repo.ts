@@ -3,10 +3,11 @@ import { INIT_REPO_DESC, INIT_REPO_NAME } from '@/common/constant'
 import request from '@/utils/request'
 
 /**
- * 获取仓库信息列表
+ * 获取仓库列表
  * @param owner
+ * @param page
  */
-export const getRepoInfoList = (owner: string) => {
+export const getRepoList = (owner: string, page = 1) => {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const tmpList: any[] = await request({
@@ -17,7 +18,7 @@ export const getRepoInfoList = (owner: string) => {
         sort: 'created', // created | updated | pushed | full_name
         direction: 'desc', // asc | desc
         per_page: 100,
-        page: 1
+        page
       }
     })
 
@@ -34,6 +35,24 @@ export const getRepoInfoList = (owner: string) => {
       resolve(null)
     }
   })
+}
+
+/**
+ * 获取所有的仓库列表（当前限制在 300 个以内）
+ * @param owner
+ */
+export const getAllRepoList = async (owner: string) => {
+  const tmpList = []
+  // eslint-disable-next-line no-plusplus
+  for (let i = 1; i <= 3; i++) {
+    const res = await getRepoList(owner, i)
+    if (res) {
+      // @ts-ignore
+      tmpList.push(...res)
+    }
+  }
+
+  return Promise.resolve(tmpList.length ? tmpList : null)
 }
 
 /**
