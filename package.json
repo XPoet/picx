@@ -2,8 +2,8 @@
   "name": "picx",
   "version": "2.1.4",
   "private": false,
-  "author": "XPoet",
-  "license": "GPL-3.0",
+  "author": "XPoet <i@xpoet.cn>",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/XPoet/picx/issues"
   },

@@ -65,6 +65,6 @@
 
 ## 许可 | License
 
-**[GPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)** 
+**[AGPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)** 
 
 Copyright © 2020-Present XPoet
