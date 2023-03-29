@@ -1,21 +1,20 @@
-<!-- eslint-disable -->
 <template>
   <div class="page-container feedback-page-container">
     <div class="help-info-item description">
       🏞️ PicX 是一款基于 GitHub API 开发的图床工具，提供图片上传托管和生成图片链接服务。
       <br />
-      🌟 无需下载！无需安装！网页端在线使用！免费！稳定！便捷！极速！
+      🌟 无需下载！无需安装！网页端在线使用！简单！免费！安全！
     </div>
 
     <div class="help-info-item">🌍 建议将本站添加至浏览器收藏夹，方便下次使用。</div>
 
     <div class="help-info-item">
-      🤩 作者：
+      🦁 作者：
       <el-link type="primary" href="https://xpoet.cn/" target="_blank">@XPoet</el-link>
     </div>
 
     <div class="help-info-item">
-      🎁 仓库：
+      🌀 仓库：
       <el-link type="primary" href="https://github.com/XPoet/picx" target="_blank">
         https://github.com/XPoet/picx
       </el-link>
@@ -29,7 +28,7 @@
     </div>
 
     <div class="help-info-item">
-      💡 在使用过程中遇到问题，请仔细阅读文档，或者给作者提&nbsp;
+      💡 在使用过程中如遇到问题，请仔细阅读文档，或者给作者提&nbsp;
       <el-link
         type="primary"
         style="font-size: 16rem"
@@ -41,17 +40,15 @@
       &nbsp;。
     </div>
 
-    <div class="help-info-item">
-      🚥 图片上传缓慢或加载不出来等情况，可借助&nbsp;
-      <el-link
-        type="primary"
-        style="font-size: 16rem"
-        href="https://xiyou4you.us/r/?s=24156134"
-        target="_blank"
-      >
-        VPN
-      </el-link>
-      &nbsp;。
+    <div class="help-info-item" style="margin-bottom: 2rem">
+      🎁 如果 PicX 图床对你有帮助，欢迎赞赏作者，支持开源。
+    </div>
+
+    <div class="help-info-item img">
+      <el-image
+        style="width: 300rem"
+        src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/common/appreciation.webp"
+      />
     </div>
 
     <div class="help-info-item red-text">
