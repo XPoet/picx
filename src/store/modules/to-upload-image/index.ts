@@ -31,7 +31,7 @@ const toUploadImageModule: Module<ToUploadImageStateTypes, RootStateTypes> = {
     // 要上传的图片列表 - 删除图片项
     TO_UPLOAD_IMAGE_LIST_REMOVE({ state }, uuid: string) {
       if (state.list.length > 0) {
-        const rmIndex = state.list.findIndex((v: ToUploadImageModel) => v.uuid === uuid)
+        const rmIndex = state.list.findIndex((v) => v.uuid === uuid)
         if (rmIndex !== -1) {
           state.list.splice(rmIndex, 1)
         }
@@ -49,10 +49,12 @@ const toUploadImageModule: Module<ToUploadImageStateTypes, RootStateTypes> = {
     // 要上传的图片列表 - 上传失败时，在列表中移除已上传的图片
     TO_UPLOAD_IMAGE_LIST_FAIL({ state }) {
       if (state.list.length > 0) {
-        const temp: ToUploadImageModel[] = state.list.filter(
-          (v: ToUploadImageModel) => v.uploadStatus.progress !== 100
-        )
+        const temp: ToUploadImageModel[] = state.list.filter((v) => v.uploadStatus.progress !== 100)
         if (temp.length > 0) {
+          // 上传的 loading 状态改为 false
+          temp.forEach((x) => {
+            x.uploadStatus.uploading = false
+          })
           state.list = temp
           state.uploadedNumber = 0
           state.curImgBase64Url = temp[0].imgData.base64Url
@@ -85,7 +87,7 @@ const toUploadImageModule: Module<ToUploadImageStateTypes, RootStateTypes> = {
 
   getters: {
     getToUploadImageList: (state: ToUploadImageStateTypes) => state.list,
-    getToUploadImage: (state: ToUploadImageStateTypes) => state
+    getToUploadImages: (state: ToUploadImageStateTypes) => state
   }
 }
 

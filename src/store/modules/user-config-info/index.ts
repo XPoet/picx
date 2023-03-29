@@ -1,14 +1,9 @@
 import { Module } from 'vuex'
-import {
-  BranchModeEnum,
-  UserConfigInfoModel,
-  PICX_CONFIG,
-  DirModeEnum
-} from '@/common/model'
-import { deepAssignObject, cleanObject } from '@/utils/object-helper'
+import { BranchModeEnum, UserConfigInfoModel, DirModeEnum, NEW_DIR_COUNT_MAX } from '@/common/model'
+import { deepAssignObject, cleanObject, formatDatetime } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
-import TimeHelper from '@/utils/time-helper'
+import { LS_PICX_CONFIG } from '@/common/constant'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {
@@ -17,20 +12,20 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     email: '',
     name: '',
     avatarUrl: '',
-    selectedRepos: '',
-    reposList: [],
-    branchMode: BranchModeEnum.reposBranch,
+    selectedRepo: '',
+    repoList: [],
+    branchMode: BranchModeEnum.repoBranch,
     branchList: [],
     selectedBranch: '',
     selectedDir: '',
-    dirMode: DirModeEnum.reposDir,
+    dirMode: DirModeEnum.repoDir,
     dirList: [],
-    loggingStatus: false,
+    logined: false,
     selectedDirList: [],
     viewDir: ''
   }
 
-  const LSConfig: string | null = localStorage.getItem(PICX_CONFIG)
+  const LSConfig: string | null = localStorage.getItem(LS_PICX_CONFIG)
 
   if (LSConfig) {
     // Assign: oldConfig -> initConfig
@@ -46,7 +41,7 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     }
 
     if (initConfig.dirMode === DirModeEnum.autoDir) {
-      initConfig.selectedDir = TimeHelper.getYyyyMmDd()
+      initConfig.selectedDir = formatDatetime('yyyyMMdd')
     }
 
     return initConfig
@@ -61,15 +56,16 @@ const convertSpecialCharacter = (state: UserConfigInfoStateTypes): void => {
     const strList = selectedDir.split('')
     let count = 0
     let newStr = ''
+    const specStrList = [' ', '.', '、', ',', '，', '!', '？', '?']
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < strList.length; i++) {
-      if (strList[i] === ' ' || strList[i] === '.' || strList[i] === '、') {
+      if (specStrList.some((x) => x === strList[i])) {
         strList[i] = '-'
       }
       if (strList[i] === '/') {
         count += 1
       }
-      if (count >= 3) {
+      if (count >= NEW_DIR_COUNT_MAX) {
         break
       }
       newStr += strList[i]
@@ -124,7 +120,7 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
     // 持久化用户配置信息
     USER_CONFIG_INFO_PERSIST({ state }) {
       convertSpecialCharacter(state)
-      localStorage.setItem(PICX_CONFIG, JSON.stringify(state.userConfigInfo))
+      localStorage.setItem(LS_PICX_CONFIG, JSON.stringify(state.userConfigInfo))
     },
 
     // 退出登录
@@ -134,10 +130,10 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
   },
 
   getters: {
-    getUserLoggingStatus: (state: UserConfigInfoStateTypes): boolean =>
-      state.userConfigInfo.loggingStatus,
+    getUserLoginStatus: (state: UserConfigInfoStateTypes): boolean => state.userConfigInfo.logined,
     getUserConfigInfo: (state: UserConfigInfoStateTypes): UserConfigInfoModel =>
-      state.userConfigInfo
+      state.userConfigInfo,
+    getUserViewDir: (state: UserConfigInfoStateTypes): string => state.userConfigInfo.viewDir
   }
 }
 

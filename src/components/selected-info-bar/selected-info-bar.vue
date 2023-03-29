@@ -1,24 +1,35 @@
 <template>
-  <div class="selected-info-bar-box" v-if="userConfigInfo.selectedRepos">
-    <span class="info-item">
+  <div class="selected-info-bar-box" v-if="userConfigInfo.selectedRepo">
+    <span class="info-item repo">
       仓库：
       <el-tag disable-transitions>
-        {{ userConfigInfo.selectedRepos }}
+        {{ userConfigInfo.selectedRepo }}
       </el-tag>
     </span>
-    <span class="info-item" v-if="userConfigInfo.selectedBranch">
+    <span class="info-item branch" v-if="userConfigInfo.selectedBranch">
       分支：
       <el-tag disable-transitions>
         {{ userConfigInfo.selectedBranch }}
       </el-tag>
     </span>
-    <span class="info-item">
+    <span class="info-item dir">
       目录：
-      <el-tag disable-transitions>
-        {{
-          barType === 'management' ? userConfigInfo.viewDir : userConfigInfo.selectedDir
-        }}
+      <el-tag
+        disable-transitions
+        v-if="userConfigInfo.dirMode !== DirModeEnum.repoDir || barType === 'management'"
+      >
+        {{ barType === 'management' ? userConfigInfo.viewDir : userConfigInfo.selectedDir }}
       </el-tag>
+      <repo-dir-cascader
+        :el-size="
+          userSettings.elementPlusSize === ElementPlusSizeEnum.large
+            ? ElementPlusSizeEnum.default
+            : userSettings.elementPlusSize
+        "
+        el-width=""
+        :el-clearable="false"
+        v-if="userConfigInfo.dirMode === DirModeEnum.repoDir && barType === 'upload'"
+      />
     </span>
   </div>
 </template>
@@ -26,6 +37,7 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useStore } from '@/store'
+import { DirModeEnum, ElementPlusSizeEnum } from '@/common/model'
 
 const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)

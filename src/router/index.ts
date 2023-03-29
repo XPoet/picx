@@ -1,10 +1,10 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import config from '@/views/config/config.vue'
-import upload from '@/views/upload/upload.vue'
-import management from '@/views/management/management.vue'
-import tutorials from '@/views/tutorials/tutorials.vue'
-import settings from '@/views/settings/settings.vue'
-import { store } from '@/store'
+import config from '@/views/my-config/my-config.vue'
+import upload from '@/views/upload-image/upload-image.vue'
+import management from '@/views/imgs-management/imgs-management.vue'
+import tutorials from '@/views/use-tutorials/use-tutorials.vue'
+import settings from '@/views/my-settings/my-settings.vue'
+import help from '@/views/help-info/help-info.vue'
 
 const titleSuffix = ` | PicX 图床神器`
 
@@ -49,9 +49,9 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/about',
-    name: 'about',
-    component: () => import('@/views/about/about.vue'),
+    path: '/help',
+    name: 'help',
+    component: help,
     meta: {
       title: `帮助反馈${titleSuffix}`
     }

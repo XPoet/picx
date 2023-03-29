@@ -9,160 +9,130 @@
     element-loading-text="图片上传中..."
     element-loading-background="rgba(0, 0, 0, 0.5)"
   >
-    <label for="uploader" class="active-upload" v-if="uploadAreaActive"></label>
-    <input
-      id="uploader"
-      type="file"
-      @change="onSelect"
-      multiple="multiple"
-      autofocus
-      @focus="onFocus"
-    />
-    <div class="tips active-upload" v-if="!toUploadImage.curImgBase64Url">
-      <el-icon class="icon active-upload"><UploadFilled /></el-icon>
-      <div class="text active-upload">拖拽、粘贴、或点击此处上传</div>
+    <label for="img-file-selecter" class="active-upload" v-if="uploadAreaActive"></label>
+    <input id="img-file-selecter" type="file" @change="onSelect" multiple="multiple" />
+    <div class="upload-area-tips" v-if="!toUploadImage.curImgBase64Url">
+      <el-icon class="icon"><UploadFilled /></el-icon>
+      <div class="text">拖拽 / 粘贴 / 点击此处选择图片</div>
     </div>
     <img
-      class="active-upload"
+      class="preview-img"
       v-if="toUploadImage.curImgBase64Url"
       :src="toUploadImage.curImgBase64Url"
-      alt="Pictures to be uploaded"
     />
   </div>
 </template>
 
-<script lang="ts">
-import { computed, defineComponent, reactive, toRefs, onMounted, onUnmounted } from 'vue'
+<script setup lang="ts">
+import { computed, onMounted, onUnmounted } from 'vue'
 import { useStore } from '@/store'
-import { filenameHandle } from '@/utils/file-handle-helper'
-import selectedFileHandle, { handleResult } from '@/utils/selected-file-handle'
-import createToUploadImageObject from '@/utils/create-to-upload-image'
-import paste from '@/utils/paste'
+import {
+  compressImgLoading,
+  createToUploadImageObject,
+  filenameHandle,
+  isImage,
+  selectedFileHandle
+} from '@/utils'
 
-export default defineComponent({
-  name: 'upload-area',
-  props: {
-    imageLoading: {
-      type: Boolean,
-      default: false
-    }
-  },
+defineProps({
+  imageLoading: {
+    type: Boolean,
+    default: false
+  }
+})
 
-  setup() {
-    const store = useStore()
+const store = useStore()
 
-    const reactiveData = reactive({
-      userConfigInfo: computed(() => store.getters.getUserConfigInfo).value,
-      userSettings: computed(() => store.getters.getUserSettings).value,
-      uploadAreaActive: computed((): boolean => store.getters.getUploadAreaActive),
-      uploadSettings: computed(() => store.getters.getUploadSettings).value,
-      toUploadImage: computed(() => store.getters.getToUploadImage).value,
+const userSettings = computed(() => store.getters.getUserSettings).value
+const uploadAreaActive = computed((): boolean => store.getters.getUploadAreaActive)
+const toUploadImage = computed(() => store.getters.getToUploadImages).value
 
-      // Select images
-      onSelect(e: any) {
-        store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
-        // eslint-disable-next-line no-restricted-syntax
-        for (const file of e.target.files) {
-          selectedFileHandle(file, this.uploadSettings.imageMaxSize)?.then((result) => {
-            if (!result) {
-              return
-            }
-            const { base64, originalFile, compressFile } = result
-            this.getImage(base64, originalFile, compressFile)
-          })
-        }
-      },
+const preUploadHandle = (base64Data: string, originFile: File, compressFile?: File) => {
+  if (
+    toUploadImage.list.length === toUploadImage.uploadedNumber &&
+    toUploadImage.list.length > 0 &&
+    toUploadImage.uploadedNumber > 0
+  ) {
+    store.dispatch('TO_UPLOAD_IMAGE_CLEAN_LIST')
+    store.dispatch('TO_UPLOAD_IMAGE_CLEAN_UPLOADED_NUMBER')
+  }
 
-      // Drop images
-      onDrop(e: any) {
-        store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
-        // eslint-disable-next-line no-restricted-syntax
-        for (const file of e.dataTransfer.files) {
-          selectedFileHandle(file, this.uploadSettings.imageMaxSize)?.then((result) => {
-            if (!result) {
-              return
-            }
-            const { base64, originalFile, compressFile } = result
-            this.getImage(base64, originalFile, compressFile)
-          })
-        }
-      },
+  const { defaultHash, isCompress, defaultPrefix, prefixName } = userSettings
+  const file = isCompress ? compressFile : originFile
+  const curImg = createToUploadImageObject()
 
-      // Paste images
-      async onPaste(e: any) {
-        store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
-        const { base64, originalFile, compressFile }: handleResult = await paste(
-          e,
-          this.uploadSettings.imageMaxSize
-        )
-        this.getImage(base64, originalFile, compressFile)
-      },
+  curImg.imgData.base64Url = base64Data
+  // eslint-disable-next-line prefer-destructuring
+  curImg.imgData.base64Content = base64Data.split(',')[1]
 
-      // Get image object
-      getImage(base64Data: string, originFile: File, compressFile?: File) {
-        if (
-          this.toUploadImage.list.length === this.toUploadImage.uploadedNumber &&
-          this.toUploadImage.list.length > 0 &&
-          this.toUploadImage.uploadedNumber > 0
-        ) {
-          store.dispatch('TO_UPLOAD_IMAGE_CLEAN_LIST')
-          store.dispatch('TO_UPLOAD_IMAGE_CLEAN_UPLOADED_NUMBER')
-        }
+  const { name, hash, suffix } = filenameHandle(file?.name)
+  curImg.uuid = hash
+  curImg.fileInfo.compressedSize = compressFile?.size
+  curImg.fileInfo.originSize = originFile.size
+  curImg.fileInfo.size = file?.size
+  curImg.fileInfo.lastModified = file?.lastModified
 
-        const { defaultHash, isCompress, defaultPrefix, prefixName } = this.userSettings
-        const file = isCompress ? compressFile : originFile
-        const curImg = createToUploadImageObject()
+  curImg.filename.initName = name
+  curImg.filename.name = defaultPrefix ? `${prefixName}${name}` : name
+  curImg.filename.prefixName = prefixName
+  curImg.filename.hash = hash
+  curImg.filename.suffix = suffix
+  curImg.filename.final = defaultHash
+    ? `${curImg.filename.name}.${hash}.${suffix}`
+    : `${curImg.filename.name}.${suffix}`
+  curImg.filename.isHashRename = defaultHash
+  curImg.filename.isPrefix = defaultPrefix
 
-        curImg.imgData.base64Url = base64Data
-        // eslint-disable-next-line prefer-destructuring
-        curImg.imgData.base64Content = base64Data.split(',')[1]
+  store.dispatch('TO_UPLOAD_IMAGE_LIST_ADD', JSON.parse(JSON.stringify(curImg)))
+  store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', {
+    uuid: hash,
+    base64Url: base64Data
+  })
+}
 
-        const { name, hash, suffix } = filenameHandle(file?.name)
-        curImg.uuid = hash
-        curImg.fileInfo.compressedSize = compressFile?.size
-        curImg.fileInfo.originSize = originFile.size
-        curImg.fileInfo.size = file?.size
-        curImg.fileInfo.lastModified = file?.lastModified
-
-        curImg.filename.initName = name
-        curImg.filename.name = defaultPrefix ? `${prefixName}${name}` : name
-        curImg.filename.prefixName = prefixName
-        curImg.filename.hash = hash
-        curImg.filename.suffix = suffix
-        curImg.filename.now = defaultHash
-          ? `${curImg.filename.name}.${hash}.${suffix}`
-          : `${curImg.filename.name}.${suffix}`
-        curImg.filename.isHashRename = defaultHash
-        curImg.filename.isPrefix = defaultPrefix
-
-        store.dispatch('TO_UPLOAD_IMAGE_LIST_ADD', JSON.parse(JSON.stringify(curImg)))
-        store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', {
-          uuid: hash,
-          base64Url: base64Data
-        })
-      },
-
-      onFocus() {
-        store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
-      }
-    })
-
-    const dataRefs = toRefs(reactiveData)
-
-    const onPasteFromWin = reactiveData.onPaste.bind(reactiveData)
-
-    onMounted(() => {
-      window.addEventListener('paste', onPasteFromWin)
-    })
-
-    onUnmounted(() => {
-      window.removeEventListener('paste', onPasteFromWin)
-    })
-
-    return {
-      ...dataRefs
+const unifiedHandler = async (files: any[]) => {
+  store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
+  const { isCompress } = userSettings
+  let loading = null
+  if (isCompress) {
+    loading = compressImgLoading()
+  }
+  // eslint-disable-next-line no-restricted-syntax
+  for (const file of files) {
+    const res = await selectedFileHandle(file)
+    if (res) {
+      preUploadHandle(res.base64, res.originalFile, res.compressFile)
     }
   }
+  if (isCompress && loading) {
+    loading.close()
+  }
+}
+
+// Select images
+const onSelect = async (e: any) => {
+  await unifiedHandler(e.target.files)
+}
+
+// Drop images
+const onDrop = async (e: any) => {
+  await unifiedHandler(e.dataTransfer.files)
+}
+
+// Paste images
+const onPaste = async (e: any) => {
+  const files = Array.from(e.clipboardData.items)
+    .filter((v: any) => v.kind === 'file' && isImage(v.type))
+    .map((x: any) => x.getAsFile())
+  await unifiedHandler(files)
+}
+
+onMounted(() => {
+  window.addEventListener('paste', onPaste)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('paste', onPaste)
 })
 </script>
 

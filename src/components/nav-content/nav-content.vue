@@ -17,10 +17,7 @@
         </div>
       </li>
     </ul>
-    <div
-      class="nav-item quick-actions flex-center"
-      :class="{ active: isShowQuickActions }"
-    >
+    <div class="nav-item quick-actions flex-center" :class="{ active: isShowQuickActions }">
       <div class="nav-content">
         <el-icon :size="navIconSize">
           <Operation />
@@ -41,9 +38,9 @@
           @change="persistUserSettings"
         />
         <el-switch
-          v-model="userSettings.defaultMarkdown"
+          v-model="userSettings.enableImageLinkFormat"
           class="mb-2"
-          active-text="转换 Markdown"
+          :active-text="'转换 ' + userSettings.imageLinkFormat.selected"
           @change="persistUserSettings"
         />
       </div>
@@ -55,6 +52,7 @@
 import { onMounted, watch, computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
+import { ElementPlusSizeEnum } from '@/common/model'
 
 const router = useRouter()
 const store = useStore()
@@ -64,9 +62,9 @@ const userSettings = computed(() => store.getters.getUserSettings).value
 
 const navIconSize = computed(() => {
   switch (userSettings.elementPlusSize) {
-    case 'small':
+    case ElementPlusSizeEnum.small:
       return 22
-    case 'large':
+    case ElementPlusSizeEnum.large:
       return 30
     default:
       return 26
@@ -115,7 +113,7 @@ const navList = ref([
     name: '帮助反馈',
     icon: 'chat-dot-round',
     isActive: false,
-    path: '/about',
+    path: '/help',
     isShow: true
   }
 ])
@@ -126,7 +124,7 @@ const navClick = (e: any) => {
   const { path } = e
 
   if (path === '/management') {
-    if (userConfigInfo.selectedRepos === '') {
+    if (userConfigInfo.selectedRepo === '') {
       ElMessage.warning('请选择一个仓库！')
       router.push('/config')
       return
@@ -170,7 +168,7 @@ watch(
 )
 
 watch(
-  () => userConfigInfo.loggingStatus,
+  () => userConfigInfo.logined,
   (_n) => {
     navList.value.forEach((v: any) => {
       // eslint-disable-next-line default-case
@@ -193,12 +191,10 @@ onMounted(() => {
     changeNavActive(router.currentRoute.value.path)
   })
 
-  document
-    .querySelector('.quick-actions .quick-actions-box')
-    ?.addEventListener('click', (e) => {
-      isShowQuickActions.value = true
-      e.stopPropagation()
-    })
+  document.querySelector('.quick-actions .quick-actions-box')?.addEventListener('click', (e) => {
+    isShowQuickActions.value = true
+    e.stopPropagation()
+  })
 
   document.querySelector('.quick-actions')?.addEventListener('click', (e) => {
     isShowQuickActions.value = !isShowQuickActions.value

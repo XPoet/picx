@@ -1,13 +1,21 @@
+@import "../../style/base.styl"
+
 .selected-info-bar-box {
-  height 100%
   display flex
   align-items center
   justify-content flex-start
-  font-size 12rem
   box-sizing border-box
+  height 100%
+  font-size 12rem
 
   .info-item {
-    margin-right 8rem
+    margin-right 10rem
+
+    +picx-mobile() {
+      &.repo {
+        display none
+      }
+    }
 
     &:last-child {
       margin-right 0

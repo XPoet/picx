@@ -5,10 +5,8 @@ import dirImageListModule from './modules/dir-image-list'
 import toUploadImageModule from './modules/to-upload-image'
 import uploadedImageListModule from './modules/uploaded-image-list'
 import userConfigInfoModule from './modules/user-config-info'
-import imageViewerModule from './modules/image-viewer'
 import imageCardModule from './modules/image-card'
 import uploadAreaActiveModule from './modules/upload-area-active'
-import uploadSettingsModule from './modules/upload-settings'
 import userSettingsModule from './modules/user-settings'
 
 // Create a new store instance.
@@ -18,10 +16,8 @@ export const store = createStore<RootStateTypes>({
     toUploadImageModule,
     uploadedImageListModule,
     userConfigInfoModule,
-    imageViewerModule,
     imageCardModule,
     uploadAreaActiveModule,
-    uploadSettingsModule,
     userSettingsModule
   },
 
@@ -38,9 +34,7 @@ export const store = createStore<RootStateTypes>({
       dispatch('TO_UPLOAD_IMAGE_LOGOUT')
       dispatch('UPLOADED_LIST_LOGOUT')
       dispatch('USER_CONFIG_INFO_LOGOUT')
-      commit('IMAGE_VIEWER_LOGOUT')
       commit('UPLOAD_AREA_ACTIVE_LOGOUT')
-      commit('UPLOAD_SETTINGS_LOGOUT')
       dispatch('USER_SETTINGS_LOGOUT')
       localStorage.clear()
       sessionStorage.clear()

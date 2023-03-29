@@ -11,6 +11,8 @@ import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import mainContainer from '@/components/main-container/main-container.vue'
 import setTheme from '@/utils/set-theme-mode'
 import { useStore } from '@/store'
+import { throttle } from '@/utils'
+import { ElementPlusSizeEnum } from '@/common/model'
 
 export default defineComponent({
   name: 'App',
@@ -30,28 +32,31 @@ export default defineComponent({
     const elementPlusSizeHandle = (width: number) => {
       if (width <= 600) {
         store.dispatch('SET_USER_SETTINGS', {
-          elementPlusSize: 'small'
+          elementPlusSize: ElementPlusSizeEnum.small
         })
-        data.size = 'small'
+        data.size = ElementPlusSizeEnum.small
       } else if (width <= 800) {
         store.dispatch('SET_USER_SETTINGS', {
-          elementPlusSize: 'default'
+          elementPlusSize: ElementPlusSizeEnum.default
         })
-        data.size = 'default'
+        data.size = ElementPlusSizeEnum.default
       } else {
         store.dispatch('SET_USER_SETTINGS', {
-          elementPlusSize: 'large'
+          elementPlusSize: ElementPlusSizeEnum.large
         })
-        data.size = 'large'
+        data.size = ElementPlusSizeEnum.large
       }
     }
 
     onMounted(() => {
       setTheme()
       elementPlusSizeHandle(window.innerWidth)
-      window.addEventListener('resize', (e: any) => {
-        elementPlusSizeHandle(e.target.innerWidth)
-      })
+      window.addEventListener(
+        'resize',
+        throttle((e: any) => {
+          elementPlusSizeHandle(e.target.innerWidth)
+        }, 800)
+      )
     })
 
     return {
@@ -63,12 +68,12 @@ export default defineComponent({
 
 <style lang="stylus">
 #app {
+  position relative
+  box-sizing border-box
+  width 100%
+  height 100%
   font-family Avenir, Helvetica, Arial, sans-serif
   -webkit-font-smoothing antialiased
   -moz-osx-font-smoothing grayscale
-  box-sizing border-box
-  position relative
-  width 100%
-  height 100%
 }
 </style>

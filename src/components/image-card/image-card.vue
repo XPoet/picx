@@ -8,8 +8,9 @@
     @mouseleave="isShowDelBtn = false"
   >
     <div class="image-box">
-      <img data-fancybox="gallery" :src="imgUrl" />
+      <el-image :src="imgUrl" fit="cover" loading="lazy" lazy data-fancybox="gallery" />
     </div>
+
     <div class="info-box">
       <div class="image-info">
         <el-input
@@ -23,15 +24,12 @@
         ></el-input>
         <div class="filename" v-else>{{ imageObj.name }}</div>
         <div class="image-operation">
-          <copy-external-link :img-obj="imageObj" />
+          <copy-image-link :img-obj="imageObj" />
         </div>
       </div>
     </div>
 
-    <div
-      class="operation-box"
-      v-show="isShowDelBtn || dropdownVisible || imageObj.checked"
-    >
+    <div class="operation-box" v-show="isShowDelBtn || dropdownVisible || imageObj.checked">
       <div class="operation-left">
         <div
           v-if="isManagementPage"
@@ -48,15 +46,9 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="deleteImageTips(imageObj)">
-                删除
-              </el-dropdown-item>
-              <el-dropdown-item @click.self="renameImage(imageObj)">
-                重命名
-              </el-dropdown-item>
-              <el-dropdown-item @click="viewImageProperties(imageObj)">
-                属性
-              </el-dropdown-item>
+              <el-dropdown-item @click="deleteImageTips(imageObj)"> 删除 </el-dropdown-item>
+              <el-dropdown-item @click.self="renameImage(imageObj)"> 重命名 </el-dropdown-item>
+              <el-dropdown-item @click="viewImageProperties(imageObj)"> 属性 </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -70,11 +62,18 @@ import { computed, nextTick, ref } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/store'
-import axios from '@/utils/axios'
-import { UploadedImageModel, ExternalLinkType } from '@/common/model'
-import { getBase64ByImageUrl, getImage } from '@/utils/rename-image'
-import { uploadImageToGH } from '@/utils/upload-helper'
-import { getFilename, getFileSize, getFileSuffix } from '@/utils/file-handle-helper'
+import { UploadedImageModel } from '@/common/model'
+import {
+  getBase64ByImageUrl,
+  getFilename,
+  getFileSize,
+  generateImageLinks,
+  createToUploadImageObject,
+  filenameHandle,
+  getUuid
+} from '@/utils'
+import { uploadImageToGitHub } from '@/utils/upload-utils'
+import { deleteSingleImage } from '@/common/api'
 
 const props = defineProps({
   listing: {
@@ -107,18 +106,9 @@ const isManagementPage = computed(() => {
   return router.path === '/management'
 })
 
-const imgUrl = computed(() => {
-  switch (userSettings.externalLinkType) {
-    case ExternalLinkType.jsdelivr:
-      return props.imageObj.jsdelivr_cdn_url
-    case ExternalLinkType.staticaly:
-      return props.imageObj.staticaly_cdn_url
-    case ExternalLinkType.zzko:
-      return props.imageObj.zzko_cdn_url
-    default:
-      return props.imageObj.github_url
-  }
-})
+const imgUrl = computed(() =>
+  generateImageLinks(props.imageObj as UploadedImageModel, userConfigInfo, userSettings)
+)
 
 const renameInputRef = ref<InstanceType<typeof ElInput>>()
 
@@ -128,38 +118,27 @@ const renameValue = ref('')
 
 const dropdownVisible = ref<Boolean>(false)
 
-const doDeleteImage = (
+const deleteOriginImage = (
   imageObj: UploadedImageModel,
   isRename: boolean = false
 ): Promise<Boolean> => {
   if (!isRename) {
     imageObj.deleting = true
   }
-  const { owner, selectedRepos } = userConfigInfo
+  const { owner, selectedRepo: repo } = userConfigInfo
+  const { path, sha } = imageObj
 
-  return new Promise((resolve) => {
-    axios
-      .delete(`/repos/${owner}/${selectedRepos}/contents/${imageObj.path}`, {
-        data: {
-          owner,
-          repo: selectedRepos,
-          path: imageObj.path,
-          message: 'Delete pictures via PicX (https://github.com/XPoet/picx)',
-          sha: imageObj.sha
-        }
-      })
-      .then((res) => {
-        console.log('deleteImage >> ', res)
-        if (res && res.status === 200) {
-          imageObj.deleting = false
-          ElMessage.success(`${isRename ? '更新' : '删除'}成功！`)
-          store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
-          store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
-          resolve(true)
-        } else {
-          imageObj.deleting = false
-        }
-      })
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    const res = await deleteSingleImage(owner, repo, path, sha)
+    if (res) {
+      ElMessage.success(`${isRename ? '更新' : '删除'}成功！`)
+      await store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
+      await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
+      resolve(true)
+    } else {
+      resolve(false)
+    }
   })
 }
 
@@ -176,7 +155,7 @@ const deleteImageTips = (imageObj: UploadedImageModel) => {
     }
   )
     .then(() => {
-      doDeleteImage(imageObj)
+      deleteOriginImage(imageObj)
     })
     .catch(() => {
       console.log('取消删除')
@@ -212,34 +191,44 @@ const updateRename = async () => {
     return
   }
 
-  const renameFn = async () => {
+  const renameImg = async () => {
     const loading = ElLoading.service({
       lock: true,
       text: '正在重命名...'
     })
 
-    const suffix = getFileSuffix(imageObj.name)
+    const { suffix } = filenameHandle(imageObj.name)
+    const newUuid = getUuid()
+    const newFilename = `${renameValue.value}.${newUuid}.${suffix}`
+    const base64 = await getBase64ByImageUrl(imgUrl.value || '', suffix)
 
-    const imgInfo = {
-      name: renameValue.value + imageObj.name.substring(imageObj.name.indexOf('.')),
-      size: imageObj.size,
-      lastModified: Date.now(),
-      type: `image/${suffix}`
-    }
-
-    const base64 = await getBase64ByImageUrl(imgUrl.value, suffix)
-
+    // eslint-disable-next-line no-unreachable
     if (base64) {
-      const newImgObj = getImage(base64, imgInfo)
-      if (newImgObj) {
-        const isUploadSuccess = await uploadImageToGH(userConfigInfo, newImgObj)
-
-        if (isUploadSuccess) {
-          renameValue.value = ''
-          await doDeleteImage(imageObj, true)
-          await store.dispatch('UPLOADED_LIST_REMOVE', newImgObj.uuid)
-        }
+      const toUpdateImgObj = createToUploadImageObject()
+      toUpdateImgObj.uuid = newUuid
+      toUpdateImgObj.imgData.base64Content = base64.split(',')[1] as string
+      toUpdateImgObj.filename.final = newFilename
+      toUpdateImgObj.reUploadImgPath = `${imageObj.dir}/${newFilename}`
+      toUpdateImgObj.reUploadInfo.isReUpload = true
+      toUpdateImgObj.reUploadInfo.dir = imageObj.dir
+      let path = newFilename
+      if (imageObj.dir !== '/') {
+        path = `${imageObj.dir}/${newFilename}`
       }
+      toUpdateImgObj.reUploadInfo.path = path
+
+      // 重新上传重命名后的图片
+      const isUploadSuccess = await uploadImageToGitHub(userConfigInfo, toUpdateImgObj)
+
+      if (isUploadSuccess) {
+        renameValue.value = ''
+        await deleteOriginImage(imageObj, true)
+        await store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
+      } else {
+        ElMessage.error('重命名失败')
+      }
+    } else {
+      ElMessage.error('重命名失败')
     }
     loading.close()
   }
@@ -248,7 +237,7 @@ const updateRename = async () => {
     type: 'warning'
   })
     .then(async () => {
-      await renameFn()
+      await renameImg()
     })
     .catch(() => {
       console.log('取消图片重命名')
@@ -277,5 +266,5 @@ const viewImageProperties = (imgObj: UploadedImageModel) => {
 </script>
 
 <style scoped lang="stylus">
-@import 'image-card.styl';
+@import 'image-card.styl'
 </style>

@@ -1,0 +1,100 @@
+@import "../../style/base.styl"
+
+.setting-title {
+  margin 40rem 0 20rem 0
+  font-weight bold
+  font-size 16rem
+
+  &:first-child {
+    margin-top 0
+  }
+}
+
+.setting-list {
+  margin 0
+  padding 0
+
+  .setting-item {
+    margin-bottom 10rem
+
+    &.upload-settings {
+      display flex
+      align-items center
+      color var(--third-text-color)
+      font-size 2rem
+      user-select none
+
+      .desc {
+        margin-left 10rem
+
+        +picx-mobile() {
+          display none
+        }
+      }
+    }
+
+
+    &.cdn {
+      display flex
+      align-items center
+
+      .add-image-link-type-rule {
+        margin-left 10px
+        font-size 20px
+        cursor pointer
+      }
+    }
+
+
+    &.last-child {
+      margin-bottom 0
+    }
+
+    .prefix-input {
+      width calc(100% - 56rem)
+      margin-left 56rem
+    }
+
+    .img-encoder-title {
+      margin-bottom 12rem
+    }
+
+    .img-encoder-group {
+
+      .desc {
+        margin-left 10rem
+        color var(--third-text-color)
+        font-size 12rem
+      }
+    }
+
+
+
+    :deep() .el-radio-group {
+
+      display inline-block
+
+      .el-radio {
+        display block
+      }
+    }
+
+    :deep() .el-switch {
+      user-select none
+    }
+  }
+}
+
+.image-link-type-rule-option {
+
+  .left {
+    float left
+    margin-right 10px
+  }
+
+  .right {
+    float right
+    color var(--el-text-color-secondary)
+    font-size 12px
+  }
+}

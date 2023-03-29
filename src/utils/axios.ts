@@ -1,11 +1,11 @@
 import Axios from 'axios'
-import { PICX_CONFIG } from '@/common/model'
+import { LS_PICX_CONFIG, AXIOS_BASE_URL, AXIOS_TIMEOUT } from '@/common/constant'
 
-const baseURL = 'https://api.github.com'
+const baseURL = AXIOS_BASE_URL
 
 const axios = Axios.create({
   baseURL,
-  timeout: 300000 // request timeout 请求超时 5m
+  timeout: AXIOS_TIMEOUT
 })
 
 axios.defaults.headers['Content-Type'] = 'application/json'
@@ -13,15 +13,13 @@ axios.defaults.headers['Content-Type'] = 'application/json'
 // 发起请求之前的拦截器（前置拦截）
 axios.interceptors.request.use(
   (config) => {
-    const userConfig = localStorage.getItem(PICX_CONFIG)
-
+    const userConfig = localStorage.getItem(LS_PICX_CONFIG)
     if (userConfig) {
       const { token } = JSON.parse(userConfig)
       if (token) {
         config.headers.Authorization = `token ${token}`
       }
     }
-
     return config
   },
   (error) => {
@@ -35,16 +33,10 @@ axios.interceptors.response.use(
     return response
   },
   (error) => {
-    if (error.response && error.response.data) {
-      const code = error.response.status
-      const msg = error.response.data.message
-      ElMessage.error(`Code: ${code}, Message: ${msg}`)
-      console.error(`[PicX Error]`, error.response)
-    } else {
-      ElMessage.error(`${error}`)
+    if (!error?.response) {
+      ElMessage.error({ duration: 6000, message: `${error}` })
     }
-
-    return error.response
+    return Promise.reject(error.response)
   }
 )
 

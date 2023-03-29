@@ -1,9 +1,9 @@
 {
   "name": "picx",
-  "version": "2.1.4",
+  "version": "2.2.0",
   "private": false,
-  "author": "XPoet",
-  "license": "GPL-3.0",
+  "author": "XPoet <i@xpoet.cn>",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/XPoet/picx/issues"
   },
@@ -14,9 +14,12 @@
     "serve": "vite preview",
     "release": "git push --tag && git push -u",
     "format": "prettier --write",
+    "lint": "eslint --fix ./src --ext .vue,.js,.ts",
+    "lint:style": "stylelint --fix ./src/**/**/*.{vue,styl}",
     "prepare": "husky install"
   },
   "lint-staged": {
+    "*.{vue,styl}": "stylelint --fix",
     "*.{vue,js,ts}": "eslint --fix"
   },
   "dependencies": {
@@ -48,7 +51,10 @@
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
     "prettier": "^2.2.1",
-    "stylus": "^0.54.8",
+    "stylelint": "^15.3.0",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-stylus": "^0.18.0",
+    "stylus": "^0.59.0",
     "typescript": "^4.1.5",
     "unplugin-auto-import": "^0.8.7",
     "unplugin-vue-components": "^0.19.6",

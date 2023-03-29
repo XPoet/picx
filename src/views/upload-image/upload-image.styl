@@ -1,0 +1,121 @@
+@import "../../style/base.styl"
+
+.upload-page-container {
+  display flex
+  justify-content space-between
+  width 100%
+  height 100%
+
+  .upload-page-left {
+    flex-shrink 0
+    box-sizing border-box
+    height 100%
+    margin-right $component-interval
+
+    .uploaded-item {
+      margin-bottom 20rem
+
+      &:last-child {
+        margin-bottom 0
+      }
+    }
+  }
+
+
+  .upload-page-right {
+    box-sizing border-box
+    width 100%
+    height 100%
+    overflow-y auto
+
+    .row-item {
+      display flex
+      justify-content center
+      box-sizing border-box
+      width 100%
+      margin-bottom 16rem
+
+      &:last-child {
+        margin-bottom 0
+      }
+
+      .content-box {
+        box-sizing border-box
+        width 100%
+        max-width $content-max-width
+        margin 0 auto
+
+        .shortcut-key {
+          margin-left 6rem
+          font-size 12rem
+
+          +picx-tablet() {
+            display none
+          }
+        }
+      }
+    }
+
+
+    .upload-status {
+      position relative
+      box-sizing border-box
+      width 100%
+      padding 10rem
+      color #666
+      font-size 12rem
+      background var(--second-background-color)
+
+      .info-item {
+        margin-top 4rem
+      }
+
+      .file-status {
+        display flex
+        align-items center
+        justify-content space-between
+      }
+
+      .upload-tips {
+
+        display flex
+        align-items center
+
+        i {
+          margin-left 2rem
+          font-size 20rem
+        }
+      }
+
+      .wait-upload {
+        color var(--await-upload-color)
+      }
+
+      .uploading {
+        color var(--uploading-color)
+      }
+
+      .uploaded {
+        color var(--uploaded-color)
+      }
+    }
+
+
+    .upload-tools {
+      width 100%
+
+      .repos-dir-info {
+        margin-bottom 20rem
+        font-size 12rem
+
+        .repos-dir-info-item {
+          margin-right 10rem
+
+          &:last-child {
+            margin-right 0
+          }
+        }
+      }
+    }
+  }
+}

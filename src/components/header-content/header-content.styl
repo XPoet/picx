@@ -1,25 +1,25 @@
 @import "../../style/base.styl"
 
 .header {
+  display flex
+  align-items center
+  justify-content space-between
+  box-sizing border-box
   width 100%
   height 100%
-  background var(--background-color)
   padding 0 20rem
-  box-sizing border-box
-  display flex
-  justify-content space-between
-  align-items center
+  background var(--background-color)
 
   .header-left {
-    height 100%
     display flex
     justify-content flex-start
+    height 100%
 
     .brand {
-      height 100%
       display flex
-      justify-content flex-start
       align-items center
+      justify-content flex-start
+      height 100%
       cursor pointer
 
       .logo {
@@ -30,24 +30,23 @@
         img {
           width 100%
         }
-
       }
 
 
       .title {
-        font-size 36rem
         font-weight bold
+        font-size 36rem
       }
     }
 
 
     .website-count {
-      box-sizing border-box
       display flex
       align-items flex-end
-      font-size 14rem
+      box-sizing border-box
       margin-left 10rem
       padding-bottom 12rem
+      font-size 14rem
       cursor pointer
 
       +picx-mobile() {
@@ -59,34 +58,33 @@
 
   .header-right {
     .user-info {
-      display: flex;
-      align-items: center;
-      cursor: pointer;
+      display flex
+      align-items center
+      cursor pointer
 
       .username {
-        font-size: 16rem;
+        font-size 16rem
       }
 
       .avatar {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 38rem;
-        height: 38rem;
-        color: var(--default-text-color);
-        border-radius: 50%;
-        border: 1rem solid var(--default-text-color);
-        margin-left: 10rem;
-        padding: 1rem;
-        box-sizing: border-box;
+        display flex
+        align-items center
+        justify-content center
+        box-sizing border-box
+        width 38rem
+        height 38rem
+        margin-left 10rem
+        padding 1rem
+        color var(--default-text-color)
+        border 1rem solid var(--default-text-color)
+        border-radius 50%
 
         img {
-          width: 100%;
-          height: 100%;
-          border-radius: 50%;
+          width 100%
+          height 100%
+          border-radius 50%
         }
       }
-
     }
   }
 }

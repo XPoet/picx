@@ -1,0 +1,40 @@
+@import "../../style/base.styl"
+
+.copy-image-link-box {
+  position relative
+  display flex
+  align-items flex-end
+  justify-content space-between
+  box-sizing border-box
+  width 100%
+  height 100%
+  padding 2rem
+
+  .left
+  .right {
+    display flex
+    align-items center
+  }
+
+  .btn-box {
+    position relative
+    box-sizing border-box
+    height 100%
+
+    .btn-item {
+      box-sizing border-box
+      padding 2rem 4rem
+      color var(--default-text-color)
+      font-size 12rem
+      border 1rem solid var(--default-text-color)
+      border-radius 5rem
+      box-shadow 0 1rem 2rem rgba(0, 0, 0, 0.3)
+      cursor pointer
+
+      &:hover {
+        color var(--background-color)
+        background var(--default-text-color)
+      }
+    }
+  }
+}

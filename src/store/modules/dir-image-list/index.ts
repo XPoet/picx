@@ -1,5 +1,6 @@
 import { Module } from 'vuex'
-import { PICX_MANAGEMENT, UploadedImageModel } from '@/common/model'
+import { UploadedImageModel } from '@/common/model'
+import { LS_PICX_MANAGEMENT } from '@/common/constant'
 import DirImageListStateTypes, { DirObject } from './types'
 import RootStateTypes from '../../types'
 import {
@@ -7,10 +8,10 @@ import {
   getUpLevelDirList,
   getUpOneLevelDir
 } from '@/store/modules/dir-image-list/utils'
-import { getDirContent } from '@/views/management/management.util'
+import { getDirContent } from '@/views/imgs-management/imgs-management.util'
 
 const initDirObject = () => {
-  const dirObj = localStorage.getItem(PICX_MANAGEMENT)
+  const dirObj = localStorage.getItem(LS_PICX_MANAGEMENT)
   return dirObj ? JSON.parse(dirObj) : createDirObject('/', '/')
 }
 
@@ -163,12 +164,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
       }
 
       // 删除图片
-      const rmImg = (
-        dirObj: DirObject,
-        dir: string,
-        img: UploadedImageModel,
-        isRm: boolean
-      ) => {
+      const rmImg = (dirObj: DirObject, dir: string, img: UploadedImageModel, isRm: boolean) => {
         if (!dirObj) {
           return state.dirObject
         }
@@ -254,12 +250,13 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
 
     // 图床管理 - 持久化存储
     DIR_IMAGE_LIST_PERSIST({ state }) {
-      localStorage.setItem(PICX_MANAGEMENT, JSON.stringify(state.dirObject))
+      localStorage.setItem(LS_PICX_MANAGEMENT, JSON.stringify(state.dirObject))
     },
 
     // 图床管理 - 退出登录
-    DIR_IMAGE_LOGOUT({ state }) {
+    DIR_IMAGE_LOGOUT({ state, dispatch }) {
       state.dirObject = createDirObject('/', '/')
+      dispatch('DIR_IMAGE_LIST_PERSIST')
     }
   },
 

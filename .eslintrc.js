@@ -37,11 +37,11 @@ module.exports = {
     'import/no-extraneous-dependencies': 'off',
     'vue/no-multiple-template-root': 'off',
     'no-console': 'off',
-    'no-unused-vars': 'off',
     'no-shadow': 'off',
     'import/prefer-default-export': 'off',
     camelcase: 'off',
-    'no-param-reassign': 'off'
+    'no-param-reassign': 'off',
+    'no-await-in-loop': 'off'
   },
   globals: {
     ...dts2Globals()

@@ -24,11 +24,7 @@
           <el-icon :size="22"><UserFilled /></el-icon>
         </div>
 
-        <el-dropdown
-          trigger="click"
-          @command="handleCommand"
-          v-if="userConfigInfo?.avatarUrl"
-        >
+        <el-dropdown trigger="click" @command="handleCommand" v-if="userConfigInfo?.avatarUrl">
           <span class="el-dropdown-link">
             <span class="avatar">
               <img :src="userConfigInfo?.avatarUrl" :alt="userConfigInfo?.owner" />
@@ -68,10 +64,7 @@ export default defineComponent({
     })
 
     const onUserInfoClick = () => {
-      if (
-        !reactiveData.userConfigInfo.loggingStatus &&
-        router.currentRoute.value.path !== '/config'
-      ) {
+      if (!reactiveData.userConfigInfo.logined && router.currentRoute.value.path !== '/config') {
         router.push('/config')
       }
     }
