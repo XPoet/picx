@@ -14,7 +14,11 @@
       </div>
     </div>
 
-    <div class="body" v-if="toUploadImages.list.length">
+    <div
+      class="body"
+      :class="{ 'no-border': toUploadImages.list.length === 1 }"
+      v-if="toUploadImages.list.length"
+    >
       <ul class="image-uploading-info-box">
         <li
           class="image-uploading-info-item"
@@ -37,7 +41,7 @@
                 </span>
 
                 <span class="file-size item" :class="{ compressed: userSettings.isCompress }">
-                  {{ getFileSize(imgItem.fileInfo.size) }}
+                  {{ getFileSize(imgItem.fileInfo.size) }} KB
                 </span>
 
                 <span class="last-modified item">

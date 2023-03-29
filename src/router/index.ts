@@ -4,6 +4,7 @@ import upload from '@/views/upload-image/upload-image.vue'
 import management from '@/views/imgs-management/imgs-management.vue'
 import tutorials from '@/views/use-tutorials/use-tutorials.vue'
 import settings from '@/views/my-settings/my-settings.vue'
+import help from '@/views/help-info/help-info.vue'
 
 const titleSuffix = ` | PicX 图床神器`
 
@@ -50,7 +51,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/help',
     name: 'help',
-    component: () => import('@/views/help-info/help-info.vue'),
+    component: help,
     meta: {
       title: `帮助反馈${titleSuffix}`
     }
