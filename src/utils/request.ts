@@ -36,11 +36,13 @@ export default function request(config: CustomAxiosRequestConfig): Promise<any> 
         if (requestConfig?.success422 && err?.status === 422) {
           resolve(err?.data || 'SUCCESS')
         } else {
-          const code = err.status
-          const msg = err.data.message
+          const code = err?.status
+          const msg = err?.data?.message
           if (!requestConfig?.noShowErrorMsg) {
             console.error('PicX Error // ', err)
-            ElMessage.error({ duration: 6000, message: `Code: ${code}, Message: ${msg}` })
+            if (code !== undefined && msg !== undefined) {
+              ElMessage.error({ duration: 6000, message: `Code: ${code}, Message: ${msg}` })
+            }
           }
           resolve(null)
         }
