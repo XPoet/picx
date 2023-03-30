@@ -1,7 +1,7 @@
 <template>
   <div
-    class="upload-area active-upload"
-    :class="{ focus: uploadAreaActive }"
+    class="upload-area"
+    :class="{ focus: uploadAreaActive && toUploadImage.curImgBase64Url }"
     @dragover.prevent
     @drop.stop.prevent="onDrop"
     @paste.stop="onPaste"
@@ -9,7 +9,7 @@
     element-loading-text="图片上传中..."
     element-loading-background="rgba(0, 0, 0, 0.5)"
   >
-    <label for="img-file-selecter" class="active-upload" v-if="uploadAreaActive"></label>
+    <label for="img-file-selecter"></label>
     <input id="img-file-selecter" type="file" @change="onSelect" multiple="multiple" />
     <div class="upload-area-tips" v-if="!toUploadImage.curImgBase64Url">
       <el-icon class="icon"><UploadFilled /></el-icon>

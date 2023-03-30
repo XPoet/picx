@@ -3,8 +3,9 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import router from '@/router/index'
 import { key, store } from '@/store'
 import App from './App.vue'
-import 'element-plus/theme-chalk/dark/css-vars.css'
 import contextmenuDirective from '@/common/directive/contextmenu'
+import 'element-plus/theme-chalk/dark/css-vars.css'
+import '@/style/element-plus.styl'
 
 if (import.meta.env.MODE === 'production') {
   // @ts-ignore

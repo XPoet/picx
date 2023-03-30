@@ -9,6 +9,7 @@
   width 100%
   height 100%
   background var(--background-color)
+  border-top-right-radius $box-border-radius
 
   ul.nav-list {
     margin 0
@@ -19,13 +20,18 @@
     position relative
     box-sizing border-box
     width 100%
-    height 76rem
+    height 78rem
     cursor pointer
     user-select none
 
+    &:first-child {
+      border-top-right-radius $box-border-radius
+    }
+
     &.active {
+      color var(--el-color-primary)
       font-weight bold
-      background var(--second-background-color)
+      background var(--el-color-primary-light-9)
     }
 
     .nav-content {
