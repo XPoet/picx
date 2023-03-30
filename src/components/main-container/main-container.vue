@@ -1,5 +1,5 @@
 <template>
-  <main class="main-container" @click="changeUploadAreaActive">
+  <main class="main-container">
     <div class="top-container">
       <header-content />
     </div>
@@ -24,14 +24,7 @@
 import { onMounted } from 'vue'
 import HeaderContent from '@/components/header-content/header-content.vue'
 import NavContent from '@/components/nav-content/nav-content.vue'
-import { useStore } from '@/store'
 import userConfigInfoModel from '@/utils/set-theme-mode'
-
-const store = useStore()
-
-const changeUploadAreaActive = (e: any) => {
-  store.commit('CHANGE_UPLOAD_AREA_ACTIVE', e.target.classList.contains('active-upload'))
-}
 
 onMounted(() => {
   userConfigInfoModel()
