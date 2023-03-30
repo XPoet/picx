@@ -34,55 +34,53 @@ $z-index-9 = 1009
 // ========================================================================================
 // light mode color
 // ========================================================================================
-$primary-color = #0066cc
 $background-color = #fff
-$second-background-color = darken($background-color, 5%)
-$third-background-color = darken($background-color, 10%)
-$default-text-color = #50505c
-$first-text-color = darken($default-text-color, 10%)
-$second-text-color = darken($default-text-color, 5%)
-$third-text-color = lighten($default-text-color, 30%)
-$fourth-text-color = lighten($default-text-color, 90%)
+$background-color-2 = darken($background-color, 5%)
+$background-color-3 = darken($background-color, 10%)
+
+$text-color = #50505c
+$text-color-2 = darken($text-color, 10%)
+$text-color-3 = darken($text-color, 5%)
+$text-color-4 = lighten($text-color, 30%)
+$text-color-5 = lighten($text-color, 90%)
+
 $border-color = darken($background-color, 20%)
-$selection-color = lighten($primary-color, 10%)
-$shadow-color = rgba(0, 0, 0, 0.3)
-$shadow-hover-color = rgba(0, 0, 0, 0.28)
+
+$shadow-color = rgba(0, 0, 0, 0.25)
+$shadow-hover-color = rgba(0, 0, 0, 0.45)
+
 $scrollbar-color = darken($background-color, 20%)
 $scroll-bar-bg-color = darken($background-color, 30%)
-$upload-area-focus-color = #0066cc
+
 $await-upload-color = #e6a23c
 $uploading-color = #409eff
 $uploaded-color = #67c23a
-$markdown-icon-color = #808080
-$markdown-icon-active-color = darken($markdown-icon-color, 30%)
-
 
 
 // ========================================================================================
 // dark mode color
 // ========================================================================================
-$dark-primary-color = #0066cc
 $dark-background-color = #2a2a2f
-$dark-second-background-color = darken($dark-background-color, 10%)
-$dark-third-background-color = darken($dark-background-color, 15%)
-$dark-default-text-color = #bebec6
-$dark-first-text-color = lighten($dark-default-text-color, 30%)
-$dark-second-text-color = lighten($dark-default-text-color, 20%)
-$dark-third-text-color = darken($dark-default-text-color, 20%)
-$dark-fourth-text-color = darken($dark-default-text-color, 80%)
+$dark-background-color-2 = darken($dark-background-color, 10%)
+$dark-background-color-3 = darken($dark-background-color, 15%)
+
+$dark-text-color = #bebec6
+$dark-text-color-2 = lighten($dark-text-color, 30%)
+$dark-text-color-3 = lighten($dark-text-color, 20%)
+$dark-text-color-4 = darken($dark-text-color, 20%)
+$dark-text-color-5 = darken($dark-text-color, 80%)
+
 $dark-border-color = lighten($dark-background-color, 20%)
-$dark-selection-color = $selection-color
-$dark-shadow-color = rgba(128, 128, 128, 0.2)
-$dark-shadow-hover-color = rgba(128, 128, 128, 0.28)
+
+$dark-shadow-color = rgba(128, 128, 128, 0.25)
+$dark-shadow-hover-color = rgba(128, 128, 128, 0.45)
+
 $dark-scrollbar-color = darken($dark-background-color, 20%)
 $dark-scroll-bar-bg-color = lighten($dark-background-color, 30%)
-$dark-upload-area-focus-color = #1070d0
-$dark-await-upload-color = #c08327
-$dark-uploading-color = #287dd5
-$dark-uploaded-color = #55b626
-$dark-markdown-icon-color = #aaa
-$dark-markdown-icon-active-color = lighten($dark-markdown-icon-color, 30%)
 
+$dark-await-upload-color = darken($await-upload-color, 30%)
+$dark-uploading-color = darken($uploading-color, 30%)
+$dark-uploaded-color = darken($uploaded-color, 30%)
 
 
 // ========================================================================
@@ -90,25 +88,23 @@ $dark-markdown-icon-active-color = lighten($dark-markdown-icon-color, 30%)
 // ========================================================================
 root-color(mode) {
   --background-color mode == 'light' ? $background-color : $dark-background-color
-  --second-background-color mode == 'light' ? $second-background-color : $dark-second-background-color
-  --third-background-color mode == 'light' ? $third-background-color : $dark-third-background-color
-  --primary-color mode == 'light' ? $primary-color : $dark-primary-color
-  --first-text-color mode == 'light' ? $first-text-color : $dark-first-text-color
-  --second-text-color mode == 'light' ? $second-text-color : $dark-second-text-color
-  --third-text-color mode == 'light' ? $third-text-color : $dark-third-text-color
-  --fourth-text-color mode == 'light' ? $fourth-text-color : $dark-fourth-text-color
-  --default-text-color mode == 'light' ? $default-text-color : $dark-default-text-color
+  --background-color-2 mode == 'light' ? $background-color-2 : $dark-background-color-2
+  --background-color-3 mode == 'light' ? $background-color-3 : $dark-background-color-3
+
+  --text-color mode == 'light' ? $text-color : $dark-text-color
+  --text-color-2 mode == 'light' ? $text-color-2 : $dark-text-color-2
+  --text-color-3 mode == 'light' ? $text-color-3 : $dark-text-color-3
+  --text-color-4 mode == 'light' ? $text-color-4 : $dark-text-color-4
+  --text-color-5 mode == 'light' ? $text-color-5 : $dark-text-color-5
+
   --border-color mode == 'light' ? $border-color : $dark-border-color
-  --selection-color mode == 'light' ? $selection-color : $dark-selection-color
   --shadow-color mode == 'light' ? $shadow-color : $dark-shadow-color
   --shadow-hover-color mode == 'light' ? $shadow-hover-color : $dark-shadow-hover-color
   --scrollbar-color mode == 'light' ? $scrollbar-color : $dark-scrollbar-color
   --scroll-bar-bg-color mode == 'light' ? $scroll-bar-bg-color : $dark-scroll-bar-bg-color
-  --upload-area-focus-color  mode == 'light' ? $upload-area-focus-color : $dark-upload-area-focus-color
+
   --await-upload-color  mode == 'light' ? $await-upload-color : $dark-await-upload-color
   --uploading-color  mode == 'light' ? $uploading-color : $dark-uploading-color
   --uploaded-color  mode == 'light' ? $uploaded-color : $dark-uploaded-color
-  --markdown-icon-color  mode == 'light' ? $markdown-icon-color : $dark-markdown-icon-color
-  --markdown-icon-active-color  mode == 'light' ? $markdown-icon-active-color : $dark-markdown-icon-active-color
 }
 

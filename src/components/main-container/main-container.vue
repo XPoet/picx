@@ -11,9 +11,7 @@
         </div>
 
         <div class="right">
-          <div class="content">
-            <router-view />
-          </div>
+          <router-view />
         </div>
       </div>
     </div>
