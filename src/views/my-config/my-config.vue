@@ -14,7 +14,7 @@
       </el-form-item>
 
       <el-form-item class="operation">
-        <el-tooltip placement="top" content="选择现有的 GitHub 仓库">
+        <el-tooltip placement="top" content="选择已有的 GitHub 仓库">
           <el-button
             :disabled="btnDisabled"
             plain
@@ -25,7 +25,7 @@
             {{ reConfig ? '' : '重新' }}手动配置
           </el-button>
         </el-tooltip>
-        <el-tooltip placement="top" content="自动创建 GitHub 仓库">
+        <el-tooltip placement="top" content="自动创建 GitHub 仓库（适合新用户）">
           <el-button
             plain
             :disabled="btnDisabled"
@@ -243,11 +243,11 @@ import { BranchModeEnum, BranchModel, DirModeEnum, ElementPlusSizeEnum } from '@
 import { formatDatetime } from '@/utils'
 import {
   getBranchInfoList,
-  getRepoInfoList,
   getGitHubUserInfo,
   createNewBranch,
   initEmptyRepo,
-  getDirInfoList
+  getDirInfoList,
+  getAllRepoList
 } from '@/common/api'
 import { INIT_REPO_BARNCH } from '@/common/constant'
 import {
@@ -304,6 +304,7 @@ const dirModeChange = (dirMode: DirModeEnum) => {
       const { dirList } = userConfigInfo
       if (dirList.length) {
         userConfigInfo.selectedDir = dirList[0].value
+        userConfigInfo.selectedDirList = [dirList[0].value]
       } else {
         userConfigInfo.selectedDir = ''
       }
@@ -317,8 +318,8 @@ const dirModeChange = (dirMode: DirModeEnum) => {
 }
 
 async function getRepoList(owner: string) {
-  const repoList = await getRepoInfoList(owner)
-  console.log('getRepoInfoList >> ', repoList)
+  const repoList = await getAllRepoList(owner)
+  console.log('getAllRepoList >> ', repoList)
   userInfoLoading.value = false
   if (repoList) {
     userConfigInfo.repoList = repoList
