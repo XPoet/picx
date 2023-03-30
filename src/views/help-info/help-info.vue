@@ -40,9 +40,11 @@
       &nbsp;。
     </div>
 
-    <div class="help-info-item">🎁 如果 PicX 图床对你有帮助，欢迎赞赏作者。</div>
+    <div class="help-info-item" style="margin-bottom: 2rem">
+      🎁 如果 PicX 图床对你有帮助，欢迎赞赏作者，支持开源。
+    </div>
 
-    <div class="help-info-item">
+    <div class="help-info-item img">
       <el-image
         style="width: 300rem"
         src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/common/appreciation.webp"
