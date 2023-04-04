@@ -33,21 +33,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: VITE_PORT,
       open: VITE_OPEN_BROWSER,
       cors: VITE_CORS
-      /**
-       * proxy 设置代理（解决前端跨域问题）
-       * /api -> https://xxx.xxx.com
-       * ^/API -> /
-       * /api/aa/bb -> https://xxx.xxx.com/aa/bb
-       * /api/API/aa/bb -> https://xxx.xxx.com/aa/bb
-       */
-      // proxy: {
-      //   '/api': {
-      //     target: 'https://xxx.xxx.com',
-      //     changeOrigin: true,
-      //     secure: true,
-      //     rewrite: (path) => path.replace('^/API', '/')
-      //   }
-      // }
     }
   }
 }

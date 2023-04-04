@@ -30,5 +30,5 @@ onMounted(() => {
 </script>
 
 <style scoped lang="stylus">
-@import "main-container.styl"
+@import "./main-container.styl"
 </style>

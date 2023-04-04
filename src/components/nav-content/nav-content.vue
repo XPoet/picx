@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch, computed, ref } from 'vue'
+import { onMounted, watch, computed, ref, onUpdated } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { ElementPlusSizeEnum } from '@/common/model'
@@ -90,7 +90,7 @@ const navList = ref([
   },
   {
     name: '图床管理',
-    icon: 'box',
+    icon: 'Picture',
     isActive: false,
     path: '/management',
     isShow: true
@@ -100,6 +100,13 @@ const navList = ref([
     icon: 'setting',
     isActive: false,
     path: '/settings',
+    isShow: true
+  },
+  {
+    name: '工具箱',
+    icon: 'files',
+    isActive: false,
+    path: '/tools',
     isShow: true
   },
   {
@@ -178,6 +185,13 @@ watch(
     immediate: true
   }
 )
+
+onUpdated(() => {
+  router.isReady().then(() => {
+    const curPath: string = `/${router.currentRoute.value.path.split('/')[1]}`
+    changeNavActive(curPath)
+  })
+})
 
 onMounted(() => {
   router.isReady().then(() => {
