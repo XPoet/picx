@@ -62,5 +62,5 @@
 <script setup lang="ts"></script>
 
 <style scoped lang="stylus">
-@import "help-info.styl"
+@import "./feedback-info.styl"
 </style>
