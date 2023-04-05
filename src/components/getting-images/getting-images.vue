@@ -6,9 +6,9 @@
     @drop.stop.prevent="onDrop"
     @paste.stop="onPaste"
   >
-    <label for="img-file-selector"></label>
+    <label for="input-file-selector"></label>
     <input
-      id="img-file-selector"
+      id="input-file-selector"
       type="file"
       accept="image/*"
       @change="onSelect"
@@ -37,7 +37,7 @@ const imgList = ref<ImageHandleResult[]>([])
 
 const emit = defineEmits(['getImgList'])
 
-const imgUnifiedHandle = async (files: File[]) => {
+const unifiedHandle = async (files: File[]) => {
   if (!files.length) {
     return
   }
@@ -55,18 +55,21 @@ const imgUnifiedHandle = async (files: File[]) => {
 }
 
 const onSelect = async (e: any) => {
-  await imgUnifiedHandle(e.target.files)
+  const input = e.target
+  await unifiedHandle(input.files)
+  input.value = '' // 清空 input 元素的 value 属性，强制每次触发 onchange 事件
+  input.value = input.defaultValue
 }
 
 const onDrop = async (e: any) => {
-  await imgUnifiedHandle(e.dataTransfer.files)
+  await unifiedHandle(e.dataTransfer.files)
 }
 
 const onPaste = async (e: any) => {
   const files = Array.from(e.clipboardData.items)
     .filter((v: any) => v.kind === 'file' && isImage(v.type))
     .map((x: any) => x.getAsFile())
-  await imgUnifiedHandle(files)
+  await unifiedHandle(files)
 }
 
 const reset = () => {
