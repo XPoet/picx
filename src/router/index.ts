@@ -3,7 +3,7 @@ import config from '@/views/my-config/my-config.vue'
 import upload from '@/views/upload-image/upload-image.vue'
 import management from '@/views/imgs-management/imgs-management.vue'
 import settings from '@/views/my-settings/my-settings.vue'
-import tools from '@/views/tool-box/tool-box.vue'
+import toolbox from '@/views/picx-toolbox/picx-toolbox.vue'
 import help from '@/views/help-info/help-info.vue'
 import compressTool from '@/components/tools/compress-tool/compress-tool.vue'
 
@@ -50,15 +50,15 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/tools',
-    name: 'tools',
-    component: tools,
+    path: '/toolbox',
+    name: 'toolbox',
+    component: toolbox,
     meta: {
       title: `工具箱${titleSuffix}`
     },
     children: [
       {
-        path: '/tools/compress',
+        path: '/toolbox/compress',
         name: 'compress',
         component: compressTool
       }

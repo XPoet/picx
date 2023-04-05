@@ -1,9 +1,9 @@
 <template>
   <div class="page-container">
-    <div v-if="showTool" class="tool-panel">
+    <div v-if="showToolPanel" class="tool-panel">
       <div class="panel-header">
         <el-breadcrumb separator-icon="ArrowRight">
-          <el-breadcrumb-item :to="{ path: '/tools' }">工具箱</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: toolboxPath }">工具箱</el-breadcrumb-item>
           <el-breadcrumb-item>{{ currentTool.name }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
@@ -11,8 +11,8 @@
         <router-view />
       </div>
     </div>
-    <ul v-else class="tool-box">
-      <li class="tool-item" v-for="tool in toolList" :key="tool.uuid" @click="useTool(tool)">
+    <ul v-else class="toolbox">
+      <li class="tool-item" v-for="tool in toolList" :key="tool.uuid" @click="selectTool(tool)">
         <div class="top">
           <div class="left flex-center">
             <el-icon :size="30">
@@ -28,15 +28,17 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getUuid } from '@/utils'
 import { ToolItemModel } from '@/common/model'
 
 const router = useRouter()
 
-const showTool = ref(false)
-const currentTool = reactive<ToolItemModel>({
+const toolboxPath = ref('/toolbox')
+const showToolPanel = ref(false)
+
+const currentTool = ref<ToolItemModel>({
   path: '',
   icon: '',
   name: '',
@@ -47,32 +49,49 @@ const currentTool = reactive<ToolItemModel>({
 const toolList = ref<ToolItemModel[]>([
   {
     name: '图片压缩',
-    desc: '不限制图片大小和数量，不上传至服务器的离线极速压缩',
+    desc: '不限制图片大小和数量，不上传至服务器的离线极致压缩',
     icon: 'MagicStick',
     uuid: getUuid(),
     path: '/compress'
   }
 ])
 
-const useTool = (tool: ToolItemModel) => {
-  showTool.value = true
-  currentTool.name = tool.name
-  router.push(`/tools${tool.path}`)
+const selectTool = (tool: ToolItemModel) => {
+  showToolPanel.value = true
+  currentTool.value = { ...tool }
+  router.push(`${toolboxPath.value}${tool.path}`)
 }
 
 watch(
   () => router.currentRoute.value,
   (newValue) => {
-    if (newValue.path === '/tools') {
-      showTool.value = false
+    if (newValue.path === toolboxPath.value) {
+      showToolPanel.value = false
     }
   },
   {
     deep: true
   }
 )
+
+const initHandle = () => {
+  router.isReady().then(() => {
+    const currentPath = router.currentRoute.value.path
+    if (toolboxPath.value !== currentPath) {
+      const path = currentPath.substring(currentPath.lastIndexOf('/'))
+      const tool = toolList.value.find((x) => x.path === path)
+      if (tool) {
+        selectTool(tool)
+      }
+    }
+  })
+}
+
+onMounted(() => {
+  initHandle()
+})
 </script>
 
 <style scoped lang="stylus">
-@import "./tool-box.styl"
+@import "./picx-toolbox.styl"
 </style>

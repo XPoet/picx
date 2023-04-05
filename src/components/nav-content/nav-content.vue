@@ -106,7 +106,7 @@ const navList = ref([
     name: '工具箱',
     icon: 'files',
     isActive: false,
-    path: '/tools',
+    path: '/toolbox',
     isShow: true
   },
   {
@@ -142,7 +142,7 @@ const navClick = (e: any) => {
 const changeNavActive = (currentPath: string) => {
   navList.value.forEach((v) => {
     const temp = v
-    temp.isActive = v.path === currentPath
+    temp.isActive = v.path === currentPath || currentPath.includes(v.path)
     return temp
   })
 }

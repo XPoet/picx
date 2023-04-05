@@ -1,8 +1,15 @@
 // ========================================================================================
 // media query
 // ========================================================================================
+$media-max-width-tablet-2 = 1200px                       // media query max width (tablet-2)
 $media-max-width-tablet = 900px                          // media query max width (tablet)
 $media-max-width-mobile = 500px                          // media query max width (mobile)
+
+picx-tablet-2() {
+  @media (max-width $media-max-width-tablet-2) {
+    { block }
+  }
+}
 
 picx-tablet() {
   @media (max-width $media-max-width-tablet) {
