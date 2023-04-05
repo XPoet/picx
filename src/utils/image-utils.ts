@@ -1,5 +1,6 @@
 import {
   DeleteStatusEnum,
+  ImageHandleResult,
   ToUploadImageModel,
   UploadedImageModel,
   UserConfigInfoModel
@@ -7,6 +8,7 @@ import {
 import { getUuid } from '@/utils/common-utils'
 import { store } from '@/store'
 import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo } from '@/common/api'
+import { getFileSize, isImage } from '@/utils/file-utils'
 
 /**
  * 生成一个等待上传的图片对象
@@ -203,5 +205,64 @@ export function getBase64ByImageUrl(url: string, ext: string): Promise<string | 
       const dataURL: string = canvas.toDataURL(`image/${ext}`)
       resolve(dataURL)
     }
+  })
+}
+
+/**
+ * 图片 File 格式转 Base64 格式
+ * @param file
+ */
+export function imgFileToBase64(file: File): Promise<string | null> {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => {
+      const base64 = reader.result as string
+      resolve(base64)
+    }
+    reader.onerror = () => resolve(null)
+  })
+}
+
+/**
+ * 下载 File 格式的图片
+ * @param file
+ */
+export function downloadImage(file: File) {
+  const url = URL.createObjectURL(file) // 创建图片 URL
+  const link = document.createElement('a') // 创建一个 a 标签
+  link.href = url // 设置链接地址为图片 URL
+  link.download = file.name // 设置下载文件的文件名
+  document.body.appendChild(link) // 将 a 标签添加到 body 中
+  link.click() // 模拟点击链接进行下载
+  document.body.removeChild(link) // 下载完成后移除 a 标签
+  URL.revokeObjectURL(url) // 释放图片 URL
+}
+
+/**
+ * 处理获取的图片
+ * @param file
+ */
+export const gettingImagesHandle = (file: File): Promise<ImageHandleResult | null> => {
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    if (!file) {
+      resolve(null)
+    }
+
+    if (!isImage(file.type)) {
+      ElMessage.error(`${file.name} 不是图片格式`)
+      resolve(null)
+    }
+
+    const base64 = (await imgFileToBase64(file)) || ''
+
+    resolve({
+      uuid: getUuid(),
+      base64,
+      file,
+      name: file.name,
+      size: getFileSize(base64.length)
+    })
   })
 }

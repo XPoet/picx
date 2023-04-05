@@ -85,7 +85,7 @@
                   userSettings.prefixName
                 "
                 v-model="imgItem.filename.isPrefix"
-                @change="prefixName($event, imgItem)"
+                @change="prefixNaming($event, imgItem)"
               ></el-checkbox>
             </div>
 

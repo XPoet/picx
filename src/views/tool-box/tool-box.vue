@@ -14,7 +14,11 @@
     <ul v-else class="tool-box">
       <li class="tool-item" v-for="tool in toolList" :key="tool.uuid" @click="useTool(tool)">
         <div class="top">
-          <div class="left"></div>
+          <div class="left flex-center">
+            <el-icon :size="30">
+              <component :is="tool.icon"></component>
+            </el-icon>
+          </div>
           <div class="right">{{ tool.name }}</div>
         </div>
         <div class="bottom">{{ tool.desc }}</div>
@@ -43,22 +47,8 @@ const currentTool = reactive<ToolItemModel>({
 const toolList = ref<ToolItemModel[]>([
   {
     name: '图片压缩',
-    desc: '不限制图片大小数量，不上传至服务器离线极速压缩',
-    icon: '',
-    uuid: getUuid(),
-    path: '/compress'
-  },
-  {
-    name: '图片水印',
-    desc: '不限制图片大小数量，不上传至服务器离线极速压缩',
-    icon: '',
-    uuid: getUuid(),
-    path: '/compress'
-  },
-  {
-    name: '图片转 Base64',
-    desc: '不限制图片大小数量，不上传至服务器离线极速压缩',
-    icon: '',
+    desc: '不限制图片大小和数量，不上传至服务器的离线极速压缩',
+    icon: 'MagicStick',
     uuid: getUuid(),
     path: '/compress'
   }

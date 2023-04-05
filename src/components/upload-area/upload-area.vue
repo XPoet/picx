@@ -9,8 +9,14 @@
     element-loading-text="图片上传中..."
     element-loading-background="rgba(0, 0, 0, 0.5)"
   >
-    <label for="img-file-selecter"></label>
-    <input id="img-file-selecter" type="file" @change="onSelect" multiple="multiple" />
+    <label for="img-file-selector"></label>
+    <input
+      id="img-file-selector"
+      type="file"
+      accept="image/*"
+      @change="onSelect"
+      multiple="multiple"
+    />
     <div class="upload-area-tips" v-if="!toUploadImage.curImgBase64Url">
       <el-icon class="icon"><UploadFilled /></el-icon>
       <div class="text">拖拽 / 粘贴 / 点击此处选择图片</div>
