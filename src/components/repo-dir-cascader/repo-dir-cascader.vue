@@ -9,17 +9,19 @@
     :key="elKey"
     v-model="userConfigInfo.selectedDirList"
     filterable
-    placeholder="请选择一个目录..."
+    :placeholder="i18nConfig().selectARepo"
     :clearable="elClearable"
     @change="cascaderChange"
   />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, getCurrentInstance } from 'vue'
 import { getDirInfoList } from '@/common/api'
 import { useStore } from '@/store'
 import { ElementPlusSizeEnum, NEW_DIR_COUNT_MAX } from '@/common/model'
+
+const instance = getCurrentInstance()
 
 const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
@@ -65,6 +67,12 @@ const cascaderProps = {
     } else {
       resolve([])
     }
+  }
+}
+
+const i18nConfig = () => {
+  return {
+    selectARepo: instance?.proxy?.$t('selectARepo')
   }
 }
 
