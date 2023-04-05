@@ -6,14 +6,14 @@
         v-for="(navItem, index) in navList"
         :key="index"
         :class="{ active: navItem.isActive }"
-        @click="navClick(navItem)"
+        @click="onNavClick(navItem)"
         v-show="navItem.isShow"
       >
         <div class="nav-content">
           <el-icon :size="navIconSize">
             <component :is="navItem.icon"></component>
           </el-icon>
-          <span class="nav-name">{{ navItem.name }}</span>
+          <span class="nav-name">{{ $t(navItem.name) }}</span>
         </div>
       </li>
     </ul>
@@ -22,25 +22,25 @@
         <el-icon :size="navIconSize">
           <Operation />
         </el-icon>
-        <span class="nav-name">快捷操作</span>
+        <span class="nav-name">{{ $t('nav.actions') }}</span>
       </div>
       <div class="quick-actions-box" v-show="isShowQuickActions">
         <el-switch
           v-model="isOpenDarkMode"
           class="mb-2"
-          active-text="暗夜模式"
+          :active-text="$t('actions.night')"
           @change="themeModeChange"
         />
         <el-switch
           v-model="userSettings.isCompress"
           class="mb-2"
-          active-text="压缩图片"
+          :active-text="$t('actions.compress')"
           @change="persistUserSettings"
         />
         <el-switch
           v-model="userSettings.enableImageLinkFormat"
           class="mb-2"
-          :active-text="'转换 ' + userSettings.imageLinkFormat.selected"
+          :active-text="$t('actions.transform') + userSettings.imageLinkFormat.selected"
           @change="persistUserSettings"
         />
       </div>
@@ -53,6 +53,7 @@ import { onMounted, watch, computed, ref, onUpdated } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { ElementPlusSizeEnum } from '@/common/model'
+import { navInfoList } from './nav-content.data'
 
 const router = useRouter()
 const store = useStore()
@@ -73,54 +74,11 @@ const navIconSize = computed(() => {
 
 const isOpenDarkMode = ref(userSettings.themeMode === 'dark')
 
-const navList = ref([
-  {
-    name: '图床配置',
-    icon: 'edit',
-    isActive: false,
-    path: '/config',
-    isShow: true
-  },
-  {
-    name: '上传图片',
-    icon: 'upload',
-    isActive: false,
-    path: '/upload',
-    isShow: true
-  },
-  {
-    name: '图床管理',
-    icon: 'Picture',
-    isActive: false,
-    path: '/management',
-    isShow: true
-  },
-  {
-    name: '我的设置',
-    icon: 'setting',
-    isActive: false,
-    path: '/settings',
-    isShow: true
-  },
-  {
-    name: '工具箱',
-    icon: 'files',
-    isActive: false,
-    path: '/toolbox',
-    isShow: true
-  },
-  {
-    name: '帮助反馈',
-    icon: 'chat-dot-round',
-    isActive: false,
-    path: '/help',
-    isShow: true
-  }
-])
+const navList = ref(navInfoList)
 
 const isShowQuickActions = ref<Boolean>(false)
 
-const navClick = (e: any) => {
+const onNavClick = (e: any) => {
   const { path } = e
 
   if (path === '/management') {

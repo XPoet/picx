@@ -53,13 +53,16 @@
     .quick-actions-box {
       position absolute
       bottom 0
-      left 100%
+      left calc(100% + 1rem)
       z-index $z-index-1
       box-sizing border-box
-      width 180rem
       padding 6rem 10rem
       background var(--background-color)
-      box-shadow 1rem -1rem 2.5rem var(--shadow-color)
+      box-shadow 1rem 0 3rem var(--shadow-color)
+
+      .el-switch {
+        white-space nowrap
+      }
     }
   }
 }

@@ -15,7 +15,7 @@
     <div class="header-right">
       <div class="user-info" @click="onUserInfoClick">
         <div class="username">
-          {{ userConfigInfo.owner ? userConfigInfo.owner : defaultUsername }}
+          {{ userConfigInfo.owner ? userConfigInfo.owner : $t('header.notLogin') }}
         </div>
 
         <div class="avatar" v-if="!userConfigInfo?.avatarUrl">
@@ -30,7 +30,7 @@
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="logout"> 退出登录 </el-dropdown-item>
+              <el-dropdown-item command="logout"> {{ $t('header.logout') }} </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -40,15 +40,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import SiteCount from '@/components/site-count/site-count.vue'
 
 const router = useRouter()
 const store = useStore()
 
-const defaultUsername = ref('未登录')
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
 const onUserInfoClick = () => {
