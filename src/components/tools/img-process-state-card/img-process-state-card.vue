@@ -5,12 +5,11 @@
         :src="imgObj.finialBase64 || imgObj.originalBase64"
         fit="cover"
         loading="lazy"
-        lazy
         data-fancybox="gallery"
       />
     </div>
     <div class="info-container">
-      <div class="img-name">{{ imgObj.finialName || imgObj.originalName }}</div>
+      <div class="img-name text-ellipsis">{{ imgObj.finialName || imgObj.originalName }}</div>
       <div class="img-size">
         <div class="original-file-size file-size-item" :class="{ 'del-line': imgObj.finialSize }">
           {{ imgObj.originalSize }} KB

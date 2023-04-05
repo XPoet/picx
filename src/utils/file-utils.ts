@@ -34,7 +34,7 @@ export const isImage = (fileType: string): boolean => {
  * @param size
  */
 export const getFileSize = (size: number) => {
-  return Number((size / 1024).toFixed(2))
+  return Number((size / 1024).toFixed(0))
 }
 
 /**

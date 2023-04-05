@@ -37,7 +37,7 @@
     border-top 1rem solid var(--border-color)
 
     .img-name {
-      padding-left 2rem
+      max-width 50%
       font-size 13rem
     }
 
@@ -49,19 +49,23 @@
       .file-size-item {
         padding 2rem 3rem
         font-size 12rem
+        background var(--background-color-3)
+        border-radius 3rem
       }
 
       .original-file-size {
-        background var(--background-color-2)
+        margin-right -2rem
 
         &.del-line {
+          margin-right 0
           text-decoration line-through
         }
       }
 
       .finial-file-size {
-        margin-left 3rem
-        background var(--el-color-primary-light-9)
+        margin-right -4rem
+        margin-left 4rem
+        color var(--el-color-primary)
       }
     }
   }

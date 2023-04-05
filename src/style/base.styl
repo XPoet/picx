@@ -18,33 +18,6 @@ $scrollbar-size = 8rem
   }
 }
 
-html
-body {
-  position relative
-  width 100%
-  height 100%
-  margin 0
-  padding 0
-  color var(--text-color)
-}
-
-a {
-  color var(--text-color)
-  font-size 1.5rem
-  text-decoration none
-}
-
-a:link {
-  color var(--text-color)
-  text-decoration none
-}
-
-ul
-ol
-li {
-  margin 0
-  list-style none
-}
 
 * {
   &::-webkit-scrollbar {
@@ -60,6 +33,37 @@ li {
   &::-webkit-scrollbar-track {
     background transparent
   }
+}
+
+
+html
+body {
+  position relative
+  width 100%
+  height 100%
+  margin 0
+  padding 0
+  color var(--text-color)
+}
+
+
+a {
+  color var(--text-color)
+  font-size 1.5rem
+  text-decoration none
+}
+
+a:link {
+  color var(--text-color)
+  text-decoration none
+}
+
+
+ul
+ol
+li {
+  margin 0
+  list-style none
 }
 
 
@@ -87,6 +91,7 @@ li {
   border-top-left-radius $box-border-radius
 }
 
+
 .clearfix {
   &::after {
     display block
@@ -97,6 +102,7 @@ li {
     content ''
   }
 }
+
 
 .custom-contextmenu-container {
   position relative
@@ -125,6 +131,12 @@ li {
       color var(--el-color-primary)
     }
   }
+}
+
+.text-ellipsis {
+  overflow hidden
+  white-space nowrap
+  text-overflow ellipsis
 }
 
 
