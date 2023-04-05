@@ -11,7 +11,6 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
 
   // loadEnv 中返回的是 string 类型的（即使是 boolean），下面的方法可以返回正确的类型
   const viteEnv = wrapperEnv(env)
-  const { VITE_PORT, VITE_PUBLIC_PATH, VITE_OPEN_BROWSER, VITE_CORS } = viteEnv
 
   return {
     plugins: createVitePlugins(viteEnv, isBuild),
@@ -24,17 +23,21 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
         {
           find: 'vue-i18n',
           replacement: 'vue-i18n/dist/vue-i18n.cjs.js'
+        },
+        {
+          find: 'virtual:pwa-register',
+          replacement: '/path/to/node_modules/vite-plugin-pwa/src/pwa-register.js'
         }
       ]
     },
-    base: VITE_PUBLIC_PATH, // 设置打包路径
+    base: './', // 设置打包路径
     optimizeDeps: {
       exclude: ['@yireen/squoosh-browser']
     },
     server: {
-      port: VITE_PORT,
-      open: VITE_OPEN_BROWSER,
-      cors: VITE_CORS
+      port: 4000,
+      open: true,
+      cors: true
     }
   }
 }

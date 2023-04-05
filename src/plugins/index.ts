@@ -24,7 +24,7 @@ export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   if (isBuild) {
     // add plugin vite-plugin-pwa
     if (viteEnv.VITE_USE_PWA) {
-      vitePlugins.push(configPWAPlugin(viteEnv))
+      vitePlugins.push(configPWAPlugin())
     }
   }
 

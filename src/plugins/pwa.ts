@@ -4,14 +4,13 @@
  * https://github.com/antfu/vite-plugin-pwa
  */
 import { VitePWA } from 'vite-plugin-pwa'
-import { ViteEnv } from '@/common/model'
 
-export default function configPWAPlugin(env: ViteEnv) {
+export default function configPWAPlugin() {
   return VitePWA({
     registerType: 'autoUpdate',
     manifest: {
-      name: env.VITE_GLOB_APP_TITLE,
-      short_name: env.VITE_GLOB_APP_SHORT_NAME,
+      name: 'PicX 图床',
+      short_name: 'PicX',
       icons: [
         {
           src: './logo@192x192.png',
@@ -19,6 +18,9 @@ export default function configPWAPlugin(env: ViteEnv) {
           type: 'image/png'
         }
       ]
+    },
+    workbox: {
+      skipWaiting: true
     }
   })
 }

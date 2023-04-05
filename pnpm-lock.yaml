@@ -32,7 +32,7 @@ specifiers:
   unplugin-auto-import: ^0.8.7
   unplugin-vue-components: ^0.19.6
   vite: ~2.7.13
-  vite-plugin-pwa: ^0.11.2
+  vite-plugin-pwa: 0.12.8
   vue: ^3.2.18
   vue-i18n: ^9.2.2
   vue-router: ^4.0.11
@@ -76,7 +76,7 @@ devDependencies:
   unplugin-auto-import: 0.8.8_vite@2.7.13
   unplugin-vue-components: 0.19.9_vite@2.7.13+vue@3.2.47
   vite: 2.7.13_stylus@0.59.0
-  vite-plugin-pwa: 0.11.13_vite@2.7.13
+  vite-plugin-pwa: 0.12.8_vite@2.7.13
 
 packages:
 
@@ -6239,6 +6239,11 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  /pretty-bytes/6.1.0:
+    resolution: {integrity: sha512-Rk753HI8f4uivXi4ZCIYdhmG1V+WKzvRMg/X+M42a6t7D07RcmopXJMDNk6N++7Bl75URRGsb40ruvg7Hcp2wQ==}
+    engines: {node: ^14.13.1 || >=16.0.0}
+    dev: true
+
   /progress/2.0.3:
     resolution: {integrity: sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==}
     engines: {node: '>=0.4.0'}
@@ -7857,14 +7862,14 @@ packages:
       vfile-message: 1.1.1
     dev: true
 
-  /vite-plugin-pwa/0.11.13_vite@2.7.13:
-    resolution: {integrity: sha512-Ssj14m3TRVLfkFEAWSMcFE2d1cSdEZyrVTzfY2lSL+umHYvcIFHVDAY143sygtBCb44OPczsAOmWwBTxwOvh7g==}
+  /vite-plugin-pwa/0.12.8_vite@2.7.13:
+    resolution: {integrity: sha512-pSiFHmnJGMQJJL8aJzQ8SaraZBSBPMGvGUkCNzheIq9UQCEk/eP3UmANNmS9eupuhIpTK8AdxTOHcaMcAqAbCA==}
     peerDependencies:
-      vite: ^2.0.0
+      vite: ^2.0.0 || ^3.0.0-0
     dependencies:
       debug: 4.3.4
       fast-glob: 3.2.12
-      pretty-bytes: 5.6.0
+      pretty-bytes: 6.1.0
       rollup: 2.79.1
       vite: 2.7.13_stylus@0.59.0
       workbox-build: 6.5.4

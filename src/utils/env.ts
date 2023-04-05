@@ -1,6 +1,5 @@
 import { Recordable, ViteEnv } from '@/common/model'
 
-// Read all environment variable configuration files to process.env
 export default function wrapperEnv(envConf: Recordable): ViteEnv {
   const ret: any = {}
 
@@ -11,10 +10,6 @@ export default function wrapperEnv(envConf: Recordable): ViteEnv {
       realName = true
     } else if (realName === 'false') {
       realName = false
-    }
-
-    if (envName === 'VITE_PORT') {
-      realName = Number(realName)
     }
     ret[envName] = realName
     process.env[envName] = realName

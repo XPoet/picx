@@ -8,12 +8,8 @@ import contextmenuDirective from '@/common/directive/contextmenu'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import '@/style/element-plus.styl'
 
-if (import.meta.env.MODE === 'production') {
-  // @ts-ignore
-  import('@/utils/register-sw.ts')
-}
-
 const app = createApp(App)
+
 app.directive('contextmenu', contextmenuDirective)
 
 // import element-plus icons
