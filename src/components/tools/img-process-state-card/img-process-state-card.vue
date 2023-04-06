@@ -26,12 +26,17 @@
     >
       点击下载
     </div>
+    <el-tooltip placement="top" :offset="8" content="删除">
+      <el-icon class="del-btn" @click="remove(imgObj.uuid)"><Remove /></el-icon>
+    </el-tooltip>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ImgProcessStateModel } from '@/common/model'
 import { downloadImage } from '@/utils'
+
+const emit = defineEmits(['remove'])
 
 defineProps({
   imgObj: {
@@ -43,6 +48,10 @@ defineProps({
 
 const download = (file: File) => {
   downloadImage(file)
+}
+
+const remove = (uuid: string) => {
+  emit('remove', uuid)
 }
 </script>
 

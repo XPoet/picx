@@ -1,7 +1,7 @@
 <template>
   <div
     class="getting-images-container"
-    :class="{ focus: uploadAreaActive && curImgBase64 }"
+    :class="{ focus: uploadAreaActive && curShowImg.base64 }"
     @dragover.prevent
     @drop.stop.prevent="onDrop"
     @paste.stop="onPaste"
@@ -14,11 +14,11 @@
       @change="onSelect"
       multiple="multiple"
     />
-    <div class="upload-area-tips" v-if="!curImgBase64">
+    <div class="upload-area-tips" v-if="!curShowImg.base64">
       <el-icon class="icon"><UploadFilled /></el-icon>
       <div class="text">拖拽 / 粘贴 / 点击此处选择图片</div>
     </div>
-    <img class="preview-img" v-if="curImgBase64" :src="curImgBase64" />
+    <img class="preview-img" v-if="curShowImg.base64" :src="curShowImg.base64" />
   </div>
 </template>
 
@@ -32,10 +32,22 @@ const store = useStore()
 
 const uploadAreaActive = computed((): boolean => store.getters.getUploadAreaActive)
 
-const curImgBase64 = ref<string>('')
+const curShowImg = ref<{ uuid: string; base64: string }>({
+  uuid: '',
+  base64: ''
+})
 const imgList = ref<ImageHandleResult[]>([])
 
 const emit = defineEmits(['getImgList'])
+
+const setCurImg = () => {
+  const len = imgList.value.length
+  const tmpImg = len > 0 ? imgList.value[len - 1] : { uuid: '', base64: '' }
+  curShowImg.value = {
+    uuid: tmpImg.uuid,
+    base64: tmpImg.base64
+  }
+}
 
 const unifiedHandle = async (files: File[]) => {
   if (!files.length) {
@@ -49,7 +61,9 @@ const unifiedHandle = async (files: File[]) => {
       imgList.value.push(res)
     }
   }
-  curImgBase64.value = imgList.value[imgList.value.length - 1].base64
+
+  setCurImg()
+
   store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
   emit('getImgList', imgList.value)
 }
@@ -74,7 +88,19 @@ const onPaste = async (e: any) => {
 
 const reset = () => {
   imgList.value = []
-  curImgBase64.value = ''
+  curShowImg.value.uuid = ''
+  curShowImg.value.base64 = ''
+}
+
+const remove = (uuid: string) => {
+  const rmIdx = imgList.value.findIndex((v) => v.uuid === uuid)
+  if (rmIdx !== -1) {
+    imgList.value.splice(rmIdx, 1)
+  }
+
+  if (uuid === curShowImg.value.uuid) {
+    setCurImg()
+  }
 }
 
 onMounted(() => {
@@ -85,7 +111,7 @@ onUnmounted(() => {
   window.removeEventListener('paste', onPaste)
 })
 
-defineExpose({ reset })
+defineExpose({ reset, remove })
 </script>
 
 <style scoped lang="stylus">

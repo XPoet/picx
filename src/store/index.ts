@@ -8,6 +8,7 @@ import userConfigInfoModule from './modules/user-config-info'
 import imageCardModule from './modules/image-card'
 import uploadAreaActiveModule from './modules/upload-area-active'
 import userSettingsModule from './modules/user-settings'
+import toolboxImageListModule from './modules/toolbox-image-list'
 
 // Create a new store instance.
 export const store = createStore<RootStateTypes>({
@@ -18,7 +19,8 @@ export const store = createStore<RootStateTypes>({
     userConfigInfoModule,
     imageCardModule,
     uploadAreaActiveModule,
-    userSettingsModule
+    userSettingsModule,
+    toolboxImageListModule
   },
 
   state: {
@@ -36,6 +38,7 @@ export const store = createStore<RootStateTypes>({
       dispatch('USER_CONFIG_INFO_LOGOUT')
       commit('UPLOAD_AREA_ACTIVE_LOGOUT')
       dispatch('USER_SETTINGS_LOGOUT')
+      dispatch('TOOLBOX_IMG_LIST_RESET')
       localStorage.clear()
       sessionStorage.clear()
     }

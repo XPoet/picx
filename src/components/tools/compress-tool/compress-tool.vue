@@ -1,7 +1,12 @@
 <template>
   <div class="compress-tool-container">
     <div v-if="imgList.length" class="compress-tool-left">
-      <img-process-state-card v-for="img in imgList" :img-obj="img" :key="img.uuid" />
+      <img-process-state-card
+        v-for="img in imgList"
+        :img-obj="img"
+        :key="img.uuid"
+        @remove="remove"
+      />
     </div>
     <div class="compress-tool-right" :class="{ 'no-img': !imgList.length }">
       <getting-images ref="gettingImagesRef" @getImgList="getImgList"></getting-images>
@@ -46,9 +51,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { CompressEncoderEnum, ImageHandleResult, ImgProcessStateModel } from '@/common/model'
 import { compressImage, downloadImage, getFileSize, imgFileToBase64 } from '@/utils'
+import { useStore } from '@/store'
+
+const store = useStore()
 
 const gettingImagesRef = ref<any>(null)
 
@@ -60,24 +68,28 @@ const isCompressed = ref<boolean>(false)
 const getImgList = (imgs: ImageHandleResult[]) => {
   isCompressed.value = false
   compressing.value = false
-  imgList.value = imgs.map((x) => ({
-    uuid: x.uuid,
-    originalName: x.name,
-    originalSize: x.size,
-    originalBase64: x.base64,
-    originalFile: x.file
-  }))
+  imgs.forEach((x) => {
+    store.dispatch('TOOLBOX_IMG_LIST_ADD', {
+      uuid: x.uuid,
+      originalName: x.name,
+      originalSize: x.size,
+      originalBase64: x.base64,
+      originalFile: x.file
+    })
+  })
 }
 
 const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.webP)
 
+// 重置
 const reset = () => {
-  imgList.value.length = 0
+  store.dispatch('TOOLBOX_IMG_LIST_RESET')
   compressEncoder.value = CompressEncoderEnum.webP
   isCompressed.value = false
   gettingImagesRef.value?.reset()
 }
 
+// 压缩
 const compress = async () => {
   compressing.value = true
   // eslint-disable-next-line no-restricted-syntax
@@ -93,11 +105,29 @@ const compress = async () => {
   compressing.value = false
 }
 
+// 下载
 const download = () => {
-  imgList.value.forEach((v) => {
+  imgList.value.forEach((v: ImgProcessStateModel) => {
     downloadImage(v.finialFile as File)
   })
 }
+
+// 删除
+const remove = (uuid: string) => {
+  store.dispatch('TOOLBOX_IMG_LIST_REMOVE', uuid)
+  gettingImagesRef.value?.remove(uuid)
+}
+
+watch(
+  () => store.state.toolboxImageListModule.toolboxImageList,
+  (newValue) => {
+    imgList.value = newValue
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+)
 </script>
 
 <style scoped lang="stylus">

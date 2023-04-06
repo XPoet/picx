@@ -14,6 +14,12 @@
     margin-bottom 0
   }
 
+  &:hover {
+    .del-btn {
+      display block
+    }
+  }
+
   .img-container {
     position relative
     box-sizing border-box
@@ -25,6 +31,7 @@
       height 100%
     }
   }
+
 
   .info-container {
     position relative
@@ -70,6 +77,7 @@
     }
   }
 
+
   .operate-container {
     position relative
     box-sizing border-box
@@ -83,5 +91,15 @@
     &:hover {
       background var(--el-color-primary-light-9)
     }
+  }
+
+  .del-btn {
+    position absolute
+    top 6rem
+    right 6rem
+    display none
+    color var(--background-color)
+    font-size 22rem
+    cursor pointer
   }
 }

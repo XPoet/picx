@@ -5,11 +5,10 @@ import {
   ImageLinkRuleModel,
   UserSettingsModel
 } from '@/common/model'
-import { deepAssignObject } from '@/utils'
+import { deepAssignObject, getLocal, getUuid } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 import UserSettingsStateTypes from '@/store/modules/user-settings/types'
-import { getLocalItem, getUuid } from '@/utils/common-utils'
 import { LS_PICX_SETTINGS } from '@/common/constant'
 
 const initSettings: UserSettingsModel = {
@@ -64,7 +63,7 @@ const initSettings: UserSettingsModel = {
 }
 
 const initUserSettings = (): UserSettingsModel => {
-  const LSSettings = getLocalItem(LS_PICX_SETTINGS)
+  const LSSettings = getLocal(LS_PICX_SETTINGS)
   if (LSSettings) {
     deepAssignObject(initSettings, LSSettings)
   }
