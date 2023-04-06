@@ -10,7 +10,7 @@ import configPWAPlugin from './pwa'
 export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   const vitePlugins: (Plugin | Plugin[])[] = [vue()]
 
-  // On-demand import style for Element Plus
+  // 按需自动导入 Element Plus 组件
   vitePlugins.push(
     AutoImport({
       resolvers: [ElementPlusResolver()]
