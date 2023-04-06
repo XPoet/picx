@@ -60,7 +60,14 @@ const initSettings: UserSettingsModel = {
       }
     ]
   },
-  starred: false
+  starred: false,
+  defaultWatermark: false,
+  watermarkSettings: {
+    text: '',
+    fontSize: 30,
+    position: 'bottom-right',
+    opacity: 0.5
+  }
 }
 
 const initUserSettings = (): UserSettingsModel => {
