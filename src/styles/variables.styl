@@ -1,9 +1,18 @@
+// ========================================================================
+//  others variables
+// ========================================================================
+$component-interval = 16rem
+$box-border-radius = 10rem
+$content-max-width = 888rem
+$scrollbar-size = 8rem
+
+
 // ========================================================================================
 // media query
 // ========================================================================================
 $media-max-width-tablet-2 = 1200px                       // media query max width (tablet-2)
 $media-max-width-tablet = 900px                          // media query max width (tablet)
-$media-max-width-mobile = 500px                          // media query max width (mobile)
+$media-max-width-mobile = 600px                          // media query max width (mobile)
 
 picx-tablet-2() {
   @media (max-width $media-max-width-tablet-2) {
@@ -11,11 +20,13 @@ picx-tablet-2() {
   }
 }
 
+
 picx-tablet() {
   @media (max-width $media-max-width-tablet) {
     { block }
   }
 }
+
 
 picx-mobile() {
   @media (max-width $media-max-width-mobile) {
@@ -90,9 +101,6 @@ $dark-uploading-color = darken($uploading-color, 30%)
 $dark-uploaded-color = darken($uploaded-color, 30%)
 
 
-// ========================================================================
-//  light/dark mode color
-// ========================================================================
 root-color(mode) {
   --background-color mode == 'light' ? $background-color : $dark-background-color
   --background-color-2 mode == 'light' ? $background-color-2 : $dark-background-color-2
@@ -114,4 +122,6 @@ root-color(mode) {
   --uploading-color  mode == 'light' ? $uploading-color : $dark-uploading-color
   --uploaded-color  mode == 'light' ? $uploaded-color : $dark-uploaded-color
 }
+
+
 

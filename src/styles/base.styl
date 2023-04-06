@@ -1,13 +1,13 @@
-@import './theme.styl'
-@import './variables.styl'
-
-$component-interval = 16rem
-$box-border-radius = 10rem
-$content-max-width = 888rem
-$scrollbar-size = 8rem
+@import "./variables.styl"
+@import "./theme.styl"
+@import "./element-plus.styl"
 
 :root {
   font-size 1px
+
+  +picx-tablet() {
+    font-size 0.95px
+  }
 
   +picx-tablet() {
     font-size 0.9px
@@ -49,7 +49,6 @@ body {
 
 a {
   color var(--text-color)
-  font-size 1.5rem
   text-decoration none
 }
 

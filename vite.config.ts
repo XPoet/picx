@@ -1,5 +1,6 @@
 import { loadEnv } from 'vite'
 import type { UserConfig, ConfigEnv } from 'vite'
+import * as path from 'path'
 import createVitePlugins from './src/plugins/vite'
 import wrapperEnv from './src/utils/env'
 
@@ -25,6 +26,18 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
           replacement: 'vue-i18n/dist/vue-i18n.cjs.js'
         }
       ]
+    },
+    css: {
+      preprocessorOptions: {
+        stylus: {
+          // 引入 variables.styl 文件
+          imports: [path.resolve(__dirname, 'src/styles/variables.styl')],
+          // 定义全局变量
+          additionalData: `
+            $picx-primary-color = #4975c6
+          `
+        }
+      }
     },
     base: './', // 设置打包路径
     optimizeDeps: {
