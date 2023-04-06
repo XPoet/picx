@@ -12,7 +12,6 @@
     "dev": "vite",
     "build": "vite build",
     "serve": "vite preview",
-    "release": "git push --tag && git push -u",
     "format": "prettier --write",
     "lint": "eslint --fix ./src --ext .vue,.js,.ts",
     "lint:style": "stylelint --fix ./src/**/**/*.{vue,styl}",
@@ -23,14 +22,14 @@
     "*.{vue,js,ts}": "eslint --fix"
   },
   "dependencies": {
-    "@element-plus/icons-vue": "^2.0.4",
+    "@element-plus/icons-vue": "^2.1.0",
     "@yireen/squoosh-browser": "^1.0.7",
-    "axios": "^0.21.4",
-    "element-plus": "^2.2.5",
-    "vue": "^3.2.18",
+    "axios": "^1.3.5",
+    "element-plus": "^2.3.2",
+    "vue": "^3.2.47",
     "vue-i18n": "^9.2.2",
-    "vue-router": "^4.0.11",
-    "vuex": "^4.0.2"
+    "vue-router": "^4.1.6",
+    "vuex": "^4.1.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^12.1.1",
@@ -38,8 +37,8 @@
     "@types/node": "^15.0.1",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "@vitejs/plugin-vue": "^1.1.5",
-    "@vue/compiler-sfc": "^3.2.18",
+    "@vitejs/plugin-vue": "^2.3.4",
+    "@vue/compiler-sfc": "^3.2.47",
     "commitizen": "^4.2.3",
     "cz-conventional-changelog": "^3.3.0",
     "cz-customizable": "^6.3.0",
@@ -57,8 +56,8 @@
     "stylelint-stylus": "^0.18.0",
     "stylus": "^0.59.0",
     "typescript": "^4.1.5",
-    "unplugin-auto-import": "^0.8.7",
-    "unplugin-vue-components": "^0.19.6",
+    "unplugin-auto-import": "^0.15.2",
+    "unplugin-vue-components": "^0.24.1",
     "vite": "~2.7.13",
     "vite-plugin-pwa": "^0.12.8"
   },
