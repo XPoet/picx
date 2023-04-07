@@ -3,7 +3,8 @@ import {
   CompressEncoderEnum,
   ElementPlusSizeEnum,
   ImageLinkRuleModel,
-  UserSettingsModel
+  UserSettingsModel,
+  WatermarkPositionEnum
 } from '@/common/model'
 import { deepAssignObject, getLocal, getUuid } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
@@ -60,11 +61,11 @@ const initSettings: UserSettingsModel = {
     ]
   },
   starred: false,
-  defaultWatermark: false,
-  watermarkSettings: {
+  watermark: {
+    enable: false,
     text: '',
     fontSize: 30,
-    position: 'bottom-right',
+    position: WatermarkPositionEnum.rightBottom,
     opacity: 0.5
   }
 }

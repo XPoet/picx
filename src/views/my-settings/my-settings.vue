@@ -40,53 +40,55 @@
       </li>
       <li class="setting-item upload-settings">
         <el-switch
-          v-model="userSettings.defaultWatermark"
+          v-model="userSettings.watermark.enable"
           @change="persistUserSettings"
           active-text="添加水印"
         ></el-switch>
         <span class="desc"> 自定义水印文字、字体大小、位置和透明度 </span>
       </li>
-      <el-card v-if="userSettings.defaultWatermark">
-        <el-form label-position="left" label-width="120px" size="default">
-          <el-form-item label="水印文字">
-            <el-input
-              v-model="userSettings.watermarkSettings.text"
-              clearable
-              maxlength="8"
-              @input="persistUserSettings"
-            />
-          </el-form-item>
-          <el-form-item label="水印字体大小">
-            <el-input-number
-              v-model="userSettings.watermarkSettings.fontSize"
-              :min="30"
-              :max="50"
-              @change="persistUserSettings"
-            />
-          </el-form-item>
-          <el-form-item label="水印位置">
-            <el-radio-group
-              v-model="userSettings.watermarkSettings.position"
-              @change="persistUserSettings"
-            >
-              <el-radio label="top-left">左上角</el-radio>
-              <el-radio label="top-right">右上角</el-radio>
-              <el-radio label="bottom-left">左下角</el-radio>
-              <el-radio label="bottom-right">右下角</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="水印透明度">
-            <el-input-number
-              v-model="userSettings.watermarkSettings.opacity"
-              :precision="2"
-              :step="0.1"
-              :min="0"
-              :max="1"
-              @change="persistUserSettings"
-            />
-          </el-form-item>
-        </el-form>
-      </el-card>
+      <li class="setting-item" v-if="userSettings.watermark.enable">
+        <el-card class="watermark-config-card">
+          <el-form label-position="left" label-width="120rem">
+            <el-form-item label="水印文字">
+              <el-input
+                v-model="userSettings.watermark.text"
+                clearable
+                maxlength="10"
+                @input="persistUserSettings"
+              />
+            </el-form-item>
+            <el-form-item label="水印字体大小">
+              <el-input-number
+                v-model="userSettings.watermark.fontSize"
+                :min="30"
+                :max="50"
+                @change="persistUserSettings"
+              />
+            </el-form-item>
+            <el-form-item label="水印位置">
+              <el-radio-group
+                v-model="userSettings.watermark.position"
+                @change="persistUserSettings"
+              >
+                <el-radio :label="WatermarkPositionEnum.leftTop">左上角</el-radio>
+                <el-radio :label="WatermarkPositionEnum.leftBottom">左下角</el-radio>
+                <el-radio :label="WatermarkPositionEnum.rightTop">右上角</el-radio>
+                <el-radio :label="WatermarkPositionEnum.rightBottom">右下角</el-radio>
+              </el-radio-group>
+            </el-form-item>
+            <el-form-item label="水印透明度">
+              <el-input-number
+                v-model="userSettings.watermark.opacity"
+                :precision="1"
+                :step="0.1"
+                :min="0.2"
+                :max="1"
+                @change="persistUserSettings"
+              />
+            </el-form-item>
+          </el-form>
+        </el-card>
+      </li>
     </ul>
 
     <div class="setting-title">图片链接规则配置：</div>
@@ -154,7 +156,7 @@
       <li class="setting-item">
         <div class="img-encoder-title">选择图像编码器（压缩算法）：</div>
         <el-radio-group
-          class="img-encoder-group"
+          class="img-encoder-radio-group"
           :disabled="!userSettings.isCompress"
           v-model="userSettings.compressEncoder"
           @change="persistUserSettings"
@@ -220,7 +222,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { store } from '@/store'
-import { CompressEncoderEnum } from '@/common/model'
+import { CompressEncoderEnum, WatermarkPositionEnum } from '@/common/model'
 import ImageLinkRuleConfig from '@/components/image-link-rule-config/image-link-rule-config.vue'
 
 const userSettings = computed(() => store.getters.getUserSettings).value

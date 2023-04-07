@@ -66,16 +66,19 @@ export const selectedFileHandle = async (file: File): Promise<ImageFileHandleRes
       resolve(null)
     }
 
-    let compressFile: NonNullable<File>
-    const { isCompress, compressEncoder, defaultWatermark, watermarkSettings } =
-      store.getters.getUserSettings
-    const isNoCompress = file.type === 'image/gif'
-    if (defaultWatermark && isCompress) {
-      const { text, fontSize, position, opacity } = watermarkSettings
-      if (text) {
-        file = await addWatermarkToImage(file, text, fontSize, position, opacity)
+    const { isCompress, compressEncoder, watermark } = store.getters.getUserSettings
+
+    const { enable, text } = watermark
+
+    if (enable && text) {
+      const watermarkImg = await addWatermarkToImage(file, watermark)
+      if (watermarkImg) {
+        file = watermarkImg
       }
     }
+
+    let compressFile: NonNullable<File>
+    const isNoCompress = file.type === 'image/gif'
 
     if (!isNoCompress && isCompress) {
       compressFile = await compressImage(file, compressEncoder)

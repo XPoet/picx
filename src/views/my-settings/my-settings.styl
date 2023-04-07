@@ -48,8 +48,14 @@
       margin-bottom 0
     }
 
+
     .prefix-input {
       width calc(100% - 56rem)
+      margin-left 56rem
+    }
+
+
+    .watermark-config-card {
       margin-left 56rem
     }
 
@@ -57,7 +63,14 @@
       margin-bottom 12rem
     }
 
-    .img-encoder-group {
+
+    .img-encoder-radio-group {
+
+      display inline-block
+
+      .el-radio {
+        display block
+      }
 
       .desc {
         margin-left 10rem
@@ -66,16 +79,6 @@
       }
     }
 
-
-
-    :deep() .el-radio-group {
-
-      display inline-block
-
-      .el-radio {
-        display block
-      }
-    }
 
     :deep() .el-switch {
       user-select none

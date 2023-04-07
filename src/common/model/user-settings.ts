@@ -19,6 +19,17 @@ export enum ElementPlusSizeEnum {
   small = 'small'
 }
 
+export enum WatermarkPositionEnum {
+  // eslint-disable-next-line no-unused-vars
+  leftTop = 'leftTop',
+  // eslint-disable-next-line no-unused-vars
+  leftBottom = 'leftBottom',
+  // eslint-disable-next-line no-unused-vars
+  rightTop = 'rightTop',
+  // eslint-disable-next-line no-unused-vars
+  rightBottom = 'rightBottom'
+}
+
 export interface UserSettingsModel {
   defaultHash: boolean
   enableImageLinkFormat: boolean
@@ -37,13 +48,12 @@ export interface UserSettingsModel {
     selected: string
     presetList: Array<ImageLinkFormatModel>
   }
-
   starred?: boolean
-  defaultWatermark: boolean
-  watermarkSettings: {
+  watermark: {
+    enable: boolean
     text: string
     fontSize: number
-    position: string
+    position: WatermarkPositionEnum
     opacity: number
   }
 }
