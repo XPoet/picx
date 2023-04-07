@@ -32,13 +32,13 @@
           @change="themeModeChange"
         />
         <el-switch
-          v-model="userSettings.isCompress"
+          v-model="userSettings.compress.enable"
           class="mb-2"
           :active-text="$t('actions.compress')"
           @change="persistUserSettings"
         />
         <el-switch
-          v-model="userSettings.enableImageLinkFormat"
+          v-model="userSettings.imageLinkFormat.enable"
           class="mb-2"
           :active-text="$t('actions.transform') + userSettings.imageLinkFormat.selected"
           @change="persistUserSettings"
@@ -49,10 +49,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch, computed, ref, onUpdated } from 'vue'
+import { computed, onMounted, onUpdated, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { ElementPlusSizeEnum } from '@/common/model'
+import { ElementPlusSizeEnum, ThemeModeEnum } from '@/common/model'
 import { navInfoList } from './nav-content.data'
 
 const router = useRouter()
@@ -72,7 +72,7 @@ const navIconSize = computed(() => {
   }
 })
 
-const isOpenDarkMode = ref(userSettings.themeMode === 'dark')
+const isOpenDarkMode = ref(userSettings.theme.mode === ThemeModeEnum.dark)
 
 const navList = ref(navInfoList)
 
@@ -110,10 +110,10 @@ const persistUserSettings = () => {
 }
 
 const themeModeChange = () => {
-  if (userSettings.themeMode === 'dark') {
-    userSettings.themeMode = 'light'
+  if (userSettings.theme.mode === ThemeModeEnum.dark) {
+    userSettings.theme.mode = ThemeModeEnum.light
   } else {
-    userSettings.themeMode = 'dark'
+    userSettings.theme.mode = ThemeModeEnum.dark
   }
   persistUserSettings()
 }

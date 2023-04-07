@@ -30,21 +30,37 @@ export enum WatermarkPositionEnum {
   rightBottom = 'rightBottom'
 }
 
+export enum ThemeModeEnum {
+  // eslint-disable-next-line no-unused-vars
+  auto = 'auto',
+  // eslint-disable-next-line no-unused-vars
+  light = 'light',
+  // eslint-disable-next-line no-unused-vars
+  dark = 'dark'
+  // eslint-disable-next-line no-unused-vars
+}
+
 export interface UserSettingsModel {
   defaultHash: boolean
-  enableImageLinkFormat: boolean
-  defaultPrefix: boolean
-  prefixName: string
-  themeMode: 'auto' | 'light' | 'dark'
-  autoLightThemeTime: string[]
-  isCompress: boolean
-  compressEncoder: CompressEncoderEnum
+  prefixNaming: {
+    enable: boolean
+    prefix: string
+  }
+  theme: {
+    mode: ThemeModeEnum
+    autoLightTime: string[]
+  }
+  compress: {
+    enable: boolean
+    encoder: CompressEncoderEnum
+  }
   elementPlusSize: ElementPlusSizeEnum
   imageLinkType: {
     selected: string
     presetList: Array<ImageLinkRuleModel>
   }
   imageLinkFormat: {
+    enable: boolean
     selected: string
     presetList: Array<ImageLinkFormatModel>
   }

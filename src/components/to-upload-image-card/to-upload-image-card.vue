@@ -36,11 +36,11 @@
                 {{ imgItem.filename.final }}
               </div>
               <div class="image-info">
-                <span class="file-size original-file-size item" v-if="userSettings.isCompress">
+                <span class="file-size original-file-size item" v-if="userSettings.compress.enable">
                   <del> {{ getFileSize(imgItem.fileInfo.originSize) }}KB </del>
                 </span>
 
-                <span class="file-size item" :class="{ compressed: userSettings.isCompress }">
+                <span class="file-size item" :class="{ compressed: userSettings.compress.enable }">
                   {{ getFileSize(imgItem.fileInfo.size) }} KB
                 </span>
 
@@ -81,11 +81,11 @@
                 label="命名前缀"
                 v-if="
                   !imgItem.filename.isRename &&
-                  userSettings.defaultPrefix &&
-                  userSettings.prefixName
+                  userSettings.prefixNaming.enable &&
+                  userSettings.prefixNaming.prefix
                 "
                 v-model="imgItem.filename.isPrefix"
-                @change="prefixNaming($event, imgItem)"
+                @change="prefixNamingTrans($event, imgItem)"
               ></el-checkbox>
             </div>
 
@@ -166,7 +166,7 @@ const hashRename = (e: boolean, img: any) => {
   }
 }
 
-const prefixNaming = (e: boolean, img: any) => {
+const prefixNamingTrans = (e: boolean, img: any) => {
   if (e) {
     img.filename.name = `${img.filename.prefixName}${img.filename.initName}`
   } else {
@@ -183,7 +183,7 @@ const rename = (e: boolean, img: any) => {
   if (e) {
     img.filename.name = img.filename.newName.trim().replace(/\s+/g, '-')
   } else {
-    prefixNaming(img.filename.isPrefix, img) // 恢复列表 prefix 选项
+    prefixNamingTrans(img.filename.isPrefix, img) // 恢复列表 prefix 选项
   }
 
   if (img.filename.isHashRename) {
@@ -213,11 +213,11 @@ const removeToUploadImage = (imgItem: ToUploadImageModel) => {
 }
 
 onMounted(() => {
-  const { defaultHash: isHash, defaultPrefix: isPrefix, prefixName } = userSettings
+  const { defaultHash: isHash, prefixNaming } = userSettings
   toUploadImages.list.forEach((v: ToUploadImageModel) => {
-    v.filename.isPrefix = isPrefix
-    v.filename.prefixName = prefixName
-    prefixNaming(isPrefix, v)
+    v.filename.isPrefix = prefixNaming.enable
+    v.filename.prefixName = prefixNaming.prefix
+    prefixNamingTrans(prefixNaming.enable, v)
     v.filename.isHashRename = isHash
     hashRename(isHash, v)
   })

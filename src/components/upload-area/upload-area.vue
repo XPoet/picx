@@ -63,8 +63,8 @@ const preUploadHandle = (base64Data: string, originFile: File, compressFile?: Fi
     store.dispatch('TO_UPLOAD_IMAGE_CLEAN_UPLOADED_NUMBER')
   }
 
-  const { defaultHash, isCompress, defaultPrefix, prefixName } = userSettings
-  const file = isCompress ? compressFile : originFile
+  const { defaultHash, prefixNaming, compress } = userSettings
+  const file = compress.enable ? compressFile : originFile
   const curImg = createToUploadImageObject()
 
   curImg.imgData.base64Url = base64Data
@@ -79,15 +79,15 @@ const preUploadHandle = (base64Data: string, originFile: File, compressFile?: Fi
   curImg.fileInfo.lastModified = file?.lastModified
 
   curImg.filename.initName = name
-  curImg.filename.name = defaultPrefix ? `${prefixName}${name}` : name
-  curImg.filename.prefixName = prefixName
+  curImg.filename.name = prefixNaming.enable ? `${prefixNaming.prefix}${name}` : name
+  curImg.filename.prefixName = prefixNaming.prefix
   curImg.filename.hash = hash
   curImg.filename.suffix = suffix
   curImg.filename.final = defaultHash
     ? `${curImg.filename.name}.${hash}.${suffix}`
     : `${curImg.filename.name}.${suffix}`
   curImg.filename.isHashRename = defaultHash
-  curImg.filename.isPrefix = defaultPrefix
+  curImg.filename.isPrefix = prefixNaming.enable
 
   store.dispatch('TO_UPLOAD_IMAGE_LIST_ADD', JSON.parse(JSON.stringify(curImg)))
   store.dispatch('TO_UPLOAD_IMAGE_SET_CURRENT', {
@@ -98,9 +98,9 @@ const preUploadHandle = (base64Data: string, originFile: File, compressFile?: Fi
 
 const unifiedHandler = async (files: any[]) => {
   store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
-  const { isCompress } = userSettings
+  const { compress } = userSettings
   let loading = null
-  if (isCompress) {
+  if (compress.enable) {
     loading = compressImgLoading()
   }
   // eslint-disable-next-line no-restricted-syntax
@@ -110,7 +110,7 @@ const unifiedHandler = async (files: any[]) => {
       preUploadHandle(res.base64, res.originalFile, res.compressFile)
     }
   }
-  if (isCompress && loading) {
+  if (compress.enable && loading) {
     loading.close()
   }
 }

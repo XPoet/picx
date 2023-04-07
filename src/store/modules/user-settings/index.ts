@@ -3,6 +3,7 @@ import {
   CompressEncoderEnum,
   ElementPlusSizeEnum,
   ImageLinkRuleModel,
+  ThemeModeEnum,
   UserSettingsModel,
   WatermarkPositionEnum
 } from '@/common/model'
@@ -14,13 +15,18 @@ import { LS_PICX_SETTINGS } from '@/common/constant'
 
 const initSettings: UserSettingsModel = {
   defaultHash: true,
-  enableImageLinkFormat: false,
-  defaultPrefix: false,
-  prefixName: '',
-  isCompress: true,
-  compressEncoder: CompressEncoderEnum.webP,
-  themeMode: 'light',
-  autoLightThemeTime: ['08:00', '19:00'],
+  prefixNaming: {
+    enable: false,
+    prefix: ''
+  },
+  compress: {
+    enable: true,
+    encoder: CompressEncoderEnum.webP
+  },
+  theme: {
+    mode: ThemeModeEnum.light,
+    autoLightTime: ['08:00', '19:00']
+  },
   elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
     selected: 'Staticaly',
@@ -48,6 +54,7 @@ const initSettings: UserSettingsModel = {
     ]
   },
   imageLinkFormat: {
+    enable: false,
     selected: 'Markdown',
     presetList: [
       {

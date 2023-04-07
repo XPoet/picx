@@ -12,16 +12,16 @@
       </li>
       <li class="setting-item upload-settings">
         <el-switch
-          v-model="userSettings.defaultPrefix"
+          v-model="userSettings.prefixNaming.enable"
           @change="persistUserSettings"
           active-text="添加图片名前缀"
         ></el-switch>
         <span class="desc">上传前给图片名加上配置的前缀，示例：abc-image.jpg，abc- 为前缀</span>
       </li>
-      <li class="setting-item upload-settings" v-if="userSettings.defaultPrefix">
+      <li class="setting-item upload-settings" v-if="userSettings.prefixNaming.enable">
         <el-input
           class="prefix-input"
-          v-model="userSettings.prefixName"
+          v-model="userSettings.prefixNaming.prefix"
           placeholder="请输入命名前缀"
           @input="persistUserSettings"
           clearable
@@ -30,7 +30,7 @@
       </li>
       <li class="setting-item upload-settings">
         <el-switch
-          v-model="userSettings.enableImageLinkFormat"
+          v-model="userSettings.imageLinkFormat.enable"
           @change="persistUserSettings"
           active-text="转换图片链接格式"
         ></el-switch>
@@ -148,7 +148,7 @@
     <ul class="setting-list">
       <li class="setting-item">
         <el-switch
-          v-model="userSettings.isCompress"
+          v-model="userSettings.compress.enable"
           @change="persistUserSettings"
           active-text="是否压缩图片"
         ></el-switch>
@@ -157,20 +157,20 @@
         <div class="img-encoder-title">选择图像编码器（压缩算法）：</div>
         <el-radio-group
           class="img-encoder-radio-group"
-          :disabled="!userSettings.isCompress"
-          v-model="userSettings.compressEncoder"
+          :disabled="!userSettings.compress.enable"
+          v-model="userSettings.compress.encoder"
           @change="persistUserSettings"
         >
-          <el-radio :label="compressEncoder.webP">
-            {{ compressEncoder.webP }}
+          <el-radio :label="CompressEncoderEnum.webP">
+            {{ CompressEncoderEnum.webP }}
             <span class="desc">压缩后图片格式为 webp，压缩率较高，大多数浏览器支持</span>
           </el-radio>
-          <el-radio :label="compressEncoder.mozJPEG">
-            {{ compressEncoder.mozJPEG }}
+          <el-radio :label="CompressEncoderEnum.mozJPEG">
+            {{ CompressEncoderEnum.mozJPEG }}
             <span class="desc">压缩后图片格式为 jpg，兼容性最好</span>
           </el-radio>
-          <el-radio :label="compressEncoder.avif">
-            {{ compressEncoder.avif }}
+          <el-radio :label="CompressEncoderEnum.avif">
+            {{ CompressEncoderEnum.avif }}
             <span class="desc">压缩后图片格式为 avif，压缩率最高，目前仅谷歌浏览器支持</span>
           </el-radio>
         </el-radio-group>
@@ -181,7 +181,7 @@
     <ul class="setting-list">
       <li class="setting-item">
         <el-select
-          v-model="userSettings.themeMode"
+          v-model="userSettings.theme.mode"
           placeholder="主题模式"
           @change="saveUserSettings"
         >
@@ -192,13 +192,15 @@
       </li>
     </ul>
 
-    <div class="setting-title" v-if="userSettings.themeMode === 'auto'">设置白昼模式时间区间：</div>
-    <ul class="setting-list" v-if="userSettings.themeMode === 'auto'">
+    <div class="setting-title" v-if="userSettings.theme.mode === ThemeModeEnum.auto">
+      设置白昼模式时间区间：
+    </div>
+    <ul class="setting-list" v-if="userSettings.theme.mode === ThemeModeEnum.auto">
       <li class="setting-item">
         <el-form ref="form">
           <el-form-item>
             <el-time-select
-              v-model="userSettings.autoLightThemeTime[0]"
+              v-model="userSettings.theme.autoLightTime[0]"
               start="00:00"
               step="00:30"
               end="23:59"
@@ -206,8 +208,8 @@
             ></el-time-select>
             <span class="time-middle-space"> ~ </span>
             <el-time-select
-              v-model="userSettings.autoLightThemeTime[1]"
-              :start="userSettings.autoLightThemeTime[0]"
+              v-model="userSettings.theme.autoLightTime[1]"
+              :start="userSettings.theme.autoLightTime[0]"
               step="00:30"
               end="23:59"
               @change="saveUserSettings"
@@ -222,7 +224,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { store } from '@/store'
-import { CompressEncoderEnum, WatermarkPositionEnum } from '@/common/model'
+import { CompressEncoderEnum, ThemeModeEnum, WatermarkPositionEnum } from '@/common/model'
 import ImageLinkRuleConfig from '@/components/image-link-rule-config/image-link-rule-config.vue'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
@@ -231,8 +233,6 @@ const isAddRule = ref<boolean>(false)
 const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
 }
-
-const compressEncoder = CompressEncoderEnum
 
 const saveUserSettings = () => {
   store.dispatch('SET_USER_SETTINGS', {

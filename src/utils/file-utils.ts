@@ -66,7 +66,7 @@ export const selectedFileHandle = async (file: File): Promise<ImageFileHandleRes
       resolve(null)
     }
 
-    const { isCompress, compressEncoder, watermark } = store.getters.getUserSettings
+    const { watermark, compress } = store.getters.getUserSettings
 
     const { enable, text } = watermark
 
@@ -80,13 +80,13 @@ export const selectedFileHandle = async (file: File): Promise<ImageFileHandleRes
     let compressFile: NonNullable<File>
     const isNoCompress = file.type === 'image/gif'
 
-    if (!isNoCompress && isCompress) {
-      compressFile = await compressImage(file, compressEncoder)
+    if (!isNoCompress && compress.enable) {
+      compressFile = await compressImage(file, compress.encoder)
     }
 
     const reader = new FileReader()
     // @ts-ignore
-    reader.readAsDataURL(!isNoCompress && isCompress ? compressFile : file)
+    reader.readAsDataURL(!isNoCompress && compress.enable ? compressFile : file)
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const base64: any = e.target?.result
       const curImgSize = getFileSize(base64.length)
@@ -98,7 +98,7 @@ export const selectedFileHandle = async (file: File): Promise<ImageFileHandleRes
         resolve({
           base64,
           originalFile: file,
-          compressFile: !isNoCompress && isCompress ? compressFile : file
+          compressFile: !isNoCompress && compress.enable ? compressFile : file
         })
       }
     }
