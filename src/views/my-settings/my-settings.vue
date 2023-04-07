@@ -154,26 +154,11 @@
         ></el-switch>
       </li>
       <li class="setting-item">
-        <div class="img-encoder-title">选择图像编码器（压缩算法）：</div>
-        <el-radio-group
-          class="img-encoder-radio-group"
-          :disabled="!userSettings.compress.enable"
-          v-model="userSettings.compress.encoder"
-          @change="persistUserSettings"
-        >
-          <el-radio :label="CompressEncoderEnum.webP">
-            {{ CompressEncoderEnum.webP }}
-            <span class="desc">压缩后图片格式为 webp，压缩率较高，大多数浏览器支持</span>
-          </el-radio>
-          <el-radio :label="CompressEncoderEnum.mozJPEG">
-            {{ CompressEncoderEnum.mozJPEG }}
-            <span class="desc">压缩后图片格式为 jpg，兼容性最好</span>
-          </el-radio>
-          <el-radio :label="CompressEncoderEnum.avif">
-            {{ CompressEncoderEnum.avif }}
-            <span class="desc">压缩后图片格式为 avif，压缩率最高，目前仅谷歌浏览器支持</span>
-          </el-radio>
-        </el-radio-group>
+        <compress-config-box
+          ref="compressConfigBoxRef"
+          style="margin-top: 10rem"
+          @encoder=";(userSettings.compress.encoder = $event), persistUserSettings()"
+        />
       </li>
     </ul>
 
@@ -224,7 +209,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { store } from '@/store'
-import { CompressEncoderEnum, ThemeModeEnum, WatermarkPositionEnum } from '@/common/model'
+import { ThemeModeEnum, WatermarkPositionEnum } from '@/common/model'
 import ImageLinkRuleConfig from '@/components/image-link-rule-config/image-link-rule-config.vue'
 
 const userSettings = computed(() => store.getters.getUserSettings).value

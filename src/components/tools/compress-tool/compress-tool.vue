@@ -11,23 +11,11 @@
     <div class="compress-tool-right" :class="{ 'no-img': !imgList.length }">
       <getting-images ref="gettingImagesRef" @getImgList="getImgList"></getting-images>
 
-      <div class="compress-config">
-        <div class="img-encoder-title">选择图片压缩算法：</div>
-        <el-radio-group class="img-encoder-group" v-model="compressEncoder">
-          <el-radio :label="CompressEncoderEnum.webP">
-            {{ CompressEncoderEnum.webP }}
-            <span class="desc">压缩后图片格式为 webp，压缩率较高，大多数浏览器支持</span>
-          </el-radio>
-          <el-radio :label="CompressEncoderEnum.avif">
-            {{ CompressEncoderEnum.avif }}
-            <span class="desc">压缩后图片格式为 avif，压缩率极高，部分现代浏览器支持</span>
-          </el-radio>
-          <el-radio :label="CompressEncoderEnum.mozJPEG">
-            {{ CompressEncoderEnum.mozJPEG }}
-            <span class="desc">压缩后图片格式为 jpg，压缩率一般，所有浏览器支持</span>
-          </el-radio>
-        </el-radio-group>
-      </div>
+      <compress-config-box
+        ref="compressConfigBoxRef"
+        style="margin-top: 18rem"
+        @encoder="setCompressEncoder($event)"
+      />
 
       <div class="user-operate" :class="{ compressed: isCompressed && imgList.length > 1 }">
         <el-button v-if="isCompressed && imgList.length > 1" plain type="success" @click="download">
@@ -59,8 +47,10 @@ import { useStore } from '@/store'
 const store = useStore()
 
 const gettingImagesRef = ref<any>(null)
+const compressConfigBoxRef = ref<any>(null)
 
 const imgList = ref<ImgProcessStateModel[]>([])
+const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.webP)
 
 const compressing = ref<boolean>(false)
 const isCompressed = ref<boolean>(false)
@@ -79,14 +69,17 @@ const getImgList = (imgs: ImageHandleResult[]) => {
   })
 }
 
-const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.webP)
+const setCompressEncoder = (v: CompressEncoderEnum) => {
+  isCompressed.value = false
+  compressEncoder.value = v
+}
 
 // 重置
 const reset = () => {
   store.dispatch('TOOLBOX_IMG_LIST_RESET')
-  compressEncoder.value = CompressEncoderEnum.webP
   isCompressed.value = false
   gettingImagesRef.value?.reset()
+  compressConfigBoxRef.value?.reset()
 }
 
 // 压缩
