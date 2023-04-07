@@ -1,4 +1,5 @@
 import { getUuid } from './common-utils'
+import { addWatermarkToImage } from './add-watermark'
 import { store } from '@/store'
 import { compressImage } from '@/utils/compress-image'
 import { ImageFileHandleResult, IMG_UPLOAD_MAX_SIZE } from '@/common/model'
@@ -66,8 +67,15 @@ export const selectedFileHandle = async (file: File): Promise<ImageFileHandleRes
     }
 
     let compressFile: NonNullable<File>
-    const { isCompress, compressEncoder } = store.getters.getUserSettings
+    const { isCompress, compressEncoder, defaultWatermark, watermarkSettings } =
+      store.getters.getUserSettings
     const isNoCompress = file.type === 'image/gif'
+    if (defaultWatermark && isCompress) {
+      const { text, fontSize, position, opacity } = watermarkSettings
+      if (text) {
+        file = await addWatermarkToImage(file, text, fontSize, position, opacity)
+      }
+    }
 
     if (!isNoCompress && isCompress) {
       compressFile = await compressImage(file, compressEncoder)

@@ -38,6 +38,55 @@
           上传成功后复制的图片链接时启用 {{ userSettings.imageLinkFormat.selected }} 格式
         </span>
       </li>
+      <li class="setting-item upload-settings">
+        <el-switch
+          v-model="userSettings.defaultWatermark"
+          @change="persistUserSettings"
+          active-text="添加水印"
+        ></el-switch>
+        <span class="desc"> 自定义水印文字、字体大小、位置和透明度 </span>
+      </li>
+      <el-card v-if="userSettings.defaultWatermark">
+        <el-form label-position="left" label-width="120px" size="default">
+          <el-form-item label="水印文字">
+            <el-input
+              v-model="userSettings.watermarkSettings.text"
+              clearable
+              maxlength="8"
+              @input="persistUserSettings"
+            />
+          </el-form-item>
+          <el-form-item label="水印字体大小">
+            <el-input-number
+              v-model="userSettings.watermarkSettings.fontSize"
+              :min="30"
+              :max="50"
+              @change="persistUserSettings"
+            />
+          </el-form-item>
+          <el-form-item label="水印位置">
+            <el-radio-group
+              v-model="userSettings.watermarkSettings.position"
+              @change="persistUserSettings"
+            >
+              <el-radio label="top-left">左上角</el-radio>
+              <el-radio label="top-right">右上角</el-radio>
+              <el-radio label="bottom-left">左下角</el-radio>
+              <el-radio label="bottom-right">右下角</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="水印透明度">
+            <el-input-number
+              v-model="userSettings.watermarkSettings.opacity"
+              :precision="2"
+              :step="0.1"
+              :min="0"
+              :max="1"
+              @change="persistUserSettings"
+            />
+          </el-form-item>
+        </el-form>
+      </el-card>
     </ul>
 
     <div class="setting-title">图片链接规则配置：</div>

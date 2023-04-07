@@ -39,4 +39,11 @@ export interface UserSettingsModel {
   }
 
   starred?: boolean
+  defaultWatermark: boolean
+  watermarkSettings: {
+    text: string
+    fontSize: number
+    position: string
+    opacity: number
+  }
 }
