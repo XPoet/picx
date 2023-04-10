@@ -6,6 +6,7 @@ import {
   EncoderState
 } from '@yireen/squoosh-browser/dist/client/lazy-app/feature-meta'
 import { CompressEncoderEnum } from '@/common/model'
+import { isNeedCompress } from '@/utils/file-utils'
 
 /**
  * 压缩图片时，上传区域 loading
@@ -23,14 +24,17 @@ export const compressImgLoading = () => {
  * @param encoder
  */
 export const compressImage = async (file: File, encoder: CompressEncoderEnum) => {
-  const compress = new Compress(file, {
-    encoderState: {
-      type: encoder,
-      options: encoderMap[encoder].meta.defaultOptions
-    } as EncoderState,
-    processorState: defaultProcessorState,
-    preprocessorState: defaultPreprocessorState
-  })
+  if (isNeedCompress(file.type)) {
+    const compress = new Compress(file, {
+      encoderState: {
+        type: encoder,
+        options: encoderMap[encoder].meta.defaultOptions
+      } as EncoderState,
+      processorState: defaultProcessorState,
+      preprocessorState: defaultPreprocessorState
+    })
+    return compress.process()
+  }
 
-  return compress.process()
+  return file
 }

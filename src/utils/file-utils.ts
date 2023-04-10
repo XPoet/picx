@@ -27,7 +27,15 @@ export const getFileSuffix = (filename: string) => {
  * @param fileType
  */
 export const isImage = (fileType: string): boolean => {
-  return /(png|jpg|gif|jpeg|webp|awebp|avif|svg\+xml|image\/x-icon)$/.test(fileType)
+  return /(png|jpg|jpeg|gif|webp|awebp|avif|svg\+xml|x-icon|vnd.microsoft.icon)$/.test(fileType)
+}
+
+/**
+ * 判断是否需要压缩的图片格式
+ * @param imageType
+ */
+export const isNeedCompress = (imageType: string): boolean => {
+  return /(png|jpg|jpeg|webp|avif)$/.test(imageType)
 }
 
 /**
@@ -78,15 +86,14 @@ export const selectedFileHandle = async (file: File): Promise<ImageFileHandleRes
     }
 
     let compressFile: NonNullable<File>
-    const isNoCompress = file.type === 'image/gif'
 
-    if (!isNoCompress && compress.enable) {
+    if (compress.enable) {
       compressFile = await compressImage(file, compress.encoder)
     }
 
     const reader = new FileReader()
     // @ts-ignore
-    reader.readAsDataURL(!isNoCompress && compress.enable ? compressFile : file)
+    reader.readAsDataURL(compress.enable ? compressFile : file)
     reader.onload = (e: ProgressEvent<FileReader>) => {
       const base64: any = e.target?.result
       const curImgSize = getFileSize(base64.length)
@@ -98,7 +105,7 @@ export const selectedFileHandle = async (file: File): Promise<ImageFileHandleRes
         resolve({
           base64,
           originalFile: file,
-          compressFile: !isNoCompress && compress.enable ? compressFile : file
+          compressFile: compress.enable ? compressFile : file
         })
       }
     }
