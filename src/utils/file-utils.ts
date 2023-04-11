@@ -18,8 +18,8 @@ export const getFilename = (filename: string) => {
  * @param filename
  */
 export const getFileSuffix = (filename: string) => {
-  const splitIndex = filename.lastIndexOf('.')
-  return filename.substr(splitIndex + 1, filename.length)
+  const idx = filename.lastIndexOf('.')
+  return filename.slice(idx + 1)
 }
 
 /**
@@ -43,7 +43,10 @@ export const isNeedCompress = (imageType: string): boolean => {
  * @param size
  */
 export const getFileSize = (size: number) => {
-  return Number((size / 1024).toFixed(0))
+  if (size) {
+    return Number((size / 1024).toFixed(0))
+  }
+  return size
 }
 
 /**
@@ -76,9 +79,7 @@ export const selectedFileHandle = async (file: File): Promise<ImageFileHandleRes
 
     const { watermark, compress } = store.getters.getUserSettings
 
-    const { enable, text } = watermark
-
-    if (enable && text) {
+    if (watermark.enable && watermark.text) {
       const watermarkImg = await addWatermarkToImage(file, watermark)
       if (watermarkImg) {
         file = watermarkImg

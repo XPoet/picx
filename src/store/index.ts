@@ -2,25 +2,23 @@ import { InjectionKey } from 'vue'
 import { createStore, Store, useStore as baseUseStore } from 'vuex'
 import RootStateTypes, { AllStateTypes } from './types'
 import dirImageListModule from './modules/dir-image-list'
-import toUploadImageModule from './modules/to-upload-image'
-import uploadedImageListModule from './modules/uploaded-image-list'
 import userConfigInfoModule from './modules/user-config-info'
 import imageCardModule from './modules/image-card'
 import uploadAreaActiveModule from './modules/upload-area-active'
 import userSettingsModule from './modules/user-settings'
 import toolboxImageListModule from './modules/toolbox-image-list'
+import uploadImageListModule from './modules/upload-image-list'
 
 // Create a new store instance.
 export const store = createStore<RootStateTypes>({
   modules: {
     dirImageListModule,
-    toUploadImageModule,
-    uploadedImageListModule,
     userConfigInfoModule,
     imageCardModule,
     uploadAreaActiveModule,
     userSettingsModule,
-    toolboxImageListModule
+    toolboxImageListModule,
+    uploadImageListModule
   },
 
   state: {
@@ -32,13 +30,12 @@ export const store = createStore<RootStateTypes>({
   actions: {
     // 退出登录（删除 localStorage 和 sessionStorage 数据，清空 state 的值）
     LOGOUT({ dispatch, commit }) {
-      dispatch('DIR_IMAGE_LOGOUT')
-      dispatch('TO_UPLOAD_IMAGE_LOGOUT')
-      dispatch('UPLOADED_LIST_LOGOUT')
-      dispatch('USER_CONFIG_INFO_LOGOUT')
       commit('UPLOAD_AREA_ACTIVE_LOGOUT')
+      dispatch('DIR_IMAGE_LOGOUT')
+      dispatch('USER_CONFIG_INFO_LOGOUT')
       dispatch('USER_SETTINGS_LOGOUT')
       dispatch('TOOLBOX_IMG_LIST_RESET')
+      dispatch('UPLOAD_IMG_LIST_RESET')
       localStorage.clear()
       sessionStorage.clear()
     }

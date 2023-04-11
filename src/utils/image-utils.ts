@@ -1,8 +1,8 @@
 import {
   DeleteStatusEnum,
   ImageHandleResult,
-  ToUploadImageModel,
   UploadedImageModel,
+  UploadImageModel,
   UserConfigInfoModel
 } from '@/common/model'
 import { getUuid } from '@/utils/common-utils'
@@ -11,43 +11,45 @@ import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo }
 import { getFileSize, isImage } from '@/utils/file-utils'
 
 /**
- * 生成一个等待上传的图片对象
+ * 生成一个上传的图片对象
  */
-export const createToUploadImageObject = (): ToUploadImageModel => {
+export const createUploadImageObject = (): UploadImageModel => {
   return {
     uuid: '',
-
-    uploadStatus: {
-      progress: 0,
-      uploading: false
+    base64: {
+      originalBase64: '',
+      watermarkBase64: null,
+      compressBase64: null
     },
-
-    imgData: {
-      base64Content: '',
-      base64Url: ''
-    },
-
     fileInfo: {
-      size: 0,
-      lastModified: 0
+      originalFile: null,
+      watermarkFile: null,
+      compressFile: null
     },
-
     filename: {
-      name: '',
       hash: '',
       suffix: '',
+      name: '',
       prefixName: '',
       final: '',
       initName: '',
-      newName: 'xxx',
+      newName: '',
       isHashRename: true,
       isRename: false,
       isPrefix: false
     },
-
+    beforeUploadStatus: {
+      uploading: false,
+      watermarking: false,
+      compressing: false
+    },
+    uploadStatus: {
+      progress: 0,
+      uploading: false
+    },
     reUploadInfo: {
-      path: '',
       dir: '',
+      path: '',
       isReUpload: false
     }
   }
@@ -90,7 +92,7 @@ export async function deleteImageFromGitHub(
     imageObj.deleting = false
     if (res) {
       resolve(true)
-      await store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
+      await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
       await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
     } else {
       resolve(false)
@@ -155,7 +157,7 @@ export async function deleteImagesFromGitHub(
 
   imgObjs.forEach((imgObj) => {
     imgObj.deleting = false
-    store.dispatch('UPLOADED_LIST_REMOVE', imgObj.uuid)
+    store.dispatch('UPLOAD_IMG_LIST_REMOVE', imgObj.uuid)
     store.dispatch('DIR_IMAGE_LIST_REMOVE', imgObj)
   })
 }

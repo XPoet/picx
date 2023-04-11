@@ -6,12 +6,6 @@
           <selected-info-bar bar-type="management" />
         </div>
         <div class="right flex-start">
-          <el-tooltip placement="top" :content="listing ? '切换方块展示' : '切换列表展示'">
-            <el-icon class="btn-icon" @click.stop="toggleListing">
-              <Tickets v-if="listing" />
-              <Menu v-if="!listing" />
-            </el-icon>
-          </el-tooltip>
           <el-tooltip placement="top" :content="'重新加载 ' + userConfigInfo.viewDir + ' 目录内容'">
             <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
               <Refresh />
@@ -47,21 +41,12 @@
           </li>
           <div style="width: 100%" />
           <li
-            class="image-management-item"
+            class="image-management-item image"
             v-for="(image, index) in currentPathImageList"
             :key="'image-card-' + index"
-            :style="{
-              width: listing ? '50%' : '230rem',
-              height: listing ? '80rem' : '240rem'
-            }"
             v-contextmenu="{ type: ContextmenuEnum.img, img: image }"
           >
-            <image-card
-              :image-obj="image"
-              :listing="listing"
-              v-model="activeIndex"
-              :index="index"
-            />
+            <image-card :image-obj="image" />
           </li>
         </ul>
       </div>
@@ -91,8 +76,6 @@ const dirObject = computed(() => store.getters.getDirObject).value
 
 const renderKey = ref(new Date().getTime()) // key for update image-selector component
 const loadingImageList = ref(false)
-const listing = ref(false)
-const activeIndex = ref<number>()
 
 const currentPathDirList = ref([])
 const currentPathImageList = ref([])
@@ -144,10 +127,6 @@ async function initDirImageList() {
   }
 
   await dirContentHandle(userConfigInfo.viewDir)
-}
-
-function toggleListing() {
-  listing.value = !listing.value
 }
 
 // 重新加载当前目录内容（网络请求）

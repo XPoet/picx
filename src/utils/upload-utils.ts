@@ -1,4 +1,4 @@
-import { ToUploadImageModel, UploadedImageModel, UserConfigInfoModel } from '@/common/model'
+import { UploadedImageModel, UserConfigInfoModel, UploadImageModel } from '@/common/model'
 import { store } from '@/store'
 import {
   createCommit,
@@ -18,12 +18,12 @@ import { PICX_UPLOAD_IMG_DESC } from '@/common/constant'
  */
 const uploadedHandle = (
   res: { name: string; sha: string; path: string; size: number },
-  img: ToUploadImageModel,
+  img: UploadImageModel,
   userConfigInfo: UserConfigInfoModel
 ) => {
   let dir = userConfigInfo.selectedDir
 
-  if (img.reUploadInfo.isReUpload) {
+  if (img?.reUploadInfo?.isReUpload) {
     dir = img.reUploadInfo.dir
   }
 
@@ -45,9 +45,6 @@ const uploadedHandle = (
 
   img.uploadedImg = uploadedImg
 
-  // uploadedList 增加图片
-  store.dispatch('UPLOADED_LIST_ADD', uploadedImg)
-
   // dirImageList 增加目录
   store.dispatch('DIR_IMAGE_LIST_ADD_DIR', dir)
 
@@ -60,10 +57,7 @@ const uploadedHandle = (
  * @param config
  * @param imgObj
  */
-export const uploadUrlHandle = (
-  config: UserConfigInfoModel,
-  imgObj: ToUploadImageModel
-): string => {
+export const uploadUrlHandle = (config: UserConfigInfoModel, imgObj: UploadImageModel): string => {
   const { owner, selectedRepo: repo, selectedDir: dir } = config
   const filename: string = imgObj.filename.final
 
@@ -73,7 +67,7 @@ export const uploadUrlHandle = (
     path = `${dir}/${filename}`
   }
 
-  if (imgObj.reUploadInfo.isReUpload) {
+  if (imgObj?.reUploadInfo?.isReUpload) {
     path = imgObj.reUploadInfo.path
   }
 
@@ -87,7 +81,7 @@ export const uploadUrlHandle = (
  */
 export async function uploadImagesToGitHub(
   userConfigInfo: UserConfigInfoModel,
-  imgs: ToUploadImageModel[]
+  imgs: UploadImageModel[]
 ): Promise<boolean> {
   const { selectedBranch: branch, selectedRepo: repo, selectedDir, owner } = userConfigInfo
 
@@ -99,8 +93,6 @@ export async function uploadImagesToGitHub(
     const blobRes = await uploadImageBlob(img, owner, repo)
     if (blobRes) {
       blobs.push({ img, ...blobRes })
-      // 已上传数量 +1
-      await store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
     } else {
       img.uploadStatus.uploading = false
       ElMessage.error(`${img.filename.final} 上传失败`)
@@ -159,14 +151,18 @@ export async function uploadImagesToGitHub(
  */
 export function uploadImageToGitHub(
   userConfigInfo: UserConfigInfoModel,
-  img: ToUploadImageModel
+  img: UploadImageModel
 ): Promise<Boolean> {
   const { selectedBranch: branch, email, owner } = userConfigInfo
 
   const data: any = {
     message: PICX_UPLOAD_IMG_DESC,
     branch,
-    content: img.imgData.base64Content
+    content: (
+      img.base64.compressBase64 ||
+      img.base64.watermarkBase64 ||
+      img.base64.originalBase64
+    ).split(',')[1]
   }
 
   if (email) {
@@ -186,7 +182,6 @@ export function uploadImageToGitHub(
     if (uploadRes) {
       const { name, sha, path, size } = uploadRes.content
       uploadedHandle({ name, sha, path, size }, img, userConfigInfo)
-      await store.dispatch('TO_UPLOAD_IMAGE_UPLOADED', img.uuid)
       resolve(true)
     } else {
       resolve(false)

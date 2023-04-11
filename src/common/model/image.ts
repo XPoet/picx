@@ -14,32 +14,27 @@ export interface UploadedImageModel {
 }
 
 /**
- * 等待上传的图片对象 Model
+ * 上传列表的图片对象 Model
  */
-export interface ToUploadImageModel {
+export interface UploadImageModel {
   uuid: string
 
-  uploadStatus: {
-    progress: number
-    uploading: boolean
-  }
-
-  imgData: {
-    base64Content: string
-    base64Url: string
+  base64: {
+    originalBase64: string
+    watermarkBase64: string | null
+    compressBase64: string | null
   }
 
   fileInfo: {
-    compressedSize?: number | undefined
-    originSize?: number | undefined
-    size: number | undefined
-    lastModified: number | undefined
+    originalFile: File | null
+    watermarkFile: File | null
+    compressFile: File | null
   }
 
   filename: {
-    name: string
     hash: string
     suffix: string
+    name: string
     prefixName: string
     final: string
     initName: string
@@ -49,11 +44,21 @@ export interface ToUploadImageModel {
     isPrefix: boolean
   }
 
+  // 上传前的状态
+  beforeUploadStatus: {
+    uploading: boolean
+    compressing: boolean
+    watermarking: boolean
+  }
+
+  uploadStatus: {
+    progress: 0 | 100
+    uploading: boolean
+  }
+
   uploadedImg?: UploadedImageModel
 
-  reUploadImgPath?: string
-
-  reUploadInfo: {
+  reUploadInfo?: {
     isReUpload: boolean
     path: string
     dir: string
