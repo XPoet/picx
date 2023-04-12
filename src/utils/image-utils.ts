@@ -1,6 +1,5 @@
 import {
   DeleteStatusEnum,
-  ImageHandleResult,
   UploadedImageModel,
   UploadImageModel,
   UserConfigInfoModel
@@ -8,7 +7,6 @@ import {
 import { getUuid } from '@/utils/common-utils'
 import { store } from '@/store'
 import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo } from '@/common/api'
-import { getFileSize, isImage } from '@/utils/file-utils'
 
 /**
  * 生成一个上传的图片对象
@@ -239,32 +237,4 @@ export function downloadImage(file: File) {
   link.click() // 模拟点击链接进行下载
   document.body.removeChild(link) // 下载完成后移除 a 标签
   URL.revokeObjectURL(url) // 释放图片 URL
-}
-
-/**
- * 处理获取的图片
- * @param file
- */
-export const gettingImagesHandle = (file: File): Promise<ImageHandleResult | null> => {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    if (!file) {
-      resolve(null)
-    }
-
-    if (!isImage(file.type)) {
-      ElMessage.error(`${file.name} 不是图片格式`)
-      resolve(null)
-    }
-
-    const base64 = (await imgFileToBase64(file)) || ''
-
-    resolve({
-      uuid: getUuid(),
-      base64,
-      file,
-      name: file.name,
-      size: getFileSize(base64.length)
-    })
-  })
 }

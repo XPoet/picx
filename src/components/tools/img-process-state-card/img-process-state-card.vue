@@ -12,10 +12,10 @@
       <div class="img-name text-ellipsis">{{ imgObj.finialName || imgObj.originalName }}</div>
       <div class="img-size">
         <div class="original-file-size file-size-item" :class="{ 'del-line': imgObj.finialSize }">
-          {{ imgObj.originalSize }} KB
+          {{ getFileSize(imgObj.originalSize) }} KB
         </div>
         <div v-if="imgObj.finialSize" class="finial-file-size file-size-item">
-          {{ imgObj.finialSize }} KB
+          {{ getFileSize(imgObj.finialSize) }} KB
         </div>
       </div>
     </div>
@@ -34,7 +34,7 @@
 
 <script setup lang="ts">
 import { ImgProcessStateModel } from '@/common/model'
-import { downloadImage } from '@/utils'
+import { downloadImage, getFileSize } from '@/utils'
 
 const emit = defineEmits(['remove'])
 

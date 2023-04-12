@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useStore } from '@/store'
-import { gettingImagesHandle, isImage } from '@/utils'
+import { gettingFilesHandle, isImage } from '@/utils'
 import { ImageHandleResult } from '@/common/model'
 
 const store = useStore()
@@ -56,7 +56,7 @@ const unifiedHandle = async (files: File[]) => {
 
   // eslint-disable-next-line no-restricted-syntax
   for (const file of files) {
-    const res = await gettingImagesHandle(file)
+    const res = await gettingFilesHandle(file)
     if (res) {
       imgList.value.push(res)
     }
@@ -66,6 +66,7 @@ const unifiedHandle = async (files: File[]) => {
 
   store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
   emit('getImgList', imgList.value)
+  imgList.value = []
 }
 
 const onSelect = async (e: any) => {

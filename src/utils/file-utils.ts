@@ -1,8 +1,7 @@
-import { getUuid } from './common-utils'
-import { addWatermarkToImage } from './add-watermark'
-import { store } from '@/store'
-import { compressImage } from '@/utils/compress-image'
-import { ImageFileHandleResult, IMG_UPLOAD_MAX_SIZE } from '@/common/model'
+import { ImageHandleResult } from '@/common/model'
+import { getUuid } from '@/utils/common-utils'
+import { imgFileToBase64 } from '@/utils/image-utils'
+import { IMG_UPLOAD_MAX_SIZE } from '@/common/constant'
 
 /**
  * 获取文件名
@@ -50,22 +49,10 @@ export const getFileSize = (size: number) => {
 }
 
 /**
- * 文件名处理
- * @param filename
- */
-export const filenameHandle = (filename: string | undefined) => {
-  return {
-    name: filename ? getFilename(filename) : '',
-    hash: filename ? getUuid() : '',
-    suffix: filename ? getFileSuffix(filename) : ''
-  }
-}
-
-/**
- * 处理选择的文件
+ * 处理获取的图片文件
  * @param file
  */
-export const selectedFileHandle = async (file: File): Promise<ImageFileHandleResult | null> => {
+export const gettingFilesHandle = (file: File): Promise<ImageHandleResult | null> => {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     if (!file) {
@@ -73,42 +60,21 @@ export const selectedFileHandle = async (file: File): Promise<ImageFileHandleRes
     }
 
     if (!isImage(file.type)) {
-      ElMessage.error('该文件格式不支持上传！')
+      ElMessage.error(`${file.name} 不是图片格式`)
       resolve(null)
     }
 
-    const { watermark, compress } = store.getters.getUserSettings
+    const base64 = (await imgFileToBase64(file)) || ''
 
-    if (watermark.enable && watermark.text) {
-      const watermarkImg = await addWatermarkToImage(file, watermark)
-      if (watermarkImg) {
-        file = watermarkImg
-      }
+    if (getFileSize(base64.length) >= IMG_UPLOAD_MAX_SIZE * 1024) {
+      ElMessage.error(`${file.name} 超过 ${IMG_UPLOAD_MAX_SIZE} MB，跳过选择`)
+      resolve(null)
     }
 
-    let compressFile: NonNullable<File>
-
-    if (compress.enable) {
-      compressFile = await compressImage(file, compress.encoder)
-    }
-
-    const reader = new FileReader()
-    // @ts-ignore
-    reader.readAsDataURL(compress.enable ? compressFile : file)
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      const base64: any = e.target?.result
-      const curImgSize = getFileSize(base64.length)
-
-      if (curImgSize >= IMG_UPLOAD_MAX_SIZE * 1024) {
-        ElMessage.error(`该图片超过 ${IMG_UPLOAD_MAX_SIZE} MB，不允许上传！`)
-        resolve(null)
-      } else {
-        resolve({
-          base64,
-          originalFile: file,
-          compressFile: compress.enable ? compressFile : file
-        })
-      }
-    }
+    resolve({
+      uuid: getUuid(),
+      base64,
+      file
+    })
   })
 }

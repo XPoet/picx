@@ -8,10 +8,8 @@ export interface ToolItemModel {
 
 export interface ImageHandleResult {
   uuid: string
-  name: string
   base64: string
   file: File
-  size: number
 }
 
 export interface ImgProcessStateModel {

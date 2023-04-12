@@ -41,7 +41,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { CompressEncoderEnum, ImageHandleResult, ImgProcessStateModel } from '@/common/model'
-import { compressImage, downloadImage, getFileSize, imgFileToBase64 } from '@/utils'
+import { compressImage, downloadImage, imgFileToBase64 } from '@/utils'
 import { useStore } from '@/store'
 
 const store = useStore()
@@ -61,8 +61,8 @@ const getImgList = (imgs: ImageHandleResult[]) => {
   imgs.forEach((x) => {
     store.dispatch('TOOLBOX_IMG_LIST_ADD', {
       uuid: x.uuid,
-      originalName: x.name,
-      originalSize: x.size,
+      originalName: x.file.name,
+      originalSize: x.file.size,
       originalBase64: x.base64,
       originalFile: x.file
     })
@@ -90,7 +90,7 @@ const compress = async () => {
     img.processing = true
     img.finialFile = await compressImage(img.originalFile, compressEncoder.value)
     img.finialBase64 = (await imgFileToBase64(img.finialFile)) || ''
-    img.finialSize = getFileSize(img.finialBase64.length)
+    img.finialSize = img.finialFile.size
     img.finialName = img.finialFile.name
     img.processing = false
   }

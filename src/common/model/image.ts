@@ -118,9 +118,3 @@ export interface ImageLinkFormatModel {
   name: string
   format: string
 }
-
-export interface ImageFileHandleResult {
-  base64: string
-  originalFile: File
-  compressFile?: File
-}

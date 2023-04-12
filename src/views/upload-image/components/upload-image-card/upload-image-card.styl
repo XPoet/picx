@@ -14,11 +14,13 @@
     margin-bottom 0
   }
 
+
   &:hover {
     .del-btn {
       display block
     }
   }
+
 
   .img-show-container {
     position relative
@@ -33,7 +35,7 @@
   }
 
 
-  .img-name-handle-container {
+  .before-upload-handle-container {
     position relative
     box-sizing border-box
     width 100%
@@ -41,10 +43,27 @@
 
     .img-name-box {
       position relative
-      max-width 100%
+      display flex
+      align-items center
+      justify-content space-between
+      box-sizing border-box
+      width 100%
       padding 2rem 5rem
       font-size 13rem
       border-bottom 1rem solid var(--border-color)
+
+      .img-name {
+        position relative
+        box-sizing border-box
+        width calc(100% - 20rem)
+      }
+
+      .fold-btn {
+        position relative
+        box-sizing border-box
+        width 20rem
+        cursor pointer
+      }
     }
 
     .img-name-operate-box {
@@ -55,6 +74,10 @@
       box-sizing border-box
       padding 2rem 5rem
       border-bottom 1rem solid var(--border-color)
+
+      &.folded {
+        display none
+      }
 
 
       .operate-item {
@@ -71,13 +94,13 @@
     .img-size-box {
       display flex
       justify-content space-between
-      padding 3rem 0
-      transform scale(0.9)
+      padding 2rem 5rem
+      font-size 12rem
+      user-select none
 
 
       .file-size-item {
         padding 2rem 3rem
-        font-size 12rem
         background var(--background-color-3)
         border-radius 3rem
       }
@@ -97,7 +120,7 @@
   }
 
 
-  .operate-container {
+  .after-upload-handle-container {
     position relative
     box-sizing border-box
     width 100%
@@ -112,7 +135,8 @@
     }
   }
 
-  .del-btn {
+
+  .del-img-btn {
     position absolute
     top 6rem
     right 6rem

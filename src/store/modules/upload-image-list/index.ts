@@ -13,7 +13,7 @@ const uploadImageListModule: Module<UploadImageListStateTypes, RootStateTypes> =
   actions: {
     // 上传处理的图片列表 - 增加
     UPLOAD_IMG_LIST_ADD({ state }, item: UploadImageModel) {
-      state.uploadImageList.push(item)
+      state.uploadImageList.unshift(item)
     },
 
     // 上传处理的图片列表 - 删除
