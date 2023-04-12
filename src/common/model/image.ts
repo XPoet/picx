@@ -46,7 +46,6 @@ export interface UploadImageModel {
 
   // 上传前的状态
   beforeUploadStatus: {
-    uploading: boolean
     compressing: boolean
     watermarking: boolean
   }

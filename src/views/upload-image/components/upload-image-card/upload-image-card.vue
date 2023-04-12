@@ -14,6 +14,7 @@
         imgObj.beforeUploadStatus.compressing ||
         imgObj.beforeUploadStatus.watermarking
       "
+      :element-loading-text="loadingText"
     >
       <el-image
         :src="
@@ -114,7 +115,7 @@
     <div
       class="after-upload-handle-container flex-center"
       v-if="imgObj.uploadStatus.progress === 100"
-      @click="oneClickCopy(imgObj)"
+      @click="copyImageLink(imgObj.uploadedImg, userConfigInfo, userSettings)"
     >
       点击复制图片链接
     </div>
@@ -144,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import { copyImageLink } from '@/utils'
 import { UploadImageModel } from '@/common/model'
 import { useStore } from '@/store'
@@ -170,6 +171,8 @@ const renameInputRef = ref<any>(null)
 const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
+const loadingText = ref('')
+
 const fileNameOperateData = reactive({
   isHash: false,
   prefixNaming: false,
@@ -193,10 +196,6 @@ const onRename = () => {
   rename(fileNameOperateData.isRename, props.imgObj)
 }
 
-const oneClickCopy = (img: UploadImageModel) => {
-  copyImageLink(img.uploadedImg!, userConfigInfo, userSettings)
-}
-
 const initFilename = () => {
   const { defaultHash: isHash, prefixNaming } = userSettings
   if (props.imgObj.uploadStatus.progress === 0) {
@@ -213,6 +212,19 @@ const initFilename = () => {
     fileNameOperateData.newName = props.imgObj.filename.newName
   }
 }
+
+watch(
+  () => props.imgObj.uploadStatus,
+  (nv) => {
+    if (nv.uploading) {
+      loadingText.value = '正在上传...'
+    }
+  },
+  {
+    deep: true,
+    immediate: true
+  }
+)
 
 onMounted(() => {
   initFilename()

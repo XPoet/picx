@@ -37,7 +37,6 @@ export const createUploadImageObject = (): UploadImageModel => {
       isPrefix: false
     },
     beforeUploadStatus: {
-      uploading: false,
       watermarking: false,
       compressing: false
     },
