@@ -38,6 +38,14 @@ export const isNeedCompress = (imageType: string): boolean => {
 }
 
 /**
+ * 判断是否需要添加水印的图片格式
+ * @param imageType
+ */
+export const isNeedWatermark = (imageType: string): boolean => {
+  return /(png|jpg|jpeg|webp|avif)$/.test(imageType)
+}
+
+/**
  * 获取文件大小 (KB)
  * @param size
  */

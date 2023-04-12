@@ -9,16 +9,6 @@ import { CompressEncoderEnum } from '@/common/model'
 import { isNeedCompress } from '@/utils/file-utils'
 
 /**
- * 压缩图片时，上传区域 loading
- */
-export const compressImgLoading = () => {
-  return ElLoading.service({
-    target: '.upload-area',
-    text: '正在压缩图片...'
-  })
-}
-
-/**
  * 压缩图片
  * @param file
  * @param encoder

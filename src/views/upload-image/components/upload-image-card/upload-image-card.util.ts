@@ -1,5 +1,5 @@
 import { UploadImageModel, UserSettingsModel } from '@/common/model'
-import { addWatermarkToImage, compressImage, imgFileToBase64 } from '@/utils'
+import { addWatermarkToImage, compressImage, imgFileToBase64, isNeedWatermark } from '@/utils'
 
 /**
  * 前缀命名
@@ -68,10 +68,9 @@ export const initImgSettings = async (
   // 添加水印
   if (watermark.enable && watermark.text && !imgObj.fileInfo.watermarkFile) {
     imgObj.beforeUploadStatus.watermarking = true
-    imgObj.fileInfo.watermarkFile = await addWatermarkToImage(
-      imgObj.fileInfo.originalFile!,
-      watermark
-    )
+    imgObj.fileInfo.watermarkFile = isNeedWatermark(imgObj.fileInfo.originalFile!.type)
+      ? await addWatermarkToImage(imgObj.fileInfo.originalFile!, watermark)
+      : imgObj.fileInfo.originalFile
     file = imgObj.fileInfo.watermarkFile!
     imgObj.base64.watermarkBase64 = await imgFileToBase64(file)
     imgObj.beforeUploadStatus.watermarking = false
