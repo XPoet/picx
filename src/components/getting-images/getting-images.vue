@@ -54,6 +54,8 @@ const unifiedHandle = async (files: File[]) => {
     return
   }
 
+  imgList.value = []
+
   // eslint-disable-next-line no-restricted-syntax
   for (const file of files) {
     const res = await gettingFilesHandle(file)
@@ -66,7 +68,6 @@ const unifiedHandle = async (files: File[]) => {
 
   store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
   emit('getImgList', imgList.value)
-  imgList.value = []
 }
 
 const onSelect = async (e: any) => {

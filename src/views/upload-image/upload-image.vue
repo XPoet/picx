@@ -175,6 +175,7 @@ const resetUploadInfo = () => {
 // 删除
 const remove = (uuid: string) => {
   store.dispatch('UPLOAD_IMG_LIST_REMOVE', uuid)
+  gettingImagesRef.value?.remove(uuid)
 }
 
 watch(

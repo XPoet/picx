@@ -1,5 +1,12 @@
 <template>
-  <div class="upload-image-card-container">
+  <div
+    class="upload-image-card-container"
+    :class="{
+      'wait-upload': !imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress === 0,
+      uploading: imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress !== 100,
+      uploaded: !imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress === 100
+    }"
+  >
     <div
       class="img-show-container"
       v-loading="
@@ -85,8 +92,8 @@
           ></el-checkbox>
         </div>
       </div>
-      <div class="img-size-box">
-        <div>
+      <div class="img-info-box" v-if="imgObj.uploadStatus.progress === 0">
+        <div class="file-size-box">
           <span
             class="original-file-size file-size-item"
             :class="{ 'del-line': imgObj.fileInfo?.compressFile?.size }"
@@ -97,7 +104,7 @@
             {{ getFileSize(imgObj.fileInfo?.compressFile?.size) }} KB
           </span>
         </div>
-        <span class="file-size-item">
+        <span class="last-modified">
           {{ formatDatetime('yyyy-MM-dd hh:mm', imgObj.fileInfo.originalFile.lastModified) }}
         </span>
       </div>
@@ -111,14 +118,27 @@
       点击复制图片链接
     </div>
 
-    <el-tooltip
-      v-if="imgObj.uploadStatus.progress === 0"
-      placement="top"
-      :offset="8"
-      content="删除"
-    >
-      <el-icon class="del-img-btn" @click="remove(imgObj.uuid)"><Remove /></el-icon>
+    <el-tooltip placement="top" :offset="8" content="删除">
+      <el-icon
+        class="del-img-btn"
+        v-if="imgObj.uploadStatus.progress === 0"
+        @click="remove(imgObj.uuid)"
+        ><Remove
+      /></el-icon>
     </el-tooltip>
+
+    <div
+      class="upload-status-box"
+      :class="{
+        'wait-upload': !imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress === 0,
+        uploaded: !imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress === 100
+      }"
+    >
+      <el-icon>
+        <Upload v-if="!imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress === 0" />
+        <Check v-if="!imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress === 100" />
+      </el-icon>
+    </div>
   </div>
 </template>
 

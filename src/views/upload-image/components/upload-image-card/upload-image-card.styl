@@ -10,13 +10,25 @@
   border 1rem solid var(--border-color)
   border-radius 6rem
 
+  &.wait-upload {
+    border-color var(--await-upload-color)
+  }
+
+  &.uploading {
+    border-color var(--uploading-color)
+  }
+
+  &.uploaded {
+    border-color var(--uploaded-color)
+  }
+
   &:last-child {
     margin-bottom 0
   }
 
 
   &:hover {
-    .del-btn {
+    .del-img-btn {
       display block
     }
   }
@@ -91,30 +103,37 @@
       }
     }
 
-    .img-size-box {
+    .img-info-box {
       display flex
+      align-items center
       justify-content space-between
-      padding 2rem 5rem
+      padding 5rem
       font-size 12rem
       user-select none
 
+      .file-size-box {
+        transform scale(0.9)
 
-      .file-size-item {
-        padding 2rem 3rem
-        background var(--background-color-3)
-        border-radius 3rem
-      }
-
-      .original-file-size {
-
-        &.del-line {
-          text-decoration line-through
+        .file-size-item {
+          padding 2rem 3rem
+          background var(--background-color-3)
+          border-radius 3rem
         }
-      }
 
-      .finial-file-size {
-        margin-left 6rem
-        color var(--el-color-primary)
+
+        .original-file-size {
+          margin-left -4rem
+
+          &.del-line {
+            text-decoration line-through
+          }
+        }
+
+
+        .finial-file-size {
+          margin-left 6rem
+          color var(--el-color-primary)
+        }
       }
     }
   }
@@ -131,7 +150,8 @@
     cursor pointer
 
     &:hover {
-      background var(--el-color-primary-light-9)
+      // background var(--uploaded-color)
+      background var(--el-color-primary-light-8)
     }
   }
 
@@ -144,5 +164,36 @@
     color var(--background-color)
     font-size 22rem
     cursor pointer
+  }
+
+  .upload-status-box {
+    position absolute
+    top -8rem
+    left -16rem
+    box-sizing border-box
+    width 46rem
+    height 26rem
+    color #fff
+    text-align center
+    box-shadow 0 1rem 1rem var(--border-color)
+    transform rotate(315deg)
+
+    &.wait-upload {
+      background var(--await-upload-color)
+    }
+
+    &.uploaded {
+      background var(--uploaded-color)
+
+      .el-icon {
+        margin-top 12rem
+      }
+    }
+
+    .el-icon {
+      margin-top 10rem
+      font-size 12rem
+      transform rotate(45deg)
+    }
   }
 }
