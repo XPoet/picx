@@ -21,6 +21,7 @@
             v-model="renameInputValue"
             clearable
             ref="renameInputRef"
+            :maxlength="RENAME_MAX_LENGTH"
           ></el-input>
           <el-button-group size="small">
             <el-button :icon="Close" @click="isRenameImg = false" />
@@ -83,6 +84,7 @@ import {
 } from '@/utils'
 import { uploadImageToGitHub } from '@/utils/upload-utils'
 import { deleteSingleImage } from '@/common/api'
+import { RENAME_MAX_LENGTH } from '@/common/constant'
 
 const props = defineProps({
   imageObj: {

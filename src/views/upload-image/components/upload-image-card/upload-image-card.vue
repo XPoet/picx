@@ -71,6 +71,7 @@
             v-if="imgObj.filename.isRename"
             v-model="fileNameOperateData.newName"
             @input="onRename"
+            :maxlength="RENAME_MAX_LENGTH"
             ref="renameInputRef"
             clearable
           ></el-input>
@@ -150,6 +151,7 @@ import { useStore } from '@/store'
 import { getFileSize } from '@/utils/file-utils'
 import { formatDatetime } from '@/utils/common-utils'
 import { hashRename, initImgSettings, prefixNamingTrans, rename } from './upload-image-card.util'
+import { RENAME_MAX_LENGTH } from '@/common/constant'
 
 const store = useStore()
 
