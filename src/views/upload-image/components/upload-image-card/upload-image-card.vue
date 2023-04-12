@@ -226,9 +226,9 @@ watch(
   }
 )
 
-onMounted(() => {
+onMounted(async () => {
+  await initImgSettings(props.imgObj, userSettings)
   initFilename()
-  initImgSettings(props.imgObj, userSettings)
 })
 </script>
 

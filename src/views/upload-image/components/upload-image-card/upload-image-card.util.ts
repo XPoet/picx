@@ -1,5 +1,11 @@
 import { UploadImageModel, UserSettingsModel } from '@/common/model'
-import { addWatermarkToImage, compressImage, imgFileToBase64, isNeedWatermark } from '@/utils'
+import {
+  addWatermarkToImage,
+  compressImage,
+  getFileSuffix,
+  imgFileToBase64,
+  isNeedWatermark
+} from '@/utils'
 
 /**
  * 前缀命名
@@ -82,6 +88,7 @@ export const initImgSettings = async (
     imgObj.fileInfo.compressFile = await compressImage(file, compress.encoder)
     file = imgObj.fileInfo.compressFile!
     imgObj.base64.compressBase64 = await imgFileToBase64(file)
+    imgObj.filename.suffix = getFileSuffix(file.name)
     imgObj.beforeUploadStatus.compressing = false
   }
 }
