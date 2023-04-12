@@ -15,7 +15,7 @@ import { ElementPlusSizeEnum } from '@/common/model'
 import MainContainer from '@/views/main-container/main-container.vue'
 
 const store = useStore()
-const size = ref<string>('small') // large | default | small
+const size = ref<'large' | 'default' | 'small'>('default') // large | default | small
 
 const elementPlusSizeHandle = (width: number) => {
   if (width <= 600) {
@@ -23,7 +23,7 @@ const elementPlusSizeHandle = (width: number) => {
       elementPlusSize: ElementPlusSizeEnum.small
     })
     size.value = ElementPlusSizeEnum.small
-  } else if (width <= 800) {
+  } else if (width <= 900) {
     store.dispatch('SET_USER_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.default
     })

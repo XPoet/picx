@@ -9,8 +9,14 @@
   .info-item {
     margin-right 10rem
 
-    +picx-mobile() {
+    +picx-tablet() {
       &.repo {
+        display none
+      }
+    }
+
+    +picx-mobile() {
+      &.branch {
         display none
       }
     }

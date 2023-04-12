@@ -3,7 +3,11 @@
     <!-- 左侧 / 上传图片列表 -->
     <div
       class="upload-page-left page-container"
-      v-if="uploadImageList.length && userSettings.elementPlusSize === ElementPlusSizeEnum.large"
+      v-if="
+        uploadImageList.length &&
+        (userSettings.elementPlusSize === ElementPlusSizeEnum.large ||
+          userSettings.elementPlusSize === ElementPlusSizeEnum.default)
+      "
       :style="{
         width: '300rem'
       }"
@@ -14,7 +18,7 @@
     </div>
 
     <!-- 右侧 / 上传操作 -->
-    <div class="upload-page-right page-container">
+    <div class="upload-page-right page-container" :class="{ 'has-left': uploadImageList.length }">
       <!-- 选择图片区域 -->
       <div class="row-item">
         <div class="content-box">
