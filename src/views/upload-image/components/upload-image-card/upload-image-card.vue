@@ -118,13 +118,13 @@
       点击复制图片链接
     </div>
 
-    <el-tooltip placement="top" :offset="8" content="删除">
-      <el-icon
-        class="del-img-btn"
-        v-if="imgObj.uploadStatus.progress === 0"
-        @click="remove(imgObj.uuid)"
-        ><Remove
-      /></el-icon>
+    <el-tooltip
+      v-if="imgObj.uploadStatus.progress === 0"
+      placement="top"
+      :offset="8"
+      content="删除"
+    >
+      <el-icon class="del-img-btn" @click="remove(imgObj.uuid)"><Remove /></el-icon>
     </el-tooltip>
 
     <div

@@ -1,7 +1,7 @@
 <template>
   <div
     class="getting-images-container"
-    :class="{ focus: uploadAreaActive && curShowImg.base64 }"
+    :class="{ focus: uploadAreaActive && curShowImg.base64, disabled: disabled }"
     @dragover.prevent
     @drop.stop.prevent="onDrop"
     @paste.stop="onPaste"
@@ -39,6 +39,13 @@ const curShowImg = ref<{ uuid: string; base64: string }>({
 const imgList = ref<ImageHandleResult[]>([])
 
 const emit = defineEmits(['getImgList'])
+
+defineProps({
+  disabled: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const setCurImg = () => {
   const len = imgList.value.length

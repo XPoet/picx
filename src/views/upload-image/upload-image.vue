@@ -18,7 +18,11 @@
       <!-- 选择图片区域 -->
       <div class="row-item">
         <div class="content-box">
-          <getting-images ref="gettingImagesRef" @getImgList="setImgList"></getting-images>
+          <getting-images
+            :disabled="uploading"
+            ref="gettingImagesRef"
+            @getImgList="setImgList"
+          ></getting-images>
         </div>
       </div>
 
