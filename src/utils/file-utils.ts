@@ -1,7 +1,7 @@
-import { getUuid } from './common-utils'
-import { store } from '@/store'
-import { compressImage } from '@/utils/compress-image'
-import { ImageFileHandleResult, IMG_UPLOAD_MAX_SIZE } from '@/common/model'
+import { ImageHandleResult } from '@/common/model'
+import { getUuid } from '@/utils/common-utils'
+import { imgFileToBase64 } from '@/utils/image-utils'
+import { IMG_UPLOAD_MAX_SIZE } from '@/common/constant'
 
 /**
  * 获取文件名
@@ -17,8 +17,8 @@ export const getFilename = (filename: string) => {
  * @param filename
  */
 export const getFileSuffix = (filename: string) => {
-  const splitIndex = filename.lastIndexOf('.')
-  return filename.substr(splitIndex + 1, filename.length)
+  const idx = filename.lastIndexOf('.')
+  return filename.slice(idx + 1)
 }
 
 /**
@@ -26,7 +26,23 @@ export const getFileSuffix = (filename: string) => {
  * @param fileType
  */
 export const isImage = (fileType: string): boolean => {
-  return /(png|jpg|gif|jpeg|webp|awebp|avif|svg\+xml|image\/x-icon)$/.test(fileType)
+  return /(png|jpg|jpeg|gif|webp|awebp|avif|svg\+xml|x-icon|vnd.microsoft.icon)$/.test(fileType)
+}
+
+/**
+ * 判断是否需要压缩的图片格式
+ * @param imageType
+ */
+export const isNeedCompress = (imageType: string): boolean => {
+  return /(png|jpg|jpeg|webp|avif)$/.test(imageType)
+}
+
+/**
+ * 判断是否需要添加水印的图片格式
+ * @param imageType
+ */
+export const isNeedWatermark = (imageType: string): boolean => {
+  return /(png|jpg|jpeg|webp|avif)$/.test(imageType)
 }
 
 /**
@@ -34,26 +50,17 @@ export const isImage = (fileType: string): boolean => {
  * @param size
  */
 export const getFileSize = (size: number) => {
-  return Number((size / 1024).toFixed(2))
-}
-
-/**
- * 文件名处理
- * @param filename
- */
-export const filenameHandle = (filename: string | undefined) => {
-  return {
-    name: filename ? getFilename(filename) : '',
-    hash: filename ? getUuid() : '',
-    suffix: filename ? getFileSuffix(filename) : ''
+  if (size) {
+    return Number((size / 1024).toFixed(0))
   }
+  return size
 }
 
 /**
- * 处理选择的文件
+ * 处理获取的图片文件
  * @param file
  */
-export const selectedFileHandle = async (file: File): Promise<ImageFileHandleResult | null> => {
+export const gettingFilesHandle = (file: File): Promise<ImageHandleResult | null> => {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     if (!file) {
@@ -61,35 +68,21 @@ export const selectedFileHandle = async (file: File): Promise<ImageFileHandleRes
     }
 
     if (!isImage(file.type)) {
-      ElMessage.error('该文件格式不支持上传！')
+      ElMessage.error(`${file.name} 不是图片格式`)
       resolve(null)
     }
 
-    let compressFile: NonNullable<File>
-    const { isCompress, compressEncoder } = store.getters.getUserSettings
-    const isNoCompress = file.type === 'image/gif'
+    const base64 = (await imgFileToBase64(file)) || ''
 
-    if (!isNoCompress && isCompress) {
-      compressFile = await compressImage(file, compressEncoder)
+    if (getFileSize(base64.length) >= IMG_UPLOAD_MAX_SIZE * 1024) {
+      ElMessage.error(`${file.name} 超过 ${IMG_UPLOAD_MAX_SIZE} MB，跳过选择`)
+      resolve(null)
     }
 
-    const reader = new FileReader()
-    // @ts-ignore
-    reader.readAsDataURL(!isNoCompress && isCompress ? compressFile : file)
-    reader.onload = (e: ProgressEvent<FileReader>) => {
-      const base64: any = e.target?.result
-      const curImgSize = getFileSize(base64.length)
-
-      if (curImgSize >= IMG_UPLOAD_MAX_SIZE * 1024) {
-        ElMessage.error(`该图片超过 ${IMG_UPLOAD_MAX_SIZE} MB，不允许上传！`)
-        resolve(null)
-      } else {
-        resolve({
-          base64,
-          originalFile: file,
-          compressFile: !isNoCompress && isCompress ? compressFile : file
-        })
-      }
-    }
+    resolve({
+      uuid: getUuid(),
+      base64,
+      file
+    })
   })
 }

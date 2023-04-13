@@ -3,24 +3,30 @@ import {
   CompressEncoderEnum,
   ElementPlusSizeEnum,
   ImageLinkRuleModel,
-  UserSettingsModel
+  ThemeModeEnum,
+  UserSettingsModel,
+  WatermarkPositionEnum
 } from '@/common/model'
-import { deepAssignObject } from '@/utils'
+import { deepAssignObject, getLocal, getUuid } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
 import UserSettingsStateTypes from '@/store/modules/user-settings/types'
-import { getLocalItem, getUuid } from '@/utils/common-utils'
 import { LS_PICX_SETTINGS } from '@/common/constant'
 
 const initSettings: UserSettingsModel = {
   defaultHash: true,
-  enableImageLinkFormat: false,
-  defaultPrefix: false,
-  prefixName: '',
-  isCompress: true,
-  compressEncoder: CompressEncoderEnum.webP,
-  themeMode: 'light',
-  autoLightThemeTime: ['08:00', '19:00'],
+  prefixNaming: {
+    enable: false,
+    prefix: ''
+  },
+  compress: {
+    enable: true,
+    encoder: CompressEncoderEnum.webP
+  },
+  theme: {
+    mode: ThemeModeEnum.light,
+    autoLightTime: ['08:00', '19:00']
+  },
   elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
     selected: 'Staticaly',
@@ -48,6 +54,7 @@ const initSettings: UserSettingsModel = {
     ]
   },
   imageLinkFormat: {
+    enable: false,
     selected: 'Markdown',
     presetList: [
       {
@@ -60,11 +67,18 @@ const initSettings: UserSettingsModel = {
       }
     ]
   },
-  starred: false
+  starred: false,
+  watermark: {
+    enable: false,
+    text: 'PicX',
+    fontSize: 50,
+    position: WatermarkPositionEnum.rightBottom,
+    opacity: 0.5
+  }
 }
 
 const initUserSettings = (): UserSettingsModel => {
-  const LSSettings = getLocalItem(LS_PICX_SETTINGS)
+  const LSSettings = getLocal(LS_PICX_SETTINGS)
   if (LSSettings) {
     deepAssignObject(initSettings, LSSettings)
   }

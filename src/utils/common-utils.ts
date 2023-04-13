@@ -17,16 +17,6 @@ export const getUuid = () => {
 }
 
 /**
- * 获取 localStorage 值
- * @param key
- * @returns {*}
- */
-export const getLocalItem = (key: string) => {
-  const temp = window.localStorage.getItem(key)
-  return temp ? JSON.parse(temp) : null
-}
-
-/**
  * 复制文本到系统剪贴板
  * @param txt
  * @param callback
@@ -151,6 +141,7 @@ export const formatDatetime = (
  * @param func
  * @param wait
  */
+// eslint-disable-next-line no-unused-vars
 export const throttle = <T extends (...args: any[]) => void>(func: T, wait: number = 500): T => {
   let timer: ReturnType<typeof setTimeout> | undefined
   let lastArgs: any[]

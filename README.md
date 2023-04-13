@@ -12,21 +12,27 @@
 [![Deploy](https://github.com/XPoet/picx/workflows/deploy/badge.svg)](https://github.com/XPoet/picx/actions/workflows/deploy.yml)
 [![JavaScript Style Guide](https://img.shields.io/badge/code_style-Airbnb-hotpink.svg)](https://github.com/lin-123/javascript)
 
-**[PicX](https://picx.xpoet.cn)** 是一款基于 GitHub API 开发的图床工具，提供图片上传托管和生成图片链接服务。
+**[PicX](https://picx.xpoet.cn)** 是一款基于 GitHub API 开发的图床工具，提供图片上传托管、生成图片链接和常用图片工具箱服务。
 
 ---
 
-## 产品亮点 | Highlights
+## 亮点 | Highlights
 
 - **简单** - 无需下载，无需安装，不限平台，浏览器在线使用。
 - **免费** - PicX 巧妙结合多种开源技术搭建而成，完全免费。
-- **安全** - Token、用户信息和图片数据均保存在用户端，安全可靠。
+- **安全** - Token、图片等一切数据均保存在用户端，安全可靠。
 
 ## 如何使用 | How to use
 
 只需 [创建一个 GitHub Token](https://github.com/settings/tokens/new)，在 [PicX 官网](https://picx.xpoet.cn) 使用 Token 完成图床配置即可。
 
 PicX 在线使用入口 >> **https://picx.xpoet.cn**
+
+## 文档 | Documents
+
+官方文档入口 >> https://picx-docs.xpoet.cn
+
+通过阅读 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX 。
 
 ## 功能 | Features
 
@@ -40,16 +46,8 @@ PicX 在线使用入口 >> **https://picx.xpoet.cn**
 - [x] 支持 **图片压缩** (内置高效压缩算法，可配置在上传前自动压缩)
 - [x] 支持 **暗夜模式** (自由切换 / 自动切换)
 - [x] 支持 **PWA**
-- [ ] 配置图片水印
+- [x] 支持配置 **图片水印**
 - [ ] i18n
-
-
-## 文档 | Documents
-
-官方文档入口 >> https://picx-docs.xpoet.cn
-
-通过阅读官方文档的 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX 图床。
-
 
 ## 贡献 | Contribution
 

@@ -1,7 +1,7 @@
 import {
   DeleteStatusEnum,
-  ToUploadImageModel,
   UploadedImageModel,
+  UploadImageModel,
   UserConfigInfoModel
 } from '@/common/model'
 import { getUuid } from '@/utils/common-utils'
@@ -9,43 +9,44 @@ import { store } from '@/store'
 import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo } from '@/common/api'
 
 /**
- * 生成一个等待上传的图片对象
+ * 生成一个上传的图片对象
  */
-export const createToUploadImageObject = (): ToUploadImageModel => {
+export const createUploadImageObject = (): UploadImageModel => {
   return {
     uuid: '',
-
-    uploadStatus: {
-      progress: 0,
-      uploading: false
+    base64: {
+      originalBase64: '',
+      watermarkBase64: null,
+      compressBase64: null
     },
-
-    imgData: {
-      base64Content: '',
-      base64Url: ''
-    },
-
     fileInfo: {
-      size: 0,
-      lastModified: 0
+      originalFile: null,
+      watermarkFile: null,
+      compressFile: null
     },
-
     filename: {
-      name: '',
       hash: '',
       suffix: '',
+      name: '',
       prefixName: '',
       final: '',
       initName: '',
-      newName: 'xxx',
+      newName: '',
       isHashRename: true,
       isRename: false,
       isPrefix: false
     },
-
+    beforeUploadStatus: {
+      watermarking: false,
+      compressing: false
+    },
+    uploadStatus: {
+      progress: 0,
+      uploading: false
+    },
     reUploadInfo: {
-      path: '',
       dir: '',
+      path: '',
       isReUpload: false
     }
   }
@@ -88,7 +89,7 @@ export async function deleteImageFromGitHub(
     imageObj.deleting = false
     if (res) {
       resolve(true)
-      await store.dispatch('UPLOADED_LIST_REMOVE', imageObj.uuid)
+      await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
       await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
     } else {
       resolve(false)
@@ -153,7 +154,7 @@ export async function deleteImagesFromGitHub(
 
   imgObjs.forEach((imgObj) => {
     imgObj.deleting = false
-    store.dispatch('UPLOADED_LIST_REMOVE', imgObj.uuid)
+    store.dispatch('UPLOAD_IMG_LIST_REMOVE', imgObj.uuid)
     store.dispatch('DIR_IMAGE_LIST_REMOVE', imgObj)
   })
 }
@@ -204,4 +205,35 @@ export function getBase64ByImageUrl(url: string, ext: string): Promise<string | 
       resolve(dataURL)
     }
   })
+}
+
+/**
+ * 图片 File 格式转 Base64 格式
+ * @param file
+ */
+export function imgFileToBase64(file: File): Promise<string | null> {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => {
+      const base64 = reader.result as string
+      resolve(base64)
+    }
+    reader.onerror = () => resolve(null)
+  })
+}
+
+/**
+ * 下载 File 格式的图片
+ * @param file
+ */
+export function downloadImage(file: File) {
+  const url = URL.createObjectURL(file) // 创建图片 URL
+  const link = document.createElement('a') // 创建一个 a 标签
+  link.href = url // 设置链接地址为图片 URL
+  link.download = file.name // 设置下载文件的文件名
+  document.body.appendChild(link) // 将 a 标签添加到 body 中
+  link.click() // 模拟点击链接进行下载
+  document.body.removeChild(link) // 下载完成后移除 a 标签
+  URL.revokeObjectURL(url) // 释放图片 URL
 }

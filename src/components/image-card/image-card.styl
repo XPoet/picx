@@ -1,13 +1,7 @@
-@import "../../style/base.styl"
-
-$infoBoxHeight = 58rem
-
 .image-card {
   position relative
   box-sizing border-box
   width 100%
-  height 100%
-  padding-bottom $infoBoxHeight
   box-shadow 1rem 2rem 3rem var(--shadow-color)
   user-select none
 
@@ -16,44 +10,10 @@ $infoBoxHeight = 58rem
     box-shadow 0 0 10rem var(--shadow-hover-color)
   }
 
-  &.listing {
-    display flex
-    align-items center
-    justify-content flex-start
-    padding 5rem
-    border-radius $box-border-radius
-
-    .image-box {
-      width 45rem
-      height 45rem
-    }
-
-    .info-box {
-      position relative
-      width 80%
-    }
-
-    :deep(.el-loading-mask) {
-      .el-loading-spinner {
-        margin-top -25rem
-
-        .circular {
-          width 24rem
-          height 24rem
-        }
-
-        .el-loading-text {
-          margin 0
-        }
-      }
-    }
-  }
-
-
   .image-box {
     position relative
     width 100%
-    height 100%
+    height 150rem
 
     .el-image {
       width 100%
@@ -63,11 +23,11 @@ $infoBoxHeight = 58rem
 
 
   .info-box {
-    position absolute
-    bottom 0
-    left 0
+    position relative
+    box-sizing border-box
     width 100%
-    height $infoBoxHeight
+    margin-top 5rem
+    padding 5rem
 
     .image-info {
       display flex
@@ -76,14 +36,19 @@ $infoBoxHeight = 58rem
       box-sizing border-box
       width 100%
       height 100%
-      padding 5rem
       color var(--text-color)
 
-      .rename-input {
+      .rename-operate {
         display flex
-        height 20rem
-        margin-bottom 4rem
+        align-items center
+        justify-content space-between
+        height 22rem
+
+        .rename-input {
+          width 122rem
+        }
       }
+
 
       .filename {
         height 18rem
@@ -96,6 +61,10 @@ $infoBoxHeight = 58rem
     }
   }
 
+
+  .copy-link-box {
+    padding 5rem
+  }
 
   .operation-box {
     position absolute

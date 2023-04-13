@@ -1,0 +1,105 @@
+.img-process-state-card-container {
+  position relative
+  display flex
+  flex-direction column
+  justify-content flex-start
+  box-sizing border-box
+  width 100%
+  margin-bottom 20rem
+  overflow hidden
+  border 1rem solid var(--border-color)
+  border-radius 6rem
+
+  &:last-child {
+    margin-bottom 0
+  }
+
+  &:hover {
+    .del-btn {
+      display block
+    }
+  }
+
+  .img-container {
+    position relative
+    box-sizing border-box
+    width 100%
+    height 140rem
+
+    .el-image {
+      width 100%
+      height 100%
+    }
+  }
+
+
+  .info-container {
+    position relative
+    display flex
+    align-items center
+    justify-content space-between
+    box-sizing border-box
+    width 100%
+    padding 3rem 5rem
+    border-top 1rem solid var(--border-color)
+
+    .img-name {
+      max-width 50%
+      font-size 13rem
+    }
+
+    .img-size {
+      display flex
+      justify-content flex-end
+      transform scale(0.9)
+
+      .file-size-item {
+        padding 2rem 3rem
+        font-size 12rem
+        background var(--background-color-3)
+        border-radius 3rem
+      }
+
+      .original-file-size {
+        margin-right -2rem
+
+        &.del-line {
+          margin-right 0
+          text-decoration line-through
+        }
+      }
+
+      .finial-file-size {
+        margin-right -4rem
+        margin-left 4rem
+        color var(--el-color-primary)
+      }
+    }
+  }
+
+
+  .operate-container {
+    position relative
+    box-sizing border-box
+    width 100%
+    height 30rem
+    font-size 13rem
+    background var(--background-color-2)
+    border-top 1rem solid var(--border-color)
+    cursor pointer
+
+    &:hover {
+      background var(--el-color-primary-light-9)
+    }
+  }
+
+  .del-btn {
+    position absolute
+    top 6rem
+    right 6rem
+    display none
+    color var(--background-color)
+    font-size 22rem
+    cursor pointer
+  }
+}

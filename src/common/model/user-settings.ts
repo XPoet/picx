@@ -1,15 +1,5 @@
 import { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
 
-/**
- * 新建目录时最大的目录层级数
- */
-export const NEW_DIR_COUNT_MAX: number = 5
-
-/**
- * 允许上传图片的最大尺寸
- */
-export const IMG_UPLOAD_MAX_SIZE: number = 30 // MB
-
 export enum ElementPlusSizeEnum {
   // eslint-disable-next-line no-unused-vars
   large = 'large',
@@ -19,24 +9,57 @@ export enum ElementPlusSizeEnum {
   small = 'small'
 }
 
+export enum WatermarkPositionEnum {
+  // eslint-disable-next-line no-unused-vars
+  leftTop = 'leftTop',
+  // eslint-disable-next-line no-unused-vars
+  leftBottom = 'leftBottom',
+  // eslint-disable-next-line no-unused-vars
+  rightTop = 'rightTop',
+  // eslint-disable-next-line no-unused-vars
+  rightBottom = 'rightBottom'
+}
+
+export enum ThemeModeEnum {
+  // eslint-disable-next-line no-unused-vars
+  auto = 'auto',
+  // eslint-disable-next-line no-unused-vars
+  light = 'light',
+  // eslint-disable-next-line no-unused-vars
+  dark = 'dark'
+  // eslint-disable-next-line no-unused-vars
+}
+
 export interface UserSettingsModel {
   defaultHash: boolean
-  enableImageLinkFormat: boolean
-  defaultPrefix: boolean
-  prefixName: string
-  themeMode: 'auto' | 'light' | 'dark'
-  autoLightThemeTime: string[]
-  isCompress: boolean
-  compressEncoder: CompressEncoderEnum
+  prefixNaming: {
+    enable: boolean
+    prefix: string
+  }
+  theme: {
+    mode: ThemeModeEnum
+    autoLightTime: string[]
+  }
+  compress: {
+    enable: boolean
+    encoder: CompressEncoderEnum
+  }
   elementPlusSize: ElementPlusSizeEnum
   imageLinkType: {
     selected: string
     presetList: Array<ImageLinkRuleModel>
   }
   imageLinkFormat: {
+    enable: boolean
     selected: string
     presetList: Array<ImageLinkFormatModel>
   }
-
   starred?: boolean
+  watermark: {
+    enable: boolean
+    text: string
+    fontSize: number
+    position: WatermarkPositionEnum
+    opacity: number
+  }
 }

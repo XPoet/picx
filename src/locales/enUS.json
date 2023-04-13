@@ -1,0 +1,21 @@
+{
+  "header": {
+    "notLogin": "Not Login",
+    "logout": "Logout"
+  },
+  "nav": {
+    "config": "Image Hosting Config",
+    "upload": "Upload Image",
+    "management": "Image Hosting Management",
+    "settings": "My Settings",
+    "toolbox": "Toolbox",
+    "feedback": "Feedback",
+    "actions": "Quick actions"
+  },
+  "actions": {
+    "night": "Night Mode",
+    "compress": "Compress Image",
+    "watermark": "Add Watermark",
+    "transform": "Transform "
+  }
+}

@@ -3,7 +3,9 @@ import config from '@/views/my-config/my-config.vue'
 import upload from '@/views/upload-image/upload-image.vue'
 import management from '@/views/imgs-management/imgs-management.vue'
 import settings from '@/views/my-settings/my-settings.vue'
-import help from '@/views/help-info/help-info.vue'
+import toolbox from '@/views/picx-toolbox/picx-toolbox.vue'
+import feedback from '@/views/feedback-info/feedback-info.vue'
+import compressTool from '@/components/tools/compress-tool/compress-tool.vue'
 
 const titleSuffix = ` | PicX 图床`
 
@@ -40,19 +42,34 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/help',
-    name: 'help',
-    component: help,
-    meta: {
-      title: `帮助反馈${titleSuffix}`
-    }
-  },
-  {
     path: '/settings',
     name: 'settings',
     component: settings,
     meta: {
       title: `我的设置${titleSuffix}`
+    }
+  },
+  {
+    path: '/toolbox',
+    name: 'toolbox',
+    component: toolbox,
+    meta: {
+      title: `工具箱${titleSuffix}`
+    },
+    children: [
+      {
+        path: '/toolbox/compress',
+        name: 'compress',
+        component: compressTool
+      }
+    ]
+  },
+  {
+    path: '/feedback',
+    name: 'feedback',
+    component: feedback,
+    meta: {
+      title: `帮助反馈${titleSuffix}`
     }
   }
 ]

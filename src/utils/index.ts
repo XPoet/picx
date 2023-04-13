@@ -1,5 +1,7 @@
 export * from './common-utils'
+export * from './add-watermark'
 export * from './compress-image'
 export * from './image-link-utils'
 export * from './image-utils'
 export * from './file-utils'
+export * from './storage'

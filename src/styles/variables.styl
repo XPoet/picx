@@ -1,0 +1,127 @@
+// ========================================================================
+//  others variables
+// ========================================================================
+$component-interval = 16rem
+$box-border-radius = 10rem
+$content-max-width = 888rem
+$scrollbar-size = 8rem
+
+
+// ========================================================================================
+// media query
+// ========================================================================================
+$media-max-width-tablet-2 = 1200px                       // media query max width (tablet-2)
+$media-max-width-tablet = 900px                          // media query max width (tablet)
+$media-max-width-mobile = 600px                          // media query max width (mobile)
+
+picx-tablet-2() {
+  @media (max-width $media-max-width-tablet-2) {
+    { block }
+  }
+}
+
+
+picx-tablet() {
+  @media (max-width $media-max-width-tablet) {
+    { block }
+  }
+}
+
+
+picx-mobile() {
+  @media (max-width $media-max-width-mobile) {
+    { block }
+  }
+}
+
+
+// ========================================================================================
+// z-index
+// ========================================================================================
+$z-index-1 = 1001
+$z-index-2 = 1002
+$z-index-3 = 1003
+$z-index-4 = 1004
+$z-index-5 = 1005
+$z-index-6 = 1006
+$z-index-7 = 1007
+$z-index-8 = 1008
+$z-index-9 = 1009
+
+
+// ========================================================================================
+// light mode color
+// ========================================================================================
+$background-color = #fff
+$background-color-2 = darken($background-color, 5%)
+$background-color-3 = darken($background-color, 10%)
+
+$text-color = #50505c
+$text-color-2 = darken($text-color, 10%)
+$text-color-3 = darken($text-color, 5%)
+$text-color-4 = lighten($text-color, 30%)
+$text-color-5 = lighten($text-color, 90%)
+
+$border-color = darken($background-color, 20%)
+
+$shadow-color = rgba(0, 0, 0, 0.25)
+$shadow-hover-color = rgba(0, 0, 0, 0.45)
+
+$scrollbar-color = darken($background-color, 20%)
+$scroll-bar-bg-color = darken($background-color, 30%)
+
+$await-upload-color = #e6a23c
+$uploading-color = #409eff
+$uploaded-color = #67c23a
+
+
+// ========================================================================================
+// dark mode color
+// ========================================================================================
+$dark-background-color = #2a2a2f
+$dark-background-color-2 = darken($dark-background-color, 10%)
+$dark-background-color-3 = darken($dark-background-color, 15%)
+
+$dark-text-color = #bebec6
+$dark-text-color-2 = lighten($dark-text-color, 30%)
+$dark-text-color-3 = lighten($dark-text-color, 20%)
+$dark-text-color-4 = darken($dark-text-color, 20%)
+$dark-text-color-5 = darken($dark-text-color, 80%)
+
+$dark-border-color = lighten($dark-background-color, 20%)
+
+$dark-shadow-color = rgba(128, 128, 128, 0.25)
+$dark-shadow-hover-color = rgba(128, 128, 128, 0.45)
+
+$dark-scrollbar-color = darken($dark-background-color, 20%)
+$dark-scroll-bar-bg-color = lighten($dark-background-color, 30%)
+
+$dark-await-upload-color = darken($await-upload-color, 30%)
+$dark-uploading-color = darken($uploading-color, 30%)
+$dark-uploaded-color = darken($uploaded-color, 30%)
+
+
+root-color(mode) {
+  --background-color mode == 'light' ? $background-color : $dark-background-color
+  --background-color-2 mode == 'light' ? $background-color-2 : $dark-background-color-2
+  --background-color-3 mode == 'light' ? $background-color-3 : $dark-background-color-3
+
+  --text-color mode == 'light' ? $text-color : $dark-text-color
+  --text-color-2 mode == 'light' ? $text-color-2 : $dark-text-color-2
+  --text-color-3 mode == 'light' ? $text-color-3 : $dark-text-color-3
+  --text-color-4 mode == 'light' ? $text-color-4 : $dark-text-color-4
+  --text-color-5 mode == 'light' ? $text-color-5 : $dark-text-color-5
+
+  --border-color mode == 'light' ? $border-color : $dark-border-color
+  --shadow-color mode == 'light' ? $shadow-color : $dark-shadow-color
+  --shadow-hover-color mode == 'light' ? $shadow-hover-color : $dark-shadow-hover-color
+  --scrollbar-color mode == 'light' ? $scrollbar-color : $dark-scrollbar-color
+  --scroll-bar-bg-color mode == 'light' ? $scroll-bar-bg-color : $dark-scroll-bar-bg-color
+
+  --await-upload-color  mode == 'light' ? $await-upload-color : $dark-await-upload-color
+  --uploading-color  mode == 'light' ? $uploading-color : $dark-uploading-color
+  --uploaded-color  mode == 'light' ? $uploaded-color : $dark-uploaded-color
+}
+
+
+

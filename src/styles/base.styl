@@ -1,0 +1,141 @@
+@import "./variables.styl"
+@import "./theme.styl"
+@import "./element-plus.styl"
+
+:root {
+  font-size 1px
+
+  +picx-tablet() {
+    font-size 0.95px
+  }
+
+  +picx-tablet() {
+    font-size 0.9px
+  }
+
+  +picx-mobile() {
+    font-size 0.8px
+  }
+}
+
+
+* {
+  &::-webkit-scrollbar {
+    width $scrollbar-size
+    height $scrollbar-size
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background var(--scrollbar-color)
+    border-radius $box-border-radius
+  }
+
+  &::-webkit-scrollbar-track {
+    background transparent
+  }
+}
+
+
+html
+body {
+  position relative
+  width 100%
+  height 100%
+  margin 0
+  padding 0
+  color var(--text-color)
+}
+
+
+a {
+  color var(--text-color)
+  text-decoration none
+}
+
+a:link {
+  color var(--text-color)
+  text-decoration none
+}
+
+
+ul
+ol
+li {
+  margin 0
+  list-style none
+}
+
+
+.flex-center {
+  display flex
+  align-items center
+  justify-content center
+}
+
+
+.flex-start {
+  display flex
+  align-items center
+  justify-content flex-start
+}
+
+
+.page-container {
+  box-sizing border-box
+  width 100%
+  height 100%
+  padding 30rem
+  overflow-y auto
+  background var(--background-color)
+  border-top-left-radius $box-border-radius
+}
+
+
+.clearfix {
+  &::after {
+    display block
+    clear both
+    height 0
+    overflow hidden
+    visibility hidden
+    content ''
+  }
+}
+
+
+.custom-contextmenu-container {
+  position relative
+  box-sizing border-box
+  padding 5rem 0
+  color var(--el-text-color-regular)
+  background var(--background-color-2)
+  border 1rem solid var(--border-color)
+  border-radius 2rem
+
+  .custom-contextmenu-item {
+    position relative
+    display flex
+    align-items center
+    justify-content flex-start
+    box-sizing border-box
+    padding 5rem 10rem
+    background var(--background-color-2)
+    cursor pointer
+
+    &.copy-link {
+      display none
+    }
+
+    &:hover {
+      color var(--el-color-primary)
+    }
+  }
+}
+
+.text-ellipsis {
+  overflow hidden
+  white-space nowrap
+  text-overflow ellipsis
+}
+
+

@@ -1,7 +1,5 @@
-@import "../../style/base.styl"
-
 .setting-title {
-  margin 40rem 0 20rem 0
+  margin 40rem 0 25rem 0
   font-weight bold
   font-size 16rem
 
@@ -17,7 +15,7 @@
   .setting-item {
     margin-bottom 10rem
 
-    &.upload-settings {
+    &.has-desc {
       display flex
       align-items center
       color var(--text-color-4)
@@ -50,33 +48,10 @@
       margin-bottom 0
     }
 
+
     .prefix-input {
       width calc(100% - 56rem)
       margin-left 56rem
-    }
-
-    .img-encoder-title {
-      margin-bottom 12rem
-    }
-
-    .img-encoder-group {
-
-      .desc {
-        margin-left 10rem
-        color var(--text-color-4)
-        font-size 12rem
-      }
-    }
-
-
-
-    :deep() .el-radio-group {
-
-      display inline-block
-
-      .el-radio {
-        display block
-      }
     }
 
     :deep() .el-switch {

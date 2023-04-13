@@ -19,7 +19,8 @@
 import { computed } from 'vue'
 import { getDirInfoList } from '@/common/api'
 import { useStore } from '@/store'
-import { ElementPlusSizeEnum, NEW_DIR_COUNT_MAX } from '@/common/model'
+import { ElementPlusSizeEnum } from '@/common/model'
+import { NEW_DIR_COUNT_MAX } from '@/common/constant'
 
 const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
@@ -30,7 +31,7 @@ defineProps({
     default: ''
   },
   elSize: {
-    type: String,
+    type: String as () => ElementPlusSizeEnum,
     default: ElementPlusSizeEnum.default
   },
   elWidth: {

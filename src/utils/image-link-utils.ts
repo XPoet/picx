@@ -44,7 +44,7 @@ const transformImageLink = (
   imageName: string,
   userSettings: UserSettingsModel
 ) => {
-  if (userSettings.enableImageLinkFormat) {
+  if (userSettings.imageLinkFormat.enable) {
     const selectedFormat = userSettings.imageLinkFormat.selected
     const format = userSettings.imageLinkFormat.presetList.find(
       (x: ImageLinkFormatModel) => x.name === selectedFormat

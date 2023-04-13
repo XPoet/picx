@@ -1,9 +1,9 @@
 import { Module } from 'vuex'
-import { BranchModeEnum, UserConfigInfoModel, DirModeEnum, NEW_DIR_COUNT_MAX } from '@/common/model'
+import { BranchModeEnum, UserConfigInfoModel, DirModeEnum } from '@/common/model'
 import { deepAssignObject, cleanObject, formatDatetime } from '@/utils'
 import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
 import RootStateTypes from '@/store/types'
-import { LS_PICX_CONFIG } from '@/common/constant'
+import { LS_PICX_CONFIG, NEW_DIR_COUNT_MAX } from '@/common/constant'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {

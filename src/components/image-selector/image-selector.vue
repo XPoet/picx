@@ -32,7 +32,7 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['update:initImageList'])
+defineEmits(['update:initImageList'])
 
 const store = useStore()
 const allChecked = ref(false)
@@ -74,13 +74,13 @@ const batchDeleteImage = () => {
       .then(async () => {
         const res = await deleteImageOfGitHub(getImageCardCheckedArr.value, userConfigInfo)
         if (res === DeleteStatusEnum.deleted) {
-          ElMessage.success('删除成功！')
+          ElMessage.success('删除成功')
         }
         if (res === DeleteStatusEnum.allDeleted) {
-          ElMessage.success('批量删除成功！')
+          ElMessage.success('批量删除成功')
         }
         if (res === DeleteStatusEnum.deleteFail) {
-          ElMessage.error('删除失败，请稍后重试！')
+          ElMessage.error('删除失败，请稍后重试')
         }
       })
       .catch(() => {

@@ -1,5 +1,3 @@
-@import "../../style/base.styl"
-
 .upload-page-container {
   display flex
   justify-content space-between
@@ -13,6 +11,7 @@
     margin-right $component-interval
 
     .uploaded-item {
+      width 100%
       margin-bottom 20rem
 
       &:last-child {
@@ -27,6 +26,10 @@
     width 100%
     height 100%
     overflow-y auto
+
+    &.has-left {
+      border-radius 0
+    }
 
     .row-item {
       display flex
@@ -44,6 +47,14 @@
         width 100%
         max-width $content-max-width
         margin 0 auto
+
+        &.upload-area-status {
+          display flex
+          align-items center
+          justify-content space-between
+          margin-bottom 10rem
+          font-size 12rem
+        }
 
         .shortcut-key {
           margin-left 6rem
