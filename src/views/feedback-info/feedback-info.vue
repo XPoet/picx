@@ -1,12 +1,13 @@
 <template>
   <div class="page-container feedback-page-container">
     <div class="help-info-item description">
-      🏞️ PicX 是一款基于 GitHub API 开发的图床工具，提供图片上传托管和生成图片链接服务。
-      <br />
-      🌟 无需下载！无需安装！网页端在线使用！简单！免费！安全！
+      🏞️ PicX 是一款基于 GitHub API
+      开发的图床工具，提供图片上传托管、生成图片链接和常用图片工具箱服务。
     </div>
 
-    <div class="help-info-item">🌍 建议将本站添加至浏览器收藏夹，方便下次使用。</div>
+    <div class="help-info-item">
+      🌍 建议将本站添加到浏览器收藏夹，方便下次使用。快捷键：<code>{{ shortcutKey }}</code>
+    </div>
 
     <div class="help-info-item">
       🦁 作者：
@@ -41,7 +42,7 @@
     </div>
 
     <div class="help-info-item" style="margin-bottom: 2rem">
-      🎁 如果 PicX 图床对你有帮助，欢迎赞赏作者，支持开源。
+      🎁 如果 PicX 对你有帮助，欢迎赞赏作者，支持开源。
     </div>
 
     <div class="help-info-item img">
@@ -59,7 +60,12 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { computed } from 'vue'
+import { getOSName } from '@/utils'
+
+const shortcutKey = computed(() => (getOSName() === 'win' ? 'Ctrl + D' : 'Command + D'))
+</script>
 
 <style scoped lang="stylus">
 @import "./feedback-info.styl"
