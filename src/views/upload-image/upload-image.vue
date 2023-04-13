@@ -142,6 +142,9 @@ const uploadImage = async () => {
   uploading.value = true
   const uploadRes: UploadStatusEnum = (await doUploadImages(notYetUploadList)) as UploadStatusEnum
   uploading.value = false
+  const uploadedImg = notYetUploadList
+    .filter((v) => v.uploadStatus.progress === 100)
+    .map((x: UploadImageModel) => x.uploadedImg!)
   // eslint-disable-next-line default-case
   switch (uploadRes) {
     // 单张图片上传成功
@@ -149,7 +152,7 @@ const uploadImage = async () => {
       resetGettingImages()
       ElMessage.success('图片上传成功')
       // 自动复制这张图片链接到系统剪贴板
-      copyImageLink(notYetUploadList[0].uploadedImg!, userConfigInfo, userSettings, true)
+      copyImageLink(uploadedImg[0], userConfigInfo, userSettings, true)
       await starred(userSettings)
       break
 
@@ -158,12 +161,7 @@ const uploadImage = async () => {
       resetGettingImages()
       ElMessage.success('图片批量上传成功')
       // 自动复制这些图片链接到系统剪贴板
-      batchCopyImageLinks(
-        notYetUploadList.map((x: UploadImageModel) => x.uploadedImg!),
-        userConfigInfo,
-        userSettings,
-        true
-      )
+      batchCopyImageLinks(uploadedImg, userConfigInfo, userSettings, true)
       await starred(userSettings)
       break
 
