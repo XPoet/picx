@@ -1,7 +1,7 @@
 <template>
   <el-card>
     <el-table :data="userSettings.imageLinkType.presetList" style="width: 100%">
-      <el-table-column prop="name" label="类型" width="100" />
+      <el-table-column prop="name" label="类型" width="120" />
       <el-table-column label="CDN 规则">
         <template #default="scope">
           <div
