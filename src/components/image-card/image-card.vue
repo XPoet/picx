@@ -135,6 +135,7 @@ const deleteOriginImage = (
         ElMessage.success('删除成功')
       }
       await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
+      await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
       resolve(true)
     } else {
       resolve(false)
