@@ -32,6 +32,12 @@
           @change="themeModeChange"
         />
         <el-switch
+          v-model="userSettings.watermark.enable"
+          class="mb-2"
+          :active-text="$t('actions.watermark')"
+          @change="persistUserSettings"
+        />
+        <el-switch
           v-model="userSettings.compress.enable"
           class="mb-2"
           :active-text="$t('actions.compress')"

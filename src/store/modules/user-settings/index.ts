@@ -70,8 +70,8 @@ const initSettings: UserSettingsModel = {
   starred: false,
   watermark: {
     enable: false,
-    text: '',
-    fontSize: 30,
+    text: 'PicX',
+    fontSize: 50,
     position: WatermarkPositionEnum.rightBottom,
     opacity: 0.5
   }

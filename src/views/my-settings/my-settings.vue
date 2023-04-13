@@ -56,7 +56,7 @@
             <el-form-item label="字体大小">
               <el-input-number
                 v-model="userSettings.watermark.fontSize"
-                :min="30"
+                :min="40"
                 :max="60"
                 :step="2"
                 @change="persistUserSettings"
