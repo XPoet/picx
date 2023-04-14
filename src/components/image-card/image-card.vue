@@ -208,9 +208,10 @@ const updateRename = async () => {
     const suffix = getFileSuffix(imageObj.name)
     const newUuid = getUuid()
     const newFilename = `${renameInputValue.value}.${newUuid}.${suffix}`
-    let base64 = await getBase64ByImageUrl(imgUrl.value || '', suffix)
-
-    if (suffix.includes('svg')) {
+    let base64
+    if (!suffix.includes('svg')) {
+      base64 = await getBase64ByImageUrl(imgUrl.value || '', suffix)
+    } else {
       base64 = await blobToBase64ByImageUrl(imgUrl.value || '')
     }
 
