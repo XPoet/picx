@@ -1,3 +1,4 @@
+import { ElMessage } from 'element-plus'
 import { ImageHandleResult } from '@/common/model'
 import { getUuid } from '@/utils/common-utils'
 import { imgFileToBase64 } from '@/utils/image-utils'
@@ -26,7 +27,7 @@ export const getFileSuffix = (filename: string) => {
  * @param fileType
  */
 export const isImage = (fileType: string): boolean => {
-  return /(png|jpg|jpeg|gif|webp|awebp|avif|svg\+xml|x-icon|vnd.microsoft.icon)$/.test(fileType)
+  return /(png|jpg|jpeg|gif|webp|awebp|avif|svg\+xml|svg|x-icon|vnd.microsoft.icon)$/.test(fileType)
 }
 
 /**
