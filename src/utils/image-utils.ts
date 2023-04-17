@@ -209,7 +209,7 @@ export function getBase64ByImageUrl(url: string, ext: string): Promise<string | 
 }
 
 /**
- * 根据图片链接获取图片 Blob 转 base64 编码
+ * 根据图片链接获取图片 blob 转 base64 编码
  * @param url 图片路径
  */
 export function blobToBase64ByImageUrl(url: string): Promise<string | null> {
