@@ -17,39 +17,43 @@
         </div>
       </li>
     </ul>
-    <div class="nav-item quick-actions flex-center" :class="{ active: isShowQuickActions }">
-      <div class="nav-content">
-        <el-icon :size="navIconSize">
-          <Operation />
-        </el-icon>
-        <span class="nav-name">{{ $t('nav.actions') }}</span>
-      </div>
-      <div class="quick-actions-box" v-show="isShowQuickActions">
-        <el-switch
-          v-model="isOpenDarkMode"
-          class="mb-2"
-          :active-text="$t('actions.night')"
-          @change="themeModeChange"
-        />
-        <el-switch
-          v-model="userSettings.watermark.enable"
-          class="mb-2"
-          :active-text="$t('actions.watermark')"
-          @change="persistUserSettings"
-        />
-        <el-switch
-          v-model="userSettings.compress.enable"
-          class="mb-2"
-          :active-text="$t('actions.compress')"
-          @change="persistUserSettings"
-        />
-        <el-switch
-          v-model="userSettings.imageLinkFormat.enable"
-          class="mb-2"
-          :active-text="$t('actions.transform') + userSettings.imageLinkFormat.selected"
-          @change="persistUserSettings"
-        />
-      </div>
+    <div class="nav-item quick-actions flex-center">
+      <el-popover placement="right" :width="200" trigger="click">
+        <template #reference>
+          <div class="nav-content">
+            <el-icon :size="navIconSize">
+              <Operation />
+            </el-icon>
+            <span class="nav-name">{{ $t('nav.actions') }}</span>
+          </div>
+        </template>
+        <div class="quick-actions-box">
+          <el-switch
+            v-model="isOpenDarkMode"
+            class="mb-2"
+            :active-text="$t('actions.night')"
+            @change="themeModeChange"
+          />
+          <el-switch
+            v-model="userSettings.watermark.enable"
+            class="mb-2"
+            :active-text="$t('actions.watermark')"
+            @change="persistUserSettings"
+          />
+          <el-switch
+            v-model="userSettings.compress.enable"
+            class="mb-2"
+            :active-text="$t('actions.compress')"
+            @change="persistUserSettings"
+          />
+          <el-switch
+            v-model="userSettings.imageLinkFormat.enable"
+            class="mb-2"
+            :active-text="$t('actions.transform') + userSettings.imageLinkFormat.selected"
+            @change="persistUserSettings"
+          />
+        </div>
+      </el-popover>
     </div>
   </aside>
 </template>
@@ -81,8 +85,6 @@ const navIconSize = computed(() => {
 const isOpenDarkMode = ref(userSettings.theme.mode === ThemeModeEnum.dark)
 
 const navList = ref(navInfoList)
-
-const isShowQuickActions = ref<Boolean>(false)
 
 const onNavClick = (e: any) => {
   const { path } = e
@@ -160,22 +162,6 @@ onUpdated(() => {
 onMounted(() => {
   router.isReady().then(() => {
     changeNavActive(router.currentRoute.value.path)
-  })
-
-  document.querySelector('.quick-actions .quick-actions-box')?.addEventListener('click', (e) => {
-    isShowQuickActions.value = true
-    e.stopPropagation()
-  })
-
-  document.querySelector('.quick-actions')?.addEventListener('click', (e) => {
-    isShowQuickActions.value = !isShowQuickActions.value
-    e.stopPropagation()
-  })
-
-  document.addEventListener('click', () => {
-    if (isShowQuickActions.value) {
-      isShowQuickActions.value = false
-    }
   })
 })
 </script>
