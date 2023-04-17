@@ -54,7 +54,7 @@
 
     <div class="help-info-item red-text">
       <strong>
-        ⚠️ 郑重声明：请勿通过本站上传违反你当地法律的图片，所造成的一切后果与本站无关。
+        ⚠️ 郑重声明：请勿使用 PicX 上传违反你当地法律的图片，所造成的一切后果与作者无关。
       </strong>
     </div>
   </div>

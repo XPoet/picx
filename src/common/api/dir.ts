@@ -1,5 +1,5 @@
 import { store } from '@/store'
-import { getFileSuffix, isImage, createManagementImageObject } from '@/utils'
+import { getFileSuffix, isImage, createManagementImageObject, getUuid } from '@/utils'
 import request from '@/utils/request'
 import { UserConfigInfoModel } from '@/common/model'
 
@@ -49,6 +49,8 @@ export const getRepoPathContent = (userConfigInfo: UserConfigInfoModel, path: st
       url: `/repos/${owner}/${repo}/contents/${path}`,
       method: 'GET',
       params: {
+        // 防止浏览器缓存
+        'no-cache': getUuid(),
         ref
       }
     })

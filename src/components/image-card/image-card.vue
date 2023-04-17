@@ -80,7 +80,8 @@ import {
   generateImageLinks,
   getUuid,
   createUploadImageObject,
-  getFileSuffix
+  getFileSuffix,
+  blobToBase64ByImageUrl
 } from '@/utils'
 import { uploadImageToGitHub } from '@/utils/upload-utils'
 import { deleteSingleImage } from '@/common/api'
@@ -177,7 +178,7 @@ const showRenameInput = async (imgObj: UploadedImageModel) => {
   renameInputValue.value = getFilename(imgObj.name)
   setTimeout(() => {
     renameInputRef.value?.focus()
-  }, 150)
+  }, 100)
 }
 
 const updateRename = async () => {
@@ -205,8 +206,17 @@ const updateRename = async () => {
 
     const suffix = getFileSuffix(imageObj.name)
     const newUuid = getUuid()
-    const newFilename = `${renameInputValue.value}.${newUuid}.${suffix}`
-    const base64 = await getBase64ByImageUrl(imgUrl.value || '', suffix)
+    const newFilename = `${renameInputValue.value}${
+      userSettings.defaultHash ? `.${newUuid}` : ''
+    }.${suffix}`
+
+    let base64
+
+    if (!suffix.includes('svg')) {
+      base64 = await getBase64ByImageUrl(imgUrl.value || '', suffix)
+    } else {
+      base64 = await blobToBase64ByImageUrl(imgUrl.value || '')
+    }
 
     if (base64) {
       const tmpImgObj: UploadImageModel = createUploadImageObject()

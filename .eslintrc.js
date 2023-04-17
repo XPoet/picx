@@ -7,7 +7,7 @@ function parseAutoImportsDts(contents) {
 }
 
 function dts2Globals() {
-  const SRC = path.resolve(__dirname, './auto-imports.d.ts')
+  const SRC = path.resolve(__dirname, './src/auto-imports.d.ts')
   const contents = fs.readFileSync(SRC, { encoding: 'utf-8' })
   const parsed = parseAutoImportsDts(contents)
 

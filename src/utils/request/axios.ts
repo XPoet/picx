@@ -1,5 +1,6 @@
 import Axios from 'axios'
 import { LS_PICX_CONFIG, AXIOS_BASE_URL, AXIOS_TIMEOUT } from '@/common/constant'
+import { getLocal } from '@/utils/storage'
 
 const baseURL = AXIOS_BASE_URL
 
@@ -13,10 +14,10 @@ axios.defaults.headers['Content-Type'] = 'application/json'
 // 发起请求之前的拦截器（前置拦截）
 axios.interceptors.request.use(
   (config) => {
-    const userConfig = localStorage.getItem(LS_PICX_CONFIG)
+    const userConfig = getLocal(LS_PICX_CONFIG)
     if (userConfig) {
-      const { token } = JSON.parse(userConfig)
-      if (token) {
+      const { token } = userConfig
+      if (config.baseURL?.includes(baseURL) && token) {
         config.headers.Authorization = `token ${token}`
       }
     }

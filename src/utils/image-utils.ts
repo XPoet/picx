@@ -7,6 +7,7 @@ import {
 import { getUuid } from '@/utils/common-utils'
 import { store } from '@/store'
 import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo } from '@/common/api'
+import request from '@/utils/request'
 
 /**
  * 生成一个上传的图片对象
@@ -204,6 +205,39 @@ export function getBase64ByImageUrl(url: string, ext: string): Promise<string | 
       const dataURL: string = canvas.toDataURL(`image/${ext}`)
       resolve(dataURL)
     }
+  })
+}
+
+/**
+ * 根据图片链接获取图片 blob 转 base64 编码
+ * @param url 图片路径
+ */
+export function blobToBase64ByImageUrl(url: string): Promise<string | null> {
+  return new Promise((resolve) => {
+    request({
+      baseURL: '',
+      url,
+      method: 'GET',
+      responseType: 'blob'
+    })
+      .then((res) => {
+        if (res) {
+          const reader = new FileReader()
+          reader.onload = () => {
+            const base64 = reader.result as string
+            resolve(base64)
+          }
+          reader.onerror = () => {
+            resolve(null)
+          }
+          reader.readAsDataURL(res)
+        } else {
+          resolve(null)
+        }
+      })
+      .catch(() => {
+        resolve(null)
+      })
   })
 }
 
