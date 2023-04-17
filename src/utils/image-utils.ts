@@ -7,6 +7,7 @@ import {
 import { getUuid } from '@/utils/common-utils'
 import { store } from '@/store'
 import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo } from '@/common/api'
+import request from '@/utils/request'
 
 /**
  * 生成一个上传的图片对象
@@ -236,4 +237,39 @@ export function downloadImage(file: File) {
   link.click() // 模拟点击链接进行下载
   document.body.removeChild(link) // 下载完成后移除 a 标签
   URL.revokeObjectURL(url) // 释放图片 URL
+}
+
+/**
+ * 根据图片链接获取图片Blob 转 base64 编码
+ * @param url 图片路径
+ */
+export function blobToBase64ByImageUrl(url: string): Promise<string | null> {
+  return new Promise((resolve) => {
+    request({
+      baseURL: '',
+      url,
+      method: 'GET',
+      responseType: 'blob'
+    })
+      .then((res) => {
+        if (res) {
+          const reader = new FileReader()
+          reader.onload = () => {
+            const base64 = reader.result as string
+            resolve(base64)
+          }
+          reader.onerror = (reason) => {
+            console.error(reason)
+            resolve(null)
+          }
+          reader.readAsDataURL(res)
+        } else {
+          resolve(null)
+        }
+      })
+      .catch((reason) => {
+        console.error(reason)
+        resolve(null)
+      })
+  })
 }
