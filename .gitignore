@@ -47,6 +47,3 @@ Thumbs.db
 
 # Other
 *.local
-
-auto-imports.d.ts
-components.d.ts

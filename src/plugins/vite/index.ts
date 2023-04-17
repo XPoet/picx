@@ -4,7 +4,6 @@ import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import { ViteEnv } from '@/common/model'
-
 import configPWAPlugin from './pwa'
 
 export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
@@ -13,10 +12,12 @@ export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   // 按需自动导入 Element Plus 组件
   vitePlugins.push(
     AutoImport({
-      resolvers: [ElementPlusResolver()]
+      resolvers: [ElementPlusResolver()],
+      dts: 'src/auto-imports.d.ts'
     }),
     Components({
-      resolvers: [ElementPlusResolver()]
+      resolvers: [ElementPlusResolver()],
+      dts: 'src/components.d.ts'
     })
   )
 
