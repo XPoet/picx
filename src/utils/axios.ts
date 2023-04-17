@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import { ElMessage } from 'element-plus'
 import { LS_PICX_CONFIG, AXIOS_BASE_URL, AXIOS_TIMEOUT } from '@/common/constant'
 
 const baseURL = AXIOS_BASE_URL
@@ -16,7 +17,7 @@ axios.interceptors.request.use(
     const userConfig = localStorage.getItem(LS_PICX_CONFIG)
     if (userConfig) {
       const { token } = JSON.parse(userConfig)
-      if (token) {
+      if (config.baseURL?.includes(baseURL) && token) {
         config.headers.Authorization = `token ${token}`
       }
     }

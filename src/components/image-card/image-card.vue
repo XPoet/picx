@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import type { ElInput } from 'element-plus'
+import { ElInput, ElMessage, ElMessageBox, ElLoading } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { Check, Close } from '@element-plus/icons-vue'
 import { useStore } from '@/store'
@@ -80,11 +80,13 @@ import {
   generateImageLinks,
   getUuid,
   createUploadImageObject,
-  getFileSuffix
+  getFileSuffix,
+  blobToBase64ByImageUrl
 } from '@/utils'
 import { uploadImageToGitHub } from '@/utils/upload-utils'
 import { deleteSingleImage } from '@/common/api'
 import { RENAME_MAX_LENGTH } from '@/common/constant'
+import CopyImageLink from '@/components/copy-image-link/copy-image-link.vue'
 
 const props = defineProps({
   imageObj: {
@@ -205,9 +207,13 @@ const updateRename = async () => {
 
     const suffix = getFileSuffix(imageObj.name)
     const newUuid = getUuid()
-    const newFilename = `${renameInputValue.value}.${newUuid}.${suffix}`
-    const base64 = await getBase64ByImageUrl(imgUrl.value || '', suffix)
-
+    const newFilename = `${renameInputValue.value}${userSettings.defaultHash ? `.${newUuid}` : ''}.${suffix}`
+    let base64
+    if (!suffix.includes('svg')) {
+      base64 = await getBase64ByImageUrl(imgUrl.value || '', suffix)
+    } else {
+      base64 = await blobToBase64ByImageUrl(imgUrl.value || '')
+    }
     if (base64) {
       const tmpImgObj: UploadImageModel = createUploadImageObject()
       tmpImgObj.uuid = newUuid
