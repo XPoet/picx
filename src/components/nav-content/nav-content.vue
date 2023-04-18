@@ -91,13 +91,13 @@ const onNavClick = (e: any) => {
 
   if (path === '/management') {
     if (userConfigInfo.selectedRepo === '') {
-      ElMessage.warning('请选择一个仓库！')
+      ElMessage.warning('请选择一个仓库')
       router.push('/config')
       return
     }
 
     if (userConfigInfo.selectedDir === '') {
-      ElMessage.warning('目录不能为空！')
+      ElMessage.warning('目录不能为空')
       router.push('/config')
       return
     }

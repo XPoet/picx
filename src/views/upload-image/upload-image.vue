@@ -181,7 +181,7 @@ const uploadImage = async () => {
 
     // 上传失败（网络错误等原因）
     case UploadStatusEnum.uploadFail:
-      ElMessage.error('上传失败，请稍后重试！')
+      ElMessage.error('上传失败，请稍后重试')
   }
 }
 
