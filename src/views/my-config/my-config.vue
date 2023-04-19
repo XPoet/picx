@@ -394,7 +394,7 @@ async function getBranchList(repo: string) {
 
 async function getUserInfo() {
   if (!userConfigInfo.token) {
-    ElMessage.error('GitHub Token 不能为空！')
+    ElMessage.error('GitHub Token 不能为空')
     return
   }
 
@@ -445,7 +445,7 @@ const onNewBranchInputBlur = () => {
       ElMessage.warning(`${nb} 分支已存在，请在分支列表中选择`)
     }
   } else {
-    ElMessage.error('新建分支不能为空！')
+    ElMessage.error('新建分支不能为空')
   }
 }
 

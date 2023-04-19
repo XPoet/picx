@@ -9,6 +9,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Base64Tool: typeof import('./components/tools/base64-tool/base64-tool.vue')['default']
     CompressConfigBox: typeof import('./components/compress-config-box/compress-config-box.vue')['default']
     CompressTool: typeof import('./components/tools/compress-tool/compress-tool.vue')['default']
     CopyImageLink: typeof import('./components/copy-image-link/copy-image-link.vue')['default']
@@ -31,6 +32,7 @@ declare module '@vue/runtime-core' {
     ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
     ElLink: typeof import('element-plus/es')['ElLink']
     ElOption: typeof import('element-plus/es')['ElOption']
+    ElPopover: typeof import('element-plus/es')['ElPopover']
     ElRadio: typeof import('element-plus/es')['ElRadio']
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElSelect: typeof import('element-plus/es')['ElSelect']

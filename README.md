@@ -53,6 +53,12 @@ PicX 在线使用入口 >> **https://picx.xpoet.cn**
 
 欢迎各种形式的贡献，包括但不限于：美化界面、增加功能、性能优化、修复 Bug、完善文档等。
 
+这个项目的存在多亏了所有的贡献者：
+
+<a href="https://github.com/XPoet/picx/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=XPoet/picx" />
+</a>
+
 
 ##  反馈 | Feedback
 

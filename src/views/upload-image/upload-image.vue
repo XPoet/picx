@@ -60,7 +60,12 @@
 import { computed, watch, ref, Ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { ElementPlusSizeEnum, UploadImageModel, UploadStatusEnum } from '@/common/model'
+import {
+  ElementPlusSizeEnum,
+  UploadedImageModel,
+  UploadImageModel,
+  UploadStatusEnum
+} from '@/common/model'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
 import { generateUploadImageObject, starred } from './upload-image.util'
 import { uploadImagesToGitHub, uploadImageToGitHub } from '@/utils/upload-utils'
@@ -110,6 +115,21 @@ const doUploadImages = async (imgList: UploadImageModel[]) => {
   }
 }
 
+// 上传成功之后的操作
+const afterUploadSuccess = async (uploadedImg: UploadedImageModel[], isBatch: boolean = false) => {
+  resetGettingImages()
+  // 自动复制图片链接到系统剪贴板
+  if (isBatch) {
+    batchCopyImageLinks(uploadedImg, userConfigInfo, userSettings, true)
+  } else {
+    copyImageLink(uploadedImg[0], userConfigInfo, userSettings, true)
+  }
+  await store.dispatch('SET_USER_CONFIG_INFO', {
+    viewDir: userConfigInfo.selectedDir
+  })
+  await starred(userSettings)
+}
+
 // 上传
 const uploadImage = async () => {
   const { token, selectedRepo, selectedDir } = userConfigInfo
@@ -149,25 +169,19 @@ const uploadImage = async () => {
   switch (uploadRes) {
     // 单张图片上传成功
     case UploadStatusEnum.uploaded:
-      resetGettingImages()
       ElMessage.success('图片上传成功')
-      // 自动复制这张图片链接到系统剪贴板
-      copyImageLink(uploadedImg[0], userConfigInfo, userSettings, true)
-      await starred(userSettings)
+      await afterUploadSuccess(uploadedImg)
       break
 
     // 多张图片上传成功
     case UploadStatusEnum.allUploaded:
-      resetGettingImages()
       ElMessage.success('图片批量上传成功')
-      // 自动复制这些图片链接到系统剪贴板
-      batchCopyImageLinks(uploadedImg, userConfigInfo, userSettings, true)
-      await starred(userSettings)
+      await afterUploadSuccess(uploadedImg, true)
       break
 
     // 上传失败（网络错误等原因）
     case UploadStatusEnum.uploadFail:
-      ElMessage.error('上传失败，请稍后重试！')
+      ElMessage.error('上传失败，请稍后重试')
   }
 }
 

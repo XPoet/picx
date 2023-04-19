@@ -116,10 +116,10 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
           state.userSettings.imageLinkType.presetList.push(rule)
           dispatch('USER_SETTINGS_PERSIST')
         } else {
-          ElMessage.error('添加失败，该图片链接规则不合法！')
+          ElMessage.error('添加失败，该图片链接规则不合法')
         }
       } else {
-        ElMessage.error('添加失败，该图片链接规则规则已存在！')
+        ElMessage.error('添加失败，该图片链接规则规则已存在')
       }
     },
 
@@ -137,7 +137,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
           dispatch('USER_SETTINGS_PERSIST')
         }
       } else {
-        ElMessage.error('修改失败，该图片链接规则不合法！')
+        ElMessage.error('修改失败，该图片链接规则不合法')
       }
     },
 
