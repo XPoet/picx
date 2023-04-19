@@ -6,6 +6,7 @@ import settings from '@/views/my-settings/my-settings.vue'
 import toolbox from '@/views/picx-toolbox/picx-toolbox.vue'
 import feedback from '@/views/feedback-info/feedback-info.vue'
 import compressTool from '@/components/tools/compress-tool/compress-tool.vue'
+import base64Tool from '@/components/tools/base64-tool/base64-tool.vue'
 
 const titleSuffix = ` | PicX 图床`
 
@@ -51,7 +52,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/toolbox',
-    name: 'toolbox',
+    name: 'Toolbox',
     component: toolbox,
     meta: {
       title: `工具箱${titleSuffix}`
@@ -59,8 +60,13 @@ const routes: Array<RouteRecordRaw> = [
     children: [
       {
         path: '/toolbox/compress',
-        name: 'compress',
+        name: 'Compress',
         component: compressTool
+      },
+      {
+        path: '/toolbox/base64',
+        name: 'Base64',
+        component: base64Tool
       }
     ]
   },

@@ -32,6 +32,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { getUuid } from '@/utils'
 import { ToolItemModel } from '@/common/model'
+import { store } from '@/store'
 
 const router = useRouter()
 
@@ -53,12 +54,20 @@ const toolList = ref<ToolItemModel[]>([
     icon: 'MagicStick',
     uuid: getUuid(),
     path: '/compress'
+  },
+  {
+    name: '图片转 Base64',
+    desc: '不限制图片大小和数量，在线转换成 Base64 编码',
+    icon: 'Paperclip',
+    uuid: getUuid(),
+    path: '/base64'
   }
 ])
 
 const selectTool = (tool: ToolItemModel) => {
   showToolPanel.value = true
   currentTool.value = { ...tool }
+  store.dispatch('TOOLBOX_IMG_LIST_RESET')
   router.push(`${toolboxPath.value}${tool.path}`)
 }
 

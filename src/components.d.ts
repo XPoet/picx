@@ -9,6 +9,7 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
+    Base64Tool: typeof import('./components/tools/base64-tool/base64-tool.vue')['default']
     CompressConfigBox: typeof import('./components/compress-config-box/compress-config-box.vue')['default']
     CompressTool: typeof import('./components/tools/compress-tool/compress-tool.vue')['default']
     CopyImageLink: typeof import('./components/copy-image-link/copy-image-link.vue')['default']
