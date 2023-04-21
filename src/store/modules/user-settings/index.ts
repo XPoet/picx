@@ -73,6 +73,7 @@ const initSettings: UserSettingsModel = {
     text: 'PicX',
     fontSize: 50,
     position: WatermarkPositionEnum.rightBottom,
+    textColor: '#FFFFFF',
     opacity: 0.5
   }
 }

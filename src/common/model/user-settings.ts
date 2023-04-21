@@ -60,6 +60,7 @@ export interface UserSettingsModel {
     text: string
     fontSize: number
     position: WatermarkPositionEnum
+    textColor: string
     opacity: number
   }
 }
