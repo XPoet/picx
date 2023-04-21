@@ -49,7 +49,7 @@
               <el-input
                 v-model="userSettings.watermark.text"
                 clearable
-                maxlength="10"
+                maxlength="20"
                 @input="persistUserSettings"
               />
             </el-form-item>
@@ -72,6 +72,12 @@
                 <el-radio :label="WatermarkPositionEnum.rightTop">右上角</el-radio>
                 <el-radio :label="WatermarkPositionEnum.rightBottom">右下角</el-radio>
               </el-radio-group>
+            </el-form-item>
+            <el-form-item label="水印透明度">
+              <el-color-picker
+                v-model="userSettings.watermark.textColor"
+                @active-change="persistUserSettings"
+              />
             </el-form-item>
             <el-form-item label="水印透明度">
               <el-input-number

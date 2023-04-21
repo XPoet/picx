@@ -15,11 +15,24 @@ function loadImageFromFile(imageFile: File): Promise<HTMLImageElement> {
   })
 }
 
+function hexToRgb(hex: string): string {
+  if (hex) {
+    hex = hex.replace('#', '')
+  } else {
+    return `255,255,255`
+  }
+  const r = parseInt(hex.substring(0, 2), 16)
+  const g = parseInt(hex.substring(2, 4), 16)
+  const b = parseInt(hex.substring(4, 6), 16)
+  return `${r}, ${g}, ${b}`
+}
+
 export async function addWatermarkToImage(
   imageFile: File,
   watermarkConfig: UserSettingsModel['watermark']
 ): Promise<File | null> {
-  const { text, fontSize, position, opacity } = watermarkConfig
+  const { text, fontSize, position, textColor, opacity } = watermarkConfig
+  const [r, g, b] = hexToRgb(textColor).split(',')
   const img = await loadImageFromFile(imageFile)
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')!
@@ -29,7 +42,7 @@ export async function addWatermarkToImage(
   ctx.font = `bold ${fontSize}px Arial`
   ctx.strokeStyle = `rgba(0, 0, 0, ${opacity})`
   ctx.lineWidth = 3
-  ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`
+  ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`
 
   let x = 0
   let y = 0
