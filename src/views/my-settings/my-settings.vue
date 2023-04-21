@@ -73,7 +73,7 @@
                 <el-radio :label="WatermarkPositionEnum.rightBottom">右下角</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="水印透明度">
+            <el-form-item label="水印颜色">
               <el-color-picker
                 v-model="userSettings.watermark.textColor"
                 @active-change="persistUserSettings"
