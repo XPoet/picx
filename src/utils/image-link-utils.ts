@@ -5,7 +5,7 @@ import {
   UserConfigInfoModel,
   UserSettingsModel
 } from '@/common/model'
-import { copyText } from '@/utils'
+import { copyText, getOSName } from '@/utils'
 
 /**
  * 生成一个图片链接
@@ -58,6 +58,20 @@ const transformImageLink = (
   return imageLink
 }
 
+const copyNotification = (message: string, duration: number = 6500) => {
+  ElNotification({
+    type: 'success',
+    title: '复制成功',
+    message,
+    duration,
+    offset: 50
+  })
+}
+
+const getCopyShortcutKey = (): string => {
+  return `${getOSName() === 'mac' ? 'Command' : 'Ctrl'} + V`
+}
+
 /**
  * 复制单张图片链接
  * @param imgObj
@@ -78,11 +92,10 @@ export const copyImageLink = (
   )
   if (link) {
     copyText(link, () => {
-      if (autoCopy) {
-        ElMessage.success({ message: '图片链接已复制到系统剪贴板', duration: 6000 })
-      } else {
-        ElMessage.success(`${userSettings.imageLinkType.selected} 图片链接复制成功`)
-      }
+      const msg = `${imgObj.name} 图片链接已${
+        autoCopy ? '自动' : ''
+      }复制到系统剪贴板，可使用快捷键 ${getCopyShortcutKey()} 进行粘贴。`
+      copyNotification(msg)
     })
   } else {
     ElMessage.error(`复制失败`)
@@ -113,14 +126,10 @@ export const batchCopyImageLinks = (
       linksTxt += `${link}${index < uploadedImgList.length - 1 ? '\n' : ''}`
     })
     copyText(linksTxt, () => {
-      if (autoCopy) {
-        ElMessage.success({
-          message: `成功复制 ${uploadedImgList.length} 张图片链接到系统剪贴板`,
-          duration: 6000
-        })
-      } else {
-        ElMessage.success(`成功复制 ${uploadedImgList.length} 张图片链接`)
-      }
+      const msg = `已${autoCopy ? '自动' : ''}复制 ${
+        uploadedImgList.length
+      } 张图片链接到系统剪贴板，可使用快捷键 ${getCopyShortcutKey()} 进行粘贴。`
+      copyNotification(msg)
     })
   } else {
     console.warn('请先选择图片')

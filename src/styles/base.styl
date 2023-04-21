@@ -81,6 +81,7 @@ li {
 
 
 .page-container {
+  position relative
   box-sizing border-box
   width 100%
   height 100%
@@ -88,6 +89,16 @@ li {
   overflow-y auto
   background var(--background-color)
   border-top-left-radius $box-border-radius
+
+  .page-content {
+    position relative
+    left 50%
+    box-sizing border-box
+    width 100%
+    max-width 1200rem
+    height 100%
+    transform translateX(-50%)
+  }
 }
 
 

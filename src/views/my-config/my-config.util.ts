@@ -81,7 +81,7 @@ export const oneClickAutoConfig = async () => {
   const { token } = userConfigInfo
 
   if (!token) {
-    ElMessage.error('GitHub Token 不能为空！')
+    ElMessage.error('GitHub Token 不能为空')
     return
   }
 
@@ -106,7 +106,7 @@ export const oneClickAutoConfig = async () => {
 
   if (!repoInfo) {
     loading.close()
-    ElMessage.error('自动创建 GitHub 仓库失败，请稍后再试！')
+    ElMessage.error('自动创建 GitHub 仓库失败，请稍后再试')
     return
   }
 
