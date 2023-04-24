@@ -19,17 +19,17 @@ const size = ref<'large' | 'default' | 'small'>('default') // large | default | 
 
 const elementPlusSizeHandle = (width: number) => {
   if (width <= 600) {
-    store.dispatch('SET_USER_SETTINGS', {
+    store?.dispatch('SET_USER_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.small
     })
     size.value = ElementPlusSizeEnum.small
   } else if (width <= 900) {
-    store.dispatch('SET_USER_SETTINGS', {
+    store?.dispatch('SET_USER_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.default
     })
     size.value = ElementPlusSizeEnum.default
   } else {
-    store.dispatch('SET_USER_SETTINGS', {
+    store?.dispatch('SET_USER_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.large
     })
     size.value = ElementPlusSizeEnum.large

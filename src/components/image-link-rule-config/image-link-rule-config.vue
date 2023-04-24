@@ -12,7 +12,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="80">
+      <el-table-column label="操作" width="80" align="center">
         <template #default="scope">
           <el-button
             link
@@ -104,13 +104,10 @@ const removeImageLinkRule = (obj: ImageLinkRuleModel) => {
 
 const addImageLinkRule = (formEl: FormInstance | undefined) => {
   if (!formEl) return
-  // eslint-disable-next-line consistent-return
   formEl.validate((valid) => {
     if (valid) {
       imageLinkRuleForm.id = getUuid()
-      store.dispatch('ADD_IMAGE_LINK_TYPE_RULE', imageLinkRuleForm)
-    } else {
-      return false
+      store.dispatch('ADD_IMAGE_LINK_TYPE_RULE', JSON.parse(JSON.stringify(imageLinkRuleForm)))
     }
   })
 }

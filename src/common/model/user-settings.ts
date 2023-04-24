@@ -27,7 +27,6 @@ export enum ThemeModeEnum {
   light = 'light',
   // eslint-disable-next-line no-unused-vars
   dark = 'dark'
-  // eslint-disable-next-line no-unused-vars
 }
 
 export interface UserSettingsModel {
