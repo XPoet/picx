@@ -7,6 +7,7 @@ import toolbox from '@/views/picx-toolbox/picx-toolbox.vue'
 import feedback from '@/views/feedback-info/feedback-info.vue'
 import compressTool from '@/components/tools/compress-tool/compress-tool.vue'
 import base64Tool from '@/components/tools/base64-tool/base64-tool.vue'
+import watermarkTool from '@/components/tools/watermark-tool/watermark-tool.vue'
 
 const titleSuffix = ` | PicX 图床`
 
@@ -67,6 +68,11 @@ const routes: Array<RouteRecordRaw> = [
         path: '/toolbox/base64',
         name: 'Base64',
         component: base64Tool
+      },
+      {
+        path: '/toolbox/watermark',
+        name: 'Watermark',
+        component: watermarkTool
       }
     ]
   },

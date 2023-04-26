@@ -61,6 +61,13 @@ const toolList = ref<ToolItemModel[]>([
     icon: 'Paperclip',
     uuid: getUuid(),
     path: '/base64'
+  },
+  {
+    name: '图片水印',
+    desc: '自定义水印文字、字体大小、位置、颜色和透明度',
+    icon: 'Picture',
+    uuid: getUuid(),
+    path: '/watermark'
   }
 ])
 
