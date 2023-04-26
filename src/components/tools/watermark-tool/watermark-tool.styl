@@ -1,0 +1,47 @@
+$left-width = 260rem
+
+.watermark-tool-container {
+  position relative
+  display flex
+  justify-content space-between
+  box-sizing border-box
+  width 100%
+  height 100%
+
+  .watermark-tool-left {
+    position relative
+    box-sizing border-box
+    width $left-width
+    height 100%
+    padding 10rem
+    overflow-y auto
+    border-right 1px solid var(--border-color)
+
+    .el-image {
+      width 100%
+    }
+  }
+
+
+  .watermark-tool-right {
+    position relative
+    box-sizing border-box
+    width 'calc(100% - %s)' % $left-width
+    height 100%
+    padding 20rem
+
+    &.no-img {
+      width 100%
+    }
+
+    .user-operate {
+      display flex
+      justify-content flex-end
+      margin-top 20rem
+
+      &.watermarked {
+        justify-content space-between
+      }
+    }
+  }
+}
