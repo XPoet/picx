@@ -44,7 +44,7 @@
       </li>
       <li class="setting-item" v-if="userSettings.watermark.enable">
         <el-card>
-          <watermark-config-box />
+          <watermark-config-box @watermarkConfig="setWatermarkConfig" />
         </el-card>
       </li>
     </ul>
@@ -189,7 +189,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { store } from '@/store'
-import { ThemeModeEnum } from '@/common/model'
+import { ThemeModeEnum, UserSettingsModel } from '@/common/model'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 const isAddRule = ref<boolean>(false)
@@ -202,6 +202,15 @@ const saveUserSettings = () => {
   store.dispatch('SET_USER_SETTINGS', {
     ...userSettings
   })
+  persistUserSettings()
+}
+
+const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
+  userSettings.watermark.text = config.text
+  userSettings.watermark.textColor = config.textColor
+  userSettings.watermark.opacity = config.opacity
+  userSettings.watermark.position = config.position
+  userSettings.watermark.fontSize = config.fontSize
   persistUserSettings()
 }
 </script>

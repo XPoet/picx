@@ -11,10 +11,16 @@
     <div class="info-container">
       <div class="img-name text-ellipsis">{{ imgObj.finialName || imgObj.originalName }}</div>
       <div class="img-size">
-        <div class="original-file-size file-size-item" :class="{ 'del-line': imgObj.finialSize }">
+        <div
+          class="original-file-size file-size-item"
+          :class="{ 'del-line': imgObj.finialSize && cardType === 'compress' }"
+        >
           {{ getFileSize(imgObj.originalSize) }} KB
         </div>
-        <div v-if="imgObj.finialSize" class="finial-file-size file-size-item">
+        <div
+          v-if="imgObj.finialSize && cardType === 'compress'"
+          class="finial-file-size file-size-item"
+        >
           {{ getFileSize(imgObj.finialSize) }} KB
         </div>
       </div>
@@ -53,7 +59,7 @@ defineProps({
   },
   cardType: {
     type: String,
-    default: 'compress' // compress | base64
+    default: 'compress' // compress | base64 | watermark
   }
 })
 

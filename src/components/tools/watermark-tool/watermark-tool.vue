@@ -5,13 +5,18 @@
         v-for="img in imgList"
         :img-obj="img"
         :key="img.uuid"
+        card-type="watermark"
         @remove="remove"
       />
     </div>
     <div class="watermark-tool-right" :class="{ 'no-img': !imgList.length }">
       <getting-images ref="gettingImagesRef" @getImgList="getImgList"></getting-images>
 
-      <watermark-config-box isTool="true" style="margin-top: 18rem" />
+      <watermark-config-box
+        :isTool="true"
+        @watermarkConfig="setWatermarkConfig"
+        style="margin-top: 18rem"
+      />
 
       <div class="user-operate" :class="{ watermarked: isWatermarked && imgList.length > 1 }">
         <el-button
@@ -26,12 +31,12 @@
           <el-button v-if="imgList.length" plain type="warning" @click="reset"> 重置 </el-button>
           <el-button
             v-if="imgList.length"
-            :disabled="watermarking || isWatermarked || !watermark.text"
+            :disabled="watermarking || isWatermarked || !watermarkConfig.text"
             plain
             type="primary"
             @click="addWatermark"
           >
-            加水印
+            添加水印
           </el-button>
         </div>
       </div>
@@ -40,16 +45,26 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
-import { ImageHandleResult, ImgProcessStateModel } from '@/common/model'
-import { downloadImage, imgFileToBase64, addWatermarkToImage } from '@/utils'
+import { reactive, ref, watch } from 'vue'
+import {
+  ImageHandleResult,
+  ImgProcessStateModel,
+  UserSettingsModel,
+  WatermarkPositionEnum
+} from '@/common/model'
+import { addWatermarkToImage, downloadImage, imgFileToBase64 } from '@/utils'
 import { useStore } from '@/store'
 
 const store = useStore()
 
-const userSettings = computed(() => store.getters.getUserSettings).value
-
-const { watermark } = userSettings
+const watermarkConfig = reactive<UserSettingsModel['watermark']>({
+  enable: true,
+  text: '',
+  fontSize: 0,
+  opacity: 0,
+  position: WatermarkPositionEnum.rightBottom,
+  textColor: ''
+})
 
 const gettingImagesRef = ref<any>(null)
 
@@ -72,6 +87,16 @@ const getImgList = (imgs: ImageHandleResult[]) => {
   })
 }
 
+// 设置水印配置
+const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
+  watermarkConfig.text = config.text
+  watermarkConfig.textColor = config.textColor
+  watermarkConfig.opacity = config.opacity
+  watermarkConfig.position = config.position
+  watermarkConfig.fontSize = config.fontSize
+  isWatermarked.value = false
+}
+
 // 重置
 const reset = () => {
   store.dispatch('TOOLBOX_IMG_LIST_RESET')
@@ -79,13 +104,13 @@ const reset = () => {
   gettingImagesRef.value?.reset()
 }
 
-// 加水印
+// 添加水印
 const addWatermark = async () => {
   watermarking.value = true
   // eslint-disable-next-line no-restricted-syntax
   for (const img of imgList.value) {
     img.processing = true
-    img.finialFile = (await addWatermarkToImage(img.originalFile, watermark)) as File
+    img.finialFile = (await addWatermarkToImage(img.originalFile, watermarkConfig)) as File
     img.finialBase64 = (await imgFileToBase64(img.finialFile)) || ''
     img.finialSize = img.finialFile.size
     img.finialName = img.finialFile.name
