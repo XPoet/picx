@@ -18,7 +18,7 @@
       </li>
     </ul>
     <div class="nav-item quick-actions flex-center">
-      <el-popover placement="right" :width="200" trigger="click">
+      <el-popover placement="right" :width="200" trigger="click" :show-arrow="false">
         <template #reference>
           <div class="nav-content">
             <el-icon :size="navIconSize">
@@ -29,7 +29,7 @@
         </template>
         <div class="quick-actions-box">
           <el-switch
-            v-model="isOpenDarkMode"
+            v-model="isDarkMode"
             class="mb-2"
             :active-text="$t('actions.night')"
             @change="themeModeChange"
@@ -64,6 +64,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { ElementPlusSizeEnum, ThemeModeEnum } from '@/common/model'
 import { navInfoList } from './nav-content.data'
+import { isDarkModeOfSystem } from '@/utils'
 
 const router = useRouter()
 const store = useStore()
@@ -82,7 +83,7 @@ const navIconSize = computed(() => {
   }
 })
 
-const isOpenDarkMode = ref(userSettings.theme.mode === ThemeModeEnum.dark)
+const isDarkMode = ref<boolean>(false)
 
 const onNavClick = (e: any) => {
   const { path } = e
@@ -117,12 +118,8 @@ const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
 }
 
-const themeModeChange = () => {
-  if (userSettings.theme.mode === ThemeModeEnum.dark) {
-    userSettings.theme.mode = ThemeModeEnum.light
-  } else {
-    userSettings.theme.mode = ThemeModeEnum.dark
-  }
+const themeModeChange = (e: boolean) => {
+  userSettings.theme.mode = e ? ThemeModeEnum.dark : ThemeModeEnum.light
   persistUserSettings()
 }
 
@@ -152,12 +149,18 @@ watch(
   }
 )
 
-// onUpdated(() => {
-//   router.isReady().then(() => {
-//     const curPath: string = `/${router.currentRoute.value.path.split('/')[1]}`
-//     changeNavActive(curPath)
-//   })
-// })
+watch(
+  () => userSettings.theme.mode,
+  (_n) => {
+    if (_n === ThemeModeEnum.follow) {
+      isDarkMode.value = isDarkModeOfSystem()
+    } else isDarkMode.value = _n === ThemeModeEnum.dark
+  },
+  {
+    deep: true,
+    immediate: true
+  }
+)
 
 onMounted(() => {
   router.isReady().then(() => {

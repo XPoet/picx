@@ -82,24 +82,6 @@ export const deepAssignObject = (obj1: object, obj2: object): any => {
 }
 
 /**
- * 获取系统名称
- * @returns 'mac' | 'win' | 'linux' | null
- */
-export const getOSName = (): 'mac' | 'win' | 'linux' | null => {
-  const { platform } = navigator
-  if (platform.includes('Mac')) {
-    return 'mac'
-  }
-  if (platform.includes('Win')) {
-    return 'win'
-  }
-  if (platform.includes('Linux')) {
-    return 'linux'
-  }
-  return null
-}
-
-/**
  * 格式化时间日期
  * @param fmt 格式
  * @param timestamp 时间戳
