@@ -1,11 +1,12 @@
 import { nextTick, watch } from 'vue'
 import { useStore } from '@/store'
-import { ThemeModeEnum, UserSettingsModel } from '@/common/model'
+import { ThemeModeEnum } from '@/common/model'
+import { isDarkModeOfSystem } from '@/utils/system'
 
 const setThemeMode = () => {
   const store = useStore()
 
-  const setBodyClassName = async (theme: ThemeModeEnum) => {
+  const setHtmlClassName = async (theme: ThemeModeEnum) => {
     await nextTick(() => {
       const body = document.getElementsByTagName('html')[0]
       if (theme === ThemeModeEnum.dark) {
@@ -19,33 +20,18 @@ const setThemeMode = () => {
     })
   }
 
-  const autoThemeModeTimeHandle = (autoLightTime: string[]) => {
-    const getTimestamp = (i: number) => {
-      const D = new Date()
-      const yyyy = D.getFullYear()
-      const mm = D.getMonth() + 1
-      const dd = D.getDate()
-      return new Date(`${yyyy}/${mm}/${dd} ${autoLightTime[i]}:00`).getTime()
-    }
-    const now = Date.now()
-    return getTimestamp(0) <= now && now <= getTimestamp(1)
-  }
-
-  const setThemeByConfigFn = async (settings: UserSettingsModel) => {
-    const { theme } = settings
-    if (theme.mode === ThemeModeEnum.auto) {
-      await setBodyClassName(
-        autoThemeModeTimeHandle(theme.autoLightTime) ? ThemeModeEnum.light : ThemeModeEnum.dark
-      )
+  const setThemeByConfig = async (mode: ThemeModeEnum) => {
+    if (mode === ThemeModeEnum.follow) {
+      await setHtmlClassName(isDarkModeOfSystem() ? ThemeModeEnum.dark : ThemeModeEnum.light)
     } else {
-      await setBodyClassName(theme.mode)
+      await setHtmlClassName(mode)
     }
   }
 
   watch(
-    (): UserSettingsModel => store.getters.getUserSettings,
+    () => store.getters.getUserSettings.theme.mode,
     async (newValue) => {
-      await setThemeByConfigFn(newValue)
+      await setThemeByConfig(newValue)
     },
     { deep: true, immediate: true }
   )

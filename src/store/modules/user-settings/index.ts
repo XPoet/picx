@@ -24,8 +24,7 @@ const initSettings: UserSettingsModel = {
     encoder: CompressEncoderEnum.webP
   },
   theme: {
-    mode: ThemeModeEnum.light,
-    autoLightTime: ['08:00', '19:00']
+    mode: ThemeModeEnum.follow
   },
   elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
@@ -73,6 +72,7 @@ const initSettings: UserSettingsModel = {
     text: 'PicX',
     fontSize: 50,
     position: WatermarkPositionEnum.rightBottom,
+    textColor: '#FFFFFF',
     opacity: 0.5
   }
 }
@@ -83,6 +83,51 @@ const initUserSettings = (): UserSettingsModel => {
     deepAssignObject(initSettings, LSSettings)
   }
   return initSettings
+}
+
+const ruleVerification = (rule: ImageLinkRuleModel, type: 'add' | 'edit', callback: any) => {
+  const typeTxt = type === 'add' ? '添加' : '编辑'
+  const tmpList = []
+
+  if (!rule.rule.includes('{{owner}}')) {
+    tmpList.push('{{owner}}')
+  }
+
+  if (!rule.rule.includes('{{repo}}')) {
+    tmpList.push('{{repo}}')
+  }
+
+  if (!rule.rule.includes('{{branch}}')) {
+    tmpList.push('{{branch}}')
+  }
+
+  if (!tmpList.length) {
+    callback(true)
+    return
+  }
+
+  if (rule.rule.includes('{{path}}')) {
+    let confirmTxt = `图片链接规则缺少 ${tmpList.join('、')}，是否确认${typeTxt}？`
+
+    if (type === 'edit') {
+      confirmTxt = `注意：当前编辑的图片链接规则缺少 ${tmpList.join('、')}`
+    }
+
+    ElMessageBox.confirm(confirmTxt, `${typeTxt}提示`, {
+      type: 'warning',
+      showClose: type === 'add',
+      showCancelButton: type === 'add'
+    })
+      .then(() => {
+        callback(true)
+      })
+      .catch(() => {
+        console.log(`取消${typeTxt}`)
+        callback(false)
+      })
+  } else {
+    ElMessage.error(`${typeTxt}失败，图片链接规则必须包含 {{path}}`)
+  }
 }
 
 const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
@@ -107,17 +152,12 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
     ADD_IMAGE_LINK_TYPE_RULE({ state, dispatch }, rule: ImageLinkRuleModel) {
       const list = state.userSettings.imageLinkType.presetList
       if (!list.some((x) => x.name === rule.name)) {
-        if (
-          rule.rule.includes('{{owner}}') &&
-          rule.rule.includes('{{repo}}') &&
-          rule.rule.includes('{{branch}}') &&
-          rule.rule.includes('{{path}}')
-        ) {
-          state.userSettings.imageLinkType.presetList.push(rule)
-          dispatch('USER_SETTINGS_PERSIST')
-        } else {
-          ElMessage.error('添加失败，该图片链接规则不合法')
-        }
+        ruleVerification(rule, 'add', (e: boolean) => {
+          if (e) {
+            state.userSettings.imageLinkType.presetList.push(rule)
+            dispatch('USER_SETTINGS_PERSIST')
+          }
+        })
       } else {
         ElMessage.error('添加失败，该图片链接规则规则已存在')
       }
@@ -125,20 +165,15 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
 
     // 图片链接类型 - 修改规则
     UPDATE_IMAGE_LINK_TYPE_RULE({ state, dispatch }, rule: ImageLinkRuleModel) {
-      if (
-        rule.rule.includes('{{owner}}') &&
-        rule.rule.includes('{{repo}}') &&
-        rule.rule.includes('{{branch}}') &&
-        rule.rule.includes('{{path}}')
-      ) {
-        const tgt = state.userSettings.imageLinkType.presetList.find((x) => x.id === rule.id)
-        if (tgt) {
-          tgt.rule = rule.rule
-          dispatch('USER_SETTINGS_PERSIST')
+      ruleVerification(rule, 'edit', (e: boolean) => {
+        if (e) {
+          const tgt = state.userSettings.imageLinkType.presetList.find((x) => x.id === rule.id)
+          if (tgt) {
+            tgt.rule = rule.rule
+            dispatch('USER_SETTINGS_PERSIST')
+          }
         }
-      } else {
-        ElMessage.error('修改失败，该图片链接规则不合法')
-      }
+      })
     },
 
     // 图片链接类型 - 删除规则

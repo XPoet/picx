@@ -40,8 +40,8 @@
           v-if="imgObj.uploadStatus.progress === 0"
         >
           <el-icon class="fold-btn" @click="imgNameOperateFolded = !imgNameOperateFolded">
-            <CaretBottom v-if="!imgNameOperateFolded" />
-            <CaretLeft v-if="imgNameOperateFolded" />
+            <IEpCaretBottom v-if="!imgNameOperateFolded" />
+            <IEpCaretLeft v-if="imgNameOperateFolded" />
           </el-icon>
         </el-tooltip>
       </div>
@@ -126,7 +126,7 @@
       :offset="8"
       content="删除"
     >
-      <el-icon class="del-img-btn" @click="remove(imgObj.uuid)"><Remove /></el-icon>
+      <el-icon class="del-img-btn" @click="remove(imgObj.uuid)"><IEpRemove /></el-icon>
     </el-tooltip>
 
     <div
@@ -137,8 +137,8 @@
       }"
     >
       <el-icon>
-        <Upload v-if="!imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress === 0" />
-        <Check v-if="!imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress === 100" />
+        <IEpUpload v-if="!imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress === 0" />
+        <IEpCheck v-if="!imgObj.uploadStatus.uploading && imgObj.uploadStatus.progress === 100" />
       </el-icon>
     </div>
   </div>

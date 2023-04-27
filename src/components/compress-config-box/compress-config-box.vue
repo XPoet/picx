@@ -1,7 +1,12 @@
 <template>
   <div class="compress-config-box">
     <div class="img-encoder-title">选择图片压缩算法：</div>
-    <el-radio-group class="img-encoder-group" v-model="compressEncoder" @change="onChangeEncoder">
+    <el-radio-group
+      :disabled="disabled"
+      class="img-encoder-group"
+      v-model="compressEncoder"
+      @change="onChangeEncoder"
+    >
       <el-radio :label="CompressEncoderEnum.webP">
         {{ CompressEncoderEnum.webP }}
         <span class="desc">压缩后图片格式为 webp，压缩率较高，大多数浏览器支持</span>
@@ -25,6 +30,13 @@ import { CompressEncoderEnum } from '@/common/model'
 const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.webP)
 
 const emit = defineEmits(['encoder'])
+
+defineProps({
+  disabled: {
+    type: Boolean,
+    default: false
+  }
+})
 
 const onChangeEncoder = (encoder: CompressEncoderEnum) => {
   emit('encoder', encoder)

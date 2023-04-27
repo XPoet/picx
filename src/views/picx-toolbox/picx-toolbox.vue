@@ -2,7 +2,7 @@
   <div class="page-container">
     <div v-if="showToolPanel" class="tool-panel">
       <div class="panel-header">
-        <el-breadcrumb separator-icon="ArrowRight">
+        <el-breadcrumb :separator-icon="ArrowRight">
           <el-breadcrumb-item :to="{ path: toolboxPath }">工具箱</el-breadcrumb-item>
           <el-breadcrumb-item>{{ currentTool.name }}</el-breadcrumb-item>
         </el-breadcrumb>
@@ -12,7 +12,7 @@
       </div>
     </div>
     <ul v-else class="toolbox">
-      <li class="tool-item" v-for="tool in toolList" :key="tool.uuid" @click="selectTool(tool)">
+      <li class="tool-item" v-for="tool in toolboxList" :key="tool.uuid" @click="selectTool(tool)">
         <div class="top">
           <div class="left flex-center">
             <el-icon :size="30">
@@ -28,11 +28,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { getUuid } from '@/utils'
 import { ToolItemModel } from '@/common/model'
 import { store } from '@/store'
+import { toolboxList } from './picx-toolbox.data'
+
+const ArrowRight = shallowRef(IEpArrowRight)
 
 const router = useRouter()
 
@@ -46,23 +48,6 @@ const currentTool = ref<ToolItemModel>({
   desc: '',
   uuid: ''
 })
-
-const toolList = ref<ToolItemModel[]>([
-  {
-    name: '图片压缩',
-    desc: '不限制图片大小和数量，不上传至服务器的离线极致压缩',
-    icon: 'MagicStick',
-    uuid: getUuid(),
-    path: '/compress'
-  },
-  {
-    name: '图片转 Base64',
-    desc: '不限制图片大小和数量，在线转换成 Base64 编码',
-    icon: 'Paperclip',
-    uuid: getUuid(),
-    path: '/base64'
-  }
-])
 
 const selectTool = (tool: ToolItemModel) => {
   showToolPanel.value = true
@@ -88,7 +73,7 @@ const initHandle = () => {
     const currentPath = router.currentRoute.value.path
     if (toolboxPath.value !== currentPath) {
       const path = currentPath.substring(currentPath.lastIndexOf('/'))
-      const tool = toolList.value.find((x) => x.path === path)
+      const tool = toolboxList.value.find((x) => x.path === path)
       if (tool) {
         selectTool(tool)
       }

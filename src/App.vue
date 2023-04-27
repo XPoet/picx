@@ -8,7 +8,7 @@
 import { onMounted, ref } from 'vue'
 import { ElConfigProvider } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
-import setTheme from '@/utils/set-theme-mode'
+import setThemeMode from '@/utils/set-theme-mode'
 import { useStore } from '@/store'
 import { throttle } from '@/utils'
 import { ElementPlusSizeEnum } from '@/common/model'
@@ -19,17 +19,17 @@ const size = ref<'large' | 'default' | 'small'>('default') // large | default | 
 
 const elementPlusSizeHandle = (width: number) => {
   if (width <= 600) {
-    store.dispatch('SET_USER_SETTINGS', {
+    store?.dispatch('SET_USER_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.small
     })
     size.value = ElementPlusSizeEnum.small
   } else if (width <= 900) {
-    store.dispatch('SET_USER_SETTINGS', {
+    store?.dispatch('SET_USER_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.default
     })
     size.value = ElementPlusSizeEnum.default
   } else {
-    store.dispatch('SET_USER_SETTINGS', {
+    store?.dispatch('SET_USER_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.large
     })
     size.value = ElementPlusSizeEnum.large
@@ -37,13 +37,13 @@ const elementPlusSizeHandle = (width: number) => {
 }
 
 onMounted(() => {
-  setTheme()
+  setThemeMode()
   elementPlusSizeHandle(window.innerWidth)
   window.addEventListener(
     'resize',
     throttle((e: any) => {
       elementPlusSizeHandle(e.target.innerWidth)
-    }, 800)
+    }, 600)
   )
 })
 </script>
