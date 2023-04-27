@@ -1,5 +1,10 @@
 <template>
-  <el-form label-position="left" label-width="90rem">
+  <el-form
+    class="watermark-config-form"
+    label-position="left"
+    label-width="90rem"
+    :disabled="disabled"
+  >
     <el-row>
       <el-col :span="24">
         <el-form-item label="水印文字">
@@ -73,6 +78,10 @@ const watermark = reactive({
 
 defineProps({
   isTool: {
+    type: Boolean,
+    default: false
+  },
+  disabled: {
     type: Boolean,
     default: false
   }

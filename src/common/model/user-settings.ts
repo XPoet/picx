@@ -22,7 +22,7 @@ export enum WatermarkPositionEnum {
 
 export enum ThemeModeEnum {
   // eslint-disable-next-line no-unused-vars
-  auto = 'auto',
+  follow = 'follow',
   // eslint-disable-next-line no-unused-vars
   light = 'light',
   // eslint-disable-next-line no-unused-vars
@@ -37,7 +37,6 @@ export interface UserSettingsModel {
   }
   theme: {
     mode: ThemeModeEnum
-    autoLightTime: string[]
   }
   compress: {
     enable: boolean

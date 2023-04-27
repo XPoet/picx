@@ -1,5 +1,10 @@
 <template>
   <el-card>
+    <template #header>
+      <div class="card-header">
+        <span>配置自定义图片链接规则</span>
+      </div>
+    </template>
     <el-table :data="userSettings.imageLinkType.presetList" style="width: 100%">
       <el-table-column prop="name" label="类型" width="120" />
       <el-table-column label="CDN 规则">

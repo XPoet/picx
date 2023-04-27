@@ -24,8 +24,7 @@ const initSettings: UserSettingsModel = {
     encoder: CompressEncoderEnum.webP
   },
   theme: {
-    mode: ThemeModeEnum.light,
-    autoLightTime: ['08:00', '19:00']
+    mode: ThemeModeEnum.follow
   },
   elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {

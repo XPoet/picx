@@ -8,7 +8,7 @@
 import { onMounted, ref } from 'vue'
 import { ElConfigProvider } from 'element-plus'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
-import setTheme from '@/utils/set-theme-mode'
+import setThemeMode from '@/utils/set-theme-mode'
 import { useStore } from '@/store'
 import { throttle } from '@/utils'
 import { ElementPlusSizeEnum } from '@/common/model'
@@ -37,13 +37,13 @@ const elementPlusSizeHandle = (width: number) => {
 }
 
 onMounted(() => {
-  setTheme()
+  setThemeMode()
   elementPlusSizeHandle(window.innerWidth)
   window.addEventListener(
     'resize',
     throttle((e: any) => {
       elementPlusSizeHandle(e.target.innerWidth)
-    }, 800)
+    }, 600)
   )
 })
 </script>
