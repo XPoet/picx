@@ -15,7 +15,7 @@
       multiple="multiple"
     />
     <div class="upload-area-tips" v-if="!curShowImg.base64">
-      <el-icon class="icon"><UploadFilled /></el-icon>
+      <el-icon class="icon"><IEpUploadFilled /></el-icon>
       <div class="text">拖拽 / 粘贴 / 点击此处选择图片</div>
     </div>
     <img class="preview-img" v-if="curShowImg.base64" :src="curShowImg.base64" />

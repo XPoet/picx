@@ -19,7 +19,7 @@
         </div>
 
         <div class="avatar" v-if="!userConfigInfo?.avatarUrl">
-          <el-icon :size="22"><UserFilled /></el-icon>
+          <el-icon :size="22"><IEpUserFilled /></el-icon>
         </div>
 
         <el-dropdown trigger="click" @command="handleCommand" v-if="userConfigInfo?.avatarUrl">

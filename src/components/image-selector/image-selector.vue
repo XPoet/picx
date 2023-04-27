@@ -11,10 +11,10 @@
     </div>
     <div class="selector-right-box">
       <el-tooltip placement="top" content="批量复制链接">
-        <el-icon class="btn-icon" @click="batchCopy"><CopyDocument /></el-icon>
+        <el-icon class="btn-icon" @click="batchCopy"><IEpCopyDocument /></el-icon>
       </el-tooltip>
       <el-tooltip placement="top" content="批量删除图片">
-        <el-icon class="btn-icon" @click="batchDeleteImage"><Delete /></el-icon>
+        <el-icon class="btn-icon" @click="batchDeleteImage"><IEpDelete /></el-icon>
       </el-tooltip>
     </div>
   </div>

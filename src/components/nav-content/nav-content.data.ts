@@ -1,44 +1,53 @@
-export const navInfoList = [
+import { shallowRef } from 'vue'
+import { getUuid } from '@/utils'
+
+export const navInfoList = shallowRef([
   {
+    uuid: getUuid(),
     name: 'nav.config',
-    icon: 'edit',
+    icon: IEpEdit,
     isActive: false,
     path: '/config',
     isShow: true
   },
   {
+    uuid: getUuid(),
     name: 'nav.upload',
-    icon: 'upload',
+    icon: IEpUpload,
     isActive: false,
     path: '/upload',
     isShow: true
   },
   {
+    uuid: getUuid(),
     name: 'nav.management',
-    icon: 'picture',
+    icon: IEpPicture,
     isActive: false,
     path: '/management',
     isShow: true
   },
   {
+    uuid: getUuid(),
     name: 'nav.settings',
-    icon: 'setting',
+    icon: IEpSetting,
     isActive: false,
     path: '/settings',
     isShow: true
   },
   {
+    uuid: getUuid(),
     name: 'nav.toolbox',
-    icon: 'files',
+    icon: IEpFiles,
     isActive: false,
     path: '/toolbox',
     isShow: true
   },
   {
+    uuid: getUuid(),
     name: 'nav.feedback',
-    icon: 'chat-dot-round',
+    icon: IEpChatDotRound,
     isActive: false,
     path: '/feedback',
     isShow: true
   }
-]
+])

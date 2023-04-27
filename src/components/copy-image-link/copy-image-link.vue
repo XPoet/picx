@@ -2,7 +2,7 @@
   <div class="copy-image-link-box">
     <div class="left">
       <el-tooltip content="请在'我的设置'进行图片链接相关配置" placement="top">
-        <el-icon><InfoFilled /></el-icon>
+        <el-icon><IEpInfoFilled /></el-icon>
       </el-tooltip>
     </div>
     <div class="btn-box right">

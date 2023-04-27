@@ -1,7 +1,7 @@
 <template>
   <div class="refresh-config-box" :style="{ width: boxWidth + 'rem' }">
     <el-tooltip placement="top" :content="'重新加载 ' + dataTypeName + ' 数据'">
-      <el-icon class="icon" @click="reloadData"><Refresh /></el-icon>
+      <el-icon class="icon" @click="reloadData"><IEpRefresh /></el-icon>
     </el-tooltip>
   </div>
 </template>

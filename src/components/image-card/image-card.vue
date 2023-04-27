@@ -45,13 +45,13 @@
           :class="[imageObj.checked ? 'picked-btn' : 'pick-btn', 'operation-btn']"
           @click="togglePick(imageObj)"
         >
-          <el-icon v-if="imageObj.checked"><Check /></el-icon>
+          <el-icon v-if="imageObj.checked"><IEpCheck /></el-icon>
         </div>
       </div>
       <div class="operation-right">
         <el-dropdown size="default" trigger="click" @visible-change="visibleChange">
           <div class="operation-btn">
-            <el-icon><MoreFilled /></el-icon>
+            <el-icon><IEpMoreFilled /></el-icon>
           </div>
           <template #dropdown>
             <el-dropdown-menu>

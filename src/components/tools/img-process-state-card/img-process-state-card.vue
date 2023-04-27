@@ -40,7 +40,7 @@
       点击复制 Base64 编码
     </div>
     <el-tooltip placement="top" :offset="8" content="删除">
-      <el-icon class="del-btn" @click="remove(imgObj.uuid)"><Remove /></el-icon>
+      <el-icon class="del-btn" @click="remove(imgObj.uuid)"><IEpRemove /></el-icon>
     </el-tooltip>
   </div>
 </template>

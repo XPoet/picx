@@ -3,17 +3,17 @@
     <ul class="nav-list">
       <li
         class="nav-item flex-center"
-        v-for="(navItem, index) in navList"
-        :key="index"
-        :class="{ active: navItem.isActive }"
-        @click="onNavClick(navItem)"
-        v-show="navItem.isShow"
+        v-for="(nav, idx) in navInfoList"
+        :key="idx + nav.uuid"
+        :class="{ active: nav.isActive }"
+        @click="onNavClick(nav)"
+        v-show="nav.isShow"
       >
         <div class="nav-content">
           <el-icon :size="navIconSize">
-            <component :is="navItem.icon"></component>
+            <component :is="nav.icon"></component>
           </el-icon>
-          <span class="nav-name">{{ $t(navItem.name) }}</span>
+          <span class="nav-name">{{ $t(nav.name) }}</span>
         </div>
       </li>
     </ul>
@@ -22,7 +22,7 @@
         <template #reference>
           <div class="nav-content">
             <el-icon :size="navIconSize">
-              <Operation />
+              <IEpOperation />
             </el-icon>
             <span class="nav-name">{{ $t('nav.actions') }}</span>
           </div>
@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUpdated, ref, watch } from 'vue'
+import { computed, onMounted, ref, triggerRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { ElementPlusSizeEnum, ThemeModeEnum } from '@/common/model'
@@ -84,8 +84,6 @@ const navIconSize = computed(() => {
 
 const isOpenDarkMode = ref(userSettings.theme.mode === ThemeModeEnum.dark)
 
-const navList = ref(navInfoList)
-
 const onNavClick = (e: any) => {
   const { path } = e
 
@@ -106,11 +104,13 @@ const onNavClick = (e: any) => {
 }
 
 const changeNavActive = (currentPath: string) => {
-  navList.value.forEach((v) => {
+  navInfoList.value.forEach((v) => {
     const temp = v
     temp.isActive = v.path === currentPath || currentPath.includes(v.path)
     return temp
   })
+
+  triggerRef(navInfoList)
 }
 
 const persistUserSettings = () => {
@@ -136,7 +136,7 @@ watch(
 watch(
   () => userConfigInfo.logined,
   (_n) => {
-    navList.value.forEach((v: any) => {
+    navInfoList.value.forEach((v: any) => {
       // eslint-disable-next-line default-case
       switch (v.path) {
         case '/management':
@@ -152,12 +152,12 @@ watch(
   }
 )
 
-onUpdated(() => {
-  router.isReady().then(() => {
-    const curPath: string = `/${router.currentRoute.value.path.split('/')[1]}`
-    changeNavActive(curPath)
-  })
-})
+// onUpdated(() => {
+//   router.isReady().then(() => {
+//     const curPath: string = `/${router.currentRoute.value.path.split('/')[1]}`
+//     changeNavActive(curPath)
+//   })
+// })
 
 onMounted(() => {
   router.isReady().then(() => {
