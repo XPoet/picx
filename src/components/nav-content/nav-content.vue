@@ -236,6 +236,17 @@ watch(
 )
 
 onMounted(() => {
+  watch(
+    () => instance?.proxy?.$i18n?.locale,
+    (newValue, oldValue) => {
+      if (newValue !== 'zh-CN') {
+        isUS.value = true
+      } else {
+        isUS.value = false
+      }
+    }
+  )
+
   router.isReady().then(() => {
     changeNavActive(router.currentRoute.value.path)
   })

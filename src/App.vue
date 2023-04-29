@@ -5,8 +5,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, reactive, toRefs } from 'vue'
+import { defineComponent, onMounted, reactive, toRefs, getCurrentInstance } from 'vue'
 import { ElConfigProvider } from 'element-plus'
+import axios from 'axios'
 import zhCn from 'element-plus/lib/locale/lang/zh-cn'
 import mainContainer from '@/components/main-container/main-container.vue'
 import setTheme from '@/utils/set-theme-mode'
@@ -21,6 +22,7 @@ export default defineComponent({
     mainContainer
   },
   setup() {
+    const instance = getCurrentInstance()
     const store = useStore()
 
     const data = reactive({
@@ -48,7 +50,29 @@ export default defineComponent({
       }
     }
 
+    // 根据用户访问ip判断出是否国外，如何是国外切换到英文模式
+    const changeLocaleByIp = async () => {
+      try {
+        // 获取用户的ip
+        const response = await axios.get('https://api.ipify.org?format=json')
+        const { ip } = response.data
+
+        // 调用ipapi.co查询用户所在的国家
+        const result = await axios.get(`https://ipapi.co/${ip}/country/`)
+        const { data: country } = result
+
+        // 判断用户所在的国家, 并自动切换多语言模式
+        if (country === 'CN') {
+          instance.proxy.$i18n.locale = 'zh-CN'
+        } else {
+          instance.proxy.$i18n.locale = 'en-US'
+        }
+      } catch (error) {
+        console.error(error)
+      }
+    }
     onMounted(() => {
+      changeLocaleByIp()
       setTheme()
       elementPlusSizeHandle(window.innerWidth)
       window.addEventListener(
