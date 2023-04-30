@@ -16,6 +16,7 @@
     "night": "Night Mode",
     "compress": "Compress Image",
     "watermark": "Add Watermark",
-    "transform": "Transform "
+    "transform": "Transform ",
+    "localeModel": "English Mode"
   }
 }
