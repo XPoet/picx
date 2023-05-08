@@ -16,6 +16,7 @@
     "night": "暗夜模式",
     "watermark": "添加水印",
     "compress": "压缩图片",
-    "transform": "转换 "
+    "transform": "转换 ",
+    "localeModel": "英文模式"
   }
 }
