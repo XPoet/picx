@@ -29,12 +29,6 @@
         </template>
         <div class="quick-actions-box">
           <el-switch
-            v-model="isUS"
-            class="mb-2"
-            :active-text="$t('actions.localeModel')"
-            @change="localeModelChange"
-          />
-          <el-switch
             v-model="isDarkMode"
             class="mb-2"
             :active-text="$t('actions.night')"
@@ -65,14 +59,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, triggerRef, watch, getCurrentInstance } from 'vue'
+import { computed, onMounted, ref, triggerRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
 import { ElementPlusSizeEnum, ThemeModeEnum } from '@/common/model'
 import { navInfoList } from './nav-content.data'
 import { isDarkModeOfSystem } from '@/utils'
 
-const instance = getCurrentInstance()
 const router = useRouter()
 const store = useStore()
 
@@ -130,12 +123,6 @@ const themeModeChange = (e: boolean) => {
   persistUserSettings()
 }
 
-const isUS = ref<boolean>(false)
-
-const localeModelChange = () => {
-  instance.proxy.$i18n.locale = isUS.value ? 'en-US' : 'zh-CN'
-}
-
 watch(
   () => router.currentRoute.value,
   (_n) => {
@@ -176,17 +163,6 @@ watch(
 )
 
 onMounted(() => {
-  watch(
-    () => instance?.proxy?.$i18n?.locale,
-    (newValue) => {
-      if (newValue !== 'zh-CN') {
-        isUS.value = true
-      } else {
-        isUS.value = false
-      }
-    }
-  )
-
   router.isReady().then(() => {
     changeNavActive(router.currentRoute.value.path)
   })
