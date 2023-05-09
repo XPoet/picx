@@ -109,7 +109,11 @@ const logout = () => {
 }
 
 const jumpOwnerRepo = () => {
-  window.open(`https://github.com/${userConfigInfo.owner}/${userConfigInfo.selectedRepo}`)
+  if (userConfigInfo.owner) {
+    window.open(`https://github.com/${userConfigInfo.owner}/${userConfigInfo.selectedRepo}`)
+  } else {
+    router.push('/config')
+  }
 }
 </script>
 

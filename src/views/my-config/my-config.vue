@@ -4,6 +4,7 @@
     <el-form label-width="70rem" :label-position="labelPosition">
       <el-form-item label="Token">
         <el-input
+          ref="tokenInputRef"
           v-model="userConfigInfo.token"
           clearable
           :autofocus="!userConfigInfo.token"
@@ -237,7 +238,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useStore } from '@/store'
 import { BranchModeEnum, BranchModel, DirModeEnum, ElementPlusSizeEnum } from '@/common/model'
 import { formatDatetime } from '@/utils'
@@ -279,6 +280,7 @@ const newDirInputRef = ref<null | HTMLElement>(null)
 const newBranchInputRef = ref<null | HTMLElement>(null)
 const newBranchInputVal = ref<string>('')
 const repoDirCascaderKey = ref<string>('repoDirCascaderKey')
+const tokenInputRef = ref<HTMLElement | null>(null)
 
 const dirModeChange = (dirMode: DirModeEnum) => {
   switch (dirMode) {
@@ -459,6 +461,14 @@ watch(
     }
   }
 )
+
+onMounted(() => {
+  if (!userConfigInfo.token) {
+    setTimeout(() => {
+      tokenInputRef.value!.focus()
+    }, 100)
+  }
+})
 </script>
 
 <style scoped lang="stylus">
