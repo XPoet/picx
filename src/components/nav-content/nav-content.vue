@@ -37,12 +37,6 @@
         </template>
         <div class="quick-actions-popover">
           <el-switch
-            v-model="isDarkMode"
-            class="mb-2"
-            :active-text="$t('actions.night')"
-            @change="themeModeChange"
-          />
-          <el-switch
             v-model="userSettings.watermark.enable"
             class="mb-2"
             :active-text="$t('actions.watermark')"
@@ -67,12 +61,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, triggerRef, watch } from 'vue'
+import { computed, onMounted, triggerRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { ElementPlusSizeEnum, ThemeModeEnum } from '@/common/model'
+import { ElementPlusSizeEnum } from '@/common/model'
 import { navInfoList } from './nav-content.data'
-import { isDarkModeOfSystem } from '@/utils'
 
 const router = useRouter()
 const store = useStore()
@@ -90,8 +83,6 @@ const navIconSize = computed(() => {
       return 26
   }
 })
-
-const isDarkMode = ref<boolean>(false)
 
 const onNavClick = (e: any) => {
   const { path } = e
@@ -126,11 +117,6 @@ const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
 }
 
-const themeModeChange = (e: boolean) => {
-  userSettings.theme.mode = e ? ThemeModeEnum.dark : ThemeModeEnum.light
-  persistUserSettings()
-}
-
 watch(
   () => router.currentRoute.value,
   (_n) => {
@@ -150,19 +136,6 @@ watch(
           v.isShow = _n
       }
     })
-  },
-  {
-    deep: true,
-    immediate: true
-  }
-)
-
-watch(
-  () => userSettings.theme.mode,
-  (_n) => {
-    if (_n === ThemeModeEnum.follow) {
-      isDarkMode.value = isDarkModeOfSystem()
-    } else isDarkMode.value = _n === ThemeModeEnum.dark
   },
   {
     deep: true,

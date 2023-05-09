@@ -3,6 +3,7 @@ import {
   CompressEncoderEnum,
   ElementPlusSizeEnum,
   ImageLinkRuleModel,
+  LanguageEnum,
   ThemeModeEnum,
   UserSettingsModel,
   WatermarkPositionEnum
@@ -75,7 +76,7 @@ const initSettings: UserSettingsModel = {
     textColor: '#FFFFFF',
     opacity: 0.5
   },
-  language: 'zh-CN'
+  language: LanguageEnum.zhCN
 }
 
 const initUserSettings = (): UserSettingsModel => {

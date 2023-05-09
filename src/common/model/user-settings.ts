@@ -29,6 +29,15 @@ export enum ThemeModeEnum {
   dark = 'dark'
 }
 
+export enum LanguageEnum {
+  // eslint-disable-next-line no-unused-vars
+  zhCN = 'zh-CN',
+  // eslint-disable-next-line no-unused-vars
+  zhTW = 'zh-TW',
+  // eslint-disable-next-line no-unused-vars
+  en = 'en'
+}
+
 export interface UserSettingsModel {
   defaultHash: boolean
   prefixNaming: {

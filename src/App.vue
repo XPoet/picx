@@ -13,7 +13,7 @@ import en from 'element-plus/lib/locale/lang/en'
 import setThemeMode from '@/utils/set-theme-mode'
 import { useStore } from '@/store'
 import { getRegionByIP, throttle } from '@/utils'
-import { ElementPlusSizeEnum } from '@/common/model'
+import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
 import MainContainer from '@/views/main-container/main-container.vue'
 
 const instance = getCurrentInstance()
@@ -21,7 +21,7 @@ const store = useStore()
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 
-const elementPlusSize = ref<'large' | 'default' | 'small'>('default') // large | default | small
+const elementPlusSize = ref<ElementPlusSizeEnum>(ElementPlusSizeEnum.default)
 const elementPlusLocale = ref(zhCN) // zhCN | zhTW | en
 
 const elementPlusSizeHandle = (width: number) => {
@@ -76,14 +76,14 @@ const init = () => {
 
 watch(
   () => userSettings.language,
-  (language) => {
-    if (language === 'zh-CN') {
+  (language: LanguageEnum) => {
+    if (language === LanguageEnum.zhCN) {
       elementPlusLocale.value = zhCN
       instance!.proxy!.$i18n.locale = 'zh-CN'
-    } else if (language === 'zh-TW') {
+    } else if (language === LanguageEnum.zhTW) {
       elementPlusLocale.value = zhTW
       instance!.proxy!.$i18n.locale = 'zh-TW'
-    } else if (language === 'en') {
+    } else if (language === LanguageEnum.en) {
       elementPlusLocale.value = en
       instance!.proxy!.$i18n.locale = 'en'
     } else {

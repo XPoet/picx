@@ -40,13 +40,38 @@
           <ul class="personal-center-popover">
             <li class="content-item">
               <span class="flex-center">{{ $t('header.language') }}</span>
-              <el-select v-model="userSettings.language" size="small" style="width: 100rem">
+              <el-select
+                size="small"
+                style="width: 100rem"
+                v-model="userSettings.language"
+                @change="persistUserSettings"
+              >
+                <el-option label="中文简体" :value="LanguageEnum.zhCN"></el-option>
+                <el-option label="中文繁體" :value="LanguageEnum.zhTW"></el-option>
+                <el-option label="English" :value="LanguageEnum.en"></el-option>
+              </el-select>
+            </li>
+            <el-divider style="margin: 5px 0" />
+            <li class="content-item">
+              <span class="flex-center">{{ $t('header.theme') }}</span>
+              <el-select
+                size="small"
+                style="width: 100rem"
+                v-model="userSettings.theme.mode"
+                @change="persistUserSettings"
+              >
                 <el-option
-                  v-for="(lang, idx) in languageOptions"
-                  :key="idx + lang.uuid"
-                  :label="lang.label"
-                  :value="lang.value"
-                />
+                  :label="$t('settings.theme.system')"
+                  :value="ThemeModeEnum.follow"
+                ></el-option>
+                <el-option
+                  :label="$t('settings.theme.light')"
+                  :value="ThemeModeEnum.light"
+                ></el-option>
+                <el-option
+                  :label="$t('settings.theme.dark')"
+                  :value="ThemeModeEnum.dark"
+                ></el-option>
               </el-select>
             </li>
             <el-divider style="margin: 5px 0" />
@@ -59,10 +84,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
-import { getUuid } from '@/utils'
+import { LanguageEnum, ThemeModeEnum } from '@/common/model'
 
 const router = useRouter()
 const store = useStore()
@@ -70,23 +95,9 @@ const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const userSettings = computed(() => store.getters.getUserSettings).value
 
-const languageOptions = ref([
-  {
-    uuid: getUuid(),
-    label: '中文简体',
-    value: 'zh-CN'
-  },
-  {
-    uuid: getUuid(),
-    label: '中文繁體',
-    value: 'zh-TW'
-  },
-  {
-    uuid: getUuid(),
-    label: 'English',
-    value: 'en'
-  }
-])
+const persistUserSettings = () => {
+  store.dispatch('USER_SETTINGS_PERSIST')
+}
 
 const logout = () => {
   store.dispatch('LOGOUT')

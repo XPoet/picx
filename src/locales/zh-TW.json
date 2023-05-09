@@ -2,7 +2,8 @@
   "header": {
     "notLogin": "未登錄",
     "logout": "退出登錄",
-    "language": "語言"
+    "language": "語言",
+    "theme": "主題"
   },
   "nav": {
     "config": "圖床配置",
@@ -14,9 +15,15 @@
     "actions": "快捷操作"
   },
   "actions": {
-    "night": "暗夜模式",
     "watermark": "添加水印",
     "compress": "壓縮圖片",
     "transform": "轉換 "
+  },
+  "settings": {
+    "theme": {
+      "system": "跟隨系統",
+      "dark": "暗夜",
+      "light": "白晝"
+    }
   }
 }

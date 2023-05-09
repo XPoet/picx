@@ -2,7 +2,8 @@
   "header": {
     "notLogin": "Not Login",
     "logout": "Log Out",
-    "language": "Language"
+    "language": "Language",
+    "theme": "Theme"
   },
   "nav": {
     "config": "Image Hosting Config",
@@ -14,9 +15,15 @@
     "actions": "Quick actions"
   },
   "actions": {
-    "night": "Night Mode",
     "compress": "Compress Image",
     "watermark": "Add Watermark",
     "transform": "Transform "
+  },
+  "settings": {
+    "theme": {
+      "system": "System",
+      "dark": "Dark",
+      "light": "Light"
+    }
   }
 }
