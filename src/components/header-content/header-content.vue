@@ -14,7 +14,7 @@
 
     <div class="header-right">
       <div class="user-info">
-        <div class="username">
+        <div class="username" @click="jumpOwnerRepo">
           {{ userConfigInfo.owner ? userConfigInfo.owner : $t('header.notLogin') }}
         </div>
 
@@ -106,6 +106,10 @@ const logout = () => {
   store.dispatch('LOGOUT')
   router.push('/config')
   document.body.click()
+}
+
+const jumpOwnerRepo = () => {
+  window.open(`https://github.com/${userConfigInfo.owner}/${userConfigInfo.selectedRepo}`)
 }
 </script>
 
