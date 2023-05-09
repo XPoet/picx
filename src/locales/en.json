@@ -1,7 +1,7 @@
 {
   "header": {
-    "notLogin": "Not Login",
-    "logout": "Log Out",
+    "notLogin": "Not log in",
+    "logout": "Log out",
     "language": "Language",
     "theme": "Theme"
   },

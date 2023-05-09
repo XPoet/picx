@@ -43,19 +43,35 @@ const elementPlusSizeHandle = (width: number) => {
   }
 }
 
+const initLanguage = (language: LanguageEnum) => {
+  if (language === LanguageEnum.zhCN) {
+    elementPlusLocale.value = zhCN
+    instance!.proxy!.$i18n.locale = 'zh-CN'
+  } else if (language === LanguageEnum.zhTW) {
+    elementPlusLocale.value = zhTW
+    instance!.proxy!.$i18n.locale = 'zh-TW'
+  } else if (language === LanguageEnum.en) {
+    elementPlusLocale.value = en
+    instance!.proxy!.$i18n.locale = 'en'
+  } else {
+    elementPlusLocale.value = zhCN
+    instance!.proxy!.$i18n.locale = 'zh-CN'
+  }
+}
+
 const setLanguage = () => {
   getRegionByIP().then((region) => {
     if (region === 'CN') {
       store.dispatch('SET_USER_SETTINGS', {
-        language: 'zh-CN'
+        language: LanguageEnum.zhCN
       })
     } else if (region === 'HK' || region === 'TW') {
       store.dispatch('SET_USER_SETTINGS', {
-        language: 'zh-TW'
+        language: LanguageEnum.zhTW
       })
     } else {
       store.dispatch('SET_USER_SETTINGS', {
-        language: 'en'
+        language: LanguageEnum.en
       })
     }
   })
@@ -77,19 +93,7 @@ const init = () => {
 watch(
   () => userSettings.language,
   (language: LanguageEnum) => {
-    if (language === LanguageEnum.zhCN) {
-      elementPlusLocale.value = zhCN
-      instance!.proxy!.$i18n.locale = 'zh-CN'
-    } else if (language === LanguageEnum.zhTW) {
-      elementPlusLocale.value = zhTW
-      instance!.proxy!.$i18n.locale = 'zh-TW'
-    } else if (language === LanguageEnum.en) {
-      elementPlusLocale.value = en
-      instance!.proxy!.$i18n.locale = 'en'
-    } else {
-      elementPlusLocale.value = zhCN
-      instance!.proxy!.$i18n.locale = 'zh-CN'
-    }
+    initLanguage(language)
   },
   {
     deep: true

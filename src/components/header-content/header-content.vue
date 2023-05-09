@@ -28,13 +28,16 @@
           }"
         >
           <template #reference>
-            <div class="avatar flex-center">
-              <img
-                :src="userConfigInfo?.avatarUrl"
-                v-if="userConfigInfo?.avatarUrl"
-                :alt="userConfigInfo?.owner"
-              />
-              <el-icon :size="22" v-else><IEpUserFilled /></el-icon>
+            <div class="avatar-box">
+              <div class="avatar flex-center">
+                <img
+                  :src="userConfigInfo?.avatarUrl"
+                  v-if="userConfigInfo?.avatarUrl"
+                  :alt="userConfigInfo?.owner"
+                />
+                <el-icon class="user-filled-icon" v-else><IEpUserFilled /></el-icon>
+              </div>
+              <el-icon class="caret-bottom-icon"><IEpCaretBottom /></el-icon>
             </div>
           </template>
           <ul class="personal-center-popover">
