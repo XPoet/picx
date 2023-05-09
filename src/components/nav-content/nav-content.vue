@@ -18,7 +18,15 @@
       </li>
     </ul>
     <div class="nav-item quick-actions flex-center">
-      <el-popover placement="right" :width="200" trigger="click" :show-arrow="false">
+      <el-popover
+        placement="right-end"
+        :width="userSettings.language === 'en' ? '230rem' : '190rem'"
+        trigger="click"
+        :show-arrow="false"
+        :popper-style="{
+          padding: '0'
+        }"
+      >
         <template #reference>
           <div class="nav-content">
             <el-icon :size="navIconSize">
@@ -27,7 +35,7 @@
             <span class="nav-name">{{ $t('nav.actions') }}</span>
           </div>
         </template>
-        <div class="quick-actions-box">
+        <div class="quick-actions-popover">
           <el-switch
             v-model="isDarkMode"
             class="mb-2"

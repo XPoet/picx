@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, getCurrentInstance } from 'vue'
+import { onMounted, ref, getCurrentInstance, watch, computed } from 'vue'
 import { ElConfigProvider } from 'element-plus'
 import zhCN from 'element-plus/lib/locale/lang/zh-cn'
 import zhTW from 'element-plus/lib/locale/lang/zh-tw'
@@ -18,6 +18,9 @@ import MainContainer from '@/views/main-container/main-container.vue'
 
 const instance = getCurrentInstance()
 const store = useStore()
+
+const userSettings = computed(() => store.getters.getUserSettings).value
+
 const elementPlusSize = ref<'large' | 'default' | 'small'>('default') // large | default | small
 const elementPlusLocale = ref(zhCN) // zhCN | zhTW | en
 
@@ -43,14 +46,17 @@ const elementPlusSizeHandle = (width: number) => {
 const setLanguage = () => {
   getRegionByIP().then((region) => {
     if (region === 'CN') {
-      instance!.proxy!.$i18n.locale = 'zh-CN'
-      elementPlusLocale.value = zhCN
+      store.dispatch('SET_USER_SETTINGS', {
+        language: 'zh-CN'
+      })
     } else if (region === 'HK' || region === 'TW') {
-      instance!.proxy!.$i18n.locale = 'zh-CN'
-      elementPlusLocale.value = zhTW
+      store.dispatch('SET_USER_SETTINGS', {
+        language: 'zh-TW'
+      })
     } else {
-      instance!.proxy!.$i18n.locale = 'en-US'
-      elementPlusLocale.value = en
+      store.dispatch('SET_USER_SETTINGS', {
+        language: 'en'
+      })
     }
   })
 }
@@ -67,6 +73,28 @@ const init = () => {
   setThemeMode()
   setLanguage()
 }
+
+watch(
+  () => userSettings.language,
+  (language) => {
+    if (language === 'zh-CN') {
+      elementPlusLocale.value = zhCN
+      instance!.proxy!.$i18n.locale = 'zh-CN'
+    } else if (language === 'zh-TW') {
+      elementPlusLocale.value = zhTW
+      instance!.proxy!.$i18n.locale = 'zh-TW'
+    } else if (language === 'en') {
+      elementPlusLocale.value = en
+      instance!.proxy!.$i18n.locale = 'en'
+    } else {
+      elementPlusLocale.value = zhCN
+      instance!.proxy!.$i18n.locale = 'zh-CN'
+    }
+  },
+  {
+    deep: true
+  }
+)
 
 onMounted(() => {
   init()

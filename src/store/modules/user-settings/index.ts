@@ -74,7 +74,8 @@ const initSettings: UserSettingsModel = {
     position: WatermarkPositionEnum.rightBottom,
     textColor: '#FFFFFF',
     opacity: 0.5
-  }
+  },
+  language: 'zh-CN'
 }
 
 const initUserSettings = (): UserSettingsModel => {

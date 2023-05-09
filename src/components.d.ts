@@ -58,6 +58,7 @@ declare module '@vue/runtime-core' {
     IEpInfoFilled: typeof import('~icons/ep/info-filled')['default']
     IEpMoreFilled: typeof import('~icons/ep/more-filled')['default']
     IEpOperation: typeof import('~icons/ep/operation')['default']
+    IEpPosition: typeof import('~icons/ep/position')['default']
     IEpRefresh: typeof import('~icons/ep/refresh')['default']
     IEpRemove: typeof import('~icons/ep/remove')['default']
     IEpUpload: typeof import('~icons/ep/upload')['default']

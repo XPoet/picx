@@ -1,7 +1,8 @@
 {
   "header": {
     "notLogin": "Not Login",
-    "logout": "Logout"
+    "logout": "Log Out",
+    "language": "Language"
   },
   "nav": {
     "config": "Image Hosting Config",

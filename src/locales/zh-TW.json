@@ -1,0 +1,22 @@
+{
+  "header": {
+    "notLogin": "未登錄",
+    "logout": "退出登錄",
+    "language": "語言"
+  },
+  "nav": {
+    "config": "圖床配置",
+    "upload": "上傳圖片",
+    "management": "圖床管理",
+    "settings": "我的設置",
+    "toolbox": "工具箱",
+    "feedback": "幫助反饋",
+    "actions": "快捷操作"
+  },
+  "actions": {
+    "night": "暗夜模式",
+    "watermark": "添加水印",
+    "compress": "壓縮圖片",
+    "transform": "轉換 "
+  }
+}

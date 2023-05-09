@@ -13,72 +13,85 @@
     </div>
 
     <div class="header-right">
-      <div class="user-info" @click="onUserInfoClick">
+      <div class="user-info">
         <div class="username">
           {{ userConfigInfo.owner ? userConfigInfo.owner : $t('header.notLogin') }}
         </div>
 
-        <div class="avatar" v-if="!userConfigInfo?.avatarUrl">
-          <el-icon :size="22"><IEpUserFilled /></el-icon>
-        </div>
-
-        <el-dropdown trigger="click" @command="handleCommand" v-if="userConfigInfo?.avatarUrl">
-          <span class="el-dropdown-link">
-            <span class="avatar">
-              <img :src="userConfigInfo?.avatarUrl" :alt="userConfigInfo?.owner" />
-            </span>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="logout"> {{ $t('header.logout') }} </el-dropdown-item>
-            </el-dropdown-menu>
+        <el-popover
+          placement="bottom-end"
+          trigger="click"
+          width="220rem"
+          :show-arrow="false"
+          :popper-style="{
+            padding: '0'
+          }"
+        >
+          <template #reference>
+            <div class="avatar flex-center">
+              <img
+                :src="userConfigInfo?.avatarUrl"
+                v-if="userConfigInfo?.avatarUrl"
+                :alt="userConfigInfo?.owner"
+              />
+              <el-icon :size="22" v-else><IEpUserFilled /></el-icon>
+            </div>
           </template>
-        </el-dropdown>
+          <ul class="personal-center-popover">
+            <li class="content-item">
+              <span class="flex-center">{{ $t('header.language') }}</span>
+              <el-select v-model="userSettings.language" size="small" style="width: 100rem">
+                <el-option
+                  v-for="(lang, idx) in languageOptions"
+                  :key="idx + lang.uuid"
+                  :label="lang.label"
+                  :value="lang.value"
+                />
+              </el-select>
+            </li>
+            <el-divider style="margin: 5px 0" />
+            <li class="content-item" @click="logout">{{ $t('header.logout') }}</li>
+          </ul>
+        </el-popover>
       </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/store'
+import { getUuid } from '@/utils'
 
 const router = useRouter()
 const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const userSettings = computed(() => store.getters.getUserSettings).value
 
-const onUserInfoClick = () => {
-  if (!userConfigInfo.logined && router.currentRoute.value.path !== '/config') {
-    router.push('/config')
+const languageOptions = ref([
+  {
+    uuid: getUuid(),
+    label: '中文简体',
+    value: 'zh-CN'
+  },
+  {
+    uuid: getUuid(),
+    label: '中文繁體',
+    value: 'zh-TW'
+  },
+  {
+    uuid: getUuid(),
+    label: 'English',
+    value: 'en'
   }
-}
+])
 
 const logout = () => {
   store.dispatch('LOGOUT')
   router.push('/config')
-}
-
-const handleCommand = (command: string) => {
-  // eslint-disable-next-line default-case
-  switch (command) {
-    case 'upload':
-      router.push('/')
-      break
-
-    case 'config':
-      router.push('/config')
-      break
-
-    case 'management':
-      router.push('/management')
-      break
-
-    case 'logout':
-      logout()
-      break
-  }
+  document.body.click()
 }
 </script>
 
