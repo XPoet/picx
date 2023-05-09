@@ -171,7 +171,6 @@ const saveUserSettings = () => {
   store.dispatch('SET_USER_SETTINGS', {
     ...userSettings
   })
-  persistUserSettings()
 }
 
 const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {

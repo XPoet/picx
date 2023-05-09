@@ -1,7 +1,10 @@
 <template>
   <div class="page-container config-page-container">
     <!-- GitHub Token -->
-    <el-form label-width="70rem" :label-position="labelPosition">
+    <el-form
+      :label-width="setLabelWidth(userSettings)"
+      :label-position="setLabelPosition(userSettings)"
+    >
       <el-form-item label="Token">
         <el-input
           ref="tokenInputRef"
@@ -10,12 +13,12 @@
           :autofocus="!userConfigInfo.token"
           type="password"
           show-password
-          placeholder="请输入 GitHub Token"
+          :placeholder="$t('config.inputToken')"
         ></el-input>
       </el-form-item>
 
       <el-form-item class="operation">
-        <el-tooltip placement="top" content="选择已有的 GitHub 仓库">
+        <el-tooltip placement="top" :content="$t('config.manualConfiguration3')">
           <el-button
             :disabled="btnDisabled"
             plain
@@ -23,17 +26,17 @@
             native-type="submit"
             @click.prevent="getUserInfo()"
           >
-            {{ reConfig ? '' : '重新' }}手动配置
+            {{ reConfig ? $t('config.manualConfiguration1') : $t('config.manualConfiguration2') }}
           </el-button>
         </el-tooltip>
-        <el-tooltip placement="top" content="自动创建 GitHub 仓库（适合新用户）">
+        <el-tooltip placement="top" :content="$t('config.autoConfiguration3')">
           <el-button
             plain
             :disabled="btnDisabled"
             type="primary"
-            @click.prevent="oneClickAutoConfig()"
+            @click.prevent="oneClickAutoConfig($t)"
           >
-            {{ reConfig ? '' : '重新' }}一键自动配置
+            {{ reConfig ? $t('config.autoConfiguration1') : $t('config.autoConfiguration2') }}
           </el-button>
         </el-tooltip>
       </el-form-item>
@@ -41,27 +44,29 @@
 
     <!-- 基本信息 -->
     <el-form
-      label-width="70rem"
-      :label-position="labelPosition"
+      :label-width="setLabelWidth(userSettings)"
+      :label-position="setLabelPosition(userSettings)"
       v-if="userConfigInfo.token && userConfigInfo.owner"
       v-loading="userInfoLoading"
-      element-loading-text="正在加载用户信息..."
+      :element-loading-text="$t('config.loading1')"
     >
-      <el-form-item v-if="userConfigInfo.owner" label="用户名">
+      <!-- 用户名 -->
+      <el-form-item v-if="userConfigInfo.owner" :label="$t('config.username')">
         <el-input v-model="userConfigInfo.owner" readonly></el-input>
       </el-form-item>
 
-      <el-form-item v-if="userConfigInfo.email" label="邮箱">
+      <!-- 邮箱 -->
+      <el-form-item v-if="userConfigInfo.email" :label="$t('config.email')">
         <el-input v-model="userConfigInfo.email" readonly></el-input>
       </el-form-item>
 
       <!-- 仓库 -->
-      <el-form-item v-if="userConfigInfo.repoList.length" label="选择仓库">
+      <el-form-item v-if="userConfigInfo.repoList.length" :label="$t('config.selectRepo')">
         <el-select
           v-model="userConfigInfo.selectedRepo"
           :filterable="true"
           :style="{ width: 'calc(100% - ' + refreshBoxWidth + 'rem)' }"
-          placeholder="请选择图床仓库..."
+          :placeholder="$t('config.placeholder1')"
           @change="selectRepo"
         >
           <el-option
@@ -78,13 +83,13 @@
 
     <!-- 分支 -->
     <el-form
-      label-width="70rem"
-      :label-position="labelPosition"
+      :label-width="setLabelWidth(userSettings)"
+      :label-position="setLabelPosition(userSettings)"
       v-if="userConfigInfo.token && userConfigInfo.selectedRepo && userConfigInfo.branchList.length"
       v-loading="branchLoading"
-      element-loading-text="正在加载分支信息..."
+      :element-loading-text="$t('config.loading2')"
     >
-      <!-- 由于 GitHub API 目前不支持创建空分支，该功能暂时无法使用 -->
+      <!-- !!! 由于 GitHub API 目前不支持创建空分支，该功能暂时无法使用 -->
       <el-form-item v-if="userConfigInfo.selectedRepo && 0" label="分支方式">
         <el-radio-group v-model="userConfigInfo.branchMode" @change="branchModeChange">
           <el-tooltip
@@ -108,13 +113,13 @@
           userConfigInfo.branchList.length &&
           userConfigInfo.branchMode === BranchModeEnum.repoBranch
         "
-        label="选择分支"
+        :label="$t('config.selectBranch')"
       >
         <el-select
           v-model="userConfigInfo.selectedBranch"
           :filterable="true"
           :style="{ width: 'calc(100% - ' + refreshBoxWidth + 'rem)' }"
-          placeholder="请选择分支..."
+          :placeholder="$t('config.placeholder2')"
           @change="selectBranch"
         >
           <el-option
@@ -129,12 +134,15 @@
       </el-form-item>
 
       <!-- 新建分支 -->
-      <el-form-item v-if="userConfigInfo.branchMode === BranchModeEnum.newBranch" label="新建分支">
+      <el-form-item
+        v-if="userConfigInfo.branchMode === BranchModeEnum.newBranch"
+        :label="$t('config.createBranch')"
+      >
         <el-input
           v-model="newBranchInputVal"
           @blur="onNewBranchInputBlur"
           clearable
-          placeholder="请输入新建的分支..."
+          :placeholder="$t('config.placeholder3')"
           ref="newBranchInputRef"
         ></el-input>
       </el-form-item>
@@ -142,60 +150,58 @@
 
     <!-- 目录 -->
     <el-form
-      label-width="70rem"
-      :label-position="labelPosition"
+      :label-width="setLabelWidth(userSettings)"
+      :label-position="setLabelPosition(userSettings)"
       v-if="userConfigInfo.token && userConfigInfo.selectedBranch"
       v-loading="dirLoading"
-      element-loading-text="正在加载目录信息..."
+      :element-loading-text="$t('config.loading5')"
     >
-      <el-form-item v-if="userConfigInfo.selectedBranch" label="目录方式">
+      <el-form-item v-if="userConfigInfo.selectedBranch" :label="$t('config.dirMode')">
         <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
-          <el-tooltip content="手动输入一个新目录" placement="top" :offset="-1">
-            <el-radio label="newDir">新建目录</el-radio>
+          <el-tooltip :content="$t('config.inputNewDir')" placement="top" :offset="-1">
+            <el-radio label="newDir">{{ $t('config.createNewDir') }}</el-radio>
           </el-tooltip>
 
           <el-tooltip
-            :content="'图片存储在 ' + userConfigInfo.selectedBranch + ' 分支的根目录下'"
+            :content="$t('config.rootDir2', { branch: userConfigInfo.selectedBranch })"
             placement="top"
             :offset="-1"
           >
-            <el-radio label="rootDir">根目录</el-radio>
+            <el-radio label="rootDir">{{ $t('config.rootDir') }}</el-radio>
           </el-tooltip>
 
-          <el-tooltip
-            :content="'根据日期自动创建格式 YYYYMMDD 的目录'"
-            placement="top"
-            :offset="-1"
-          >
-            <el-radio label="autoDir">自动目录</el-radio>
+          <el-tooltip :content="$t('config.autoDir2')" placement="top" :offset="-1">
+            <el-radio label="autoDir">{{ $t('config.autoDir') }}</el-radio>
           </el-tooltip>
 
           <el-tooltip
             v-if="userConfigInfo.dirList.length && userConfigInfo.branchMode !== 'newBranch'"
-            :content="'选择 ' + userConfigInfo.selectedBranch + ' 分支下的一个目录'"
+            :content="$t('config.repoDir2', { repo: userConfigInfo.selectedBranch })"
             placement="top"
             :offset="-1"
           >
-            <el-radio label="repoDir"> 选择 {{ userConfigInfo.selectedRepo }} 仓库目录 </el-radio>
+            <el-radio label="repoDir">
+              {{ $t('config.repoDir', { repo: userConfigInfo.selectedRepo }) }}</el-radio
+            >
           </el-tooltip>
         </el-radio-group>
       </el-form-item>
 
-      <el-form-item v-if="userConfigInfo.dirMode === 'autoDir'" label="自动目录">
+      <el-form-item v-if="userConfigInfo.dirMode === 'autoDir'" :label="$t('config.autoDir')">
         <el-input v-model="userConfigInfo.selectedDir" readonly></el-input>
       </el-form-item>
 
-      <el-form-item v-if="userConfigInfo.dirMode === 'rootDir'" label="根目录">
+      <el-form-item v-if="userConfigInfo.dirMode === 'rootDir'" :label="$t('config.rootDir')">
         <el-input v-model="userConfigInfo.selectedDir" readonly></el-input>
       </el-form-item>
 
-      <el-form-item v-if="userConfigInfo.dirMode === 'newDir'" label="新建目录">
+      <el-form-item v-if="userConfigInfo.dirMode === 'newDir'" :label="$t('config.createNewDir')">
         <el-input
           ref="newDirInputRef"
           v-model="userConfigInfo.selectedDir"
           @input="persistUserConfigInfo()"
           clearable
-          placeholder="请输入新建的目录..."
+          :placeholder="$t('config.placeholder4')"
         ></el-input>
       </el-form-item>
 
@@ -205,14 +211,18 @@
           userConfigInfo.dirMode === 'repoDir' &&
           userConfigInfo.branchMode !== 'newBranch'
         "
-        label="选择目录"
+        :label="$t('config.selectDir')"
       >
         <repo-dir-cascader :el-key="repoDirCascaderKey" :el-size="userSettings.elementPlusSize" />
       </el-form-item>
     </el-form>
 
     <!-- 操作（重置、确认配置） -->
-    <el-form label-width="70rem" v-if="userConfigInfo.token" :label-position="labelPosition">
+    <el-form
+      :label-width="setLabelWidth(userSettings)"
+      v-if="userConfigInfo.token"
+      :label-position="setLabelPosition(userSettings)"
+    >
       <el-form-item class="operation">
         <el-button
           plain
@@ -221,7 +231,7 @@
           @click="resetConfig()"
           v-if="userConfigInfo.owner"
         >
-          重置
+          {{ $t('config.reset') }}
         </el-button>
         <el-button
           plain
@@ -230,7 +240,7 @@
           @click="goUploadPage()"
           v-if="userConfigInfo.selectedRepo"
         >
-          确认
+          {{ $t('config.confirm') }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -240,7 +250,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import { useStore } from '@/store'
-import { BranchModeEnum, BranchModel, DirModeEnum, ElementPlusSizeEnum } from '@/common/model'
+import { BranchModeEnum, BranchModel, DirModeEnum } from '@/common/model'
 import { formatDatetime } from '@/utils'
 import {
   getBranchInfoList,
@@ -257,7 +267,9 @@ import {
   initReHandConfig,
   resetConfig,
   saveUserInfo,
-  oneClickAutoConfig
+  oneClickAutoConfig,
+  setLabelWidth,
+  setLabelPosition
 } from '@/views/my-config/my-config.util'
 
 const store = useStore()
@@ -271,9 +283,6 @@ const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const logined = computed(() => store.getters.getUserLoginStatus).value
 const userSettings = computed(() => store.getters.getUserSettings).value
 const reConfig = computed(() => !userConfigInfo.token || !userConfigInfo.owner)
-const labelPosition = computed(() => {
-  return userSettings.elementPlusSize === ElementPlusSizeEnum.large ? 'right' : 'top'
-})
 const btnDisabled = computed(() => userInfoLoading.value || dirLoading.value || branchLoading.value)
 
 const newDirInputRef = ref<null | HTMLElement>(null)

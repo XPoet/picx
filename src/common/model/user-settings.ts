@@ -70,5 +70,5 @@ export interface UserSettingsModel {
     textColor: string
     opacity: number
   }
-  language: string
+  language: LanguageEnum
 }

@@ -139,7 +139,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
 
   actions: {
     // 设置
-    SET_USER_SETTINGS({ state }, configInfo: UserConfigInfoStateTypes) {
+    SET_USER_SETTINGS({ state, dispatch }, configInfo: UserConfigInfoStateTypes) {
       // eslint-disable-next-line no-restricted-syntax
       for (const key in configInfo) {
         // eslint-disable-next-line no-prototype-builtins
@@ -148,6 +148,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
           state.userSettings[key] = configInfo[key]
         }
       }
+      dispatch('USER_SETTINGS_PERSIST')
     },
 
     // 图片链接类型 - 增加规则

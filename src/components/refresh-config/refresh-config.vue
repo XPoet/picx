@@ -1,16 +1,17 @@
 <template>
   <div class="refresh-config-box" :style="{ width: boxWidth + 'rem' }">
-    <el-tooltip placement="top" :content="'重新加载 ' + dataTypeName + ' 数据'">
+    <el-tooltip placement="top" :content="$t('config.reload', { type: $t(dataType) })">
       <el-icon class="icon" @click="reloadData"><IEpRefresh /></el-icon>
     </el-tooltip>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, getCurrentInstance } from 'vue'
 import { useStore } from '@/store'
 import { getAllRepoList, getBranchInfoList } from '@/common/api'
 
+const instance = getCurrentInstance()
 const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
@@ -21,17 +22,15 @@ const props = defineProps({
     default: 20
   },
   dataType: {
-    type: String,
-    default: ''
+    type: String as () => 'repo' | 'branch',
+    default: 'repo'
   }
 })
-
-const dataTypeName = computed(() => (props.dataType === 'repo' ? '仓库' : '分支'))
 
 const reloadData = async () => {
   const loading = ElLoading.service({
     lock: true,
-    text: `正在加载 ${dataTypeName.value} 数据 ...`
+    text: instance!.proxy!.$t('config.loading4', { type: instance!.proxy!.$t(props.dataType) })
   })
 
   const { owner, selectedRepo: repo } = userConfigInfo

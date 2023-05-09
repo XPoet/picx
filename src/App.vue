@@ -43,7 +43,7 @@ const elementPlusSizeHandle = (width: number) => {
   }
 }
 
-const initLanguage = (language: LanguageEnum) => {
+const setLanguage = (language: LanguageEnum) => {
   if (language === LanguageEnum.zhCN) {
     elementPlusLocale.value = zhCN
     instance!.proxy!.$i18n.locale = 'zh-CN'
@@ -59,7 +59,7 @@ const initLanguage = (language: LanguageEnum) => {
   }
 }
 
-const setLanguage = () => {
+const initLanguage = () => {
   getRegionByIP().then((region) => {
     if (region === 'CN') {
       store.dispatch('SET_USER_SETTINGS', {
@@ -87,13 +87,13 @@ const init = () => {
   )
 
   setThemeMode()
-  setLanguage()
+  initLanguage()
 }
 
 watch(
   () => userSettings.language,
   (language: LanguageEnum) => {
-    initLanguage(language)
+    setLanguage(language)
   },
   {
     deep: true

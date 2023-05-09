@@ -1,6 +1,12 @@
 import { computed } from 'vue'
 import { store } from '@/store'
-import { BranchModeEnum, DirModeEnum } from '@/common/model'
+import {
+  BranchModeEnum,
+  DirModeEnum,
+  ElementPlusSizeEnum,
+  LanguageEnum,
+  UserSettingsModel
+} from '@/common/model'
 import { createRepo, getGitHubUserInfo, initEmptyRepo } from '@/common/api'
 import { INIT_REPO_BARNCH, INIT_REPO_NAME } from '@/common/constant'
 import { formatDatetime } from '@/utils'
@@ -77,7 +83,7 @@ export const goUploadPage = async () => {
 /**
  * 一键自动配置图床
  */
-export const oneClickAutoConfig = async () => {
+export const oneClickAutoConfig = async ($t: any) => {
   const { token } = userConfigInfo
 
   if (!token) {
@@ -87,7 +93,7 @@ export const oneClickAutoConfig = async () => {
 
   const loading = ElLoading.service({
     lock: true,
-    text: '正在自动配置...'
+    text: $t('config.loading6')
   })
 
   const userInfo = await getGitHubUserInfo(userConfigInfo.token)
@@ -123,4 +129,20 @@ export const oneClickAutoConfig = async () => {
   loading.close()
   ElMessage.success('自动配置成功')
   await router.push('/upload')
+}
+
+/**
+ * 设置 form 表单的 Label Width
+ * @param userSettings
+ */
+export const setLabelWidth = (userSettings: UserSettingsModel) => {
+  return userSettings.language === LanguageEnum.en ? '100rem' : '70rem'
+}
+
+/**
+ * 设置 form 表单的 Label Position
+ * @param userSettings
+ */
+export const setLabelPosition = (userSettings: UserSettingsModel) => {
+  return userSettings.elementPlusSize === ElementPlusSizeEnum.large ? 'right' : 'top'
 }
