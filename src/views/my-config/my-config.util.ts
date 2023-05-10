@@ -58,23 +58,21 @@ export const initReHandConfig = () => {
 /**
  * 去往图片上传页面
  */
-export const goUploadPage = async () => {
+export const goUploadPage = async ($t: any) => {
   const { selectedDir, dirMode } = userConfigInfo
-  let warningMessage: string = '目录不能为空！'
+  let warningMessage: string = $t('config.message6')
 
   if (selectedDir === '') {
+    // eslint-disable-next-line default-case
     switch (dirMode) {
       case DirModeEnum.newDir:
-        warningMessage = '请在输入框输入一个新目录！'
+        warningMessage = $t('config.message7')
         break
       case DirModeEnum.repoDir:
-        warningMessage = `请选择 ${userConfigInfo.selectedRepo} 仓库下的一个目录！`
-        break
-      default:
-        warningMessage = '请在输入框输入一个新目录！'
+        warningMessage = $t('config.message8', { repo: userConfigInfo.selectedRepo })
         break
     }
-    ElMessage.warning(warningMessage)
+    ElMessage.warning({ message: warningMessage })
   } else {
     await router.push('/upload')
   }
@@ -87,7 +85,7 @@ export const oneClickAutoConfig = async ($t: any) => {
   const { token } = userConfigInfo
 
   if (!token) {
-    ElMessage.error('GitHub Token 不能为空')
+    ElMessage.error({ message: $t('config.message1') })
     return
   }
 
@@ -96,39 +94,44 @@ export const oneClickAutoConfig = async ($t: any) => {
     text: $t('config.loading6')
   })
 
-  const userInfo = await getGitHubUserInfo(userConfigInfo.token)
-  console.log('getGitHubUserInfo >> ', userInfo)
+  try {
+    const userInfo = await getGitHubUserInfo(userConfigInfo.token)
+    console.log('getGitHubUserInfo >> ', userInfo)
 
-  if (!userInfo) {
+    if (!userInfo) {
+      loading.close()
+      ElMessage.error({ message: $t('config.message2') })
+      return
+    }
+
+    saveUserInfo(userInfo)
+
+    const repoInfo = await createRepo(userConfigInfo.token)
+    console.log('createRepo >> ', repoInfo)
+
+    if (!repoInfo) {
+      loading.close()
+      ElMessage.error({ message: $t('config.message3') })
+      return
+    }
+
+    userConfigInfo.repoList = [{ value: INIT_REPO_NAME, label: INIT_REPO_NAME }]
+    userConfigInfo.selectedRepo = INIT_REPO_NAME
+    userConfigInfo.branchList = [{ value: INIT_REPO_BARNCH, label: INIT_REPO_BARNCH }]
+    userConfigInfo.selectedBranch = INIT_REPO_BARNCH
+    userConfigInfo.branchMode = BranchModeEnum.repoBranch
+    userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
+    userConfigInfo.dirMode = DirModeEnum.autoDir
+    userConfigInfo.dirList = []
+    persistUserConfigInfo()
+    await initEmptyRepo(userConfigInfo, false)
     loading.close()
-    ElMessage.error('用户信息获取失败，请确认 Token 是否正确')
-    return
+    ElMessage.success({ message: $t('config.message4') })
+    await router.push('/upload')
+  } catch (err) {
+    ElMessage.error({ message: $t('config.message5') })
+    console.error('oneClickAutoConfig >> ', err)
   }
-
-  saveUserInfo(userInfo)
-
-  const repoInfo = await createRepo(userConfigInfo.token)
-  console.log('createRepo >> ', repoInfo)
-
-  if (!repoInfo) {
-    loading.close()
-    ElMessage.error('自动创建 GitHub 仓库失败，请稍后再试')
-    return
-  }
-
-  userConfigInfo.repoList = [{ value: INIT_REPO_NAME, label: INIT_REPO_NAME }]
-  userConfigInfo.selectedRepo = INIT_REPO_NAME
-  userConfigInfo.branchList = [{ value: INIT_REPO_BARNCH, label: INIT_REPO_BARNCH }]
-  userConfigInfo.selectedBranch = INIT_REPO_BARNCH
-  userConfigInfo.branchMode = BranchModeEnum.repoBranch
-  userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
-  userConfigInfo.dirMode = DirModeEnum.autoDir
-  userConfigInfo.dirList = []
-  persistUserConfigInfo()
-  await initEmptyRepo(userConfigInfo, false)
-  loading.close()
-  ElMessage.success('自动配置成功')
-  await router.push('/upload')
 }
 
 /**

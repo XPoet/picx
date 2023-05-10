@@ -89,21 +89,13 @@
       v-loading="branchLoading"
       :element-loading-text="$t('config.loading2')"
     >
-      <!-- !!! 由于 GitHub API 目前不支持创建空分支，该功能暂时无法使用 -->
-      <el-form-item v-if="userConfigInfo.selectedRepo && 0" label="分支方式">
+      <!-- !!! 由于 GitHub API 目前不支持创建空分支，该功能暂时无法使用 !!! -->
+      <el-form-item v-if="userConfigInfo.selectedRepo && 0" :label="$t('config.branchMode')">
         <el-radio-group v-model="userConfigInfo.branchMode" @change="branchModeChange">
-          <el-tooltip
-            v-if="userConfigInfo.branchList.length"
-            :content="'选择 ' + userConfigInfo.selectedRepo + ' 仓库下的一个分支'"
-            placement="top"
-          >
-            <el-radio label="repoBranch">
-              选择 {{ userConfigInfo.selectedRepo }} 仓库下的分支
-            </el-radio>
-          </el-tooltip>
-          <el-tooltip content="手动创建一个新分支" placement="top">
-            <el-radio label="newBranch">新建分支</el-radio>
-          </el-tooltip>
+          <el-radio v-if="userConfigInfo.branchList.length" label="repoBranch">
+            {{ $t('config.selectBranch2', { repo: userConfigInfo.selectedRepo }) }}
+          </el-radio>
+          <el-radio label="newBranch">{{ $t('config.createBranch') }}</el-radio>
         </el-radio-group>
       </el-form-item>
 
@@ -176,13 +168,13 @@
 
           <el-tooltip
             v-if="userConfigInfo.dirList.length && userConfigInfo.branchMode !== 'newBranch'"
-            :content="$t('config.repoDir2', { repo: userConfigInfo.selectedBranch })"
+            :content="$t('config.repoDir2', { branch: userConfigInfo.selectedBranch })"
             placement="top"
             :offset="-1"
           >
             <el-radio label="repoDir">
-              {{ $t('config.repoDir', { repo: userConfigInfo.selectedRepo }) }}</el-radio
-            >
+              {{ $t('config.repoDir', { repo: userConfigInfo.selectedRepo }) }}
+            </el-radio>
           </el-tooltip>
         </el-radio-group>
       </el-form-item>
@@ -217,7 +209,7 @@
       </el-form-item>
     </el-form>
 
-    <!-- 操作（重置、确认配置） -->
+    <!-- 操作（重置、确认） -->
     <el-form
       :label-width="setLabelWidth(userSettings)"
       v-if="userConfigInfo.token"
@@ -237,7 +229,7 @@
           plain
           :disabled="btnDisabled"
           type="success"
-          @click="goUploadPage()"
+          @click="goUploadPage($t)"
           v-if="userConfigInfo.selectedRepo"
         >
           {{ $t('config.confirm') }}
@@ -248,7 +240,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
 import { useStore } from '@/store'
 import { BranchModeEnum, BranchModel, DirModeEnum } from '@/common/model'
 import { formatDatetime } from '@/utils'
@@ -273,6 +265,7 @@ import {
 } from '@/views/my-config/my-config.util'
 
 const store = useStore()
+const instance = getCurrentInstance()
 
 const userInfoLoading = ref(false)
 const dirLoading = ref(false)
@@ -311,13 +304,9 @@ const dirModeChange = (dirMode: DirModeEnum) => {
 
     case DirModeEnum.repoDir:
       // 仓库目录
-      // eslint-disable-next-line no-case-declarations
-      const { dirList } = userConfigInfo
-      if (dirList.length) {
-        userConfigInfo.selectedDir = dirList[0].value
-        userConfigInfo.selectedDirList = [dirList[0].value]
-      } else {
+      if (!userConfigInfo.dirList.length) {
         userConfigInfo.selectedDir = ''
+        userConfigInfo.selectedDirList = []
       }
       break
 
@@ -336,7 +325,7 @@ async function getRepoList(owner: string) {
     userConfigInfo.repoList = repoList
     persistUserConfigInfo()
   } else {
-    ElMessage.error('仓库信息获取失败，请稍后重试')
+    ElMessage.error({ message: instance?.proxy?.$t('config.message9') })
   }
 }
 
@@ -399,13 +388,13 @@ async function getBranchList(repo: string) {
     dirModeChange(dirMode)
     persistUserConfigInfo()
   } else {
-    ElMessage.error('分支信息获取失败，请稍后再试')
+    ElMessage.error({ message: instance?.proxy?.$t('config.message10') })
   }
 }
 
 async function getUserInfo() {
   if (!userConfigInfo.token) {
-    ElMessage.error('GitHub Token 不能为空')
+    ElMessage.error({ message: instance?.proxy?.$t('config.message1') })
     return
   }
 
@@ -418,7 +407,7 @@ async function getUserInfo() {
   console.log('getGitHubUserInfo >> ', userInfo)
 
   if (!userInfo) {
-    ElMessage.error('用户信息获取失败，请确认 Token 是否正确')
+    ElMessage.error({ message: instance?.proxy?.$t('config.message11') })
     return
   }
 
@@ -449,14 +438,14 @@ const onNewBranchInputBlur = () => {
   if (nb) {
     if (!list.find((x: BranchModel) => x.value === nb)) {
       createNewBranch(userConfigInfo, nb, () => {
-        ElMessage.success(`新建 ${nb} 成功`)
+        ElMessage.error({ message: instance?.proxy?.$t('config.message14', { branch: nb }) })
         userConfigInfo.branchList.push({ value: nb, label: nb })
       })
     } else {
-      ElMessage.warning(`${nb} 分支已存在，请在分支列表中选择`)
+      ElMessage.error({ message: instance?.proxy?.$t('config.message13', { branch: nb }) })
     }
   } else {
-    ElMessage.error('新建分支不能为空')
+    ElMessage.error({ message: instance?.proxy?.$t('config.message12') })
   }
 }
 

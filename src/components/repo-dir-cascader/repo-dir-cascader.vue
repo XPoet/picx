@@ -9,7 +9,7 @@
     :key="elKey"
     v-model="userConfigInfo.selectedDirList"
     filterable
-    placeholder="请选择一个目录..."
+    :placeholder="$t('config.placeholder5')"
     :clearable="elClearable"
     @change="cascaderChange"
   />
@@ -40,7 +40,7 @@ defineProps({
   },
   elClearable: {
     type: Boolean,
-    default: true
+    default: false
   }
 })
 
