@@ -1,4 +1,7 @@
 {
+  "repo": "Repository",
+  "branch": "Branch",
+  "dir": "Directory",
   "header": {
     "notLogin": "Not log in",
     "logout": "Log out",
@@ -78,7 +81,25 @@
     "reset": "Reset",
     "confirm": "Confirm"
   },
-  "repo": "Repository",
-  "branch": "Branch",
-  "dir": "Directory"
+  "upload": {
+    "uploadAreaTips": "Drag / Paste / Click here to select images",
+    "uploaded": "Uploaded",
+    "upload": "Upload",
+    "message1": "Please complete the image hosting configuration first",
+    "message2": "Please select a repository",
+    "message3": "Directory cannot be empty",
+    "message4": "Please select an image to upload",
+    "message5": "Image uploaded successfully",
+    "message6": "Images uploaded successfully in batch",
+    "message7": "Upload failed, please try again later",
+    "message8": "Image uploaded successfully",
+    "fold": "Fold",
+    "expand": "Expand",
+    "hash": "Hashing",
+    "rename": "Rename",
+    "prefixNaming": "Prefix Naming",
+    "delete": "Delete",
+    "copyLink": "Click to copy image link",
+    "loading1": "Uploading ..."
+  }
 }

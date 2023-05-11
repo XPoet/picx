@@ -36,7 +36,7 @@
         <el-tooltip
           placement="top"
           :offset="8"
-          :content="imgNameOperateFolded ? '展开' : '折叠'"
+          :content="imgNameOperateFolded ? $t('upload.expand') : $t('upload.fold')"
           v-if="imgObj.uploadStatus.progress === 0"
         >
           <el-icon class="fold-btn" @click="imgNameOperateFolded = !imgNameOperateFolded">
@@ -53,7 +53,7 @@
         <!-- 哈希化 -->
         <div class="operate-item">
           <el-checkbox
-            label="哈希化"
+            :label="$t('upload.hash')"
             v-model="fileNameOperateData.isHash"
             @change="hashRename($event, imgObj)"
           ></el-checkbox>
@@ -62,7 +62,7 @@
         <!-- 重命名 -->
         <div class="operate-item">
           <el-checkbox
-            label="重命名"
+            :label="$t('upload.rename')"
             v-model="fileNameOperateData.isRename"
             @change="onRename"
           ></el-checkbox>
@@ -88,7 +88,7 @@
           "
         >
           <el-checkbox
-            label="命名前缀"
+            :label="$t('upload.prefixNaming')"
             v-model="fileNameOperateData.prefixNaming"
             @change="prefixNamingTrans($event, imgObj)"
           ></el-checkbox>
@@ -117,14 +117,14 @@
       v-if="imgObj.uploadStatus.progress === 100"
       @click="copyImageLink(imgObj.uploadedImg, userConfigInfo, userSettings)"
     >
-      点击复制图片链接
+      {{ $t('upload.copyLink') }}
     </div>
 
     <el-tooltip
       v-if="imgObj.uploadStatus.progress === 0"
       placement="top"
       :offset="8"
-      content="删除"
+      :content="$t('upload.delete')"
     >
       <el-icon class="del-img-btn" @click="remove(imgObj.uuid)"><IEpRemove /></el-icon>
     </el-tooltip>
@@ -145,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, getCurrentInstance, onMounted, reactive, ref, watch } from 'vue'
 import { copyImageLink } from '@/utils'
 import { UploadImageModel } from '@/common/model'
 import { useStore } from '@/store'
@@ -155,6 +155,7 @@ import { hashRename, initImgSettings, prefixNamingTrans, rename } from './upload
 import { RENAME_MAX_LENGTH } from '@/common/constant'
 
 const store = useStore()
+const instance = getCurrentInstance()
 
 const props = defineProps({
   imgObj: {
@@ -217,7 +218,7 @@ watch(
   () => props.imgObj.uploadStatus,
   (nv) => {
     if (nv.uploading) {
-      loadingText.value = '正在上传...'
+      loadingText.value = instance!.proxy!.$t('upload.loading1')
     }
   },
   {

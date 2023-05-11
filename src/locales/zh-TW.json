@@ -1,4 +1,7 @@
 {
+  "repo": "倉庫",
+  "branch": "分支",
+  "dir": "目錄",
   "header": {
     "notLogin": "未登錄",
     "logout": "退出登錄",
@@ -78,7 +81,25 @@
     "reset": "重置",
     "confirm": "確認"
   },
-  "repo": "倉庫",
-  "branch": "分支",
-  "dir": "目录"
+  "upload": {
+    "uploadAreaTips": "拖拽 / 粘貼 / 點擊此處選擇圖片",
+    "uploaded": "已上傳",
+    "upload": "上傳",
+    "message1": "請先完成圖床配置",
+    "message2": "請選擇一個倉庫",
+    "message3": "目錄不能為空",
+    "message4": "請選擇要上傳的圖片",
+    "message5": "圖片上傳成功",
+    "message6": "圖片批量上傳成功",
+    "message7": "上傳失敗，請稍後重試",
+    "message8": "圖片上傳成功",
+    "fold": "折疊",
+    "expand": "展開",
+    "hash": "哈希化",
+    "rename": "重命名",
+    "prefixNaming": "前綴命名",
+    "delete": "刪除",
+    "copyLink": "點擊復製圖片鏈接",
+    "loading1": "正在上傳 ..."
+  }
 }
