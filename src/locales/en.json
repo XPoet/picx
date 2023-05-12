@@ -101,5 +101,33 @@
     "delete": "Delete",
     "copyLink": "Click to copy image link",
     "loading1": "Uploading ..."
+  },
+  "management": {
+    "reload": "Reload all data in the {dir} directory",
+    "loadingTxt1": "Loading ...",
+    "loadingTxt2": "Renaming ...",
+    "loadingTxt3": "Deleting ...",
+    "back": "Double-click back",
+    "toNextDir": "Double-click to enter the next level directory",
+    "property": "Property",
+    "tips": "Tips",
+    "delTips": "This operation will permanently delete the image",
+    "delTips2": "Are you sure you want to delete the selected {total} images in bulk?",
+    "renameTips": "Rename this picture to {name}?",
+    "message1": "Image name cannot be empty",
+    "message2": "Image name unchanged",
+    "message3": "Rename failed",
+    "message4": "Update successfully",
+    "message5": "Delete successfully",
+    "message6": "Batch delete successfully",
+    "message7": "Deletion failed, please try again later",
+    "imageName": "Image name",
+    "imageSize": "Image size",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "unselect": "Unselect",
+    "batchCopy": "Batch copy image link",
+    "batchDelete": "Batch delete image",
+    "selectTotal": "Selected {total} images"
   }
 }

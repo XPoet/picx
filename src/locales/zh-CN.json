@@ -103,5 +103,33 @@
     "delete": "删除",
     "copyLink": "点击复制图片链接",
     "loading1": "正在上传 ..."
+  },
+  "management": {
+    "reload": "重新加载 {dir} 目录所有数据",
+    "loadingTxt1": "加载中 ...",
+    "loadingTxt2": "正在重命名 ...",
+    "loadingTxt3": "删除中 ...",
+    "back": "双击后退",
+    "toNextDir": "双击进入下一级目录",
+    "property": "属性",
+    "tips": "提示",
+    "delTips": "此操作将会永久删除图片",
+    "delTips2": "已选中 {total} 张图片，是否批量删除？",
+    "renameTips": "该图片重命名为 {name} ？",
+    "message1": "图片名不能为空",
+    "message2": "图片名无改变",
+    "message3": "重命名失败",
+    "message4": "更新成功",
+    "message5": "删除成功",
+    "message6": "批量删除成功",
+    "message7": "删除失败，请稍后重试",
+    "imageName": "图片名称",
+    "imageSize": "图片大小",
+    "selectAll": "全选",
+    "deselectAll": "取消全选",
+    "unselect": "取消选择",
+    "batchCopy": "批量复制图片链接",
+    "batchDelete": "批量删除图片",
+    "selectTotal": "已选择 {total} 张图片"
   }
 }

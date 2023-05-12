@@ -6,7 +6,10 @@
           <selected-info-bar bar-type="management" />
         </div>
         <div class="right flex-start">
-          <el-tooltip placement="top" :content="'重新加载 ' + userConfigInfo.viewDir + ' 目录内容'">
+          <el-tooltip
+            placement="top"
+            :content="$t('management.reload', { dir: userConfigInfo.viewDir })"
+          >
             <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
               <IEpRefresh />
             </el-icon>
@@ -14,7 +17,11 @@
         </div>
       </div>
 
-      <div class="bottom" v-loading="loadingImageList" element-loading-text="加载中...">
+      <div
+        class="bottom"
+        v-loading="loadingImageList"
+        :element-loading-text="$t('management.loadingTxt1')"
+      >
         <image-selector
           v-if="currentPathImageList.length"
           :currentDirImageList="currentPathImageList"

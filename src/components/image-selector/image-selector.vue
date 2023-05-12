@@ -2,25 +2,25 @@
   <div class="selector-wrapper" v-if="getImageCardCheckedNum">
     <div class="selector-left-box">
       <el-checkbox
-        :label="allChecked ? '取消全选' : '全选'"
+        :label="allChecked ? $t('management.deselectAll') : $t('management.selectAll')"
         v-model="allChecked"
         @change="allCheckChange"
       ></el-checkbox>
-      <div class="item">已选择 {{ getImageCardCheckedNum }} 张图片</div>
-      <div class="item cancel-select-btn" @click="cancelPick">取消选择</div>
+      <div class="item">{{ $t('management.selectTotal', { total: getImageCardCheckedNum }) }}</div>
+      <div class="item cancel-select-btn" @click="cancelPick">{{ $t('management.unselect') }}</div>
     </div>
     <div class="selector-right-box">
-      <el-tooltip placement="top" content="批量复制链接">
+      <el-tooltip placement="top" :content="$t('management.batchCopy')">
         <el-icon class="btn-icon" @click="batchCopy"><IEpCopyDocument /></el-icon>
       </el-tooltip>
-      <el-tooltip placement="top" content="批量删除图片">
+      <el-tooltip placement="top" :content="$t('management.batchDelete')">
         <el-icon class="btn-icon" @click="batchDeleteImage"><IEpDelete /></el-icon>
       </el-tooltip>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, onMounted, watch, ref } from 'vue'
+import { computed, onMounted, watch, ref, getCurrentInstance } from 'vue'
 import { useStore } from '@/store'
 import { UploadedImageModel, DeleteStatusEnum } from '@/common/model'
 import { batchCopyImageLinks, deleteImageOfGitHub } from '@/utils'
@@ -36,6 +36,7 @@ defineEmits(['update:initImageList'])
 
 const store = useStore()
 const allChecked = ref(false)
+const instance = getCurrentInstance()
 
 const getImageCardCheckedArr = computed(() => store.getters.getImageCardCheckedArr)
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
@@ -65,8 +66,8 @@ const cancelPick = () => {
 const batchDeleteImage = () => {
   if (getImageCardCheckedArr.value?.length > 0) {
     ElMessageBox.confirm(
-      `已选中 ${getImageCardCheckedArr.value?.length} 张图片，是否批量删除？`,
-      '删除提示',
+      instance?.proxy?.$t('management.delTips2', { total: getImageCardCheckedArr.value?.length }),
+      instance?.proxy?.$t('management.tips'),
       {
         type: 'warning'
       }
@@ -74,20 +75,18 @@ const batchDeleteImage = () => {
       .then(async () => {
         const res = await deleteImageOfGitHub(getImageCardCheckedArr.value, userConfigInfo)
         if (res === DeleteStatusEnum.deleted) {
-          ElMessage.success('删除成功')
+          ElMessage.success({ message: instance?.proxy?.$t('management.message5') })
         }
         if (res === DeleteStatusEnum.allDeleted) {
-          ElMessage.success('批量删除成功')
+          ElMessage.success({ message: instance?.proxy?.$t('management.message6') })
         }
         if (res === DeleteStatusEnum.deleteFail) {
-          ElMessage.error('删除失败，请稍后重试')
+          ElMessage.error({ message: instance?.proxy?.$t('management.message7') })
         }
       })
       .catch(() => {
-        console.log('取消批量删除')
+        console.log('Cancel')
       })
-  } else {
-    ElMessage.warning('请先选择图片')
   }
 }
 
