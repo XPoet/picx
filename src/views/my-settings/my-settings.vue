@@ -67,6 +67,7 @@
             <el-card class="settings-item-card">
               <compress-config-box
                 ref="compressConfigBoxRef"
+                usage-scenario="imageHosting"
                 :disabled="!userSettings.compress.enable"
                 @encoder=";(userSettings.compress.encoder = $event), persistUserSettings()"
               />

@@ -24,17 +24,24 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { CompressEncoderEnum } from '@/common/model'
+import { store } from '@/store'
+
+const userSettings = computed(() => store.getters.getUserSettings).value
 
 const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.webP)
 
 const emit = defineEmits(['encoder'])
 
-defineProps({
+const props = defineProps({
   disabled: {
     type: Boolean,
     default: false
+  },
+  usageScenario: {
+    type: String as () => 'imageHosting' | 'toolbox',
+    default: 'toolbox'
   }
 })
 
@@ -47,6 +54,9 @@ const reset = () => {
 }
 
 onMounted(() => {
+  if (props.usageScenario === 'imageHosting') {
+    compressEncoder.value = userSettings.compress.encoder
+  }
   emit('encoder', compressEncoder.value)
 })
 
