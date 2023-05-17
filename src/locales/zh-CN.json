@@ -2,6 +2,7 @@
   "repo": "仓库",
   "branch": "分支",
   "dir": "目录",
+  "tips": "提示",
   "header": {
     "notLogin": "未登录",
     "logout": "退出登录",
@@ -23,7 +24,63 @@
     "transform": "转换 "
   },
   "settings": {
+    "img_name": {
+      "title": "图片名称设置",
+      "hash_switch_name": "自动哈希化",
+      "hash_switch_desc": "上传前自动给图片名增加哈希码，确保图片名唯一，强烈建议开启",
+      "prefix_switch_name": "添加前缀命名",
+      "prefix_switch_desc": "上传前自动给图片名增加前缀，例如：abc-image.jpg，abc- 为前缀",
+      "prefix_input_placeholder": "请输入命名前缀 ..."
+    },
+    "img_watermark": {
+      "title": "图片水印设置",
+      "switch_name": "是否添加水印",
+      "switch_desc": "开启后可以自定义水印文字、字体大小、位置、颜色和透明度",
+      "text": "水印文字",
+      "text_input_placeholder": "请输入水印文字，限制 20 字",
+      "size": "水印大小",
+      "color": "水印颜色",
+      "opacity": "水印透明度",
+      "position": "水印位置",
+      "position_1": "左上角",
+      "position_2": "左下角",
+      "position_3": "右上角",
+      "position_4": "右下角"
+    },
+    "img_compress": {
+      "title": "图片压缩设置",
+      "switch_name": "是否压缩图片",
+      "switch_desc": "开启后上传前会自动压缩图片，有效缩短图片上传和加载时间，强烈建议开启",
+      "radio_group_title": "选择图片压缩算法",
+      "radio_1": "webP",
+      "radio_1_desc": "压缩后图片格式为 webp，压缩率较高，大多数浏览器支持",
+      "radio_2": "mozJPEG",
+      "radio_2_desc": "压缩后图片格式为 jpg，兼容性最好，所有浏览器支持",
+      "radio_3": "avif",
+      "radio_3_desc": "压缩后图片格式为 avif，压缩率极高，部分现代浏览器支持"
+    },
+    "link_rule": {
+      "title": "图片链接规则配置",
+      "select_title": "选择图片链接规则",
+      "card_title": "配置自定义图片链接规则",
+      "card_table_col_title_1": "类型",
+      "card_table_col_title_2": "CDN 规则",
+      "card_table_col_title_3": "操作",
+      "input_name_1": "图片链接类型",
+      "input_name_1_rule": "图片链接类型名称不能为空",
+      "input_name_2": "图片链接规则",
+      "input_name_2_rule": "图片链接规则不能为空",
+      "btn_name_1": "添加图片链接规则"
+    },
+    "link_format": {
+      "title": "图片链接格式设置",
+      "switch_name": "自动转换图片链接格式",
+      "switch_desc": "上传成功后复制的图片链接自动转换成 {type} 格式",
+      "select_title": "选择图片链接格式",
+      "delete_tips": "此操作将永久删除图片链接规则"
+    },
     "theme": {
+      "title": "主题设置",
       "system": "跟随系统",
       "dark": "暗夜",
       "light": "白昼"
@@ -112,7 +169,6 @@
     "back": "双击后退",
     "toNextDir": "双击进入下一级目录",
     "property": "属性",
-    "tips": "提示",
     "delTips": "此操作将会永久删除图片",
     "delTips2": "已选中 {total} 张图片，是否批量删除？",
     "renameTips": "该图片重命名为 {name} ？",

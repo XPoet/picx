@@ -157,7 +157,7 @@ const deleteImageTips = (imageObj: UploadedImageModel) => {
     <div>${instance?.proxy?.$t('management.delTips')}：</div>
     <strong>${imageObj.name}</strong>
     `,
-    instance?.proxy?.$t('management.tips'),
+    instance?.proxy?.$t('tips'),
     {
       dangerouslyUseHTMLString: true,
       type: 'warning'
@@ -257,7 +257,7 @@ const updateRename = async () => {
 
   ElMessageBox.confirm(
     instance?.proxy?.$t('management.renameTips', { name: renameInputValue.value }),
-    instance?.proxy?.$t('management.tips'),
+    instance?.proxy?.$t('tips'),
     {
       type: 'info'
     }

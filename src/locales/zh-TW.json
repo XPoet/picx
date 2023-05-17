@@ -2,6 +2,7 @@
   "repo": "倉庫",
   "branch": "分支",
   "dir": "目錄",
+  "tips": "提示",
   "header": {
     "notLogin": "未登錄",
     "logout": "退出登錄",
@@ -23,7 +24,63 @@
     "transform": "轉換 "
   },
   "settings": {
+    "img_name": {
+      "title": "圖片名稱設置",
+      "hash_switch_name": "自動哈希化",
+      "hash_switch_desc": "上傳前自動給圖片名增加哈希碼，確保圖片名唯一，強烈建議開啟",
+      "prefix_switch_name": "添加前綴命名",
+      "prefix_switch_desc": "上傳前自動給圖片名增加前綴，例如：abc-image.jpg，abc- 為前綴",
+      "prefix_input_placeholder": "請輸入命名前綴 ..."
+    },
+    "img_watermark": {
+      "title": "圖片水印設置",
+      "switch_name": "是否添加水印",
+      "switch_desc": "開啟後可以自定義水印文字、字體大小、位置、顏色和透明度",
+      "text": "水印文字",
+      "text_input_placeholder": "請輸入水印文字，限製 20 字",
+      "size": "水印大小",
+      "color": "水印顏色",
+      "opacity": "水印透明度",
+      "position": "水印位置",
+      "position_1": "左上角",
+      "position_2": "左下角",
+      "position_3": "右上角",
+      "position_4": "右下角"
+    },
+    "img_compress": {
+      "title": "圖片壓縮設置",
+      "switch_name": "是否壓縮圖片",
+      "switch_desc": "開啟後上傳前會自動壓縮圖片，有效縮短圖片上傳和加載時間，強烈建議開啟",
+      "radio_group_title": "選擇圖片壓縮算法",
+      "radio_1": "webP",
+      "radio_1_desc": "壓縮後圖片格式為 webp，壓縮率較高，大多數瀏覽器支持",
+      "radio_2": "mozJPEG",
+      "radio_2_desc": "壓縮後圖片格式為 jpg，兼容性最好，所有瀏覽器支持",
+      "radio_3": "avif",
+      "radio_3_desc": "壓縮後圖片格式為 avif，壓縮率極高，部分現代瀏覽器支持"
+    },
+    "link_rule": {
+      "title": "圖片鏈接規則配置",
+      "select_title": "選擇圖片鏈接規則",
+      "card_title": "配置自定義圖片鏈接規則",
+      "card_table_col_title_1": "類型",
+      "card_table_col_title_2": "CDN 規則",
+      "card_table_col_title_3": "操作",
+      "input_name_1": "圖片鏈接類型",
+      "input_name_1_rule": "圖片鏈接類型名稱不能為空",
+      "input_name_2": "圖片鏈接規則",
+      "input_name_2_rule": "圖片鏈接規則不能為空",
+      "btn_name_1": "添加圖片鏈接規則"
+    },
+    "link_format": {
+      "title": "圖片鏈接格式設置",
+      "switch_name": "自動轉換圖片鏈接格式",
+      "switch_desc": "上傳成功後復製的圖片鏈接自動轉換成 {type} 格式",
+      "select_title": "選擇圖片鏈接格式",
+      "delete_tips": "此操作將永久刪除圖片鏈接規則"
+    },
     "theme": {
+      "title": "主題設置",
       "system": "跟隨系統",
       "dark": "暗夜",
       "light": "白晝"
@@ -67,6 +124,8 @@
     "message13": "{branch} 分支已存在，請在分支列表中選擇",
     "message14": "{branch} 分支創建成功",
     "createBranch": "新建分支",
+    "branchMode": "分支方式",
+    "selectBranch2": "選擇 {repo}} 倉庫裏的分支",
     "reload": "重新載入所有{type}數據",
     "dirMode": "目錄模式",
     "inputNewDir": "手動輸入一個新目錄",
@@ -110,7 +169,6 @@
     "back": "雙擊後退",
     "toNextDir": "雙擊進入下一級目錄",
     "property": "屬性",
-    "tips": "提示",
     "delTips": "此操作將會永久刪除圖片",
     "delTips2": "已選中 {total} 張圖片，是否批量刪除？",
     "renameTips": "該圖片重命名為 {name} ？",

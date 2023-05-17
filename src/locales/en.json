@@ -2,6 +2,7 @@
   "repo": "Repository",
   "branch": "Branch",
   "dir": "Directory",
+  "tips": "Tips",
   "header": {
     "notLogin": "Not log in",
     "logout": "Log out",
@@ -23,7 +24,63 @@
     "transform": "Transform "
   },
   "settings": {
+    "img_name": {
+      "title": "Image Name Settings",
+      "hash_switch_name": "Hashing",
+      "hash_switch_desc": "Automatically add a hash code to the image name before uploading to ensure uniqueness. It is strongly recommended to turn on this feature.",
+      "prefix_switch_name": "Add Prefix",
+      "prefix_switch_desc": "Automatically add a prefix to the image name before uploading. For example: abc-image.jpg, where abc- is the prefix.",
+      "prefix_input_placeholder": "Please enter the name prefix..."
+    },
+    "img_watermark": {
+      "title": "Image Watermark Settings",
+      "switch_name": "Add Watermark",
+      "switch_desc": "After turning on this feature, you can customize the watermark text, font size, position, color, and transparency.",
+      "text": "Text",
+      "text_input_placeholder": "Please enter the watermark text, limited to 20 characters.",
+      "size": "Size",
+      "color": "Color",
+      "opacity": "Opacity",
+      "position": "Position",
+      "position_1": "Top Left",
+      "position_2": "Bottom Left",
+      "position_3": "Top Right",
+      "position_4": "Bottom Right"
+    },
+    "img_compress": {
+      "title": "Image Compression Settings",
+      "switch_name": "Compress Images",
+      "switch_desc": "After enable, the image will be auto compressed before uploading, which can effectively shorten the image upload and loading time. It is strongly recommended enable.",
+      "radio_group_title": "Select image compression algorithm",
+      "radio_1": "WebP",
+      "radio_1_desc": "The compressed image format is webp, which has a higher compression ratio and is supported by most browsers.",
+      "radio_2": "MozJPEG",
+      "radio_2_desc": "The compressed image format is jpg, which has the best compatibility and is supported by all browsers.",
+      "radio_3": "AVIF",
+      "radio_3_desc": "The compressed image format is avif, which has an extremely high compression ratio and is supported by some modern browsers."
+    },
+    "link_rule": {
+      "title": "Image Link Rules Configuration",
+      "select_title": "Select Image Link Rule",
+      "card_title": "Configure Custom Image Link Rules",
+      "card_table_col_title_1": "Type",
+      "card_table_col_title_2": "CDN Rule",
+      "card_table_col_title_3": "Action",
+      "input_name_1": "Link Type",
+      "input_name_1_rule": "The Image Link Type Name cannot be empty.",
+      "input_name_2": "Link Rule",
+      "input_name_2_rule": "The Image Link Rule cannot be empty.",
+      "btn_name_1": "Add Image Link Rule"
+    },
+    "link_format": {
+      "title": "Image Link Format Settings",
+      "switch_name": "Automatically Convert Image Link Format",
+      "switch_desc": "After a successful upload, the copied image link will be automatically converted to the {type} format.",
+      "select_title": "Select Image Link Format",
+      "delete_tips": "This operation will permanently delete the image link rule"
+    },
     "theme": {
+      "title": "Theme Settings",
       "system": "System",
       "dark": "Dark",
       "light": "Light"
@@ -110,7 +167,6 @@
     "back": "Double-click back",
     "toNextDir": "Double-click to enter the next level directory",
     "property": "Property",
-    "tips": "Tips",
     "delTips": "This operation will permanently delete the image",
     "delTips2": "Are you sure you want to delete the selected {total} images in bulk?",
     "renameTips": "Rename this picture to {name}?",

@@ -67,7 +67,7 @@ const batchDeleteImage = () => {
   if (getImageCardCheckedArr.value?.length > 0) {
     ElMessageBox.confirm(
       instance?.proxy?.$t('management.delTips2', { total: getImageCardCheckedArr.value?.length }),
-      instance?.proxy?.$t('management.tips'),
+      instance?.proxy?.$t('tips'),
       {
         type: 'warning'
       }

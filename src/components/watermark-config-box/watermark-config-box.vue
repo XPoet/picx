@@ -7,10 +7,10 @@
   >
     <el-row>
       <el-col :span="24">
-        <el-form-item label="水印文字">
+        <el-form-item :label="$t('settings.img_watermark.text')">
           <el-input
             v-model="watermark.text"
-            placeholder="请输入水印文字，限制 20 字"
+            :placeholder="$t('settings.img_watermark.text_input_placeholder')"
             clearable
             maxlength="20"
             @input="changeWatermarkConfig"
@@ -19,7 +19,7 @@
       </el-col>
 
       <el-col :span="isTool ? 10 : 24">
-        <el-form-item label="字体大小">
+        <el-form-item :label="$t('settings.img_watermark.size')">
           <el-input-number
             v-model="watermark.fontSize"
             :min="40"
@@ -31,13 +31,13 @@
       </el-col>
 
       <el-col :span="isTool ? 14 : 24">
-        <el-form-item label="水印颜色">
+        <el-form-item :label="$t('settings.img_watermark.color')">
           <el-color-picker v-model="watermark.textColor" @change="changeWatermarkConfig" />
         </el-form-item>
       </el-col>
 
       <el-col :span="isTool ? 10 : 24">
-        <el-form-item label="水印透明度">
+        <el-form-item :label="$t('settings.img_watermark.opacity')">
           <el-input-number
             v-model="watermark.opacity"
             :precision="1"
@@ -50,12 +50,20 @@
       </el-col>
 
       <el-col :span="isTool ? 14 : 24">
-        <el-form-item label="水印位置">
+        <el-form-item :label="$t('settings.img_watermark.position')">
           <el-radio-group v-model="watermark.position" @change="changeWatermarkConfig">
-            <el-radio :label="WatermarkPositionEnum.leftTop">左上角</el-radio>
-            <el-radio :label="WatermarkPositionEnum.leftBottom">左下角</el-radio>
-            <el-radio :label="WatermarkPositionEnum.rightTop">右上角</el-radio>
-            <el-radio :label="WatermarkPositionEnum.rightBottom">右下角</el-radio>
+            <el-radio :label="WatermarkPositionEnum.leftTop">
+              {{ $t('settings.img_watermark.position_1') }}
+            </el-radio>
+            <el-radio :label="WatermarkPositionEnum.leftBottom">
+              {{ $t('settings.img_watermark.position_2') }}
+            </el-radio>
+            <el-radio :label="WatermarkPositionEnum.rightTop">
+              {{ $t('settings.img_watermark.position_3') }}
+            </el-radio>
+            <el-radio :label="WatermarkPositionEnum.rightBottom">
+              {{ $t('settings.img_watermark.position_4') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-col>
