@@ -48,7 +48,7 @@
       <div class="row-item" v-if="uploadImageList.length">
         <div class="content-box" style="text-align: right">
           <el-button :disabled="uploading" plain type="warning" @click="resetUploadInfo">
-            {{ $t('config.reset') }} <span class="shortcut-key">[ {{ shortcutKey }} + A ]</span>
+            {{ $t('reset') }} <span class="shortcut-key">[ {{ shortcutKey }} + A ]</span>
           </el-button>
           <el-button :disabled="uploading" plain type="primary" @click="uploadImage">
             {{ $t('upload.upload') }} <span class="shortcut-key">[ {{ shortcutKey }} + S ]</span>

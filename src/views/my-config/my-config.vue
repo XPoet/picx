@@ -223,7 +223,7 @@
           @click="resetConfig()"
           v-if="userConfigInfo.owner"
         >
-          {{ $t('config.reset') }}
+          {{ $t('reset') }}
         </el-button>
         <el-button
           plain
@@ -232,7 +232,7 @@
           @click="goUploadPage($t)"
           v-if="userConfigInfo.selectedRepo"
         >
-          {{ $t('config.confirm') }}
+          {{ $t('confirm') }}
         </el-button>
       </el-form-item>
     </el-form>

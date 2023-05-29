@@ -3,6 +3,9 @@
   "branch": "Branch",
   "dir": "Directory",
   "tips": "Tips",
+  "delete": "Delete",
+  "reset": "Reset",
+  "confirm": "Confirm",
   "header": {
     "notLogin": "Not log in",
     "logout": "Log out",
@@ -134,9 +137,7 @@
     "autoDir2": "Automatically create a directory with format yyyyMMdd",
     "repoDir": "Select directory in {repo} repository",
     "repoDir2": "Choose a directory in the {branch} branch",
-    "selectDir": "Select Dir",
-    "reset": "Reset",
-    "confirm": "Confirm"
+    "selectDir": "Select Dir"
   },
   "upload": {
     "uploadAreaTips": "Drag / Paste / Click here to select images",
@@ -185,5 +186,19 @@
     "batchCopy": "Batch copy image link",
     "batchDelete": "Batch delete image",
     "selectTotal": "Selected {total} images"
+  },
+  "toolbox": {
+    "tool_1": "Image Compressor",
+    "tool_1_desc": "Offline ultimate compression without size or quantity limit, and without uploading to server",
+    "tool_2": "Image to Base64",
+    "tool_2_desc": "Online conversion of images to Base64 encoding without size or quantity limit",
+    "tool_3": "Image Watermark",
+    "tool_3_desc": "Customize watermark text, font size, position, color and opacity",
+    "copy_base64": "Click to copy Base64 encoding",
+    "copy_base64_success": "Base64 encoding copied successfully",
+    "click_download": "Click to download",
+    "compress": "Compress",
+    "batch_download": "Batch Download",
+    "add_watermark": "Add Watermark"
   }
 }

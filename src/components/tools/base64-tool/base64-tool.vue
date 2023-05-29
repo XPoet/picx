@@ -13,7 +13,9 @@
       <getting-images ref="gettingImagesRef" @getImgList="getImgList"></getting-images>
 
       <div class="user-operate">
-        <el-button v-if="imgList.length" plain type="warning" @click="reset"> 重置 </el-button>
+        <el-button v-if="imgList.length" plain type="warning" @click="reset">
+          {{ $t('reset') }}
+        </el-button>
       </div>
     </div>
   </div>

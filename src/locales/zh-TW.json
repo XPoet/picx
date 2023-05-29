@@ -3,6 +3,9 @@
   "branch": "分支",
   "dir": "目錄",
   "tips": "提示",
+  "delete": "刪除",
+  "reset": "重置",
+  "confirm": "確認",
   "header": {
     "notLogin": "未登錄",
     "logout": "退出登錄",
@@ -136,9 +139,7 @@
     "autoDir2": "根據日期自動創建格式 yyyyMMdd 的目錄",
     "repoDir": "選擇 {repo} 倉庫目錄",
     "repoDir2": "選擇 {branch} 分支裏的一個目錄",
-    "selectDir": "選擇目錄",
-    "reset": "重置",
-    "confirm": "確認"
+    "selectDir": "選擇目錄"
   },
   "upload": {
     "uploadAreaTips": "拖拽 / 粘貼 / 點擊此處選擇圖片",
@@ -187,5 +188,19 @@
     "batchCopy": "批量復製圖片鏈接",
     "batchDelete": "批量刪除圖片",
     "selectTotal": "已選擇 {total} 張圖片"
+  },
+  "toolbox": {
+    "tool_1": "圖片壓縮",
+    "tool_1_desc": "不限製圖片大小和數量，不上傳至服務器的離線極致壓縮",
+    "tool_2": "圖片轉 Base64",
+    "tool_2_desc": "不限製圖片大小和數量，在線轉換成 Base64 編碼",
+    "tool_3": "圖片水印 ",
+    "tool_3_desc": "自定義水印文字、字體大小、位置、顏色和透明度",
+    "copy_base64": "點擊復製 Base64 編碼",
+    "copy_base64_success": "Base64 編碼復製成功",
+    "click_download": "點擊下載",
+    "compress": "壓縮",
+    "batch_download": "批量下載",
+    "add_watermark": "添加水印"
   }
 }
