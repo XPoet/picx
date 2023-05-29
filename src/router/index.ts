@@ -8,8 +8,7 @@ import feedback from '@/views/feedback-info/feedback-info.vue'
 import compressTool from '@/components/tools/compress-tool/compress-tool.vue'
 import base64Tool from '@/components/tools/base64-tool/base64-tool.vue'
 import watermarkTool from '@/components/tools/watermark-tool/watermark-tool.vue'
-
-const titleSuffix = ` | PicX 图床`
+import i18n from '@/plugins/vue/i18n'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -24,7 +23,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'config',
     component: config,
     meta: {
-      title: `图床配置${titleSuffix}`
+      title: `nav.config`
     }
   },
   {
@@ -32,7 +31,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'upload',
     component: upload,
     meta: {
-      title: `图片上传${titleSuffix}`
+      title: `nav.upload`
     }
   },
   {
@@ -40,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Management',
     component: management,
     meta: {
-      title: `图床管理${titleSuffix}`
+      title: `nav.management`
     }
   },
   {
@@ -48,7 +47,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'settings',
     component: settings,
     meta: {
-      title: `我的设置${titleSuffix}`
+      title: `nav.settings`
     }
   },
   {
@@ -56,7 +55,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Toolbox',
     component: toolbox,
     meta: {
-      title: `工具箱${titleSuffix}`
+      title: `nav.toolbox`
     },
     children: [
       {
@@ -81,8 +80,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'feedback',
     component: feedback,
     meta: {
-      title: `帮助反馈${titleSuffix}`
+      title: `nav.feedback`
     }
+  },
+  {
+    path: '/:catchAll(.*)',
+    redirect: '/'
   }
 ]
 
@@ -92,7 +95,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.title) (<any>window).document.title = to.meta.title
+  if (to.meta.title) {
+    ;(<any>window).document.title = `${i18n.global.t(to.meta.title as string)} | PicX`
+  }
   next()
 })
 

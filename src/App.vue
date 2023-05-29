@@ -15,6 +15,7 @@ import { useStore } from '@/store'
 import { getRegionByIP, throttle } from '@/utils'
 import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
 import MainContainer from '@/views/main-container/main-container.vue'
+import router from '@/router'
 
 const instance = getCurrentInstance()
 const store = useStore()
@@ -45,8 +46,8 @@ const elementPlusSizeHandle = (width: number) => {
 
 const setLanguage = (language: LanguageEnum) => {
   if (language === LanguageEnum.zhCN) {
-    elementPlusLocale.value = zhCN
-    instance!.proxy!.$i18n.locale = 'zh-CN'
+    elementPlusLocale.value = zhCN // 设置 Element Plus 组件库语言
+    instance!.proxy!.$i18n.locale = 'zh-CN' // 设置 i18n 语言
   } else if (language === LanguageEnum.zhTW) {
     elementPlusLocale.value = zhTW
     instance!.proxy!.$i18n.locale = 'zh-TW'
@@ -57,6 +58,11 @@ const setLanguage = (language: LanguageEnum) => {
     elementPlusLocale.value = zhCN
     instance!.proxy!.$i18n.locale = 'zh-CN'
   }
+
+  // 设置 Window 标题
+  ;(<any>window).document.title = `${instance!.proxy!.$t(
+    router.currentRoute.value.meta.title as string
+  )} | PicX`
 }
 
 const initLanguage = () => {
