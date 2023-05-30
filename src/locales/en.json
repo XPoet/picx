@@ -6,11 +6,15 @@
   "delete": "Delete",
   "reset": "Reset",
   "confirm": "Confirm",
+  "author": "Author",
+  "document": "Document",
+  "shortcut_key": "Shortcut Key",
   "header": {
     "notLogin": "Not log in",
     "logout": "Log out",
     "language": "Language",
-    "theme": "Theme"
+    "theme": "Theme",
+    "usage_count": "Usage count"
   },
   "nav": {
     "config": "Image Hosting Config",
@@ -206,8 +210,5 @@
     "text_2": "We suggest adding our website to your browser bookmarks for easy future access.",
     "text_3": "If PicX is helpful to you, please consider donating to the author to support open source development.",
     "text_4": "Disclaimer: Do not upload images that violate the laws in your local jurisdiction. The author is not responsible for any consequences arising from such actions."
-  },
-  "author": "Author",
-  "document": "Document",
-  "shortcut_key": "Shortcut Key"
+  }
 }

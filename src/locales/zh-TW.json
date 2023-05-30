@@ -6,11 +6,15 @@
   "delete": "刪除",
   "reset": "重置",
   "confirm": "確認",
+  "author": "作者",
+  "document": "文檔",
+  "shortcut_key": "快捷鍵",
   "header": {
     "notLogin": "未登錄",
     "logout": "退出登錄",
     "language": "語言",
-    "theme": "主題"
+    "theme": "主題",
+    "usage_count": "使用次數"
   },
   "nav": {
     "config": "圖床配置",
@@ -208,8 +212,5 @@
     "text_2": "建議將本站添加到瀏覽器收藏夾，方便下次使用。",
     "text_3": "如果 PicX 對你有幫助，歡迎贊賞作者，支持開源。",
     "text_4": "鄭重聲明：請勿使用 PicX 上傳違反你當地法律的圖片，所造成的一切後果與作者無關。"
-  },
-  "author": "作者",
-  "document": "文檔",
-  "shortcut_key": "快捷鍵"
+  }
 }

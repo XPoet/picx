@@ -6,11 +6,15 @@
   "delete": "删除",
   "reset": "重置",
   "confirm": "确认",
+  "author": "作者",
+  "document": "文档",
+  "shortcut_key": "快捷键",
   "header": {
     "notLogin": "未登录",
     "logout": "退出登录",
     "language": "语言",
-    "theme": "主题"
+    "theme": "主题",
+    "usage_count": "使用次数"
   },
   "nav": {
     "config": "图床配置",
@@ -208,8 +212,5 @@
     "text_2": "建议将本站添加到浏览器收藏夹，方便下次使用。",
     "text_3": "如果 PicX 对你有帮助，欢迎赞赏作者，支持开源。",
     "text_4": "郑重声明：请勿使用 PicX 上传违反你当地法律的图片，所造成的一切后果与作者无关。"
-  },
-  "author": "作者",
-  "document": "文档",
-  "shortcut_key": "快捷键"
+  }
 }
