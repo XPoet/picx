@@ -8,7 +8,8 @@
   "confirm": "Confirm",
   "author": "Author",
   "document": "Document",
-  "shortcut_key": "Shortcut Key",
+  "shortcut_key": "Shortcut key",
+  "copy_link": "Copy image link",
   "header": {
     "notLogin": "Not log in",
     "logout": "Log out",
@@ -189,7 +190,10 @@
     "unselect": "Unselect",
     "batchCopy": "Batch copy image link",
     "batchDelete": "Batch delete image",
-    "selectTotal": "Selected {total} images"
+    "selectTotal": "Selected {total} images",
+    "contextmenu_1": "Upload new image from current location",
+    "contextmenu_2": "Upload image to < {dir} >",
+    "contextmenu_3": "Root directory"
   },
   "toolbox": {
     "tool_1": "Image Compressor",

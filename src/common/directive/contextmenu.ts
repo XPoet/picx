@@ -3,6 +3,7 @@ import router from '@/router'
 import { store } from '@/store'
 import { ContextmenuEnum, DirModeEnum } from '@/common/model'
 import { copyImageLink } from '@/utils'
+import i18n from '@/plugins/vue/i18n'
 
 const menuClass = 'custom-contextmenu-container'
 let menuEle: any = null
@@ -27,7 +28,9 @@ const contextmenuDirective: Directive = {
         menuEle.setAttribute('class', menuClass)
         menuEle.style.position = 'fixed'
         menuEle.style.zIndex = '1000'
-        menuEle.innerHTML = `<li class="custom-contextmenu-item upload-image"></li><li class="custom-contextmenu-item copy-link">复制图片链接</li>`
+        menuEle.innerHTML = `<li class="custom-contextmenu-item upload-image"></li><li class="custom-contextmenu-item copy-link">${i18n.global.t(
+          'copy_link'
+        )}</li>`
         document.body.appendChild(menuEle)
       }
 
@@ -36,10 +39,12 @@ const contextmenuDirective: Directive = {
 
       if (type === ContextmenuEnum.img) {
         copyItem.style.display = 'block'
-        uploadItem.innerHTML = `从当前位置上传新图片`
+        uploadItem.innerHTML = i18n.global.t('management.contextmenu_1')
       } else {
         copyItem.style.display = 'none'
-        uploadItem.innerHTML = `上传图片到 < ${selectedDir === '/' ? '根目录' : selectedDir} > 目录`
+        uploadItem.innerHTML = i18n.global.t('management.contextmenu_2', {
+          dir: selectedDir === '/' ? i18n.global.t('management.contextmenu_3') : selectedDir
+        })
       }
 
       let setLeft = e.clientX

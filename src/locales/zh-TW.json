@@ -9,6 +9,7 @@
   "author": "作者",
   "document": "文檔",
   "shortcut_key": "快捷鍵",
+  "copy_link": "復製圖片鏈接",
   "header": {
     "notLogin": "未登錄",
     "logout": "退出登錄",
@@ -191,7 +192,10 @@
     "unselect": "取消選擇",
     "batchCopy": "批量復製圖片鏈接",
     "batchDelete": "批量刪除圖片",
-    "selectTotal": "已選擇 {total} 張圖片"
+    "selectTotal": "已選擇 {total} 張圖片",
+    "contextmenu_1": "從當前位置上傳新圖片",
+    "contextmenu_2": "上傳圖片到 < {dir} >",
+    "contextmenu_3": "根目錄"
   },
   "toolbox": {
     "tool_1": "圖片壓縮",

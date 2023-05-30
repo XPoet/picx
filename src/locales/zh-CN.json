@@ -9,6 +9,7 @@
   "author": "作者",
   "document": "文档",
   "shortcut_key": "快捷键",
+  "copy_link": "复制图片链接",
   "header": {
     "notLogin": "未登录",
     "logout": "退出登录",
@@ -191,7 +192,10 @@
     "unselect": "取消选择",
     "batchCopy": "批量复制图片链接",
     "batchDelete": "批量删除图片",
-    "selectTotal": "已选择 {total} 张图片"
+    "selectTotal": "已选择 {total} 张图片",
+    "contextmenu_1": "从当前位置上传新图片",
+    "contextmenu_2": "上传图片到 < {dir} >",
+    "contextmenu_3": "根目录"
   },
   "toolbox": {
     "tool_1": "图片压缩",
