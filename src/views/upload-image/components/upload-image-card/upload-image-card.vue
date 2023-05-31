@@ -17,14 +17,11 @@
       :element-loading-text="loadingText"
     >
       <el-image
-        :src="
-          imgObj.base64.compressBase64 ||
-          imgObj.base64.watermarkBase64 ||
-          imgObj.base64.originalBase64
-        "
+        :src="imgSrc"
         fit="cover"
         loading="lazy"
-        data-fancybox="gallery"
+        :hide-on-click-modal="true"
+        :preview-src-list="previewImgSrcList"
       />
     </div>
 
@@ -171,6 +168,12 @@ const renameInputRef = ref<any>(null)
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const imgSrc = computed(
+  () =>
+    props.imgObj.base64.compressBase64 ||
+    props.imgObj.base64.watermarkBase64 ||
+    props.imgObj.base64.originalBase64
+).value
 
 const loadingText = ref('')
 
@@ -227,9 +230,12 @@ watch(
   }
 )
 
+const previewImgSrcList = ref<string[]>([])
+
 onMounted(async () => {
   await initImgSettings(props.imgObj, userSettings)
   initFilename()
+  previewImgSrcList.value = [imgSrc]
 })
 </script>
 

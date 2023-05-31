@@ -8,7 +8,14 @@
     @mouseleave="isShowOperateBtn = false"
   >
     <div class="image-box">
-      <el-image :src="imgUrl" fit="cover" loading="lazy" lazy data-fancybox="gallery" />
+      <el-image
+        :src="imgUrl"
+        fit="cover"
+        loading="lazy"
+        lazy
+        :hide-on-click-modal="true"
+        :preview-src-list="previewImgSrcList"
+      />
     </div>
 
     <div class="info-box">
@@ -73,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref } from 'vue'
+import { computed, getCurrentInstance, onMounted, ref } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/stores'
@@ -292,6 +299,12 @@ const viewImageProperties = (imgObj: UploadedImageModel) => {
     }
   )
 }
+
+const previewImgSrcList = ref<string[]>([])
+
+onMounted(() => {
+  previewImgSrcList.value = [imgUrl.value as string]
+})
 </script>
 
 <style scoped lang="stylus">
