@@ -124,8 +124,8 @@
             {{ $t('settings.link_format.select_title') }}：
             <el-select v-model="userSettings.imageLinkFormat.selected" @change="saveUserSettings">
               <el-option
-                v-for="item in userSettings.imageLinkFormat.presetList"
-                :key="item.name"
+                v-for="(item, idx) in userSettings.imageLinkFormat.presetList"
+                :key="idx + item.name"
                 :label="item.name"
                 :value="item.name"
                 class="image-link-type-rule-option"

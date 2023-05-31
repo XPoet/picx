@@ -64,6 +64,10 @@ const initSettings: UserSettingsModel = {
       {
         name: 'HTML',
         format: '<img src="imageLink" alt="imageName" />'
+      },
+      {
+        name: 'BBCode',
+        format: '[img]imageLink[/img]'
       }
     ]
   },
