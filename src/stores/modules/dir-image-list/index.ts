@@ -90,11 +90,6 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
       let tempDirObj = state.dirObject
       dirList.forEach((d, i) => {
         tempDirObj = rmDir(tempDirObj, d, i === dirList.length - 1)
-
-        // 删除在用户配置信息模块里的目录项
-        if (i === 0) {
-          dispatch('USER_CONFIG_INFO_REMOVE_DIR', d)
-        }
       })
 
       dispatch('DIR_IMAGE_LIST_PERSIST')
@@ -202,7 +197,22 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
             const dpc = getDirContent(dp, state.dirObject)
             if (dpc && !dpc.imageList.length && !dpc.childrenDirs.length) {
               const { dirPath } = getUpOneLevelDir(dp)
-              dispatch('SET_USER_CONFIG_INFO', { viewDir: dirPath })
+
+              const viewDir: string = dirPath
+              const selectedDir: string = dirPath
+              let selectedDirList: string[] = selectedDir.split('/')
+              if (dirPath === '/') {
+                selectedDirList = []
+
+                // 删除 config 配置文件里 dirList 中的目录项
+                dispatch('USER_CONFIG_INFO_REMOVE_DIR', dp)
+              }
+
+              dispatch('SET_USER_CONFIG_INFO', {
+                viewDir,
+                selectedDir,
+                selectedDirList
+              })
               dispatch('DIR_IMAGE_LIST_REMOVE_DIR', dp)
             }
           })
