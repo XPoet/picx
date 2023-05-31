@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { gettingFilesHandle, isImage } from '@/utils'
 import { ImageHandleResult } from '@/common/model'
 

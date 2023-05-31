@@ -241,7 +241,7 @@
 
 <script lang="ts" setup>
 import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { BranchModeEnum, BranchModel, DirModeEnum } from '@/common/model'
 import { formatDatetime } from '@/utils'
 import {

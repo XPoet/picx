@@ -148,7 +148,7 @@
 import { computed, getCurrentInstance, onMounted, reactive, ref, watch } from 'vue'
 import { copyImageLink } from '@/utils'
 import { UploadImageModel } from '@/common/model'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { getFileSize } from '@/utils/file-utils'
 import { formatDatetime } from '@/utils/common-utils'
 import { hashRename, initImgSettings, prefixNamingTrans, rename } from './upload-image-card.util'

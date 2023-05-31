@@ -36,7 +36,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { DirModeEnum, ElementPlusSizeEnum } from '@/common/model'
 
 const store = useStore()

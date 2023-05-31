@@ -62,7 +62,7 @@
 <script lang="ts" setup>
 import { computed, watch, ref, Ref, onMounted, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import {
   ElementPlusSizeEnum,
   UploadedImageModel,

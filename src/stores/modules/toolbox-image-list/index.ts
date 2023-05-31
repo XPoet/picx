@@ -1,6 +1,6 @@
 import { Module } from 'vuex'
 import ToolboxImageListStateTypes from './types'
-import RootStateTypes from '@/store/types'
+import RootStateTypes from '@/stores/types'
 import { ImgProcessStateModel } from '@/common/model'
 
 const toolboxImageListModule: Module<ToolboxImageListStateTypes, RootStateTypes> = {

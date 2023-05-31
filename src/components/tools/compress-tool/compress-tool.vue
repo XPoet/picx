@@ -44,7 +44,7 @@
 import { ref, watch } from 'vue'
 import { CompressEncoderEnum, ImageHandleResult, ImgProcessStateModel } from '@/common/model'
 import { compressImage, downloadImage, imgFileToBase64 } from '@/utils'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 
 const store = useStore()
 

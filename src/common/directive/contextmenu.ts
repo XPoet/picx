@@ -1,6 +1,6 @@
 import { computed, Directive } from 'vue'
 import router from '@/router'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { ContextmenuEnum, DirModeEnum } from '@/common/model'
 import { copyImageLink } from '@/utils'
 import i18n from '@/plugins/vue/i18n'

@@ -78,7 +78,7 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, reactive, ref } from 'vue'
 import { FormInstance } from 'element-plus'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { getUuid } from '@/utils/common-utils'
 import { ImageLinkRuleModel } from '@/common/model'
 

@@ -9,9 +9,9 @@ import {
   WatermarkPositionEnum
 } from '@/common/model'
 import { deepAssignObject, getLocal, getUuid } from '@/utils'
-import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
-import RootStateTypes from '@/store/types'
-import UserSettingsStateTypes from '@/store/modules/user-settings/types'
+import UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
+import RootStateTypes from '@/stores/types'
+import UserSettingsStateTypes from '@/stores/modules/user-settings/types'
 import { LS_PICX_SETTINGS } from '@/common/constant'
 
 const initSettings: UserSettingsModel = {
@@ -25,7 +25,7 @@ const initSettings: UserSettingsModel = {
     encoder: CompressEncoderEnum.webP
   },
   theme: {
-    mode: ThemeModeEnum.follow
+    mode: ThemeModeEnum.system
   },
   elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {

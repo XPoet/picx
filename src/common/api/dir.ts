@@ -1,4 +1,4 @@
-import { store } from '@/store'
+import { store } from '@/stores'
 import { getFileSuffix, isImage, createManagementImageObject, getUuid } from '@/utils'
 import request from '@/utils/request'
 import { UserConfigInfoModel } from '@/common/model'

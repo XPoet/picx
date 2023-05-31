@@ -76,7 +76,7 @@
 import { computed, getCurrentInstance, ref } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { UploadedImageModel, UploadImageModel } from '@/common/model'
 import {
   getBase64ByImageUrl,

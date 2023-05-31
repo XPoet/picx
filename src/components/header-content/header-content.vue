@@ -65,7 +65,7 @@
               >
                 <el-option
                   :label="$t('settings.theme.system')"
-                  :value="ThemeModeEnum.follow"
+                  :value="ThemeModeEnum.system"
                 ></el-option>
                 <el-option
                   :label="$t('settings.theme.light')"
@@ -89,7 +89,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { LanguageEnum, ThemeModeEnum } from '@/common/model'
 
 const router = useRouter()

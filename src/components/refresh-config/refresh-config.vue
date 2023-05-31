@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { computed, getCurrentInstance } from 'vue'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { getAllRepoList, getBranchInfoList } from '@/common/api'
 
 const instance = getCurrentInstance()

@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { ImageHandleResult, ImgProcessStateModel } from '@/common/model'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 
 const store = useStore()
 

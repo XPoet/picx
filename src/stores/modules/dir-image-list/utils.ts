@@ -1,4 +1,4 @@
-import { DirObject } from '@/store/modules/dir-image-list/types'
+import { DirObject } from '@/stores/modules/dir-image-list/types'
 
 /**
  * 构造一个新的目录对象

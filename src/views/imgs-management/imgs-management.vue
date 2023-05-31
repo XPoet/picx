@@ -64,7 +64,7 @@
 <script lang="ts" setup>
 import { computed, onMounted, watch, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { getRepoPathContent } from '@/common/api'
 import { filterDirContent, getDirContent } from '@/views/imgs-management/imgs-management.util'
 

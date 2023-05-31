@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
 import router from '@/router/index'
-import { key, store } from '@/store'
+import { key, store } from '@/stores'
 import App from './App.vue'
 import i18n from '@/plugins/vue/i18n'
 import 'element-plus/theme-chalk/dark/css-vars.css'

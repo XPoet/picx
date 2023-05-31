@@ -55,7 +55,7 @@ import {
   WatermarkPositionEnum
 } from '@/common/model'
 import { addWatermarkToImage, downloadImage, imgFileToBase64 } from '@/utils'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 
 const store = useStore()
 

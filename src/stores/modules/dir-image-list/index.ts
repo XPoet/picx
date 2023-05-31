@@ -7,7 +7,7 @@ import {
   createDirObject,
   getUpLevelDirList,
   getUpOneLevelDir
-} from '@/store/modules/dir-image-list/utils'
+} from '@/stores/modules/dir-image-list/utils'
 import { getDirContent } from '@/views/imgs-management/imgs-management.util'
 
 const initDirObject = () => {

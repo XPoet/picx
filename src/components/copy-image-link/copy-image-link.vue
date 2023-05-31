@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import { computed, ref, onUpdated } from 'vue'
 import { UploadedImageModel } from '@/common/model'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { copyImageLink } from '@/utils'
 
 const props = defineProps({

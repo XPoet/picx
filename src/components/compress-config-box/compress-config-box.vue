@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { CompressEncoderEnum } from '@/common/model'
-import { store } from '@/store'
+import { store } from '@/stores'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 

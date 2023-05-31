@@ -63,7 +63,7 @@
 <script setup lang="ts">
 import { computed, onMounted, triggerRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { ElementPlusSizeEnum } from '@/common/model'
 import { navInfoList } from './nav-content.data'
 

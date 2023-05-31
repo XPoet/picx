@@ -146,7 +146,7 @@
             <el-select v-model="userSettings.theme.mode" @change="saveUserSettings">
               <el-option
                 :label="$t('settings.theme.system')"
-                :value="ThemeModeEnum.follow"
+                :value="ThemeModeEnum.system"
               ></el-option>
               <el-option
                 :label="$t('settings.theme.light')"
@@ -163,7 +163,7 @@
 
 <script lang="ts" setup>
 import { computed } from 'vue'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { ThemeModeEnum, UserSettingsModel } from '@/common/model'
 
 const userSettings = computed(() => store.getters.getUserSettings).value

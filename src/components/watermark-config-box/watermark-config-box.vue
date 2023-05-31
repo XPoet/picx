@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 import { onMounted, reactive } from 'vue'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { WatermarkPositionEnum } from '@/common/model'
 
 const watermark = reactive({

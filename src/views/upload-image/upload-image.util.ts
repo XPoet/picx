@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { UploadImageModel, UserSettingsModel } from '@/common/model'
 import { starredRepo } from '@/common/api'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { createUploadImageObject } from '@/utils'
 
 const userSettings = computed(() => store.getters.getUserSettings).value

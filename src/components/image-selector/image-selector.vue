@@ -21,7 +21,7 @@
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, watch, ref, getCurrentInstance } from 'vue'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { UploadedImageModel, DeleteStatusEnum } from '@/common/model'
 import { batchCopyImageLinks, deleteImageOfGitHub } from '@/utils'
 

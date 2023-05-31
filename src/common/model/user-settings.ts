@@ -22,7 +22,7 @@ export enum WatermarkPositionEnum {
 
 export enum ThemeModeEnum {
   // eslint-disable-next-line no-unused-vars
-  follow = 'follow',
+  system = 'system',
   // eslint-disable-next-line no-unused-vars
   light = 'light',
   // eslint-disable-next-line no-unused-vars

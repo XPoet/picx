@@ -1,5 +1,5 @@
 import { UploadedImageModel, UserConfigInfoModel, UploadImageModel } from '@/common/model'
-import { store } from '@/store'
+import { store } from '@/stores'
 import {
   createCommit,
   createRef,

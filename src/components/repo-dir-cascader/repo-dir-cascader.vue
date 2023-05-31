@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getDirInfoList } from '@/common/api'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { ElementPlusSizeEnum } from '@/common/model'
 import { NEW_DIR_COUNT_MAX } from '@/common/constant'
 

@@ -33,7 +33,7 @@
 import { onMounted, ref, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ToolItemModel } from '@/common/model'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { toolboxList } from './picx-toolbox.data'
 
 const ArrowRight = shallowRef(IEpArrowRight)
