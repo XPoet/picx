@@ -10,6 +10,9 @@
   "document": "Document",
   "shortcut_key": "Shortcut key",
   "copy_link": "Copy image link",
+  "copy_success_1": "The image link has been automatically copied to the system clipboard",
+  "copy_success_2": "Image link copied successfully",
+  "copy_fail_1": "Copy failed",
   "header": {
     "notLogin": "Not log in",
     "logout": "Log out",

@@ -5,7 +5,8 @@ import {
   UserConfigInfoModel,
   UserSettingsModel
 } from '@/common/model'
-import { copyText, getOSName } from '@/utils'
+import { copyText } from '@/utils'
+import i18n from '@/plugins/vue/i18n'
 
 /**
  * 生成一个图片链接
@@ -58,18 +59,16 @@ const transformImageLink = (
   return imageLink
 }
 
-const copyNotification = (message: string, duration: number = 6500) => {
-  ElNotification({
-    type: 'success',
-    title: '复制成功',
-    message,
-    duration,
-    offset: 50
-  })
-}
+const copyMessage = (autoCopy = false) => {
+  const message: string = autoCopy
+    ? i18n.global.t('copy_success_1')
+    : i18n.global.t('copy_success_2')
 
-const getCopyShortcutKey = (): string => {
-  return `${getOSName() === 'mac' ? 'Command' : 'Ctrl'} + V`
+  ElMessage({
+    type: autoCopy ? 'info' : 'success',
+    message,
+    duration: autoCopy ? 6000 : 4000
+  })
 }
 
 /**
@@ -92,13 +91,10 @@ export const copyImageLink = (
   )
   if (link) {
     copyText(link, () => {
-      const msg = `${imgObj.name} 图片链接已${
-        autoCopy ? '自动' : ''
-      }复制到系统剪贴板，可使用快捷键 ${getCopyShortcutKey()} 进行粘贴。`
-      copyNotification(msg)
+      copyMessage(autoCopy)
     })
   } else {
-    ElMessage.error(`复制失败`)
+    ElMessage.error({ message: i18n.global.t('copy_fail_1') })
   }
 }
 
@@ -126,12 +122,7 @@ export const batchCopyImageLinks = (
       linksTxt += `${link}${index < uploadedImgList.length - 1 ? '\n' : ''}`
     })
     copyText(linksTxt, () => {
-      const msg = `已${autoCopy ? '自动' : ''}复制 ${
-        uploadedImgList.length
-      } 张图片链接到系统剪贴板，可使用快捷键 ${getCopyShortcutKey()} 进行粘贴。`
-      copyNotification(msg)
+      copyMessage(autoCopy)
     })
-  } else {
-    console.warn('请先选择图片')
   }
 }

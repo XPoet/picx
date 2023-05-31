@@ -10,6 +10,9 @@
   "document": "文檔",
   "shortcut_key": "快捷鍵",
   "copy_link": "復製圖片鏈接",
+  "copy_success_1": "圖片鏈接已自動復製到系統剪貼板",
+  "copy_success_2": "圖片鏈接復製成功",
+  "copy_fail_1": "復製失敗",
   "header": {
     "notLogin": "未登錄",
     "logout": "退出登錄",
