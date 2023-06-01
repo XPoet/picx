@@ -21,7 +21,7 @@
         fit="cover"
         loading="lazy"
         :hide-on-click-modal="true"
-        :preview-src-list="previewImgSrcList"
+        :preview-src-list="[String(imgSrc)]"
       />
     </div>
 
@@ -230,12 +230,9 @@ watch(
   }
 )
 
-const previewImgSrcList = ref<string[]>([])
-
 onMounted(async () => {
   await initImgSettings(props.imgObj, userSettings)
   initFilename()
-  previewImgSrcList.value = [imgSrc]
 })
 </script>
 

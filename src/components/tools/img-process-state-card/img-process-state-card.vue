@@ -2,11 +2,11 @@
   <div class="img-process-state-card-container">
     <div class="img-container" v-loading="imgObj.processing">
       <el-image
-        :src="imgSrc"
+        :src="imgObj.finialBase64 || imgObj.originalBase64"
         fit="cover"
         loading="lazy"
         :hide-on-click-modal="true"
-        :preview-src-list="previewImgSrcList"
+        :preview-src-list="[imgObj.finialBase64 || imgObj.originalBase64]"
       />
     </div>
     <div class="info-container">
@@ -47,13 +47,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
 import { ImgProcessStateModel } from '@/common/model'
 import { copyText, downloadImage, getFileSize } from '@/utils'
 
 const emit = defineEmits(['remove'])
 
-const props = defineProps({
+defineProps({
   imgObj: {
     type: Object as () => ImgProcessStateModel,
     require: true,
@@ -64,8 +63,6 @@ const props = defineProps({
     default: 'compress' // compress | base64 | watermark
   }
 })
-
-const imgSrc = computed(() => props.imgObj.finialBase64 || props.imgObj.originalBase64).value
 
 const remove = (uuid: string) => {
   emit('remove', uuid)
@@ -82,12 +79,6 @@ const copyBase64 = (base64: string, $t: any) => {
     ElMessage.success({ message: $t('toolbox.copy_base64_success') })
   })
 }
-
-const previewImgSrcList = ref<string[]>([])
-
-onMounted(() => {
-  previewImgSrcList.value = [imgSrc]
-})
 </script>
 
 <style scoped lang="stylus">

@@ -14,7 +14,7 @@
         loading="lazy"
         lazy
         :hide-on-click-modal="true"
-        :preview-src-list="previewImgSrcList"
+        :preview-src-list="[imgUrl]"
       />
     </div>
 
@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, ref } from 'vue'
+import { computed, getCurrentInstance, ref } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
 import { useStore } from '@/stores'
@@ -282,6 +282,10 @@ const visibleChange = (e: boolean) => {
   dropdownVisible.value = e
 }
 
+/**
+ * 查看图片属性
+ * @param imgObj
+ */
 const viewImageProperties = (imgObj: UploadedImageModel) => {
   ElMessageBox.confirm(
     `
@@ -299,12 +303,6 @@ const viewImageProperties = (imgObj: UploadedImageModel) => {
     }
   )
 }
-
-const previewImgSrcList = ref<string[]>([])
-
-onMounted(() => {
-  previewImgSrcList.value = [imgUrl.value as string]
-})
 </script>
 
 <style scoped lang="stylus">
