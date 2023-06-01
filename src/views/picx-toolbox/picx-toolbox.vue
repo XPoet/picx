@@ -3,8 +3,10 @@
     <div v-if="showToolPanel" class="tool-panel">
       <div class="panel-header">
         <el-breadcrumb :separator-icon="ArrowRight">
-          <el-breadcrumb-item :to="{ path: toolboxPath }">工具箱</el-breadcrumb-item>
-          <el-breadcrumb-item>{{ currentTool.name }}</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: toolboxPath }">
+            {{ $t('nav.toolbox') }}
+          </el-breadcrumb-item>
+          <el-breadcrumb-item>{{ $t(currentTool.name) }}</el-breadcrumb-item>
         </el-breadcrumb>
       </div>
       <div class="panel-body">
@@ -19,9 +21,9 @@
               <component :is="tool.icon"></component>
             </el-icon>
           </div>
-          <div class="right">{{ tool.name }}</div>
+          <div class="right">{{ $t(tool.name) }}</div>
         </div>
-        <div class="bottom">{{ tool.desc }}</div>
+        <div class="bottom">{{ $t(tool.desc) }}</div>
       </li>
     </ul>
   </div>
@@ -31,7 +33,7 @@
 import { onMounted, ref, shallowRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ToolItemModel } from '@/common/model'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { toolboxList } from './picx-toolbox.data'
 
 const ArrowRight = shallowRef(IEpArrowRight)

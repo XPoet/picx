@@ -13,7 +13,9 @@
       <getting-images ref="gettingImagesRef" @getImgList="getImgList"></getting-images>
 
       <div class="user-operate">
-        <el-button v-if="imgList.length" plain type="warning" @click="reset"> 重置 </el-button>
+        <el-button v-if="imgList.length" plain type="warning" @click="reset">
+          {{ $t('reset') }}
+        </el-button>
       </div>
     </div>
   </div>
@@ -22,7 +24,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { ImageHandleResult, ImgProcessStateModel } from '@/common/model'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 
 const store = useStore()
 

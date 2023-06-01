@@ -1,7 +1,7 @@
 .copy-image-link-box {
   position relative
   display flex
-  align-items flex-end
+  align-items center
   justify-content space-between
   box-sizing border-box
   width 100%
@@ -14,25 +14,21 @@
     align-items center
   }
 
-  .btn-box {
-    position relative
+  .left {
+    justify-content flex-start
     box-sizing border-box
+    width 30rem
+    height 100%
+    font-size 18rem
+  }
+
+  .right {
+    justify-content flex-end
+    width calc(100% - 30rem)
     height 100%
 
-    .btn-item {
-      box-sizing border-box
-      padding 2rem 4rem
-      color var(--text-color)
-      font-size 12rem
-      border 1rem solid var(--text-color)
-      border-radius 5rem
-      box-shadow 0 1rem 2rem rgba(0, 0, 0, 0.3)
-      cursor pointer
-
-      &:hover {
-        color var(--background-color)
-        background var(--text-color)
-      }
+    .el-button {
+      width 100%
     }
   }
 }

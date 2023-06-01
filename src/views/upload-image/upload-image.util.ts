@@ -1,7 +1,7 @@
 import { computed } from 'vue'
 import { UploadImageModel, UserSettingsModel } from '@/common/model'
 import { starredRepo } from '@/common/api'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { createUploadImageObject } from '@/utils'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
@@ -31,9 +31,13 @@ export const generateUploadImageObject = (obj: {
   const { prefixNaming, defaultHash } = userSettings
 
   const hash = obj.uuid
-  const tmpIdx = obj.file.name.lastIndexOf('.')
-  const name = obj.file.name.slice(0, tmpIdx)
-  const suffix = obj.file.name.slice(tmpIdx + 1)
+
+  // 处理文件名，去除空格字符
+  const nameHandled = obj.file.name.trim().replaceAll(' ', '-')
+
+  const tmpIdx = nameHandled.lastIndexOf('.')
+  const name = nameHandled.slice(0, tmpIdx)
+  const suffix = nameHandled.slice(tmpIdx + 1)
 
   tmp.filename.initName = name
   tmp.filename.name = prefixNaming.enable ? `${prefixNaming.prefix}${name}` : name

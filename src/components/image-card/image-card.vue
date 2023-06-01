@@ -3,12 +3,19 @@
     class="image-card"
     :class="{ checked: imageObj.checked }"
     v-loading="imageObj.deleting"
-    element-loading-text="删除中..."
+    :element-loading-text="$t('management.loadingTxt3')"
     @mouseenter="isShowOperateBtn = true"
     @mouseleave="isShowOperateBtn = false"
   >
     <div class="image-box">
-      <el-image :src="imgUrl" fit="cover" loading="lazy" lazy data-fancybox="gallery" />
+      <el-image
+        :src="imgUrl"
+        fit="cover"
+        loading="lazy"
+        lazy
+        :hide-on-click-modal="true"
+        :preview-src-list="[imgUrl]"
+      />
     </div>
 
     <div class="info-box">
@@ -24,8 +31,8 @@
             :maxlength="RENAME_MAX_LENGTH"
           ></el-input>
           <el-button-group size="small">
-            <el-button :icon="Close" @click="isRenameImg = false" />
-            <el-button :icon="Check" @click.prevent="updateRename" />
+            <el-button @click="isRenameImg = false"><IEpClose /></el-button>
+            <el-button @click.prevent="updateRename"><IEpCheck /></el-button>
           </el-button-group>
         </div>
         <!-- 文件名 -->
@@ -55,9 +62,15 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="deleteImageTips(imageObj)"> 删除 </el-dropdown-item>
-              <el-dropdown-item @click.self="showRenameInput(imageObj)"> 重命名 </el-dropdown-item>
-              <el-dropdown-item @click="viewImageProperties(imageObj)"> 属性 </el-dropdown-item>
+              <el-dropdown-item @click="deleteImageTips(imageObj)">
+                {{ $t('upload.delete') }}
+              </el-dropdown-item>
+              <el-dropdown-item @click.self="showRenameInput(imageObj)">
+                {{ $t('upload.rename') }}
+              </el-dropdown-item>
+              <el-dropdown-item @click="viewImageProperties(imageObj)">
+                {{ $t('management.property') }}
+              </el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
@@ -67,11 +80,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, getCurrentInstance, ref } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
-import { Check, Close } from '@element-plus/icons-vue'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { UploadedImageModel, UploadImageModel } from '@/common/model'
 import {
   getBase64ByImageUrl,
@@ -97,6 +109,8 @@ const props = defineProps({
     default: false
   }
 })
+
+const instance = getCurrentInstance()
 
 const store = useStore()
 const router = useRoute()
@@ -131,9 +145,9 @@ const deleteOriginImage = (
     if (res) {
       if (isRename) {
         isRenameImg.value = false
-        ElMessage.success('更新成功')
+        ElMessage.success({ message: instance?.proxy?.$t('management.message4') })
       } else {
-        ElMessage.success('删除成功')
+        ElMessage.success({ message: instance?.proxy?.$t('management.message5') })
       }
       await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
       await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
@@ -147,10 +161,10 @@ const deleteOriginImage = (
 const deleteImageTips = (imageObj: UploadedImageModel) => {
   ElMessageBox.confirm(
     `
-    <div>此操作将会永久删除图片：</div>
+    <div>${instance?.proxy?.$t('management.delTips')}：</div>
     <strong>${imageObj.name}</strong>
     `,
-    `删除提示`,
+    instance?.proxy?.$t('tips'),
     {
       dangerouslyUseHTMLString: true,
       type: 'warning'
@@ -160,7 +174,7 @@ const deleteImageTips = (imageObj: UploadedImageModel) => {
       deleteOriginImage(imageObj)
     })
     .catch(() => {
-      console.log('取消删除')
+      console.log('Cancel')
     })
 }
 
@@ -185,13 +199,13 @@ const updateRename = async () => {
   const { imageObj } = props
 
   if (!renameInputValue.value) {
-    ElMessage.error('图片名不能为空')
+    ElMessage.error({ message: instance?.proxy?.$t('management.message1') })
     renameInputRef.value?.focus()
     return
   }
 
   if (renameInputValue.value === getFilename(imageObj.name)) {
-    ElMessage.error('图片名无改变')
+    ElMessage.error({ message: instance?.proxy?.$t('management.message2') })
     isRenameImg.value = false
     return
   }
@@ -199,7 +213,7 @@ const updateRename = async () => {
   const renameImg = async () => {
     const loading = ElLoading.service({
       lock: true,
-      text: '正在重命名...'
+      text: instance?.proxy?.$t('management.loadingTxt2')
     })
 
     // 重命名的逻辑是先上传一张新名称的图片，再删除旧图片
@@ -239,23 +253,27 @@ const updateRename = async () => {
         await deleteOriginImage(imageObj, true)
         await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
       } else {
-        ElMessage.error('重命名失败')
+        ElMessage.error({ message: instance?.proxy?.$t('management.message3') })
       }
     } else {
-      ElMessage.error('重命名失败')
+      ElMessage.error({ message: instance?.proxy?.$t('management.message3') })
     }
     loading.close()
     isRenameImg.value = false
   }
 
-  ElMessageBox.confirm(`该图片重命名为 ${renameInputValue.value} ？`, `提示`, {
-    type: 'info'
-  })
+  ElMessageBox.confirm(
+    instance?.proxy?.$t('management.renameTips', { name: renameInputValue.value }),
+    instance?.proxy?.$t('tips'),
+    {
+      type: 'info'
+    }
+  )
     .then(() => {
       renameImg()
     })
     .catch(() => {
-      console.log('取消重命名')
+      console.log('Cancel')
       isRenameImg.value = false
     })
 }
@@ -264,13 +282,19 @@ const visibleChange = (e: boolean) => {
   dropdownVisible.value = e
 }
 
+/**
+ * 查看图片属性
+ * @param imgObj
+ */
 const viewImageProperties = (imgObj: UploadedImageModel) => {
   ElMessageBox.confirm(
     `
-    <div>图片名称：<strong>${imgObj.name}</strong></div>
-    <div>图片大小：<strong>${getFileSize(imgObj.size)} KB</strong></div>
+    <div>${instance?.proxy?.$t('management.imageName')}：<strong>${imgObj.name}</strong></div>
+    <div>${instance?.proxy?.$t('management.imageSize')}：<strong>${getFileSize(
+      imgObj.size
+    )} KB</strong></div>
     `,
-    `属性`,
+    instance?.proxy?.$t('management.property'),
     {
       showCancelButton: false,
       showConfirmButton: false,

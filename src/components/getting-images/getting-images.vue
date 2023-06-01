@@ -16,7 +16,7 @@
     />
     <div class="upload-area-tips" v-if="!curShowImg.base64">
       <el-icon class="icon"><IEpUploadFilled /></el-icon>
-      <div class="text">拖拽 / 粘贴 / 点击此处选择图片</div>
+      <div class="text">{{ $t('upload.uploadAreaTips') }}</div>
     </div>
     <img class="preview-img" v-if="curShowImg.base64" :src="curShowImg.base64" />
   </div>
@@ -24,7 +24,7 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { gettingFilesHandle, isImage } from '@/utils'
 import { ImageHandleResult } from '@/common/model'
 

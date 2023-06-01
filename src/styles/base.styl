@@ -118,10 +118,10 @@ li {
   position relative
   box-sizing border-box
   padding 5rem 0
-  color var(--el-text-color-regular)
-  background var(--background-color-2)
-  border 1rem solid var(--border-color)
-  border-radius 2rem
+  color var(--text-color)
+  background var(--background-color)
+  border-radius 3rem
+  box-shadow var(--el-box-shadow-light)
 
   .custom-contextmenu-item {
     position relative
@@ -129,8 +129,7 @@ li {
     align-items center
     justify-content flex-start
     box-sizing border-box
-    padding 5rem 10rem
-    background var(--background-color-2)
+    padding 8rem 10rem
     cursor pointer
 
     &.copy-link {
@@ -139,14 +138,114 @@ li {
 
     &:hover {
       color var(--el-color-primary)
+      background var(--el-color-primary-light-9)
     }
   }
 }
+
 
 .text-ellipsis {
   overflow hidden
   white-space nowrap
   text-overflow ellipsis
 }
+
+.quick-actions-popover {
+  position relative
+  box-sizing border-box
+  width 100%
+  padding 10rem
+  background var(--background-color)
+  user-select none
+
+  .el-switch {
+    white-space nowrap
+  }
+}
+
+.personal-center-popover {
+  position relative
+  box-sizing border-box
+  width 100%
+  padding 10rem 0
+  background var(--background-color)
+
+  .content-item {
+    position relative
+    display flex
+    align-items center
+    justify-content space-between
+    box-sizing border-box
+    width 100%
+    height 36rem
+    padding 0 12rem
+    color var(--text-color-3)
+    font-size 14rem
+    cursor pointer
+
+    .el-icon {
+      margin-right 3rem
+    }
+
+    &:hover {
+      background var(--background-color-2)
+    }
+  }
+}
+
+
+.toggle-language-message {
+  box-sizing border-box
+  background var(--background-color)
+  border-radius 3rem
+  box-shadow var(--el-box-shadow-light)
+
+  .el-icon {
+    display none
+  }
+
+  .content-box {
+    line-height 2
+
+    .btn-box {
+      margin-left 6rem
+    }
+
+    .btn {
+      margin-left 2rem
+      padding 2rem 4rem
+      font-size 12rem
+      border-style solid
+      border-width 1rem
+      border-radius 4rem
+      cursor pointer
+    }
+
+    .confirm {
+      color var(--el-color-primary)
+      background var(--el-color-primary-light-9)
+      border-color var(--el-color-primary-light-5)
+
+      &:hover {
+        color var(--el-color-white)
+        background var(--el-color-primary)
+        border-color var(--el-color-primary)
+      }
+    }
+
+    .cancel {
+      color var(--el-color-info)
+      background var(--el-color-info-light-9)
+      border-color var(--el-color-info-light-5)
+
+      &:hover {
+        color var(--el-color-white)
+        background var(--el-color-info)
+        border-color var(--el-color-info)
+      }
+    }
+  }
+}
+
 
 

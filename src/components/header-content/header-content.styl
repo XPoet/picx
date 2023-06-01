@@ -55,6 +55,11 @@
 
 
   .header-right {
+    display flex
+    align-items center
+    justify-content flex-end
+    user-select none
+
     .user-info {
       display flex
       align-items center
@@ -64,23 +69,39 @@
         font-size 16rem
       }
 
-      .avatar {
+      .avatar-box {
         display flex
         align-items center
-        justify-content center
-        box-sizing border-box
-        width 38rem
-        height 38rem
-        margin-left 10rem
-        padding 1rem
-        color var(--text-color)
-        border 1rem solid var(--text-color)
-        border-radius 50%
+        justify-content space-between
+        margin-left 12rem
 
-        img {
-          width 100%
-          height 100%
+        .avatar {
+          display flex
+          align-items center
+          justify-content center
+          box-sizing border-box
+          width 38rem
+          height 38rem
+          padding 1rem
+          color var(--text-color)
+          border 1rem solid var(--text-color)
           border-radius 50%
+
+          img {
+            width 100%
+            height 100%
+            border-radius 50%
+          }
+        }
+
+
+        .user-filled-icon {
+          font-size 20rem
+        }
+
+        .caret-bottom-icon {
+          margin-left 5rem
+          font-size 20rem
         }
       }
     }

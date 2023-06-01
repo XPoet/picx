@@ -3,14 +3,15 @@ import {
   CompressEncoderEnum,
   ElementPlusSizeEnum,
   ImageLinkRuleModel,
+  LanguageEnum,
   ThemeModeEnum,
   UserSettingsModel,
   WatermarkPositionEnum
 } from '@/common/model'
 import { deepAssignObject, getLocal, getUuid } from '@/utils'
-import UserConfigInfoStateTypes from '@/store/modules/user-config-info/types'
-import RootStateTypes from '@/store/types'
-import UserSettingsStateTypes from '@/store/modules/user-settings/types'
+import UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
+import RootStateTypes from '@/stores/types'
+import UserSettingsStateTypes from '@/stores/modules/user-settings/types'
 import { LS_PICX_SETTINGS } from '@/common/constant'
 
 const initSettings: UserSettingsModel = {
@@ -24,7 +25,7 @@ const initSettings: UserSettingsModel = {
     encoder: CompressEncoderEnum.webP
   },
   theme: {
-    mode: ThemeModeEnum.follow
+    mode: ThemeModeEnum.system
   },
   elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
@@ -63,6 +64,10 @@ const initSettings: UserSettingsModel = {
       {
         name: 'HTML',
         format: '<img src="imageLink" alt="imageName" />'
+      },
+      {
+        name: 'BBCode',
+        format: '[img]imageLink[/img]'
       }
     ]
   },
@@ -74,7 +79,8 @@ const initSettings: UserSettingsModel = {
     position: WatermarkPositionEnum.rightBottom,
     textColor: '#FFFFFF',
     opacity: 0.5
-  }
+  },
+  language: LanguageEnum.zhCN
 }
 
 const initUserSettings = (): UserSettingsModel => {
@@ -137,7 +143,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
 
   actions: {
     // 设置
-    SET_USER_SETTINGS({ state }, configInfo: UserConfigInfoStateTypes) {
+    SET_USER_SETTINGS({ state, dispatch }, configInfo: UserConfigInfoStateTypes) {
       // eslint-disable-next-line no-restricted-syntax
       for (const key in configInfo) {
         // eslint-disable-next-line no-prototype-builtins
@@ -146,6 +152,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
           state.userSettings[key] = configInfo[key]
         }
       }
+      dispatch('USER_SETTINGS_PERSIST')
     },
 
     // 图片链接类型 - 增加规则

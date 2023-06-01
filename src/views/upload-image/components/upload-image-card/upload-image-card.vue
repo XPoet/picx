@@ -17,14 +17,11 @@
       :element-loading-text="loadingText"
     >
       <el-image
-        :src="
-          imgObj.base64.compressBase64 ||
-          imgObj.base64.watermarkBase64 ||
-          imgObj.base64.originalBase64
-        "
+        :src="imgSrc"
         fit="cover"
         loading="lazy"
-        data-fancybox="gallery"
+        :hide-on-click-modal="true"
+        :preview-src-list="[String(imgSrc)]"
       />
     </div>
 
@@ -36,7 +33,7 @@
         <el-tooltip
           placement="top"
           :offset="8"
-          :content="imgNameOperateFolded ? '展开' : '折叠'"
+          :content="imgNameOperateFolded ? $t('upload.expand') : $t('upload.fold')"
           v-if="imgObj.uploadStatus.progress === 0"
         >
           <el-icon class="fold-btn" @click="imgNameOperateFolded = !imgNameOperateFolded">
@@ -53,7 +50,7 @@
         <!-- 哈希化 -->
         <div class="operate-item">
           <el-checkbox
-            label="哈希化"
+            :label="$t('upload.hash')"
             v-model="fileNameOperateData.isHash"
             @change="hashRename($event, imgObj)"
           ></el-checkbox>
@@ -62,7 +59,7 @@
         <!-- 重命名 -->
         <div class="operate-item">
           <el-checkbox
-            label="重命名"
+            :label="$t('upload.rename')"
             v-model="fileNameOperateData.isRename"
             @change="onRename"
           ></el-checkbox>
@@ -88,7 +85,7 @@
           "
         >
           <el-checkbox
-            label="命名前缀"
+            :label="$t('upload.prefixNaming')"
             v-model="fileNameOperateData.prefixNaming"
             @change="prefixNamingTrans($event, imgObj)"
           ></el-checkbox>
@@ -117,14 +114,14 @@
       v-if="imgObj.uploadStatus.progress === 100"
       @click="copyImageLink(imgObj.uploadedImg, userConfigInfo, userSettings)"
     >
-      点击复制图片链接
+      {{ $t('upload.copyLink') }}
     </div>
 
     <el-tooltip
       v-if="imgObj.uploadStatus.progress === 0"
       placement="top"
       :offset="8"
-      content="删除"
+      :content="$t('upload.delete')"
     >
       <el-icon class="del-img-btn" @click="remove(imgObj.uuid)"><IEpRemove /></el-icon>
     </el-tooltip>
@@ -145,16 +142,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { computed, getCurrentInstance, onMounted, reactive, ref, watch } from 'vue'
 import { copyImageLink } from '@/utils'
 import { UploadImageModel } from '@/common/model'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { getFileSize } from '@/utils/file-utils'
 import { formatDatetime } from '@/utils/common-utils'
 import { hashRename, initImgSettings, prefixNamingTrans, rename } from './upload-image-card.util'
 import { RENAME_MAX_LENGTH } from '@/common/constant'
 
 const store = useStore()
+const instance = getCurrentInstance()
 
 const props = defineProps({
   imgObj: {
@@ -170,6 +168,12 @@ const renameInputRef = ref<any>(null)
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const imgSrc = computed(
+  () =>
+    props.imgObj.base64.compressBase64 ||
+    props.imgObj.base64.watermarkBase64 ||
+    props.imgObj.base64.originalBase64
+).value
 
 const loadingText = ref('')
 
@@ -217,7 +221,7 @@ watch(
   () => props.imgObj.uploadStatus,
   (nv) => {
     if (nv.uploading) {
-      loadingText.value = '正在上传...'
+      loadingText.value = instance!.proxy!.$t('upload.loading1')
     }
   },
   {

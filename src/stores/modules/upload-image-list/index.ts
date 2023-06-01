@@ -1,5 +1,5 @@
 import { Module } from 'vuex'
-import RootStateTypes from '@/store/types'
+import RootStateTypes from '@/stores/types'
 import UploadImageListStateTypes from './types'
 import { UploadImageModel } from '@/common/model'
 

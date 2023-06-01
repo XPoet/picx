@@ -25,10 +25,12 @@
           type="success"
           @click="download"
         >
-          批量下载
+          {{ $t('toolbox.batch_download') }}
         </el-button>
         <div>
-          <el-button v-if="imgList.length" plain type="warning" @click="reset"> 重置 </el-button>
+          <el-button v-if="imgList.length" plain type="warning" @click="reset">
+            {{ $t('reset') }}
+          </el-button>
           <el-button
             v-if="imgList.length"
             :disabled="watermarking || isWatermarked || !watermarkConfig.text"
@@ -36,7 +38,7 @@
             type="primary"
             @click="addWatermark"
           >
-            添加水印
+            {{ $t('toolbox.add_watermark') }}
           </el-button>
         </div>
       </div>
@@ -53,7 +55,7 @@ import {
   WatermarkPositionEnum
 } from '@/common/model'
 import { addWatermarkToImage, downloadImage, imgFileToBase64 } from '@/utils'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 
 const store = useStore()
 

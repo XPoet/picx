@@ -35,7 +35,10 @@
         <div class="content-box upload-area-status">
           <selected-info-bar />
           <div v-if="uploadImageList.length">
-            已上传：{{ uploadImageList.filter((x) => x.uploadStatus.progress === 100).length }} /
+            {{ $t('upload.uploaded') }}：{{
+              uploadImageList.filter((x) => x.uploadStatus.progress === 100).length
+            }}
+            /
             {{ uploadImageList.length }}
           </div>
         </div>
@@ -45,10 +48,10 @@
       <div class="row-item" v-if="uploadImageList.length">
         <div class="content-box" style="text-align: right">
           <el-button :disabled="uploading" plain type="warning" @click="resetUploadInfo">
-            重置 <span class="shortcut-key">{{ shortcutKey }} + A</span>
+            {{ $t('reset') }} <span class="shortcut-key">[ {{ shortcutKey }} + A ]</span>
           </el-button>
           <el-button :disabled="uploading" plain type="primary" @click="uploadImage">
-            上传 <span class="shortcut-key">{{ shortcutKey }} + S</span>
+            {{ $t('upload.upload') }} <span class="shortcut-key">[ {{ shortcutKey }} + S ]</span>
           </el-button>
         </div>
       </div>
@@ -57,9 +60,9 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch, ref, Ref, onMounted } from 'vue'
+import { computed, watch, ref, Ref, onMounted, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import {
   ElementPlusSizeEnum,
   UploadedImageModel,
@@ -73,6 +76,7 @@ import UploadImageCard from './components/upload-image-card/upload-image-card.vu
 
 const store = useStore()
 const router = useRouter()
+const instance = getCurrentInstance()
 
 const gettingImagesRef: Ref = ref<null | HTMLElement>(null)
 
@@ -135,19 +139,19 @@ const uploadImage = async () => {
   const { token, selectedRepo, selectedDir } = userConfigInfo
 
   if (!token) {
-    ElMessage.error('请先完成图床配置')
+    ElMessage.error({ message: instance?.proxy?.$t('upload.message1') })
     await router.push('/config')
     return
   }
 
   if (!selectedRepo) {
-    ElMessage.error('请选择一个仓库')
+    ElMessage.error({ message: instance?.proxy?.$t('upload.message2') })
     await router.push('/config')
     return
   }
 
   if (!selectedDir) {
-    ElMessage.error('目录不能为空')
+    ElMessage.error({ message: instance?.proxy?.$t('upload.message3') })
     await router.push('/config')
     return
   }
@@ -155,7 +159,7 @@ const uploadImage = async () => {
   const notYetUploadList = uploadImageList.value.filter((x) => x.uploadStatus.progress === 0)
 
   if (notYetUploadList.length === 0) {
-    ElMessage.error('请选择要上传的图片')
+    ElMessage.error({ message: instance?.proxy?.$t('upload.message4') })
     return
   }
 
@@ -169,19 +173,19 @@ const uploadImage = async () => {
   switch (uploadRes) {
     // 单张图片上传成功
     case UploadStatusEnum.uploaded:
-      ElMessage.success('图片上传成功')
+      ElMessage.success({ message: instance?.proxy?.$t('upload.message5') })
       await afterUploadSuccess(uploadedImg)
       break
 
     // 多张图片上传成功
     case UploadStatusEnum.allUploaded:
-      ElMessage.success('图片批量上传成功')
+      ElMessage.success({ message: instance?.proxy?.$t('upload.message6') })
       await afterUploadSuccess(uploadedImg, true)
       break
 
     // 上传失败（网络错误等原因）
     case UploadStatusEnum.uploadFail:
-      ElMessage.error('上传失败，请稍后重试')
+      ElMessage.error({ message: instance?.proxy?.$t('upload.message7') })
   }
 }
 

@@ -1,17 +1,14 @@
 <template>
   <div class="copy-image-link-box">
     <div class="left">
-      <el-tooltip content="请在'我的设置'进行图片链接相关配置" placement="top">
+      <el-tooltip :content="leftSideTip" placement="top">
         <el-icon><IEpInfoFilled /></el-icon>
       </el-tooltip>
     </div>
-    <div class="btn-box right">
-      <el-tooltip
-        :content="'点击复制 ' + userSettings.imageLinkType.selected + ' 图片链接'"
-        placement="top"
-      >
-        <span class="btn-item flex-center" @click="oneClickCopy"> 复制链接 </span>
-      </el-tooltip>
+    <div class="right">
+      <el-button plain type="primary" size="small" @click="oneClickCopy">
+        <el-icon><IEpCopyDocument /></el-icon>&nbsp;{{ $t('upload.copyLink') }}
+      </el-button>
     </div>
   </div>
 </template>
@@ -19,7 +16,7 @@
 <script setup lang="ts">
 import { computed, ref, onUpdated } from 'vue'
 import { UploadedImageModel } from '@/common/model'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { copyImageLink } from '@/utils'
 
 const props = defineProps({
@@ -31,6 +28,12 @@ const props = defineProps({
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const leftSideTip = computed(() => {
+  if (userSettings.imageLinkFormat.enable) {
+    return `${userSettings.imageLinkType.selected} & ${userSettings.imageLinkFormat.selected}`
+  }
+  return `${userSettings.imageLinkType.selected}`
+})
 
 let img = ref(props.imgObj as UploadedImageModel).value
 

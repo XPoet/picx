@@ -22,11 +22,20 @@ export enum WatermarkPositionEnum {
 
 export enum ThemeModeEnum {
   // eslint-disable-next-line no-unused-vars
-  follow = 'follow',
+  system = 'system',
   // eslint-disable-next-line no-unused-vars
   light = 'light',
   // eslint-disable-next-line no-unused-vars
   dark = 'dark'
+}
+
+export enum LanguageEnum {
+  // eslint-disable-next-line no-unused-vars
+  zhCN = 'zh-CN',
+  // eslint-disable-next-line no-unused-vars
+  zhTW = 'zh-TW',
+  // eslint-disable-next-line no-unused-vars
+  en = 'en'
 }
 
 export interface UserSettingsModel {
@@ -61,4 +70,5 @@ export interface UserSettingsModel {
     textColor: string
     opacity: number
   }
+  language: LanguageEnum
 }

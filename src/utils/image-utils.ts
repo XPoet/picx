@@ -5,7 +5,7 @@ import {
   UserConfigInfoModel
 } from '@/common/model'
 import { getUuid } from '@/utils/common-utils'
-import { store } from '@/store'
+import { store } from '@/stores'
 import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo } from '@/common/api'
 import request from '@/utils/request'
 

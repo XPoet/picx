@@ -19,10 +19,12 @@
 
       <div class="user-operate" :class="{ compressed: isCompressed && imgList.length > 1 }">
         <el-button v-if="isCompressed && imgList.length > 1" plain type="success" @click="download">
-          批量下载
+          {{ $t('toolbox.batch_download') }}
         </el-button>
         <div>
-          <el-button v-if="imgList.length" plain type="warning" @click="reset"> 重置 </el-button>
+          <el-button v-if="imgList.length" plain type="warning" @click="reset">
+            {{ $t('reset') }}
+          </el-button>
           <el-button
             v-if="imgList.length"
             :disabled="compressing || isCompressed"
@@ -30,7 +32,7 @@
             type="primary"
             @click="compress"
           >
-            压缩
+            {{ $t('toolbox.compress') }}
           </el-button>
         </div>
       </div>
@@ -42,7 +44,7 @@
 import { ref, watch } from 'vue'
 import { CompressEncoderEnum, ImageHandleResult, ImgProcessStateModel } from '@/common/model'
 import { compressImage, downloadImage, imgFileToBase64 } from '@/utils'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 
 const store = useStore()
 

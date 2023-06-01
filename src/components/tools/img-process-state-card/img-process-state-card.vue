@@ -1,11 +1,12 @@
 <template>
   <div class="img-process-state-card-container">
-    <div class="img-container" v-loading="imgObj.processing" element-loading-text="正在压缩...">
+    <div class="img-container" v-loading="imgObj.processing">
       <el-image
         :src="imgObj.finialBase64 || imgObj.originalBase64"
         fit="cover"
         loading="lazy"
-        data-fancybox="gallery"
+        :hide-on-click-modal="true"
+        :preview-src-list="[imgObj.finialBase64 || imgObj.originalBase64]"
       />
     </div>
     <div class="info-container">
@@ -30,16 +31,16 @@
       v-if="imgObj.finialFile"
       @click="download(imgObj.finialFile)"
     >
-      点击下载
+      {{ $t('toolbox.click_download') }}
     </div>
     <div
       class="operate-container flex-center"
       v-if="cardType === 'base64' && imgObj.originalBase64"
-      @click="copyBase64(imgObj.originalBase64)"
+      @click="copyBase64(imgObj.originalBase64, $t)"
     >
-      点击复制 Base64 编码
+      {{ $t('toolbox.copy_base64') }}
     </div>
-    <el-tooltip placement="top" :offset="8" content="删除">
+    <el-tooltip placement="top" :offset="8" :content="$t('delete')">
       <el-icon class="del-btn" @click="remove(imgObj.uuid)"><IEpRemove /></el-icon>
     </el-tooltip>
   </div>
@@ -73,9 +74,9 @@ const download = (file: File) => {
 }
 
 // 复制 Base64 编码
-const copyBase64 = (base64: string) => {
+const copyBase64 = (base64: string, $t: any) => {
   copyText(base64, () => {
-    ElMessage.success({ message: ' Base64 编码复制成功' })
+    ElMessage.success({ message: $t('toolbox.copy_base64_success') })
   })
 }
 </script>

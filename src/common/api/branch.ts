@@ -44,6 +44,7 @@ export const getBranchInfoList = (owner: string, repo: string): Promise<any> => 
 }
 
 /**
+ * TODO 初始化空分支，未实现，后续待完善
  * 初始化空分支（未实现，待完善）
  * @param userConfigInfo
  * @param branch

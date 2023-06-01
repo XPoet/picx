@@ -9,7 +9,7 @@
     :key="elKey"
     v-model="userConfigInfo.selectedDirList"
     filterable
-    placeholder="请选择一个目录..."
+    :placeholder="$t('config.placeholder5')"
     :clearable="elClearable"
     @change="cascaderChange"
   />
@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getDirInfoList } from '@/common/api'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
 import { ElementPlusSizeEnum } from '@/common/model'
 import { NEW_DIR_COUNT_MAX } from '@/common/constant'
 
@@ -40,7 +40,7 @@ defineProps({
   },
   elClearable: {
     type: Boolean,
-    default: true
+    default: false
   }
 })
 

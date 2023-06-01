@@ -13,27 +13,74 @@
     </div>
 
     <div class="header-right">
-      <div class="user-info" @click="onUserInfoClick">
-        <div class="username">
+      <div class="user-info">
+        <div class="username" @click="jumpOwnerRepo">
           {{ userConfigInfo.owner ? userConfigInfo.owner : $t('header.notLogin') }}
         </div>
 
-        <div class="avatar" v-if="!userConfigInfo?.avatarUrl">
-          <el-icon :size="22"><IEpUserFilled /></el-icon>
-        </div>
-
-        <el-dropdown trigger="click" @command="handleCommand" v-if="userConfigInfo?.avatarUrl">
-          <span class="el-dropdown-link">
-            <span class="avatar">
-              <img :src="userConfigInfo?.avatarUrl" :alt="userConfigInfo?.owner" />
-            </span>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="logout"> {{ $t('header.logout') }} </el-dropdown-item>
-            </el-dropdown-menu>
+        <el-popover
+          placement="bottom-end"
+          trigger="click"
+          width="220rem"
+          :show-arrow="false"
+          :popper-style="{
+            padding: '0'
+          }"
+        >
+          <template #reference>
+            <div class="avatar-box">
+              <div class="avatar flex-center">
+                <img
+                  :src="userConfigInfo?.avatarUrl"
+                  v-if="userConfigInfo?.avatarUrl"
+                  :alt="userConfigInfo?.owner"
+                />
+                <el-icon class="user-filled-icon" v-else><IEpUserFilled /></el-icon>
+              </div>
+              <el-icon class="caret-bottom-icon"><IEpCaretBottom /></el-icon>
+            </div>
           </template>
-        </el-dropdown>
+          <ul class="personal-center-popover">
+            <li class="content-item">
+              <span class="flex-center">{{ $t('header.language') }}</span>
+              <el-select
+                size="small"
+                style="width: 100rem"
+                v-model="userSettings.language"
+                @change="persistUserSettings"
+              >
+                <el-option label="中文简体" :value="LanguageEnum.zhCN"></el-option>
+                <el-option label="中文繁體" :value="LanguageEnum.zhTW"></el-option>
+                <el-option label="English" :value="LanguageEnum.en"></el-option>
+              </el-select>
+            </li>
+            <el-divider style="margin: 5px 0" />
+            <li class="content-item">
+              <span class="flex-center">{{ $t('header.theme') }}</span>
+              <el-select
+                size="small"
+                style="width: 100rem"
+                v-model="userSettings.theme.mode"
+                @change="persistUserSettings"
+              >
+                <el-option
+                  :label="$t('settings.theme.system')"
+                  :value="ThemeModeEnum.system"
+                ></el-option>
+                <el-option
+                  :label="$t('settings.theme.light')"
+                  :value="ThemeModeEnum.light"
+                ></el-option>
+                <el-option
+                  :label="$t('settings.theme.dark')"
+                  :value="ThemeModeEnum.dark"
+                ></el-option>
+              </el-select>
+            </li>
+            <el-divider style="margin: 5px 0" />
+            <li class="content-item" @click="logout">{{ $t('header.logout') }}</li>
+          </ul>
+        </el-popover>
       </div>
     </div>
   </header>
@@ -42,42 +89,30 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from '@/store'
+import { useStore } from '@/stores'
+import { LanguageEnum, ThemeModeEnum } from '@/common/model'
 
 const router = useRouter()
 const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const userSettings = computed(() => store.getters.getUserSettings).value
 
-const onUserInfoClick = () => {
-  if (!userConfigInfo.logined && router.currentRoute.value.path !== '/config') {
-    router.push('/config')
-  }
+const persistUserSettings = () => {
+  store.dispatch('USER_SETTINGS_PERSIST')
 }
 
 const logout = () => {
   store.dispatch('LOGOUT')
   router.push('/config')
+  document.body.click()
 }
 
-const handleCommand = (command: string) => {
-  // eslint-disable-next-line default-case
-  switch (command) {
-    case 'upload':
-      router.push('/')
-      break
-
-    case 'config':
-      router.push('/config')
-      break
-
-    case 'management':
-      router.push('/management')
-      break
-
-    case 'logout':
-      logout()
-      break
+const jumpOwnerRepo = () => {
+  if (userConfigInfo.owner) {
+    window.open(`https://github.com/${userConfigInfo.owner}/${userConfigInfo.selectedRepo}`)
+  } else {
+    router.push('/config')
   }
 }
 </script>
