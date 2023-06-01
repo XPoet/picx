@@ -6,6 +6,7 @@
   "delete": "Delete",
   "reset": "Reset",
   "confirm": "Confirm",
+  "cancel": "Cancel",
   "author": "Author",
   "document": "Document",
   "shortcut_key": "Shortcut key",
@@ -217,5 +218,20 @@
     "text_2": "We suggest adding our website to your browser bookmarks for easy future access.",
     "text_3": "If PicX is helpful to you, please consider donating to the author to support open source development.",
     "text_4": "Disclaimer: Do not upload images that violate the laws in your local jurisdiction. The author is not responsible for any consequences arising from such actions."
-  }
+  },
+  "region": {
+    "CN": "Mainland China",
+    "HK": "Hong Kong, China",
+    "MO": "Macao, China",
+    "TW": "Taiwan, China",
+    "SG": "Singapore",
+    "JP": "Japan",
+    "US": "United States"
+  },
+  "language": {
+    "zh-CN": "Simplified Chinese",
+    "zh-TW": "Traditional Chinese",
+    "en": "English"
+  },
+  "toggle-language-msg": "We detected that your IP is located in {region}. Do you want to switch to {language}?"
 }

@@ -194,3 +194,58 @@ li {
 }
 
 
+.toggle-language-message {
+  box-sizing border-box
+  background var(--background-color)
+  border-radius 3rem
+  box-shadow var(--el-box-shadow-light)
+
+  .el-icon {
+    display none
+  }
+
+  .content-box {
+    line-height 2
+
+    .btn-box {
+      margin-left 6rem
+    }
+
+    .btn {
+      margin-left 2rem
+      padding 2rem 4rem
+      font-size 12rem
+      border-style solid
+      border-width 1rem
+      border-radius 4rem
+      cursor pointer
+    }
+
+    .confirm {
+      color var(--el-color-primary)
+      background var(--el-color-primary-light-9)
+      border-color var(--el-color-primary-light-5)
+
+      &:hover {
+        color var(--el-color-white)
+        background var(--el-color-primary)
+        border-color var(--el-color-primary)
+      }
+    }
+
+    .cancel {
+      color var(--el-color-info)
+      background var(--el-color-info-light-9)
+      border-color var(--el-color-info-light-5)
+
+      &:hover {
+        color var(--el-color-white)
+        background var(--el-color-info)
+        border-color var(--el-color-info)
+      }
+    }
+  }
+}
+
+
+

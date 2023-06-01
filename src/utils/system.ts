@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { LanguageEnum } from '@/common/model'
 
 /**
  * 判断系统是否是黑暗模式
@@ -46,4 +47,18 @@ export const getRegionByIP = async (): Promise<'CN' | 'HK' | 'TW' | 'SG' | 'US'>
   } catch (error) {
     return Promise.resolve('CN')
   }
+}
+
+/**
+ * 根据地区编码获取语言枚举
+ * @param region
+ */
+export const getLanguageByRegion = (region: string): LanguageEnum => {
+  if (region === 'CN') {
+    return LanguageEnum.zhCN
+  }
+  if (region === 'HK' || region === 'TW' || region === 'MO') {
+    return LanguageEnum.zhTW
+  }
+  return LanguageEnum.en
 }
