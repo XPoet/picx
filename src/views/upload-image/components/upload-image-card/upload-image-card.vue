@@ -26,7 +26,7 @@
     </div>
 
     <div class="before-upload-handle-container">
-      <div class="img-name-box">
+      <div class="img-name-box" :class="{ 'no-border': imgObj.uploadStatus.progress === 100 }">
         <span class="img-name text-ellipsis">
           {{ imgObj.filename.final || imgObj.filename.name }}
         </span>

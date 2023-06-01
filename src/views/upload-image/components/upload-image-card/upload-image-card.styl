@@ -64,6 +64,10 @@
       font-size 13rem
       border-bottom 1rem solid var(--border-color)
 
+      &.no-border {
+        border-bottom none
+      }
+
       .img-name {
         position relative
         box-sizing border-box
@@ -148,14 +152,15 @@
     box-sizing border-box
     width 100%
     height 30rem
+    color var(--el-color-primary)
     font-size 13rem
-    background var(--background-color-2)
+    background var(--el-color-primary-light-9)
     border-top 1rem solid var(--border-color)
     cursor pointer
 
     &:hover {
-      // background var(--uploaded-color)
-      background var(--el-color-primary-light-8)
+      color var(--el-color-white)
+      background var(--el-color-primary)
     }
   }
 
