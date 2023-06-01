@@ -2,7 +2,7 @@
 <img width="100" align="right" alt="PicX" src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/picx-logo.png">
 </a>
 
-# PicX 图床
+# PicX
 
 [![Author](https://img.shields.io/badge/author-XPoet-violet.svg)](https://github.com/XPoet)
 [![Release](https://img.shields.io/github/release/XPoet/picx.svg)](https://github.com/XPoet/picx/releases)
@@ -40,14 +40,14 @@ PicX 在线使用入口 >> **https://picx.xpoet.cn**
 - [x] 支持图片 **重命名**、**哈希化**（确保图片名唯一）和 **设置命名前缀**
 - [x] 支持 **批量上传图片**、**批量删除图片** 和 **批量复制图片链接**
 - [x] 支持图床 **多级目录** 管理 （创建多级目录 / 查看多级目录下图片）
-- [x] 支持 **一键复制** 图片链接和 **自由转换 Markdown / HTML 格式**
+- [x] 支持 **一键复制** 图片链接和 **自由转换 Markdown / HTML / BBCode 格式**
 - [x] 内置 **多种图片链接规则**（Staticaly、jsDelivr、ChinaJsDelivr 等）
-- [x] 支持 **配置自定义图片链接规则**
+- [x] 支持 **自定义配置图片链接规则**
 - [x] 支持 **图片压缩** (内置高效压缩算法，可配置在上传前自动压缩)
-- [x] 支持 **暗夜模式** (自由切换 / 自动切换)
+- [x] 支持 **暗夜模式** (自动切换 / 自由切换)
 - [x] 支持 **PWA**
 - [x] 支持配置 **图片水印**
-- [ ] i18n
+- [x] i18n
 
 ## 贡献 | Contribution
 
