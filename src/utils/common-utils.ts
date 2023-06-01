@@ -1,3 +1,5 @@
+import i18n from '@/plugins/vue/i18n'
+
 /**
  * 获取 JavaScript 数据类型
  * @param data
@@ -140,4 +142,14 @@ export const throttle = <T extends (...args: any[]) => void>(func: T, wait: numb
   }
 
   return throttled as unknown as T
+}
+
+/**
+ * 设置 Window 标题
+ * @param title
+ */
+export const setWindowTitle = (title: string) => {
+  if (title) {
+    ;(<any>window).document.title = `${i18n.global.t(title)} | PicX`
+  }
 }

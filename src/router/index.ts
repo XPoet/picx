@@ -8,7 +8,7 @@ import feedback from '@/views/feedback-info/feedback-info.vue'
 import compressTool from '@/components/tools/compress-tool/compress-tool.vue'
 import base64Tool from '@/components/tools/base64-tool/base64-tool.vue'
 import watermarkTool from '@/components/tools/watermark-tool/watermark-tool.vue'
-import i18n from '@/plugins/vue/i18n'
+import { setWindowTitle } from '@/utils'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -96,7 +96,7 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.meta.title) {
-    ;(<any>window).document.title = `${i18n.global.t(to.meta.title as string)} | PicX`
+    setWindowTitle(to.meta.title as string)
   }
   next()
 })

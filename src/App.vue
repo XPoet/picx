@@ -12,7 +12,7 @@ import zhTW from 'element-plus/lib/locale/lang/zh-tw'
 import en from 'element-plus/lib/locale/lang/en'
 import setThemeMode from '@/utils/set-theme-mode'
 import { useStore } from '@/stores'
-import { getRegionByIP, throttle } from '@/utils'
+import { getRegionByIP, setWindowTitle, throttle } from '@/utils'
 import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
 import MainContainer from '@/views/main-container/main-container.vue'
 import router from '@/router'
@@ -58,14 +58,10 @@ const setLanguage = (language: LanguageEnum) => {
     elementPlusLocale.value = zhCN
     instance!.proxy!.$i18n.locale = 'zh-CN'
   }
-
-  // 设置 Window 标题
-  ;(<any>window).document.title = `${instance!.proxy!.$t(
-    router.currentRoute.value.meta.title as string
-  )} | PicX`
+  setWindowTitle(router.currentRoute.value.meta.title as string)
 }
 
-const initLanguage = () => {
+const autoSetLanguage = () => {
   getRegionByIP().then((region) => {
     if (region === 'CN') {
       store.dispatch('SET_USER_SETTINGS', {
@@ -80,6 +76,7 @@ const initLanguage = () => {
         language: LanguageEnum.en
       })
     }
+    setLanguage(userSettings.language)
   })
 }
 
@@ -93,16 +90,13 @@ const init = () => {
   )
 
   setThemeMode()
-  initLanguage()
+  autoSetLanguage()
 }
 
 watch(
   () => userSettings.language,
   (language: LanguageEnum) => {
     setLanguage(language)
-  },
-  {
-    deep: true
   }
 )
 
