@@ -17,11 +17,19 @@
       :element-loading-text="loadingText"
     >
       <el-image
-        :src="imgSrc"
+        :src="
+          imgObj.base64.compressBase64 ||
+          imgObj.base64.watermarkBase64 ||
+          imgObj.base64.originalBase64
+        "
         fit="cover"
         loading="lazy"
         :hide-on-click-modal="true"
-        :preview-src-list="[String(imgSrc)]"
+        :preview-src-list="[
+          imgObj.base64.compressBase64 ||
+            imgObj.base64.watermarkBase64 ||
+            imgObj.base64.originalBase64
+        ]"
       />
     </div>
 
@@ -168,12 +176,6 @@ const renameInputRef = ref<any>(null)
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const imgSrc = computed(
-  () =>
-    props.imgObj.base64.compressBase64 ||
-    props.imgObj.base64.watermarkBase64 ||
-    props.imgObj.base64.originalBase64
-).value
 
 const loadingText = ref('')
 
