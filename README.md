@@ -16,11 +16,11 @@
 
 ---
 
-## 产品亮点 | Highlights
+## 亮点 | Highlights
 
-- **简单** - 无需下载，无需安装，不限平台，浏览器在线使用。
-- **免费** - PicX 巧妙结合多种开源技术搭建而成，完全免费。
-- **安全** - Token 等敏感数据均保存在用户本地，无外泄风险。
+- 在线使用，无需下载，无需安装。
+- 操作简单，文档完善，持续维护。
+- 代码开源，数据安全，免费使用。
 
 ## 如何使用 | How to use
 
@@ -59,11 +59,15 @@ PicX 在线使用入口 >> **https://picx.xpoet.cn**
   <img src="https://contrib.rocks/image?repo=XPoet/picx" />
 </a>
 
-
 ##  反馈 | Feedback
 
 在使用过程中，如遇问题，请仔细阅读 **[官方文档](https://picx-docs.xpoet.cn)**，或给作者提 **[Issue](https://github.com/XPoet/picx/issues)**。
 
+## 赞赏 | Appreciation
+
+PicX 的更新迭代依靠作者工作之外的时间，维护不易，如果对你有帮助，欢迎赞赏作者，支持开源。
+
+<img width="400" src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/common/appreciation.webp" />
 
 ## 许可 | License
 
