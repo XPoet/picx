@@ -83,6 +83,24 @@
           ></el-input>
         </div>
 
+        <!-- 时间戳 -->
+        <div class="operate-item">
+          <el-checkbox
+            :label="$t('upload.timename')"
+            v-model="fileNameOperateData.isTimeName"
+            @change="onTimeName"
+          ></el-checkbox>
+        </div>
+
+        <!-- 日期命名 -->
+        <div class="operate-item">
+          <el-checkbox
+            :label="$t('upload.datename')"
+            v-model="fileNameOperateData.isDateName"
+            @change="onDateName"
+          ></el-checkbox>
+        </div>
+
         <!-- 命名前缀 -->
         <div
           class="operate-item"
@@ -105,14 +123,14 @@
             class="original-file-size file-size-item"
             :class="{ 'del-line': imgObj.fileInfo?.compressFile?.size }"
           >
-            {{ getFileSize(imgObj.fileInfo.originalFile.size) }} KB
+            {{ getFileSize(imgObj.fileInfo.originalFile!.size) }} KB
           </span>
           <span v-if="imgObj.fileInfo?.compressFile?.size" class="finial-file-size file-size-item">
             {{ getFileSize(imgObj.fileInfo?.compressFile?.size) }} KB
           </span>
         </div>
         <span class="last-modified">
-          {{ formatDatetime('yyyy-MM-dd hh:mm', imgObj.fileInfo.originalFile.lastModified) }}
+          {{ formatDatetime('yyyy-MM-dd hh:mm', imgObj.fileInfo.originalFile!.lastModified) }}
         </span>
       </div>
     </div>
@@ -120,7 +138,7 @@
     <div
       class="after-upload-handle-container flex-center"
       v-if="imgObj.uploadStatus.progress === 100"
-      @click="copyImageLink(imgObj.uploadedImg, userConfigInfo, userSettings)"
+      @click="copyImageLink(imgObj.uploadedImg!, userConfigInfo, userSettings)"
     >
       {{ $t('upload.copyLink') }}
     </div>
@@ -183,7 +201,9 @@ const fileNameOperateData = reactive({
   isHash: false,
   prefixNaming: false,
   isRename: false,
-  newName: ''
+  newName: '',
+  isTimeName: false,
+  isDateName: false
 })
 
 const imgNameOperateFolded = ref<boolean>(true)
@@ -200,6 +220,16 @@ const onRename = () => {
     renameInputRef.value?.focus()
   }, 100)
   rename(fileNameOperateData.isRename, props.imgObj)
+}
+
+const onTimeName = () => {
+  props.imgObj.filename.newName = props.imgObj.filename.timeName
+  rename(fileNameOperateData.isTimeName, props.imgObj)
+}
+
+const onDateName = () => {
+  props.imgObj.filename.newName = props.imgObj.filename.dateName
+  rename(fileNameOperateData.isDateName, props.imgObj)
 }
 
 const initFilename = () => {

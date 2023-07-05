@@ -42,6 +42,8 @@ export interface UploadImageModel {
     isHashRename: boolean
     isRename: boolean
     isPrefix: boolean
+    timeName: string
+    dateName: string
   }
 
   // 上传前的状态
