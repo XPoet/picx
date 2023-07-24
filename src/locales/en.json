@@ -164,6 +164,8 @@
     "expand": "Expand",
     "hash": "Hashing",
     "rename": "Rename",
+    "timename": "Timestamp",
+    "datename": "DateNaming",
     "prefixNaming": "Prefix Naming",
     "delete": "Delete",
     "copyLink": "Copy image link",

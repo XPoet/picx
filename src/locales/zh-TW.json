@@ -166,6 +166,8 @@
     "expand": "展開",
     "hash": "哈希化",
     "rename": "重命名",
+    "timename": "時間戳",
+    "datename": "日期命名",
     "prefixNaming": "前綴命名",
     "delete": "刪除",
     "copyLink": "復製圖片鏈接",

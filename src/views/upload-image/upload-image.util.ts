@@ -18,6 +18,8 @@ export const starred = async (userSettings: UserSettingsModel) => {
   }
 }
 
+let count = 0
+
 export const generateUploadImageObject = (obj: {
   uuid: string
   file: File
@@ -38,6 +40,9 @@ export const generateUploadImageObject = (obj: {
   const tmpIdx = nameHandled.lastIndexOf('.')
   const name = nameHandled.slice(0, tmpIdx)
   const suffix = nameHandled.slice(tmpIdx + 1)
+  const timestamp = new Date().getTime().toString()
+  const dateName = new Date().toLocaleDateString().replace(/\//g, '-')
+  const time = new Date().toLocaleTimeString().replace(/:/g, '-')
 
   tmp.filename.initName = name
   tmp.filename.name = prefixNaming.enable ? `${prefixNaming.prefix}${name}` : name
@@ -49,6 +54,10 @@ export const generateUploadImageObject = (obj: {
     : `${tmp.filename.name}.${suffix}`
   tmp.filename.isHashRename = defaultHash
   tmp.filename.isPrefix = prefixNaming.enable
+  tmp.filename.timeName = `${timestamp}.${count}`
+  tmp.filename.dateName = `${dateName}.${time}.${count}`
+
+  count += 1
 
   return tmp
 }
