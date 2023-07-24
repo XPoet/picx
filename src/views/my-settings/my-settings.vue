@@ -6,7 +6,7 @@
         <ul class="setting-list" style="margin-top: 10rem">
           <li class="setting-item has-desc">
             <el-switch
-              v-model="userSettings.defaultHash"
+              v-model="userSettings.imageName.autoAddHash"
               @change="persistUserSettings"
               :active-text="$t('settings.img_name.hash_switch_name')"
             ></el-switch>
@@ -14,21 +14,28 @@
           </li>
           <li class="setting-item has-desc">
             <el-switch
-              v-model="userSettings.prefixNaming.enable"
+              v-model="userSettings.imageName.prefixNaming.enable"
               @change="persistUserSettings"
               :active-text="$t('settings.img_name.prefix_switch_name')"
             ></el-switch>
             <span class="desc">{{ $t('settings.img_name.prefix_switch_desc') }}</span>
           </li>
-          <li class="setting-item has-desc" v-if="userSettings.prefixNaming.enable">
+          <li class="setting-item has-desc" v-if="userSettings.imageName.prefixNaming.enable">
             <el-input
               class="prefix-input"
-              v-model="userSettings.prefixNaming.prefix"
+              v-model="userSettings.imageName.prefixNaming.prefix"
               :placeholder="$t('settings.img_name.prefix_input_placeholder')"
               @input="persistUserSettings"
               clearable
               autofocus
             ></el-input>
+          </li>
+          <li class="setting-item has-desc">
+            <el-switch
+              v-model="userSettings.imageName.autoTimestampNaming"
+              @change="persistUserSettings"
+              :active-text="$t('settings.img_name.timestamp_switch_name')"
+            ></el-switch>
           </li>
         </ul>
       </el-collapse-item>

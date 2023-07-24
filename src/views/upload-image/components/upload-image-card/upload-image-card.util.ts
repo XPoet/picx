@@ -13,6 +13,7 @@ import {
  * @param img
  */
 export const prefixNamingTrans = (isPrefix: boolean, img: UploadImageModel) => {
+  img.filename.isPrefix = isPrefix
   if (isPrefix) {
     img.filename.name = `${img.filename.prefixName}${img.filename.initName}`
   } else {
@@ -31,6 +32,7 @@ export const prefixNamingTrans = (isPrefix: boolean, img: UploadImageModel) => {
  * @param img
  */
 export const hashRename = (isHash: boolean, img: UploadImageModel) => {
+  img.filename.isHashRename = isHash
   if (isHash) {
     img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
   } else {

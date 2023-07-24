@@ -18,8 +18,6 @@ export const starred = async (userSettings: UserSettingsModel) => {
   }
 }
 
-let count = 0
-
 export const generateUploadImageObject = (obj: {
   uuid: string
   file: File
@@ -30,7 +28,7 @@ export const generateUploadImageObject = (obj: {
   tmp.base64.originalBase64 = obj.base64
   tmp.fileInfo.originalFile = obj.file
 
-  const { prefixNaming, defaultHash } = userSettings
+  const { imageName } = userSettings
 
   const hash = obj.uuid
 
@@ -40,24 +38,19 @@ export const generateUploadImageObject = (obj: {
   const tmpIdx = nameHandled.lastIndexOf('.')
   const name = nameHandled.slice(0, tmpIdx)
   const suffix = nameHandled.slice(tmpIdx + 1)
-  const timestamp = new Date().getTime().toString()
-  const dateName = new Date().toLocaleDateString().replace(/\//g, '-')
-  const time = new Date().toLocaleTimeString().replace(/:/g, '-')
 
   tmp.filename.initName = name
-  tmp.filename.name = prefixNaming.enable ? `${prefixNaming.prefix}${name}` : name
-  tmp.filename.prefixName = prefixNaming.prefix
+  tmp.filename.name = imageName.prefixNaming.enable
+    ? `${imageName.prefixNaming.prefix}${name}`
+    : name
+  tmp.filename.prefixName = imageName.prefixNaming.prefix
   tmp.filename.hash = hash
   tmp.filename.suffix = suffix
-  tmp.filename.final = defaultHash
+  tmp.filename.final = imageName.autoAddHash
     ? `${tmp.filename.name}.${hash}.${suffix}`
     : `${tmp.filename.name}.${suffix}`
-  tmp.filename.isHashRename = defaultHash
-  tmp.filename.isPrefix = prefixNaming.enable
-  tmp.filename.timeName = `${timestamp}.${count}`
-  tmp.filename.dateName = `${dateName}.${time}.${count}`
-
-  count += 1
-
+  tmp.filename.isHashRename = imageName.autoAddHash
+  tmp.filename.isPrefix = imageName.prefixNaming.enable
+  tmp.filename.timestampNaming = imageName.autoTimestampNaming
   return tmp
 }

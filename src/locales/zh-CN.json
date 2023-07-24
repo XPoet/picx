@@ -42,7 +42,8 @@
       "hash_switch_desc": "上传前自动给图片名增加哈希码，确保图片名唯一，强烈建议开启",
       "prefix_switch_name": "添加前缀命名",
       "prefix_switch_desc": "上传前自动给图片名增加前缀，例如：abc-image.jpg，abc- 为前缀",
-      "prefix_input_placeholder": "请输入命名前缀 ..."
+      "prefix_input_placeholder": "请输入命名前缀 ...",
+      "timestamp_switch_name": "自动时间戳命名"
     },
     "img_watermark": {
       "title": "图片水印设置",
@@ -166,8 +167,7 @@
     "expand": "展开",
     "hash": "哈希化",
     "rename": "重命名",
-    "timename": "时间戳",
-    "datename": "日期命名",
+    "timestamp-naming": "时间戳命名",
     "prefixNaming": "前缀命名",
     "delete": "删除",
     "copyLink": "复制图片链接",

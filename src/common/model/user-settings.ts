@@ -39,10 +39,13 @@ export enum LanguageEnum {
 }
 
 export interface UserSettingsModel {
-  defaultHash: boolean
-  prefixNaming: {
-    enable: boolean
-    prefix: string
+  imageName: {
+    autoAddHash: boolean
+    prefixNaming: {
+      enable: boolean
+      prefix: string
+    }
+    autoTimestampNaming: boolean
   }
   theme: {
     mode: ThemeModeEnum
