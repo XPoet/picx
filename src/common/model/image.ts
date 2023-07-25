@@ -32,17 +32,17 @@ export interface UploadImageModel {
   }
 
   filename: {
-    hash: string
-    suffix: string
+    hash: string // 哈希值
+    suffix: string // 后缀
     name: string
-    prefixName: string
     final: string
     initName: string
     newName: string
-    isHashRename: boolean
     isRename: boolean
-    isPrefix: boolean
-    timestampNaming: boolean
+    isAddHash: boolean // 是否添加哈希值
+    isPrefixNaming: boolean // 是否前缀命名
+    prefixName: string // 前缀命名值
+    isTimestampNaming: boolean // 是否时间戳命名
   }
 
   // 上传前的状态

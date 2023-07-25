@@ -86,9 +86,6 @@ const initSettings: UserSettingsModel = {
 const initUserSettings = (): UserSettingsModel => {
   const LSSettings = getLocal(LS_PICX_SETTINGS)
   if (LSSettings) {
-    console.log('initSettings: ', initSettings)
-    console.log('LSSettings: ', LSSettings)
-
     deepAssignObject(initSettings, LSSettings)
   }
   return initSettings

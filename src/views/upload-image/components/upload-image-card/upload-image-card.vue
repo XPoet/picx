@@ -87,7 +87,7 @@
         <div class="operate-item">
           <el-checkbox
             :label="$t('upload.timestamp-naming')"
-            v-model="fileNameOperateData.isTimestamp"
+            v-model="fileNameOperateData.isTimestampNaming"
             @change="onTimestampNaming"
           ></el-checkbox>
         </div>
@@ -193,9 +193,9 @@ const loadingText = ref('')
 const fileNameOperateData = reactive({
   isHash: false,
   isPrefixNaming: false,
+  isTimestampNaming: false,
   isRename: false,
-  newName: '',
-  isTimestamp: false
+  newName: ''
 })
 
 const imgNameOperateFolded = ref<boolean>(true)
@@ -205,58 +205,66 @@ const remove = (uuid: string) => {
 }
 
 const onRename = () => {
-  props.imgObj.filename.newName = fileNameOperateData.newName
+  props.imgObj!.filename.newName = fileNameOperateData.newName
   setTimeout(() => {
     renameInputRef.value?.focus()
   }, 100)
   rename(fileNameOperateData.isRename, props.imgObj)
 }
 
-const initFilename = () => {
-  const { imageName } = userSettings
-  if (props.imgObj.uploadStatus.progress === 0) {
-    props.imgObj.filename.isHashRename = imageName.autoAddHash
-    props.imgObj.filename.isPrefix = imageName.prefixNaming.enable
-    props.imgObj.filename.prefixName = imageName.prefixNaming.prefix
-    props.imgObj.filename.timestampName = imageName.autoTimestampNaming
-
-    prefixNamingTrans(imageName.prefixNaming.enable, props.imgObj)
-    hashRename(imageName.autoAddHash, props.imgObj)
-
-    fileNameOperateData.isHash = props.imgObj.filename.isHashRename
-    fileNameOperateData.isPrefixNaming = props.imgObj.filename.isPrefix
-    fileNameOperateData.isRename = props.imgObj.filename.isRename
-    fileNameOperateData.newName = props.imgObj.filename.newName
-  }
-}
-
 const onHashRename = (e: boolean) => {
-  fileNameOperateData.isTimestamp = false
+  fileNameOperateData.isTimestampNaming = false
   hashRename(e, props.imgObj)
 }
 
 const onPrefixNaming = (e: boolean) => {
-  fileNameOperateData.isTimestamp = false
+  fileNameOperateData.isTimestampNaming = false
   prefixNamingTrans(e, props.imgObj)
 }
 
 const onTimestampNaming = (e: boolean) => {
-  const { suffix, isPrefix, isHashRename } = props.imgObj.filename
+  const { suffix, isPrefixNaming, isAddHash } = props.imgObj!.filename
   if (e) {
     fileNameOperateData.isHash = false
     fileNameOperateData.isPrefixNaming = false
-
-    props.imgObj.filename.final = `${Date.now()}.${suffix}`
+    props.imgObj!.filename.final = `${Date.now()}.${suffix}`
   } else {
-    prefixNamingTrans(isPrefix, props.imgObj)
-    hashRename(isHashRename, props.imgObj)
-    fileNameOperateData.isHash = isHashRename
-    fileNameOperateData.isPrefixNaming = isPrefix
+    prefixNamingTrans(isPrefixNaming, props.imgObj)
+    hashRename(isAddHash, props.imgObj)
+    fileNameOperateData.isHash = isAddHash
+    fileNameOperateData.isPrefixNaming = isPrefixNaming
+  }
+}
+
+const initFilename = () => {
+  const { imageName } = userSettings
+  if (props.imgObj!.uploadStatus.progress === 0) {
+    props.imgObj!.filename.isTimestampNaming = imageName.autoTimestampNaming
+
+    // 如果开启了自动时间戳命名，则将哈希化和前缀命名关闭
+    if (props.imgObj!.filename.isTimestampNaming) {
+      props.imgObj!.filename.isAddHash = false
+      props.imgObj!.filename.isPrefixNaming = false
+      onTimestampNaming(true)
+    } else {
+      props.imgObj!.filename.isAddHash = imageName.autoAddHash
+      props.imgObj!.filename.isPrefixNaming = imageName.prefixNaming.enable
+      props.imgObj!.filename.prefixName = imageName.prefixNaming.prefix
+
+      prefixNamingTrans(imageName.prefixNaming.enable, props.imgObj)
+      hashRename(imageName.autoAddHash, props.imgObj)
+    }
+
+    fileNameOperateData.isTimestampNaming = props.imgObj!.filename.isTimestampNaming
+    fileNameOperateData.isHash = props.imgObj!.filename.isAddHash
+    fileNameOperateData.isPrefixNaming = props.imgObj!.filename.isPrefixNaming
+    fileNameOperateData.isRename = props.imgObj!.filename.isRename
+    fileNameOperateData.newName = props.imgObj!.filename.newName
   }
 }
 
 watch(
-  () => props.imgObj.uploadStatus,
+  () => props.imgObj!.uploadStatus,
   (nv) => {
     if (nv.uploading) {
       loadingText.value = instance!.proxy!.$t('upload.loading1')

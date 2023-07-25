@@ -13,13 +13,13 @@ import {
  * @param img
  */
 export const prefixNamingTrans = (isPrefix: boolean, img: UploadImageModel) => {
-  img.filename.isPrefix = isPrefix
+  img.filename.isPrefixNaming = isPrefix
   if (isPrefix) {
     img.filename.name = `${img.filename.prefixName}${img.filename.initName}`
   } else {
     img.filename.name = `${img.filename.initName}`
   }
-  if (img.filename.isHashRename) {
+  if (img.filename.isAddHash) {
     img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
   } else {
     img.filename.final = `${img.filename.name}.${img.filename.suffix}`
@@ -32,7 +32,7 @@ export const prefixNamingTrans = (isPrefix: boolean, img: UploadImageModel) => {
  * @param img
  */
 export const hashRename = (isHash: boolean, img: UploadImageModel) => {
-  img.filename.isHashRename = isHash
+  img.filename.isAddHash = isHash
   if (isHash) {
     img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
   } else {
@@ -51,10 +51,10 @@ export const rename = (isRename: boolean, img: UploadImageModel) => {
   if (isRename) {
     img.filename.name = img.filename.newName.trim().replace(/\s+/g, '-')
   } else {
-    prefixNamingTrans(img.filename.isPrefix, img) // 恢复列表 prefix 选项
+    prefixNamingTrans(img.filename.isPrefixNaming, img) // 恢复列表 prefix 选项
   }
 
-  if (img.filename.isHashRename) {
+  if (img.filename.isAddHash) {
     img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
   } else {
     img.filename.final = `${img.filename.name}.${img.filename.suffix}`

@@ -49,8 +49,8 @@ export const generateUploadImageObject = (obj: {
   tmp.filename.final = imageName.autoAddHash
     ? `${tmp.filename.name}.${hash}.${suffix}`
     : `${tmp.filename.name}.${suffix}`
-  tmp.filename.isHashRename = imageName.autoAddHash
-  tmp.filename.isPrefix = imageName.prefixNaming.enable
-  tmp.filename.timestampNaming = imageName.autoTimestampNaming
+  tmp.filename.isAddHash = imageName.autoAddHash
+  tmp.filename.isPrefixNaming = imageName.prefixNaming.enable
+  tmp.filename.isTimestampNaming = imageName.autoTimestampNaming
   return tmp
 }
