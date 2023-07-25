@@ -42,7 +42,8 @@
       "hash_switch_desc": "Automatically add a hash code to the image name before uploading to ensure uniqueness. It is strongly recommended to turn on this feature.",
       "prefix_switch_name": "Add Prefix",
       "prefix_switch_desc": "Automatically add a prefix to the image name before uploading. For example: abc-image.jpg, where abc- is the prefix.",
-      "prefix_input_placeholder": "Please enter the name prefix..."
+      "prefix_input_placeholder": "Please enter the name prefix...",
+      "timestamp_switch_name": "Automatically timestamp naming"
     },
     "img_watermark": {
       "title": "Image Watermark Settings",

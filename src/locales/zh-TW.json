@@ -42,7 +42,8 @@
       "hash_switch_desc": "上傳前自動給圖片名增加哈希碼，確保圖片名唯一，強烈建議開啟",
       "prefix_switch_name": "添加前綴命名",
       "prefix_switch_desc": "上傳前自動給圖片名增加前綴，例如：abc-image.jpg，abc- 為前綴",
-      "prefix_input_placeholder": "請輸入命名前綴 ..."
+      "prefix_input_placeholder": "請輸入命名前綴 ...",
+      "timestamp_switch_name": "自動時間戳命名"
     },
     "img_watermark": {
       "title": "圖片水印設置",
