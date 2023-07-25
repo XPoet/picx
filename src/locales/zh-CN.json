@@ -16,6 +16,7 @@
   "copy_fail_1": "复制失败",
   "header": {
     "notLogin": "未登录",
+    "login": "登录",
     "logout": "退出登录",
     "language": "语言",
     "theme": "主题",

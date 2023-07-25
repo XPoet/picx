@@ -16,6 +16,7 @@
   "copy_fail_1": "復製失敗",
   "header": {
     "notLogin": "未登錄",
+    "login": "登錄",
     "logout": "退出登錄",
     "language": "語言",
     "theme": "主題",
