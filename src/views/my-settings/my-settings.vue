@@ -169,7 +169,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 import { store } from '@/stores'
 import { ThemeModeEnum, UserSettingsModel } from '@/common/model'
 
@@ -193,6 +193,21 @@ const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
   userSettings.watermark.fontSize = config.fontSize
   persistUserSettings()
 }
+
+watch(
+  () => userSettings.imageName,
+  (ins) => {
+    if (ins.autoTimestampNaming) {
+      userSettings.imageName.autoAddHash = false
+      userSettings.imageName.prefixNaming.enable = false
+    }
+    persistUserSettings()
+  },
+  {
+    immediate: true,
+    deep: true
+  }
+)
 </script>
 
 <style scoped lang="stylus">
