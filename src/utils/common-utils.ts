@@ -78,7 +78,11 @@ export const deepAssignObject = (obj1: object, obj2: object): any => {
       }
     } else {
       // @ts-ignore
-      deepAssignObject(obj1[key], obj2[key])
+      // eslint-disable-next-line no-lonely-if
+      if (obj1[key]) {
+        // @ts-ignore
+        deepAssignObject(obj1[key], obj2[key])
+      }
     }
   }
 }

@@ -16,6 +16,7 @@
   "copy_fail_1": "Copy failed",
   "header": {
     "notLogin": "Not log in",
+    "login": "Log in",
     "logout": "Log out",
     "language": "Language",
     "theme": "Theme",
@@ -42,7 +43,8 @@
       "hash_switch_desc": "Automatically add a hash code to the image name before uploading to ensure uniqueness. It is strongly recommended to turn on this feature.",
       "prefix_switch_name": "Add Prefix",
       "prefix_switch_desc": "Automatically add a prefix to the image name before uploading. For example: abc-image.jpg, where abc- is the prefix.",
-      "prefix_input_placeholder": "Please enter the name prefix..."
+      "prefix_input_placeholder": "Please enter the name prefix...",
+      "timestamp_switch_name": "Automatically timestamp naming"
     },
     "img_watermark": {
       "title": "Image Watermark Settings",
@@ -164,6 +166,7 @@
     "expand": "Expand",
     "hash": "Hashing",
     "rename": "Rename",
+    "timestamp-naming": "Timestamp Naming",
     "prefixNaming": "Prefix Naming",
     "delete": "Delete",
     "copyLink": "Copy image link",

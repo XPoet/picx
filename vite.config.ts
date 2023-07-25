@@ -47,6 +47,15 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: 4000,
       open: true,
       cors: true
+    },
+    build: {
+      minify: 'terser', // 启用 terser 压缩
+      terserOptions: {
+        compress: {
+          pure_funcs: ['console.log'], // 删除 console.log
+          drop_debugger: true // 删除 debugger
+        }
+      }
     }
   }
 }

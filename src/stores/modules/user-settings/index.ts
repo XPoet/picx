@@ -15,10 +15,10 @@ import UserSettingsStateTypes from '@/stores/modules/user-settings/types'
 import { LS_PICX_SETTINGS } from '@/common/constant'
 
 const initSettings: UserSettingsModel = {
-  defaultHash: true,
-  prefixNaming: {
-    enable: false,
-    prefix: ''
+  imageName: {
+    autoAddHash: true,
+    autoTimestampNaming: false,
+    prefixNaming: { enable: false, prefix: '' }
   },
   compress: {
     enable: true,

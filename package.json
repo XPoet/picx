@@ -1,6 +1,6 @@
 {
   "name": "picx",
-  "version": "2.3.5",
+  "version": "2.3.6",
   "private": false,
   "author": "XPoet <i@xpoet.cn>",
   "license": "AGPL-3.0",
@@ -24,7 +24,7 @@
   "dependencies": {
     "@yireen/squoosh-browser": "^1.0.7",
     "axios": "^1.3.5",
-    "element-plus": "^2.3.4",
+    "element-plus": "2.3.7",
     "vue": "^3.2.47",
     "vue-i18n": "^9.2.2",
     "vue-router": "^4.1.6",
@@ -55,6 +55,7 @@
     "stylelint-config-rational-order": "^0.1.2",
     "stylelint-stylus": "^0.18.0",
     "stylus": "^0.59.0",
+    "terser": "^5.19.2",
     "typescript": "^4.1.5",
     "unplugin-auto-import": "^0.15.2",
     "unplugin-icons": "^0.16.1",

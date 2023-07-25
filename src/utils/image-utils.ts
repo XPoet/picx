@@ -33,9 +33,10 @@ export const createUploadImageObject = (): UploadImageModel => {
       final: '',
       initName: '',
       newName: '',
-      isHashRename: true,
+      isAddHash: true,
       isRename: false,
-      isPrefix: false
+      isPrefixNaming: false,
+      isTimestampNaming: false
     },
     beforeUploadStatus: {
       watermarking: false,

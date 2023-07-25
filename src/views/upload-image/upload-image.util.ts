@@ -28,7 +28,7 @@ export const generateUploadImageObject = (obj: {
   tmp.base64.originalBase64 = obj.base64
   tmp.fileInfo.originalFile = obj.file
 
-  const { prefixNaming, defaultHash } = userSettings
+  const { imageName } = userSettings
 
   const hash = obj.uuid
 
@@ -40,15 +40,17 @@ export const generateUploadImageObject = (obj: {
   const suffix = nameHandled.slice(tmpIdx + 1)
 
   tmp.filename.initName = name
-  tmp.filename.name = prefixNaming.enable ? `${prefixNaming.prefix}${name}` : name
-  tmp.filename.prefixName = prefixNaming.prefix
+  tmp.filename.name = imageName.prefixNaming.enable
+    ? `${imageName.prefixNaming.prefix}${name}`
+    : name
+  tmp.filename.prefixName = imageName.prefixNaming.prefix
   tmp.filename.hash = hash
   tmp.filename.suffix = suffix
-  tmp.filename.final = defaultHash
+  tmp.filename.final = imageName.autoAddHash
     ? `${tmp.filename.name}.${hash}.${suffix}`
     : `${tmp.filename.name}.${suffix}`
-  tmp.filename.isHashRename = defaultHash
-  tmp.filename.isPrefix = prefixNaming.enable
-
+  tmp.filename.isAddHash = imageName.autoAddHash
+  tmp.filename.isPrefixNaming = imageName.prefixNaming.enable
+  tmp.filename.isTimestampNaming = imageName.autoTimestampNaming
   return tmp
 }

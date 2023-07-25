@@ -221,7 +221,7 @@ const updateRename = async () => {
     const suffix = getFileSuffix(imageObj.name)
     const newUuid = getUuid()
     const newFilename = `${renameInputValue.value}${
-      userSettings.defaultHash ? `.${newUuid}` : ''
+      userSettings.imageName.autoAddHash ? `.${newUuid}` : ''
     }.${suffix}`
 
     let base64

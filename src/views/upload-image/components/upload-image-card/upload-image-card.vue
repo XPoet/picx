@@ -60,7 +60,7 @@
           <el-checkbox
             :label="$t('upload.hash')"
             v-model="fileNameOperateData.isHash"
-            @change="hashRename($event, imgObj)"
+            @change="onHashRename($event)"
           ></el-checkbox>
         </div>
 
@@ -83,19 +83,28 @@
           ></el-input>
         </div>
 
+        <!-- 时间戳命名 -->
+        <div class="operate-item">
+          <el-checkbox
+            :label="$t('upload.timestamp-naming')"
+            v-model="fileNameOperateData.isTimestampNaming"
+            @change="onTimestampNaming"
+          ></el-checkbox>
+        </div>
+
         <!-- 命名前缀 -->
         <div
           class="operate-item"
           v-if="
             !imgObj.filename.isRename &&
-            userSettings.prefixNaming.enable &&
-            userSettings.prefixNaming.prefix
+            userSettings.imageName.prefixNaming.enable &&
+            userSettings.imageName.prefixNaming.prefix
           "
         >
           <el-checkbox
             :label="$t('upload.prefixNaming')"
-            v-model="fileNameOperateData.prefixNaming"
-            @change="prefixNamingTrans($event, imgObj)"
+            v-model="fileNameOperateData.isPrefixNaming"
+            @change="onPrefixNaming($event)"
           ></el-checkbox>
         </div>
       </div>
@@ -105,14 +114,14 @@
             class="original-file-size file-size-item"
             :class="{ 'del-line': imgObj.fileInfo?.compressFile?.size }"
           >
-            {{ getFileSize(imgObj.fileInfo.originalFile.size) }} KB
+            {{ getFileSize(imgObj.fileInfo.originalFile?.size) }} KB
           </span>
           <span v-if="imgObj.fileInfo?.compressFile?.size" class="finial-file-size file-size-item">
             {{ getFileSize(imgObj.fileInfo?.compressFile?.size) }} KB
           </span>
         </div>
         <span class="last-modified">
-          {{ formatDatetime('yyyy-MM-dd hh:mm', imgObj.fileInfo.originalFile.lastModified) }}
+          {{ formatDatetime('yyyy-MM-dd hh:mm', imgObj.fileInfo.originalFile?.lastModified) }}
         </span>
       </div>
     </div>
@@ -150,6 +159,8 @@
 </template>
 
 <script setup lang="ts">
+/* eslint-disable vue/no-mutating-props */
+
 import { computed, getCurrentInstance, onMounted, reactive, ref, watch } from 'vue'
 import { copyImageLink } from '@/utils'
 import { UploadImageModel } from '@/common/model'
@@ -181,7 +192,8 @@ const loadingText = ref('')
 
 const fileNameOperateData = reactive({
   isHash: false,
-  prefixNaming: false,
+  isPrefixNaming: false,
+  isTimestampNaming: false,
   isRename: false,
   newName: ''
 })
@@ -192,35 +204,67 @@ const remove = (uuid: string) => {
   emit('remove', uuid)
 }
 
-/* eslint-disable vue/no-mutating-props */
-
 const onRename = () => {
-  props.imgObj.filename.newName = fileNameOperateData.newName
+  props.imgObj!.filename.newName = fileNameOperateData.newName
   setTimeout(() => {
     renameInputRef.value?.focus()
   }, 100)
   rename(fileNameOperateData.isRename, props.imgObj)
 }
 
+const onHashRename = (e: boolean) => {
+  fileNameOperateData.isTimestampNaming = false
+  hashRename(e, props.imgObj)
+}
+
+const onPrefixNaming = (e: boolean) => {
+  fileNameOperateData.isTimestampNaming = false
+  prefixNamingTrans(e, props.imgObj)
+}
+
+const onTimestampNaming = (e: boolean) => {
+  const { suffix, isPrefixNaming, isAddHash } = props.imgObj!.filename
+  if (e) {
+    fileNameOperateData.isHash = false
+    fileNameOperateData.isPrefixNaming = false
+    props.imgObj!.filename.final = `${Date.now()}.${suffix}`
+  } else {
+    prefixNamingTrans(isPrefixNaming, props.imgObj)
+    hashRename(isAddHash, props.imgObj)
+    fileNameOperateData.isHash = isAddHash
+    fileNameOperateData.isPrefixNaming = isPrefixNaming
+  }
+}
+
 const initFilename = () => {
-  const { defaultHash: isHash, prefixNaming } = userSettings
-  if (props.imgObj.uploadStatus.progress === 0) {
-    props.imgObj.filename.isHashRename = isHash
-    props.imgObj.filename.isPrefix = prefixNaming.enable
-    props.imgObj.filename.prefixName = prefixNaming.prefix
+  const { imageName } = userSettings
+  if (props.imgObj!.uploadStatus.progress === 0) {
+    props.imgObj!.filename.isTimestampNaming = imageName.autoTimestampNaming
 
-    prefixNamingTrans(prefixNaming.enable, props.imgObj)
-    hashRename(isHash, props.imgObj)
+    // 如果开启了自动时间戳命名，则将哈希化和前缀命名关闭
+    if (props.imgObj!.filename.isTimestampNaming) {
+      props.imgObj!.filename.isAddHash = false
+      props.imgObj!.filename.isPrefixNaming = false
+      onTimestampNaming(true)
+    } else {
+      props.imgObj!.filename.isAddHash = imageName.autoAddHash
+      props.imgObj!.filename.isPrefixNaming = imageName.prefixNaming.enable
+      props.imgObj!.filename.prefixName = imageName.prefixNaming.prefix
 
-    fileNameOperateData.isHash = props.imgObj.filename.isHashRename
-    fileNameOperateData.prefixNaming = props.imgObj.filename.isPrefix
-    fileNameOperateData.isRename = props.imgObj.filename.isRename
-    fileNameOperateData.newName = props.imgObj.filename.newName
+      prefixNamingTrans(imageName.prefixNaming.enable, props.imgObj)
+      hashRename(imageName.autoAddHash, props.imgObj)
+    }
+
+    fileNameOperateData.isTimestampNaming = props.imgObj!.filename.isTimestampNaming
+    fileNameOperateData.isHash = props.imgObj!.filename.isAddHash
+    fileNameOperateData.isPrefixNaming = props.imgObj!.filename.isPrefixNaming
+    fileNameOperateData.isRename = props.imgObj!.filename.isRename
+    fileNameOperateData.newName = props.imgObj!.filename.newName
   }
 }
 
 watch(
-  () => props.imgObj.uploadStatus,
+  () => props.imgObj!.uploadStatus,
   (nv) => {
     if (nv.uploading) {
       loadingText.value = instance!.proxy!.$t('upload.loading1')
