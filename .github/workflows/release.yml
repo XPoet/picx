@@ -1,0 +1,79 @@
+on:
+  push:
+    branches:
+      - master
+
+name: release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          token: ${{ secrets.ACTIONS_TOKEN }}
+          release-type: node
+          package-name: standard-version
+          changelog-types: '[
+            {
+              "type": "feat",
+              "section": "🌟 Features",
+              "hidden": false
+            },
+            {
+              "type": "fix",
+              "section": "🐞 Bug Fixes",
+              "hidden": false
+            },
+            {
+              "type": "docs",
+              "section": "📖 Docs",
+              "hidden": false
+            },
+            {
+              "type": "style",
+              "section": "🎨 Styling",
+              "hidden": false
+            },
+            {
+              "type": "refactor",
+              "section": "🍭 Code Refactoring",
+              "hidden": false
+            },
+            {
+              "type": "perf",
+              "section": "🛠 Performance Improvements",
+              "hidden": false
+            },
+            {
+              "type": "test",
+              "section": "🚧 Tests",
+              "hidden": false
+            },
+            {
+              "type": "build",
+              "section": "📦 Build System",
+              "hidden": false
+            },
+            {
+              "type": "revert",
+              "section": "🌀 Reverts",
+              "hidden": false
+            },
+            {
+              "type": "ci",
+              "section": "🎯 CI",
+              "hidden": false
+            },
+            {
+              "type": "ui",
+              "section": "💄 Improvement UI",
+              "hidden": false
+            },
+            {
+              "type": "chore",
+              "section": "🚦 Chore",
+              "hidden": false
+            }
+          ]'

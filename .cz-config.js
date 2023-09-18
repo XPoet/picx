@@ -9,9 +9,10 @@ module.exports = {
     { value: 'perf', name: 'perf:     性能优化' },
     { value: 'test', name: 'test:     添加、修改测试用例' },
     { value: 'build', name: 'build:    构建流程、外部依赖变更（如升级 npm 包、修改 webpack 配置等）' },
+    { value: 'revert', name: 'revert:   回滚 commit' },
     { value: 'ci', name: 'ci:       修改 CI 配置、脚本' },
     { value: 'chore', name: 'chore:    对构建过程或辅助工具和库的更改（不影响源文件、测试用例）' },
-    { value: 'revert', name: 'revert:   回滚 commit' }
+    { value: 'ui', name: 'ui:    美化界面 UI' }
   ],
 
   // scope 类型（定义之后，可通过上下键选择）
@@ -19,7 +20,7 @@ module.exports = {
     ['components', '组件相关'],
     ['hooks', 'hook 相关'],
     ['utils', 'utils 相关'],
-    ['element-ui', '对 element-ui 的调整'],
+    ['element-plus', '对 element-plus 的调整'],
     ['styles', '样式相关'],
     ['deps', '项目依赖'],
     ['auth', '对 auth 修改'],
