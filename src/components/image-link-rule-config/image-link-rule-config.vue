@@ -14,7 +14,7 @@
       <el-table-column :label="$t('settings.link_rule.card_table_col_title_2')">
         <template #default="scope">
           <div
-            :contenteditable="scope.row.editable"
+            :contenteditable="true"
             @focusout="editImageLinkRule($event.target.innerHTML, scope.row.id)"
           >
             {{ scope.row.rule }}
