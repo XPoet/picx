@@ -1,0 +1,104 @@
+on:
+  push:
+    branches:
+      - master
+
+name: release
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        id: release
+        with:
+          token: ${{ secrets.ACTIONS_TOKEN }}
+          release-type: node
+          package-name: standard-version
+          changelog-types: '[
+            {
+              "type": "feat",
+              "section": "🌟 Features",
+              "hidden": false
+            },
+            {
+              "type": "fix",
+              "section": "🐞 Bug Fixes",
+              "hidden": false
+            },
+            {
+              "type": "docs",
+              "section": "📖 Docs",
+              "hidden": false
+            },
+            {
+              "type": "style",
+              "section": "🎨 Styling",
+              "hidden": false
+            },
+            {
+              "type": "refactor",
+              "section": "🍭 Code Refactoring",
+              "hidden": false
+            },
+            {
+              "type": "perf",
+              "section": "🛠 Performance Improvements",
+              "hidden": false
+            },
+            {
+              "type": "test",
+              "section": "🚧 Tests",
+              "hidden": false
+            },
+            {
+              "type": "build",
+              "section": "📦 Build System",
+              "hidden": false
+            },
+            {
+              "type": "revert",
+              "section": "🌀 Reverts",
+              "hidden": false
+            },
+            {
+              "type": "ci",
+              "section": "🎯 CI",
+              "hidden": false
+            },
+            {
+              "type": "ui",
+              "section": "💄 Improvement UI",
+              "hidden": false
+            },
+            {
+              "type": "chore",
+              "section": "🚦 Chore",
+              "hidden": false
+            }
+          ]'
+
+      # ↓↓ The logic below handles deploy to gh ↓↓
+
+      - uses: actions/checkout@v2
+        if: ${{ steps.release.outputs.release_created }}
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+        if: ${{ steps.release.outputs.release_created }}
+
+      - run: npm install
+        if: ${{ steps.release.outputs.release_created }}
+
+      - run: npm run build
+        if: ${{ steps.release.outputs.release_created }}
+
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          publish_dir: ./dist
+          github_token: ${{ secrets.ACTIONS_TOKEN }}
+          user_name: ${{ secrets.MY_USER_NAME }}
+          user_email: ${{ secrets.MY_USER_EMAIL }}
+          commit_message: Update PicX
+        if: ${{ steps.release.outputs.release_created }}
