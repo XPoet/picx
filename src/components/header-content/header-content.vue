@@ -78,7 +78,11 @@
               </el-select>
             </li>
             <el-divider style="margin: 5px 0" />
-            <li class="content-item" v-if="userConfigInfo.name" @click="logout">
+            <li
+              class="content-item"
+              v-if="userConfigInfo.name || userConfigInfo.owner"
+              @click="logout"
+            >
               {{ $t('header.logout') }}
             </li>
             <li class="content-item" v-else @click="router.push('/config')">
