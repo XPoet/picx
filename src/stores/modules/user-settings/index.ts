@@ -29,12 +29,12 @@ const initSettings: UserSettingsModel = {
   },
   elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
-    selected: 'Staticaly',
+    selected: 'Statically',
     presetList: [
       {
         id: getUuid(),
-        name: 'Staticaly',
-        rule: 'https://cdn.staticaly.com/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+        name: 'Statically',
+        rule: 'https://cdn.statically.io/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
       },
       {
         id: getUuid(),
