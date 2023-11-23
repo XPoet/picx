@@ -1,5 +1,5 @@
 <a href="https://picx.xpoet.cn" >
-<img width="100" align="right" alt="PicX" src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/PicX/picx-logo.png">
+<img width="100" align="right" alt="PicX" src="https://xpoet.cn/images/picx/picx-logo.png">
 </a>
 
 # PicX
@@ -32,7 +32,7 @@
 
 官方文档入口 >> https://picx-docs.xpoet.cn
 
-通过阅读 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX 。
+通过阅读 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX。 
 
 ## 功能 | Features
 
@@ -72,7 +72,7 @@
 
 PicX 的更新迭代依靠作者工作之外的时间，维护不易，如果对你有帮助，欢迎赞赏作者，支持开源。
 
-<img width="320" src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/common/appreciation.webp" />
+<img width="320" src="https://xpoet.cn/images/fec/appreciation.webp" />
 
 ## 许可 | License
 
