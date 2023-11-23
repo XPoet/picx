@@ -28,10 +28,7 @@
     <div class="help-info-item" style="margin-bottom: 2rem">🎁 {{ $t('feedback.text_3') }}</div>
 
     <div class="help-info-item img">
-      <el-image
-        style="width: 300rem"
-        src="https://cdn.staticaly.com/gh/XPoet/image-hosting@master/common/appreciation.webp"
-      />
+      <el-image style="width: 300rem" :src="QRCodeImg" />
     </div>
 
     <div class="help-info-item red-text">
@@ -43,6 +40,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getOSName } from '@/utils'
+import QRCodeImg from '@/assets/appreciation.webp'
 
 const shortcutKey = computed(() => (getOSName() === 'win' ? 'Ctrl + D' : 'Command + D'))
 </script>
