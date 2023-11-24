@@ -1,15 +1,10 @@
 <template>
-  <div class="copy-image-link-box">
-    <div class="left">
-      <el-tooltip :content="leftSideTip" placement="top">
-        <el-icon><IEpInfoFilled /></el-icon>
-      </el-tooltip>
-    </div>
-    <div class="right">
-      <el-button plain type="primary" size="small" @click="oneClickCopy">
+  <div class="copy-image-link-box border-box">
+    <el-tooltip :content="imgLinkRuleTip" placement="top">
+      <el-button plain type="primary" size="default" @click="oneClickCopy">
         <el-icon><IEpCopyDocument /></el-icon>&nbsp;{{ $t('upload.copyLink') }}
       </el-button>
-    </div>
+    </el-tooltip>
   </div>
 </template>
 
@@ -28,7 +23,7 @@ const props = defineProps({
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const leftSideTip = computed(() => {
+const imgLinkRuleTip = computed(() => {
   if (userSettings.imageLinkFormat.enable) {
     return `${userSettings.imageLinkType.selected} & ${userSettings.imageLinkFormat.selected}`
   }

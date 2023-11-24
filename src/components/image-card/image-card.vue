@@ -41,7 +41,7 @@
     </div>
 
     <!-- 图片链接操作 -->
-    <div class="copy-link-box">
+    <div class="copy-link-box border-box">
       <copy-image-link :img-obj="imageObj" />
     </div>
 
