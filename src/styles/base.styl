@@ -50,11 +50,11 @@ body {
 a {
   color var(--text-color)
   text-decoration none
-}
 
-a:link {
-  color var(--text-color)
-  text-decoration none
+  &:link {
+    color var(--text-color)
+    text-decoration none
+  }
 }
 
 
@@ -130,6 +130,7 @@ li {
     justify-content flex-start
     box-sizing border-box
     padding 8rem 10rem
+    font-size 12rem
     cursor pointer
 
     &.copy-link {
@@ -150,6 +151,7 @@ li {
   text-overflow ellipsis
 }
 
+
 .quick-actions-popover {
   position relative
   box-sizing border-box
@@ -162,6 +164,7 @@ li {
     white-space nowrap
   }
 }
+
 
 .personal-center-popover {
   position relative
@@ -245,6 +248,11 @@ li {
       }
     }
   }
+}
+
+.border-box {
+  position relative
+  box-sizing border-box
 }
 
 
