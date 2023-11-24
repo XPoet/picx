@@ -1,5 +1,5 @@
 <a href="https://picx.xpoet.cn" >
-<img width="100" align="right" alt="PicX" src="https://xpoet.cn/images/picx/picx-logo.png">
+<img width="100" align="right" alt="PicX" src="https://picx-docs.xpoet.cn/images/logo.png">
 </a>
 
 # PicX
@@ -30,7 +30,7 @@
 
 ## 文档 | Documents
 
-官方文档入口 >> https://picx-docs.xpoet.cn
+官方文档 https://picx-docs.xpoet.cn
 
 通过阅读 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX。 
 
@@ -54,7 +54,7 @@
 
 欢迎各种形式的贡献，包括但不限于：美化界面、增加功能、性能优化、修复 Bug、完善文档等。
 
-> [PicX 贡献指南](https://picx-docs.xpoet.cn/user-notice/contribution-guide.html)
+> [PicX 贡献指南](https://picx-docs.xpoet.cn/contribution-guide/contribution-guide.html)
 
 ### 致谢
 
@@ -66,13 +66,13 @@
 
 ##  反馈 | Feedback
 
-在使用过程中，如遇问题，请仔细阅读 **[官方文档](https://picx-docs.xpoet.cn)**，或给作者提 **[Issue](https://github.com/XPoet/picx/issues)**。
+在使用过程中，如遇问题，请仔细阅读 **[官方文档](https://picx-docs.xpoet.cn)**，或在 GitHub 发起 **[Issue](https://github.com/XPoet/picx/issues)**。
 
 ## 赞赏 | Appreciation
 
 PicX 的更新迭代依靠作者工作之外的时间，维护不易，如果对你有帮助，欢迎赞赏作者，支持开源。
 
-<img width="320" src="https://xpoet.cn/images/fec/appreciation.webp" />
+<img width="320" src="https://xpoet.cn/images/admire-code-wechat.webp" />
 
 ## 许可 | License
 
