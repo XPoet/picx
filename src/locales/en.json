@@ -78,7 +78,7 @@
       "select_title": "Select Image Link Rule",
       "card_title": "Configure Custom Image Link Rules",
       "card_table_col_title_1": "Type",
-      "card_table_col_title_2": "CDN Rule",
+      "card_table_col_title_2": "Image Link Rule",
       "card_table_col_title_3": "Action",
       "input_name_1": "Link Type",
       "input_name_1_rule": "The Image Link Type Name cannot be empty.",

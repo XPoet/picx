@@ -78,7 +78,7 @@
       "select_title": "选择图片链接规则",
       "card_title": "配置自定义图片链接规则",
       "card_table_col_title_1": "类型",
-      "card_table_col_title_2": "CDN 规则",
+      "card_table_col_title_2": "图片链接规则",
       "card_table_col_title_3": "操作",
       "input_name_1": "图片链接类型",
       "input_name_1_rule": "图片链接类型名称不能为空",

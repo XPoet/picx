@@ -78,7 +78,7 @@
       "select_title": "選擇圖片鏈接規則",
       "card_title": "配置自定義圖片鏈接規則",
       "card_table_col_title_1": "類型",
-      "card_table_col_title_2": "CDN 規則",
+      "card_table_col_title_2": "圖片鏈接規則",
       "card_table_col_title_3": "操作",
       "input_name_1": "圖片鏈接類型",
       "input_name_1_rule": "圖片鏈接類型名稱不能為空",
