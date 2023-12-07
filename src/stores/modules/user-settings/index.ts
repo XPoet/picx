@@ -3,6 +3,7 @@ import {
   CompressEncoderEnum,
   ElementPlusSizeEnum,
   ImageLinkRuleModel,
+  ImageLinkTypeEnum,
   LanguageEnum,
   ThemeModeEnum,
   UserSettingsModel,
@@ -11,8 +12,12 @@ import {
 import { deepAssignObject, getLocal, getUuid } from '@/utils'
 import UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
 import RootStateTypes from '@/stores/types'
-import UserSettingsStateTypes from '@/stores/modules/user-settings/types'
+import UserSettingsStateTypes, {
+  ImgLinkRuleActionsEnum
+} from '@/stores/modules/user-settings/types'
 import { LS_PICX_SETTINGS } from '@/common/constant'
+import { DeployServerEnum } from '@/components/image-hosting-deploy/image-hosting-deploy.model'
+import { imgLinkRuleVerification } from '@/stores/modules/user-settings/utils'
 
 const initSettings: UserSettingsModel = {
   imageName: {
@@ -29,29 +34,39 @@ const initSettings: UserSettingsModel = {
   },
   elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
-    selected: 'Statically',
-    presetList: [
-      {
+    selected: ImageLinkTypeEnum.jsDelivr,
+    presetList: {
+      // GitHubPages
+      [`${ImageLinkTypeEnum.GitHubPages}`]: {
         id: getUuid(),
-        name: 'Statically',
-        rule: 'https://cdn.statically.io/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+        name: ImageLinkTypeEnum.GitHubPages,
+        rule: 'https://{{owner}}.github.io/{{repo}}/{{path}}'
       },
-      {
+      // GitHub
+      [`${ImageLinkTypeEnum.GitHub}`]: {
         id: getUuid(),
-        name: 'ChinaJsDelivr',
-        rule: 'https://jsd.cdn.zzko.cn/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+        name: ImageLinkTypeEnum.GitHub,
+        rule: 'https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}'
       },
-      {
+      // jsDelivr
+      [`${ImageLinkTypeEnum.jsDelivr}`]: {
         id: getUuid(),
-        name: 'jsDelivr',
+        name: ImageLinkTypeEnum.jsDelivr,
         rule: 'https://cdn.jsdelivr.net/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
       },
-      {
+      // Statically
+      [`${ImageLinkTypeEnum.Statically}`]: {
         id: getUuid(),
-        name: 'GitHub',
-        rule: 'https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}'
+        name: ImageLinkTypeEnum.Statically,
+        rule: 'https://cdn.statically.io/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+      },
+      // ChinaJsDelivr
+      [`${ImageLinkTypeEnum.ChinaJsDelivr}`]: {
+        id: getUuid(),
+        name: ImageLinkTypeEnum.ChinaJsDelivr,
+        rule: 'https://jsd.cdn.zzko.cn/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
       }
-    ]
+    }
   },
   imageLinkFormat: {
     enable: false,
@@ -80,6 +95,14 @@ const initSettings: UserSettingsModel = {
     textColor: '#FFFFFF',
     opacity: 0.5
   },
+  deploy: {
+    github: {
+      uuid: getUuid(),
+      status: null,
+      latestTime: null,
+      type: DeployServerEnum.githubPages
+    }
+  },
   language: LanguageEnum.zhCN
 }
 
@@ -89,51 +112,6 @@ const initUserSettings = (): UserSettingsModel => {
     deepAssignObject(initSettings, LSSettings)
   }
   return initSettings
-}
-
-const ruleVerification = (rule: ImageLinkRuleModel, type: 'add' | 'edit', callback: any) => {
-  const typeTxt = type === 'add' ? '添加' : '编辑'
-  const tmpList = []
-
-  if (!rule.rule.includes('{{owner}}')) {
-    tmpList.push('{{owner}}')
-  }
-
-  if (!rule.rule.includes('{{repo}}')) {
-    tmpList.push('{{repo}}')
-  }
-
-  if (!rule.rule.includes('{{branch}}')) {
-    tmpList.push('{{branch}}')
-  }
-
-  if (!tmpList.length) {
-    callback(true)
-    return
-  }
-
-  if (rule.rule.includes('{{path}}')) {
-    let confirmTxt = `图片链接规则缺少 ${tmpList.join('、')}，是否确认${typeTxt}？`
-
-    if (type === 'edit') {
-      confirmTxt = `注意：当前编辑的图片链接规则缺少 ${tmpList.join('、')}`
-    }
-
-    ElMessageBox.confirm(confirmTxt, `${typeTxt}提示`, {
-      type: 'warning',
-      showClose: type === 'add',
-      showCancelButton: type === 'add'
-    })
-      .then(() => {
-        callback(true)
-      })
-      .catch(() => {
-        console.log(`取消${typeTxt}`)
-        callback(false)
-      })
-  } else {
-    ElMessage.error(`${typeTxt}失败，图片链接规则必须包含 {{path}}`)
-  }
 }
 
 const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
@@ -156,40 +134,33 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
     },
 
     // 图片链接类型 - 增加规则
-    ADD_IMAGE_LINK_TYPE_RULE({ state, dispatch }, rule: ImageLinkRuleModel) {
-      const list = state.userSettings.imageLinkType.presetList
-      if (!list.some((x) => x.name === rule.name)) {
-        ruleVerification(rule, 'add', (e: boolean) => {
+    ADD_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule, $t }) {
+      const ruleObjs = state.userSettings.imageLinkType.presetList
+      if (!Object.hasOwn(ruleObjs, rule.name)) {
+        imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.add, $t, (e: boolean) => {
           if (e) {
-            state.userSettings.imageLinkType.presetList.push(rule)
+            state.userSettings.imageLinkType.presetList[rule.name] = rule
             dispatch('USER_SETTINGS_PERSIST')
           }
         })
       } else {
-        ElMessage.error('添加失败，该图片链接规则规则已存在')
+        ElMessage.error($t('settings.link_rule.error_msg_1'))
       }
     },
 
     // 图片链接类型 - 修改规则
-    UPDATE_IMAGE_LINK_TYPE_RULE({ state, dispatch }, rule: ImageLinkRuleModel) {
-      ruleVerification(rule, 'edit', (e: boolean) => {
+    UPDATE_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule, $t }) {
+      imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.edit, $t, (e: boolean) => {
         if (e) {
-          const tgt = state.userSettings.imageLinkType.presetList.find((x) => x.id === rule.id)
-          if (tgt) {
-            tgt.rule = rule.rule
-            dispatch('USER_SETTINGS_PERSIST')
-          }
+          state.userSettings.imageLinkType.presetList[rule.name].rule = rule.rule
+          dispatch('USER_SETTINGS_PERSIST')
         }
       })
     },
 
     // 图片链接类型 - 删除规则
-    DEL_IMAGE_LINK_TYPE_RULE({ state, dispatch }, id: string) {
-      const list = state.userSettings.imageLinkType.presetList
-      list.splice(
-        list.findIndex((x) => x.id === id),
-        1
-      )
+    DEL_IMAGE_LINK_TYPE_RULE({ state, dispatch }, rule: ImageLinkRuleModel) {
+      delete state.userSettings.imageLinkType.presetList[rule.name]
       dispatch('USER_SETTINGS_PERSIST')
     },
 

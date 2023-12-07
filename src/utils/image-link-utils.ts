@@ -1,6 +1,5 @@
 import {
   ImageLinkFormatModel,
-  ImageLinkRuleModel,
   UploadedImageModel,
   UserConfigInfoModel,
   UserSettingsModel
@@ -19,10 +18,8 @@ export const generateImageLinks = (
   userConfigInfo: UserConfigInfoModel,
   userSettings: UserSettingsModel
 ): string | null => {
-  const selectedType = userSettings.imageLinkType.selected
-  const rule = userSettings.imageLinkType.presetList.find(
-    (x: ImageLinkRuleModel) => x.name === selectedType
-  )?.rule
+  const { selected } = userSettings.imageLinkType
+  const { rule } = userSettings.imageLinkType.presetList[selected]
   if (rule) {
     const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
     return rule

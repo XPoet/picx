@@ -1,4 +1,5 @@
 import { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
+import { DeployServerEnum } from '@/components/image-hosting-deploy/image-hosting-deploy.model'
 
 export enum ElementPlusSizeEnum {
   // eslint-disable-next-line no-unused-vars
@@ -38,6 +39,13 @@ export enum LanguageEnum {
   en = 'en'
 }
 
+export interface DeployStatusInfo {
+  uuid: string
+  status: boolean | null
+  latestTime: number | null
+  type: DeployServerEnum
+}
+
 export interface UserSettingsModel {
   imageName: {
     autoAddHash: boolean
@@ -57,7 +65,9 @@ export interface UserSettingsModel {
   elementPlusSize: ElementPlusSizeEnum
   imageLinkType: {
     selected: string
-    presetList: Array<ImageLinkRuleModel>
+    presetList: {
+      [key: string]: ImageLinkRuleModel
+    }
   }
   imageLinkFormat: {
     enable: boolean
@@ -72,6 +82,9 @@ export interface UserSettingsModel {
     position: WatermarkPositionEnum
     textColor: string
     opacity: number
+  }
+  deploy: {
+    [key: string]: DeployStatusInfo
   }
   language: LanguageEnum
 }

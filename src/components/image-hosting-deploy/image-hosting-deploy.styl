@@ -1,0 +1,46 @@
+.deploy-box {
+  width 100%
+
+  .deploy-item {
+    display flex
+    align-items center
+    justify-content space-between
+    margin-bottom 12rem
+    padding 2rem 0 2rem 10rem
+    border 1rem solid var(--text-color-4)
+    border-radius 6rem
+
+    &:last-child {
+      margin-bottom 0
+    }
+
+    .left-wrap {
+      display flex
+      align-items center
+      justify-content flex-start
+    }
+
+    .info-item {
+      margin-right 10rem
+      font-size 14rem
+    }
+
+    .deploy-status-icon {
+      display inline-block
+      width 12rem
+      height 12rem
+      background var(--el-color-info)
+      border-radius 50%
+
+      &.success {
+        background var(--el-color-success)
+      }
+
+      &.fail {
+        background var(--el-color-error)
+      }
+    }
+  }
+}
+
+

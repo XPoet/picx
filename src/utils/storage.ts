@@ -19,7 +19,6 @@ export const setSession = (key: string, value: any) => {
 /**
  * 获取 localStorage 值
  * @param key
- * @returns {*}
  */
 export const getLocal = (key: string) => {
   const temp = window.localStorage.getItem(key)

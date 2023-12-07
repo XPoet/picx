@@ -22,7 +22,7 @@
           <el-button
             :disabled="btnDisabled"
             plain
-            type="primary"
+            type="info"
             native-type="submit"
             @click.prevent="getUserInfo()"
           >
@@ -89,16 +89,6 @@
       v-loading="branchLoading"
       :element-loading-text="$t('config.loading2')"
     >
-      <!-- !!! 由于 GitHub API 目前不支持创建空分支，该功能暂时无法使用 !!! -->
-      <el-form-item v-if="userConfigInfo.selectedRepo && 0" :label="$t('config.branchMode')">
-        <el-radio-group v-model="userConfigInfo.branchMode" @change="branchModeChange">
-          <el-radio v-if="userConfigInfo.branchList.length" label="repoBranch">
-            {{ $t('config.selectBranch2', { repo: userConfigInfo.selectedRepo }) }}
-          </el-radio>
-          <el-radio label="newBranch">{{ $t('config.createBranch') }}</el-radio>
-        </el-radio-group>
-      </el-form-item>
-
       <!-- 选择分支 -->
       <el-form-item
         v-if="
@@ -123,20 +113,6 @@
           </el-option>
         </el-select>
         <refresh-config :box-width="refreshBoxWidth" data-type="branch" />
-      </el-form-item>
-
-      <!-- 新建分支 -->
-      <el-form-item
-        v-if="userConfigInfo.branchMode === BranchModeEnum.newBranch"
-        :label="$t('config.createBranch')"
-      >
-        <el-input
-          v-model="newBranchInputVal"
-          @blur="onNewBranchInputBlur"
-          clearable
-          :placeholder="$t('config.placeholder3')"
-          ref="newBranchInputRef"
-        ></el-input>
       </el-form-item>
     </el-form>
 
@@ -228,7 +204,7 @@
         <el-button
           plain
           :disabled="btnDisabled"
-          type="success"
+          type="primary"
           @click="goUploadPage($t)"
           v-if="userConfigInfo.selectedRepo"
         >
@@ -242,17 +218,16 @@
 <script lang="ts" setup>
 import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
 import { useStore } from '@/stores'
-import { BranchModeEnum, BranchModel, DirModeEnum } from '@/common/model'
+import { BranchModeEnum, DirModeEnum } from '@/common/model'
 import { formatDatetime } from '@/utils'
 import {
   getBranchInfoList,
   getGitHubUserInfo,
-  createNewBranch,
   initEmptyRepo,
   getDirInfoList,
   getAllRepoList
 } from '@/common/api'
-import { INIT_REPO_BARNCH } from '@/common/constant'
+import { GH_PAGES, INIT_REPO_BARNCH } from '@/common/constant'
 import {
   goUploadPage,
   persistUserConfigInfo,
@@ -279,8 +254,6 @@ const reConfig = computed(() => !userConfigInfo.token || !userConfigInfo.owner)
 const btnDisabled = computed(() => userInfoLoading.value || dirLoading.value || branchLoading.value)
 
 const newDirInputRef = ref<null | HTMLElement>(null)
-const newBranchInputRef = ref<null | HTMLElement>(null)
-const newBranchInputVal = ref<string>('')
 const repoDirCascaderKey = ref<string>('repoDirCascaderKey')
 const tokenInputRef = ref<HTMLElement | null>(null)
 
@@ -340,56 +313,26 @@ async function getDirList() {
   persistUserConfigInfo()
 }
 
-const branchModeChange = (mode: BranchModeEnum) => {
-  const selBranch = userConfigInfo.selectedBranch
-  const bv = userConfigInfo.branchList[0].value
-
-  switch (mode) {
-    case BranchModeEnum.newBranch:
-      userConfigInfo.dirMode = DirModeEnum.newDir
-      userConfigInfo.selectedBranch = ''
-      userConfigInfo.selectedDir = ''
-      newBranchInputRef.value?.focus()
-      break
-
-    case BranchModeEnum.repoBranch:
-      if (selBranch !== bv) {
-        userConfigInfo.selectedBranch = bv
-        getDirList()
-      }
-      break
-
-    default:
-      userConfigInfo.selectedBranch = ''
-      break
-  }
-  persistUserConfigInfo()
-}
-
 async function getBranchList(repo: string) {
   branchLoading.value = true
   const { owner, dirMode } = userConfigInfo
   const branchInfoList = await getBranchInfoList(owner, repo)
   console.log('getBranchInfoList >> ', branchInfoList)
   branchLoading.value = false
-  if (branchInfoList) {
-    if (branchInfoList.length > 0) {
-      userConfigInfo.branchList = branchInfoList
-      userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
-      userConfigInfo.branchMode = BranchModeEnum.repoBranch
-      await getDirList()
-    } else {
-      userConfigInfo.selectedBranch = INIT_REPO_BARNCH
-      userConfigInfo.branchMode = BranchModeEnum.newBranch
-
-      // 当分支列表为空时，判定该仓库为空仓库，需要初始化
-      await initEmptyRepo(userConfigInfo)
-    }
-    dirModeChange(dirMode)
-    persistUserConfigInfo()
+  if (branchInfoList.length > 0) {
+    userConfigInfo.branchList = branchInfoList.filter((x) => x.value !== GH_PAGES)
+    userConfigInfo.selectedBranch = userConfigInfo.branchList[0].value
+    userConfigInfo.branchMode = BranchModeEnum.repoBranch
+    await getDirList()
   } else {
-    ElMessage.error({ message: instance?.proxy?.$t('config.message10') })
+    userConfigInfo.selectedBranch = INIT_REPO_BARNCH
+    userConfigInfo.branchMode = BranchModeEnum.newBranch
+
+    // 当分支列表为空时，判定该仓库为空仓库，需要初始化
+    await initEmptyRepo(userConfigInfo)
   }
+  dirModeChange(dirMode)
+  persistUserConfigInfo()
 }
 
 async function getUserInfo() {
@@ -430,23 +373,6 @@ async function selectBranch(branch: string) {
   userConfigInfo.selectedDir = userConfigInfo.dirList[0].value
   userConfigInfo.selectedDirList = [userConfigInfo.selectedDir]
   persistUserConfigInfo()
-}
-
-const onNewBranchInputBlur = () => {
-  const nb = newBranchInputVal.value
-  const list = userConfigInfo.branchList
-  if (nb) {
-    if (!list.find((x: BranchModel) => x.value === nb)) {
-      createNewBranch(userConfigInfo, nb, () => {
-        ElMessage.error({ message: instance?.proxy?.$t('config.message14', { branch: nb }) })
-        userConfigInfo.branchList.push({ value: nb, label: nb })
-      })
-    } else {
-      ElMessage.error({ message: instance?.proxy?.$t('config.message13', { branch: nb }) })
-    }
-  } else {
-    ElMessage.error({ message: instance?.proxy?.$t('config.message12') })
-  }
 }
 
 watch(

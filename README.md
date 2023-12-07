@@ -20,17 +20,17 @@
 
 - 在线使用，无需下载，无需安装。
 - 操作简单，文档完善，持续维护。
-- 代码开源，数据安全，免费使用。
+- 代码开源，数据安全，完全免费。
 
 ## 如何使用 | How to use
 
 只需 [创建一个 GitHub Token](https://github.com/settings/tokens/new)，在 [PicX 官网](https://picx.xpoet.cn) 使用 Token 完成图床配置即可。
 
-**PicX 在线使用入口 >> https://picx.xpoet.cn**
+**在线使用 https://picx.xpoet.cn**
 
 ## 文档 | Documents
 
-官方文档 https://picx-docs.xpoet.cn
+**官方文档 https://picx-docs.xpoet.cn**
 
 通过阅读 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX。 
 

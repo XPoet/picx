@@ -56,7 +56,7 @@ export const initReHandConfig = () => {
 }
 
 /**
- * 去往图片上传页面
+ * 前往 上传图片 页面
  */
 export const goUploadPage = async ($t: any) => {
   const { selectedDir, dirMode } = userConfigInfo

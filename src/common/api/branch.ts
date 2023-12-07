@@ -1,8 +1,10 @@
 import { UserConfigInfoModel } from '@/common/model'
 import request from '@/utils/request'
+import axios from '@/utils/request/axios'
+import { GH_PAGES } from '@/common/constant'
 
 /**
- * 获取分支信息列表
+ * 获取分支信息
  * @param owner
  * @param repo
  * @param branch
@@ -19,12 +21,21 @@ export const getBranchInfo = (owner: string, repo: string, branch: string) => {
  * @param owner
  * @param repo
  */
-export const getBranchInfoList = (owner: string, repo: string): Promise<any> => {
+export const getBranchInfoList = (
+  owner: string,
+  repo: string
+): Promise<{ value: string; label: string }[]> => {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const tmpList: any[] = await request({
       url: `/repos/${owner}/${repo}/branches`,
-      method: 'GET'
+      method: 'GET',
+      cache: {
+        maxAge: 0 // 设置缓存的最大寿命为 0，禁用缓存
+      },
+      params: {
+        timestamp: Date.now() // 添加时间戳参数，防止获取缓存的数据
+      }
     })
 
     if (tmpList && tmpList.length) {
@@ -38,85 +49,94 @@ export const getBranchInfoList = (owner: string, repo: string): Promise<any> => 
           .reverse()
       )
     } else {
-      resolve(null)
+      resolve([])
     }
   })
 }
 
 /**
- * TODO 初始化空分支，未实现，后续待完善
- * 初始化空分支（未实现，待完善）
+ * 将当前分支 checkout 到 gh-pages 分支
+ * 部署到 GitHub Pages，完成图片资源托管，获取访问能力
  * @param userConfigInfo
- * @param branch
- * @param callback
+ * @param $t
+ * @param cb
  */
-export const createNewBranch = async (
+export const checkoutGhPagesBranch = async (
   userConfigInfo: UserConfigInfoModel,
-  branch: string,
-  callback: any
+  $t: any,
+  cb?: any
 ) => {
-  const { owner, selectedRepo: repo, branchList } = userConfigInfo
+  const { owner, selectedRepo: repo, selectedBranch } = userConfigInfo
 
   const initLoading = ElLoading.service({
-    text: `正在新建 ${branch} 分支...`
+    text: $t('settings.image_hosting_deploy.deploying')
   })
 
+  const cbHandler = (evt: boolean = false) => {
+    // eslint-disable-next-line no-unused-expressions
+    cb && cb(evt)
+    initLoading.close()
+  }
+
   try {
-    // 1、获取现有分支的 sha
-    let sha = ''
-    const res1 = await request({
-      url: `/repos/${owner}/${repo}/git/refs/heads/${branchList[0].value}`,
-      method: 'GET'
-    })
+    // 1、判断 gh-pages 是否存在
+    const branchsRes = await getBranchInfoList(owner, repo)
+    const hasGhPages = branchsRes.some((x) => x.value === GH_PAGES)
 
-    if (res1) {
-      sha = res1.object.sha
-    }
+    let allowCreate = true
 
-    if (!sha) {
-      initLoading.close()
-      ElMessage.error('新建分支失败')
-      return
-    }
-
-    // 2、新建分支
-    let newBranchSha = ''
-    const res2 = await request({
-      url: `/repos/${owner}/${repo}/git/refs`,
-      method: 'POST',
-      params: {
-        ref: `refs/heads/${branch}`, // 新分支的名称
-        sha
+    // 存在则删除 gh-pages
+    if (hasGhPages) {
+      allowCreate = false
+      const delRes = await axios.delete(`/repos/${owner}/${repo}/git/refs/heads/${GH_PAGES}`)
+      if (delRes) {
+        allowCreate = true
+      } else {
+        cbHandler(false)
+        return
       }
-    })
-
-    if (res2) {
-      newBranchSha = res2.object.sha
     }
 
-    if (!newBranchSha) {
-      initLoading.close()
-      ElMessage.error('新建分支失败')
-      return
-    }
+    // 允许创建 gh-pages
+    if (allowCreate) {
+      // 2、获取当前分支的 SHA 值
+      let sha = ''
+      const res1 = await request({
+        url: `/repos/${owner}/${repo}/git/refs/heads/${selectedBranch}`,
+        method: 'GET'
+      })
 
-    // 3、强制更新分支
-    const res3 = await request({
-      url: `/repos/${owner}/${repo}/git/refs/heads/${branch}`,
-      method: 'PATCH',
-      params: {
-        force: true,
-        sha: newBranchSha
+      if (res1) {
+        sha = res1?.object?.sha
       }
-    })
 
-    if (res3) {
-      callback()
+      if (!sha) {
+        cbHandler(false)
+        return
+      }
+
+      // 3、复制当前分支到 gh-pages
+      const res2 = await request({
+        url: `/repos/${owner}/${repo}/git/refs`,
+        method: 'POST',
+        params: {
+          ref: `refs/heads/${GH_PAGES}`,
+          sha
+        }
+      })
+
+      // gh-pages 分支创建成功
+      if (res2.object.sha) {
+        // GitHub 部署 Pages 服务需要 50s 左右，利用 setTimeout 模拟部署进程
+        setTimeout(() => {
+          cbHandler(true)
+        }, 50000)
+      } else {
+        cbHandler(false)
+      }
     }
-
-    // 删除分支
-    // await axios.delete(`/repos/${owner}/${repo}/git/refs/heads/${branch}`)
   } catch (err) {
     console.error(err)
+    cbHandler(false)
   }
 }
