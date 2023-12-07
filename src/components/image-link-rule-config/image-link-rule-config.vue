@@ -5,7 +5,7 @@
         <span>{{ $t('settings.link_rule.card_title') }}</span>
       </div>
     </template>
-    <el-table :data="userSettings.imageLinkType.presetList" style="width: 100%">
+    <el-table :data="linkRuleTableData" style="width: 100%">
       <el-table-column
         prop="name"
         :label="$t('settings.link_rule.card_table_col_title_1')"
@@ -15,7 +15,7 @@
         <template #default="scope">
           <div
             :contenteditable="true"
-            @focusout="editImageLinkRule($event.target.innerHTML, scope.row.id)"
+            @focusout="editImageLinkRule($event.target.innerHTML, scope.row)"
           >
             {{ scope.row.rule }}
           </div>
@@ -85,6 +85,14 @@ import { ImageLinkRuleModel } from '@/common/model'
 const instance = getCurrentInstance()
 
 const userSettings = computed(() => store.getters.getUserSettings).value
+const linkRuleTableData = computed(() => {
+  const tmpArr = []
+  // eslint-disable-next-line guard-for-in,no-restricted-syntax
+  for (const key in userSettings.imageLinkType.presetList) {
+    tmpArr.push(userSettings.imageLinkType.presetList[key])
+  }
+  return tmpArr
+})
 
 const formRef = ref<FormInstance>()
 
@@ -95,8 +103,10 @@ const imageLinkRuleForm: ImageLinkRuleModel = reactive({
   editable: true
 })
 
-const editImageLinkRule = (rule: string, id: string) => {
-  store.dispatch('UPDATE_IMAGE_LINK_TYPE_RULE', { rule, id })
+const editImageLinkRule = (newRule: string, ruleObj: ImageLinkRuleModel) => {
+  const tmpRuleObj = JSON.parse(JSON.stringify(ruleObj))
+  tmpRuleObj.rule = newRule
+  store.dispatch('UPDATE_IMAGE_LINK_TYPE_RULE', { rule: tmpRuleObj, $t: instance?.proxy?.$t })
 }
 
 const removeImageLinkRule = (obj: ImageLinkRuleModel) => {
@@ -109,7 +119,7 @@ const removeImageLinkRule = (obj: ImageLinkRuleModel) => {
     }
   )
     .then(() => {
-      store.dispatch('DEL_IMAGE_LINK_TYPE_RULE', obj.id)
+      store.dispatch('DEL_IMAGE_LINK_TYPE_RULE', obj)
     })
     .catch(() => {
       console.log('Cancel')

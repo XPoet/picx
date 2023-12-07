@@ -15,7 +15,7 @@
   "copy_success_2": "Image link copied successfully",
   "copy_fail_1": "Copy failed",
   "header": {
-    "notLogin": "Not log in",
+    "not_login": "Not log in",
     "login": "Log in",
     "logout": "Log out",
     "language": "Language",
@@ -85,7 +85,11 @@
       "input_name_2": "Link Rule",
       "input_name_2_rule": "The Image Link Rule cannot be empty.",
       "btn_name_1": "Add Image Link Rule",
-      "error_msg_1": "Failed to add, the image link rule already exists"
+      "error_msg_1": "Failed to add, the image link rule already exists",
+      "error_msg_2": "{action} failed, image link rule must contain {path}",
+      "error_msg_3": "The image link rule is missing {rules}. Do you want to confirm {action}?",
+      "add": "add",
+      "edit": "edit"
     },
     "link_format": {
       "title": "Image Link Format Settings",
@@ -243,5 +247,5 @@
     "zh-TW": "Traditional Chinese",
     "en": "English"
   },
-  "toggle-language-msg": "We detected that your IP is located in {region}. Do you want to switch to {language}?"
+  "toggle_language_msg": "We detected that your IP is located in {region}. Do you want to switch to {language}?"
 }

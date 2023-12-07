@@ -65,7 +65,9 @@ export interface UserSettingsModel {
   elementPlusSize: ElementPlusSizeEnum
   imageLinkType: {
     selected: string
-    presetList: Array<ImageLinkRuleModel>
+    presetList: {
+      [key: string]: ImageLinkRuleModel
+    }
   }
   imageLinkFormat: {
     enable: boolean

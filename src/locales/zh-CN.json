@@ -15,7 +15,7 @@
   "copy_success_2": "图片链接复制成功",
   "copy_fail_1": "复制失败",
   "header": {
-    "notLogin": "未登录",
+    "not_login": "未登录",
     "login": "登录",
     "logout": "退出登录",
     "language": "语言",
@@ -85,7 +85,11 @@
       "input_name_2": "图片链接规则",
       "input_name_2_rule": "图片链接规则不能为空",
       "btn_name_1": "添加图片链接规则",
-      "error_msg_1": "添加失败，该图片链接规则规则已存在"
+      "error_msg_1": "添加失败，该图片链接规则已存在",
+      "error_msg_2": "{action}失败，图片链接规则必须包含 {path}",
+      "error_msg_3": "图片链接规则缺少 {rules}，是否确认{action}？",
+      "add": "添加",
+      "edit": "编辑"
     },
     "link_format": {
       "title": "图片链接格式设置",
@@ -244,5 +248,5 @@
     "zh-TW": "中文繁体",
     "en": "英文"
   },
-  "toggle-language-msg": "检测到你的 IP 所属地为{region}，是否切换{language}？"
+  "toggle_language_msg": "检测到你的 IP 所属地为{region}，是否切换{language}？"
 }

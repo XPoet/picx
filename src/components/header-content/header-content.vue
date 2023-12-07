@@ -15,7 +15,7 @@
     <div class="header-right">
       <div class="user-info">
         <div class="username" @click="jumpOwnerRepo">
-          {{ userConfigInfo.owner ? userConfigInfo.owner : $t('header.notLogin') }}
+          {{ userConfigInfo.owner ? userConfigInfo.owner : $t('header.not_login') }}
         </div>
 
         <el-popover

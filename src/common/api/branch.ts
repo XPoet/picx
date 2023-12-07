@@ -58,13 +58,18 @@ export const getBranchInfoList = (
  * 将当前分支 checkout 到 gh-pages 分支
  * 部署到 GitHub Pages，完成图片资源托管，获取访问能力
  * @param userConfigInfo
+ * @param $t
  * @param cb
  */
-export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel, cb?: any) => {
+export const checkoutGhPagesBranch = async (
+  userConfigInfo: UserConfigInfoModel,
+  $t: any,
+  cb?: any
+) => {
   const { owner, selectedRepo: repo, selectedBranch } = userConfigInfo
 
   const initLoading = ElLoading.service({
-    text: `正在部署到 GitHub Pages，该过程持续 1 分钟左右，请耐心等待 ...`
+    text: $t('settings.image_hosting_deploy.deploying')
   })
 
   const cbHandler = (evt: boolean = false) => {
@@ -122,7 +127,7 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
 
       // gh-pages 分支创建成功
       if (res2.object.sha) {
-        // GitHub 部署 Pages 服务需要 50s 左右，利用 setTimeout 模拟
+        // GitHub 部署 Pages 服务需要 50s 左右，利用 setTimeout 模拟部署进程
         setTimeout(() => {
           cbHandler(true)
         }, 50000)

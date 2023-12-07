@@ -70,7 +70,7 @@ const initSetLanguage = () => {
     if (language !== userSettings.language) {
       const confirmTxt = instance?.proxy?.$t(`confirm`, language)
       const cancelTxt = instance?.proxy?.$t(`cancel`, language)
-      const msgTxt = instance?.proxy?.$t(`toggle-language-msg`, language, {
+      const msgTxt = instance?.proxy?.$t(`toggle_language_msg`, language, {
         region: instance?.proxy?.$t(`region.${region}`, language),
         language: instance?.proxy?.$t(`language.${language}`, language)
       })

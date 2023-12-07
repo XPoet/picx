@@ -15,7 +15,7 @@
   "copy_success_2": "圖片鏈接復製成功",
   "copy_fail_1": "復製失敗",
   "header": {
-    "notLogin": "未登錄",
+    "not_login": "未登錄",
     "login": "登錄",
     "logout": "退出登錄",
     "language": "語言",
@@ -84,8 +84,12 @@
       "input_name_1_rule": "圖片鏈接類型名稱不能為空",
       "input_name_2": "圖片鏈接規則",
       "input_name_2_rule": "圖片鏈接規則不能為空",
-      "btn_name_1": "添加圖片鏈接規則",
-      "error_msg_1": "新增失敗，該圖片連結規則規則已存在"
+      "btn_name_1": "新增圖片鏈接規則",
+      "error_msg_1": "新增失敗，該圖片連結規則已存在",
+      "error_msg_2": "{action}失敗，圖片連結規則必須包含 {path}",
+      "error_msg_3": "圖片連結規則缺少 {rules}，是否確認{action}？",
+      "add": "新增",
+      "edit": "編輯"
     },
     "link_format": {
       "title": "圖片鏈接格式設置",
@@ -244,5 +248,5 @@
     "zh-TW": "中文繁體",
     "en": "英文"
   },
-  "toggle-language-msg": "檢測到你的 IP 所屬地為{region}，是否切換{language}？"
+  "toggle_language_msg": "檢測到你的 IP 所屬地為{region}，是否切換{language}？"
 }

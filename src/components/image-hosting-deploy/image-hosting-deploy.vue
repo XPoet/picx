@@ -74,7 +74,7 @@ const onDeploy = (deployItem: DeployStatusInfo) => {
   // eslint-disable-next-line default-case
   switch (deployItem.type) {
     case DeployServerEnum.githubPages:
-      checkoutGhPagesBranch(userConfigInfo, (event: boolean) => {
+      checkoutGhPagesBranch(userConfigInfo, instance?.proxy?.$t, (event: boolean) => {
         userSettings.deploy.github.status = event
         userSettings.deploy.github.latestTime = Date.now()
         if (event) {
