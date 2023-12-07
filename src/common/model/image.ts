@@ -118,3 +118,19 @@ export interface ImageLinkFormatModel {
   name: string
   format: string
 }
+
+/**
+ * 图片链接类型名称枚举
+ */
+export enum ImageLinkTypeEnum {
+  // eslint-disable-next-line no-unused-vars
+  GitHub = 'GitHub',
+  // eslint-disable-next-line no-unused-vars
+  GitHubPages = 'GitHub Pages',
+  // eslint-disable-next-line no-unused-vars
+  jsDelivr = 'jsDelivr',
+  // eslint-disable-next-line no-unused-vars
+  ChinaJsDelivr = 'ChinaJsDelivr',
+  // eslint-disable-next-line no-unused-vars
+  Statically = 'Statically'
+}

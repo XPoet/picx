@@ -145,8 +145,13 @@
         </ul>
       </el-collapse-item>
 
+      <!-- 图床部署设置 -->
+      <el-collapse-item :title="$t('settings.image_hosting_deploy.title')" name="6">
+        <image-hosting-deploy />
+      </el-collapse-item>
+
       <!-- 主题设置 -->
-      <el-collapse-item :title="$t('settings.theme.title')" name="6">
+      <el-collapse-item :title="$t('settings.theme.title')" name="7">
         <ul class="setting-list">
           <li class="setting-item">
             {{ $t('header.theme') }}：

@@ -22,11 +22,7 @@
       <!-- 选择图片区域 -->
       <div class="row-item">
         <div class="content-box">
-          <getting-images
-            :disabled="uploading"
-            ref="gettingImagesRef"
-            @getImgList="setImgList"
-          ></getting-images>
+          <getting-images :disabled="uploading" ref="gettingImagesRef" @getImgList="setImgList" />
         </div>
       </div>
 
@@ -44,9 +40,16 @@
         </div>
       </div>
 
-      <!-- 重置 & 上传 -->
+      <div class="row-item">
+        <div class="content-box">
+          <!-- 部署 -->
+          <image-hosting-deploy :disabled="!isCanDeploy" />
+        </div>
+      </div>
+
+      <!-- 重置 & 上传   -->
       <div class="row-item" v-if="uploadImageList.length">
-        <div class="content-box" style="text-align: right">
+        <div class="content-box operation-btn">
           <el-button :disabled="uploading" plain type="warning" @click="resetUploadInfo">
             {{ $t('reset') }} <span class="shortcut-key">[ {{ shortcutKey }} + A ]</span>
           </el-button>
@@ -87,6 +90,8 @@ const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 const uploadImageList = ref<UploadImageModel[]>([])
 const uploading = ref(false)
 const shortcutKey = computed(() => (getOSName() === 'mac' ? 'Command' : 'Ctrl'))
+
+const isCanDeploy = ref(false)
 
 const setImgList = (imgList: any[]) => {
   imgList.forEach((v) => {
@@ -192,6 +197,7 @@ const uploadImage = async () => {
 // 重置
 const resetUploadInfo = () => {
   uploading.value = false
+  isCanDeploy.value = false
   store.dispatch('UPLOAD_IMG_LIST_RESET')
   resetGettingImages()
 }
@@ -213,8 +219,9 @@ watch(
 
 watch(
   () => store.state.uploadImageListModule.uploadImageList,
-  (newValue) => {
-    uploadImageList.value = newValue
+  (nv) => {
+    uploadImageList.value = nv
+    isCanDeploy.value = uploadImageList.value.some((x) => x.uploadStatus.progress === 100)
   },
   {
     immediate: true,

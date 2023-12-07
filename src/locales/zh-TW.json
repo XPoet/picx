@@ -84,7 +84,8 @@
       "input_name_1_rule": "圖片鏈接類型名稱不能為空",
       "input_name_2": "圖片鏈接規則",
       "input_name_2_rule": "圖片鏈接規則不能為空",
-      "btn_name_1": "添加圖片鏈接規則"
+      "btn_name_1": "添加圖片鏈接規則",
+      "error_msg_1": "新增失敗，該圖片連結規則規則已存在"
     },
     "link_format": {
       "title": "圖片鏈接格式設置",
@@ -92,6 +93,16 @@
       "switch_desc": "上傳成功後復製的圖片鏈接自動轉換成 {type} 格式",
       "select_title": "選擇圖片鏈接格式",
       "delete_tips": "此操作將永久刪除圖片鏈接規則"
+    },
+    "image_hosting_deploy": {
+      "title": "圖床部署",
+      "one_click_deploy": "一鍵部署",
+      "deploy_to": "部署到 {server}",
+      "success": "部署成功",
+      "fail": "部署失敗",
+      "fail2": "部署失敗，請稍後再試",
+      "deploying": "正在部署到 GitHub Pages，該過程持續 1 分鐘左右，請耐心等待 ...",
+      "not_deployed": "未部署"
     },
     "theme": {
       "title": "主題設置",
@@ -107,7 +118,7 @@
     "manualConfiguration3": "使用已有的 GitHub 倉庫，逐步完成配置",
     "autoConfiguration1": "一鍵自動配置",
     "autoConfiguration2": "重新一鍵自動配置",
-    "autoConfiguration3": "自動創建 GitHub 倉庫（適合新用戶）",
+    "autoConfiguration3": "自動創建 GitHub 倉庫（推薦）",
     "username": "用戶名",
     "email": "郵箱",
     "selectRepo": "選擇倉庫",
@@ -132,13 +143,7 @@
     "message7": "請輸入一個新目錄",
     "message8": "請選擇 {repo} 倉庫裏的一個目錄",
     "message9": "倉庫信息獲取失敗，請稍後重試",
-    "message10": "分支信息獲取失敗，請稍後再試",
     "message11": "用戶信息獲取失敗，請確認 GitHub Token 是否有效",
-    "message12": "請輸入分支名稱",
-    "message13": "{branch} 分支已存在，請在分支列表中選擇",
-    "message14": "{branch} 分支創建成功",
-    "createBranch": "新建分支",
-    "branchMode": "分支方式",
     "selectBranch2": "選擇 {repo}} 倉庫裏的分支",
     "reload": "重新載入所有{type}數據",
     "dirMode": "目錄模式",
@@ -231,7 +236,8 @@
     "TW": "中國臺灣",
     "SG": "新加坡",
     "JP": "日本",
-    "US": "美國"
+    "US": "美國",
+    "NL": "荷蘭"
   },
   "language": {
     "zh-CN": "中文簡體",

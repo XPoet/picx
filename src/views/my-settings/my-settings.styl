@@ -19,6 +19,10 @@
   .setting-item {
     margin-bottom 10rem
 
+    &:last-child {
+      margin-bottom 0
+    }
+
     &.has-desc {
       display flex
       align-items center
@@ -42,15 +46,11 @@
     }
 
 
-    &.last-child {
-      margin-bottom 0
-    }
-
-
     .prefix-input {
       width calc(100% - 56rem)
       margin-left 56rem
     }
+
 
     :deep() .el-switch {
       user-select none

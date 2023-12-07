@@ -84,7 +84,8 @@
       "input_name_1_rule": "The Image Link Type Name cannot be empty.",
       "input_name_2": "Link Rule",
       "input_name_2_rule": "The Image Link Rule cannot be empty.",
-      "btn_name_1": "Add Image Link Rule"
+      "btn_name_1": "Add Image Link Rule",
+      "error_msg_1": "Failed to add, the image link rule already exists"
     },
     "link_format": {
       "title": "Image Link Format Settings",
@@ -92,6 +93,16 @@
       "switch_desc": "After a successful upload, the copied image link will be automatically converted to the {type} format.",
       "select_title": "Select Image Link Format",
       "delete_tips": "This operation will permanently delete the image link rule"
+    },
+    "image_hosting_deploy": {
+      "title": "Image hosting deployment",
+      "one_click_deploy": "One-click deployment",
+      "deploy_to": "Deploy to {server}",
+      "success": "Deployment successful",
+      "fail": "Deployment failed",
+      "fail2": "Deployment failed, please try again later",
+      "deploying": "Deploying to GitHub Pages, this process will take about 1 minute, please wait patiently...",
+      "not_deployed": "Not deployed"
     },
     "theme": {
       "title": "Theme Settings",
@@ -107,7 +118,7 @@
     "manualConfiguration3": "Configure using an existing GitHub repository step by step",
     "autoConfiguration1": "One-click Automatic Configuration",
     "autoConfiguration2": "Reconfigure Automatically",
-    "autoConfiguration3": "Automatically create a GitHub repository (suitable for new users)",
+    "autoConfiguration3": "Automatically create a GitHub repository (Recommend)",
     "username": "Username",
     "email": "Email",
     "selectRepo": "Select Repo",
@@ -132,12 +143,7 @@
     "message7": "Please enter a new directory",
     "message8": "Please select a directory in the {repo} repository",
     "message9": "Failed to retrieve repository information, please try again later",
-    "message10": "Failed to retrieve branch information, please try again later",
     "message11": "Failed to retrieve user information, please verify that the GitHub Token is valid",
-    "message12": "Please enter a branch name",
-    "message13": "The {branch} branch already exists, please select from the list of branches",
-    "message14": "The {branch} branch was created successfully.",
-    "createBranch": "Create new branch",
     "reload": "Reload all {type} data",
     "dirMode": "Dir Mode",
     "inputNewDir": "Manually input a new directory",
@@ -229,7 +235,8 @@
     "TW": "Taiwan, China",
     "SG": "Singapore",
     "JP": "Japan",
-    "US": "United States"
+    "US": "United States",
+    "NL": "Netherlands"
   },
   "language": {
     "zh-CN": "Simplified Chinese",

@@ -84,7 +84,8 @@
       "input_name_1_rule": "图片链接类型名称不能为空",
       "input_name_2": "图片链接规则",
       "input_name_2_rule": "图片链接规则不能为空",
-      "btn_name_1": "添加图片链接规则"
+      "btn_name_1": "添加图片链接规则",
+      "error_msg_1": "添加失败，该图片链接规则规则已存在"
     },
     "link_format": {
       "title": "图片链接格式设置",
@@ -92,6 +93,16 @@
       "switch_desc": "上传成功后复制的图片链接自动转换成 {type} 格式",
       "select_title": "选择图片链接格式",
       "delete_tips": "此操作将永久删除图片链接规则"
+    },
+    "image_hosting_deploy": {
+      "title": "图床部署",
+      "one_click_deploy": "一键部署",
+      "deploy_to": "部署到 {server}",
+      "success": "部署成功",
+      "fail": "部署失败",
+      "fail2": "部署失败，请稍后再试",
+      "deploying": "正在部署到 GitHub Pages，该过程持续 1 分钟左右，请耐心等待 ...",
+      "not_deployed": "未部署"
     },
     "theme": {
       "title": "主题设置",
@@ -107,7 +118,7 @@
     "manualConfiguration3": "使用已有的 GitHub 仓库，逐步完成配置",
     "autoConfiguration1": "一键自动配置",
     "autoConfiguration2": "重新一键自动配置",
-    "autoConfiguration3": "自动创建 GitHub 仓库（适合新用户）",
+    "autoConfiguration3": "自动创建 GitHub 仓库（推荐）",
     "username": "用户名",
     "email": "邮箱",
     "selectRepo": "选择仓库",
@@ -132,13 +143,7 @@
     "message7": "请输入一个新目录",
     "message8": "请选择 {repo} 仓库里的一个目录",
     "message9": "仓库信息获取失败，请稍后重试",
-    "message10": "分支信息获取失败，请稍后再试",
     "message11": "用户信息获取失败，请确认 GitHub Token 是否有效",
-    "message12": "请输入分支名称",
-    "message13": "{branch} 分支已存在，请在分支列表中选择",
-    "message14": "{branch} 分支创建成功",
-    "createBranch": "新建分支",
-    "branchMode": "分支方式",
     "selectBranch2": "选择 {repo}} 仓库里的分支",
     "reload": "重新载入所有{type}数据",
     "dirMode": "目录模式",
@@ -231,7 +236,8 @@
     "TW": "中国台湾",
     "SG": "新加坡",
     "JP": "日本",
-    "US": "美国"
+    "US": "美国",
+    "NL": "荷兰"
   },
   "language": {
     "zh-CN": "中文简体",

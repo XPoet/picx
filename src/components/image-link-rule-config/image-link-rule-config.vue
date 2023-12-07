@@ -121,7 +121,10 @@ const addImageLinkRule = (formEl: FormInstance | undefined) => {
   formEl.validate((valid) => {
     if (valid) {
       imageLinkRuleForm.id = getUuid()
-      store.dispatch('ADD_IMAGE_LINK_TYPE_RULE', JSON.parse(JSON.stringify(imageLinkRuleForm)))
+      store.dispatch('ADD_IMAGE_LINK_TYPE_RULE', {
+        rule: JSON.parse(JSON.stringify(imageLinkRuleForm)),
+        $t: instance?.proxy?.$t
+      })
     }
   })
 }

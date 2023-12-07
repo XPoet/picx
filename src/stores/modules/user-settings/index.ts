@@ -3,6 +3,7 @@ import {
   CompressEncoderEnum,
   ElementPlusSizeEnum,
   ImageLinkRuleModel,
+  ImageLinkTypeEnum,
   LanguageEnum,
   ThemeModeEnum,
   UserSettingsModel,
@@ -13,6 +14,7 @@ import UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
 import RootStateTypes from '@/stores/types'
 import UserSettingsStateTypes from '@/stores/modules/user-settings/types'
 import { LS_PICX_SETTINGS } from '@/common/constant'
+import { DeployServerEnum } from '@/components/image-hosting-deploy/image-hosting-deploy.model'
 
 const initSettings: UserSettingsModel = {
   imageName: {
@@ -29,27 +31,32 @@ const initSettings: UserSettingsModel = {
   },
   elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
-    selected: 'Statically',
+    selected: ImageLinkTypeEnum.jsDelivr,
     presetList: [
       {
         id: getUuid(),
-        name: 'Statically',
-        rule: 'https://cdn.statically.io/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+        name: ImageLinkTypeEnum.GitHubPages,
+        rule: 'https://{{owner}}.github.io/{{repo}}/{{path}}'
       },
       {
         id: getUuid(),
-        name: 'ChinaJsDelivr',
-        rule: 'https://jsd.cdn.zzko.cn/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+        name: ImageLinkTypeEnum.GitHub,
+        rule: 'https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}'
       },
       {
         id: getUuid(),
-        name: 'jsDelivr',
+        name: ImageLinkTypeEnum.jsDelivr,
         rule: 'https://cdn.jsdelivr.net/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
       },
       {
         id: getUuid(),
-        name: 'GitHub',
-        rule: 'https://github.com/{{owner}}/{{repo}}/raw/{{branch}}/{{path}}'
+        name: ImageLinkTypeEnum.ChinaJsDelivr,
+        rule: 'https://jsd.cdn.zzko.cn/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+      },
+      {
+        id: getUuid(),
+        name: ImageLinkTypeEnum.Statically,
+        rule: 'https://cdn.statically.io/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
       }
     ]
   },
@@ -79,6 +86,14 @@ const initSettings: UserSettingsModel = {
     position: WatermarkPositionEnum.rightBottom,
     textColor: '#FFFFFF',
     opacity: 0.5
+  },
+  deploy: {
+    github: {
+      uuid: getUuid(),
+      status: null,
+      latestTime: null,
+      type: DeployServerEnum.githubPages
+    }
   },
   language: LanguageEnum.zhCN
 }
@@ -156,7 +171,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
     },
 
     // 图片链接类型 - 增加规则
-    ADD_IMAGE_LINK_TYPE_RULE({ state, dispatch }, rule: ImageLinkRuleModel) {
+    ADD_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule, $t }) {
       const list = state.userSettings.imageLinkType.presetList
       if (!list.some((x) => x.name === rule.name)) {
         ruleVerification(rule, 'add', (e: boolean) => {
@@ -166,7 +181,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
           }
         })
       } else {
-        ElMessage.error('添加失败，该图片链接规则规则已存在')
+        ElMessage.error($t('settings.link_rule.error_msg_1'))
       }
     },
 
