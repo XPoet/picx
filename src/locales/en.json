@@ -113,6 +113,14 @@
       "system": "System",
       "dark": "Dark",
       "light": "Light"
+    },
+    "cloud_settings": {
+      "tip_1": "It is detected that your settings data is not saved to the cloud repository. Do you want to save it?",
+      "tip_2": "It is detected that your cloud repository has a configuration file. Do you want to use it?",
+      "tip_3": "It is detected that your settings data has changed. Do you want to synchronize it to the cloud repository?",
+      "tip_4": "The local settings data is consistent with the cloud repository settings data",
+      "success_msg_1": "Save successfully",
+      "success_msg_2": "Update successful"
     }
   },
   "config": {

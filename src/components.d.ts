@@ -10,6 +10,7 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     Base64Tool: typeof import('./components/tools/base64-tool/base64-tool.vue')['default']
+    CloudSettingsBar: typeof import('./components/cloud-settings-bar/cloud-settings-bar.vue')['default']
     CompressConfigBox: typeof import('./components/compress-config-box/compress-config-box.vue')['default']
     CompressTool: typeof import('./components/tools/compress-tool/compress-tool.vue')['default']
     CopyImageLink: typeof import('./components/copy-image-link/copy-image-link.vue')['default']
@@ -42,10 +43,12 @@ declare module '@vue/runtime-core' {
     ElRadioGroup: typeof import('element-plus/es')['ElRadioGroup']
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
+    ElSpace: typeof import('element-plus/es')['ElSpace']
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']
+    ElText: typeof import('element-plus/es')['ElText']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     FolderCard: typeof import('./components/folder-card/folder-card.vue')['default']
     GettingImages: typeof import('./components/getting-images/getting-images.vue')['default']

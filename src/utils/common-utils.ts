@@ -5,7 +5,7 @@ import i18n from '@/plugins/vue/i18n'
  * @param data
  * @returns {string} array | string | number | boolean ...
  */
-export const getType = (data: string) => {
+export const getType = (data: string): string => {
   const type = Object.prototype.toString.call(data).split(' ')[1]
   return type.substring(0, type.length - 1).toLowerCase()
 }
@@ -67,7 +67,7 @@ export const cleanObject = (object: any) => {
  * @param obj1{Object}
  * @param obj2{Object}
  */
-export const deepAssignObject = (obj1: object, obj2: object): any => {
+export const deepAssignObject = (obj1: object, obj2: object) => {
   // eslint-disable-next-line no-restricted-syntax
   for (const key in obj2) {
     // @ts-ignore
@@ -156,4 +156,42 @@ export const setWindowTitle = (title: string) => {
   if (title) {
     ;(<any>window).document.title = `${i18n.global.t(title)} | PicX`
   }
+}
+
+/**
+ * 深度判断两个对象是否相等
+ * @param obj1 对象 1
+ * @param obj2 对象 2
+ * @return {boolean} true | false
+ */
+export const deepObjectEqual = (obj1: object, obj2: object): boolean => {
+  // 多维对象转换为一维对象
+  function flattenObject(obj: object) {
+    const result = {}
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [key, value] of Object.entries(obj)) {
+      if (typeof value === 'object' && value !== null) {
+        // 递归处理嵌套对象
+        const nested = flattenObject(value)
+
+        // 使用 Object.entries() 处理嵌套对象的键
+        // eslint-disable-next-line no-restricted-syntax
+        for (const [nestedKey, nestedValue] of Object.entries(nested)) {
+          // @ts-ignore
+          result[`${key}.${nestedKey}`] = nestedValue
+        }
+      } else {
+        // @ts-ignore
+        result[key] = value
+      }
+    }
+
+    return result
+  }
+
+  return (
+    Object.entries(flattenObject(obj1)).toString() ===
+    Object.entries(flattenObject(obj2)).toString()
+  )
 }

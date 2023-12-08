@@ -1,5 +1,5 @@
 import { UserConfigInfoModel } from '@/common/model'
-import { INIT_REPO_DESC, INIT_REPO_NAME } from '@/common/constant'
+import { INIT_REPO_DESC, INIT_REPO_NAME, PICX_INIT_REPO_MSG } from '@/common/constant'
 import request from '@/utils/request'
 
 /**
@@ -89,7 +89,7 @@ If you like it, please give it a star on [GitHub](https://github.com/XPoet/picx)
     url: `/repos/${owner}/${repo}/contents/README.md`,
     method: 'PUT',
     data: {
-      message: 'Init repo via PicX(https://github.com/XPoet/picx)',
+      message: PICX_INIT_REPO_MSG,
       branch,
       content: window.btoa(README)
     },
