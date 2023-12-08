@@ -9,6 +9,8 @@ declare global {
   const ElMessageBox: typeof import('element-plus/es')['ElMessageBox']
   const IEpArrowRight: typeof import('~icons/ep/arrow-right')['default']
   const IEpChatDotRound: typeof import('~icons/ep/chat-dot-round')['default']
+  const IEpCheck: typeof import('~icons/ep/check')['default']
+  const IEpClose: typeof import('~icons/ep/close')['default']
   const IEpEdit: typeof import('~icons/ep/edit')['default']
   const IEpFiles: typeof import('~icons/ep/files')['default']
   const IEpMagicStick: typeof import('~icons/ep/magic-stick')['default']

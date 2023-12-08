@@ -1,5 +1,7 @@
 <template>
   <div class="page-container settings-page-container">
+    <cloud-settings-bar style="margin-bottom: 20rem" />
+
     <el-collapse>
       <!-- 图片名称设置 -->
       <el-collapse-item :title="$t('settings.img_name.title')" name="1">
@@ -200,11 +202,13 @@ const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
 }
 
 watch(
-  () => userSettings.imageName,
-  (ins) => {
-    if (ins.autoTimestampNaming) {
+  () => userSettings.imageName.autoTimestampNaming,
+  (enable) => {
+    if (enable) {
       userSettings.imageName.autoAddHash = false
       userSettings.imageName.prefixNaming.enable = false
+    } else {
+      userSettings.imageName.autoAddHash = true
     }
     persistUserSettings()
   },
