@@ -8,6 +8,7 @@ import { LS_PICX_CONFIG, NEW_DIR_COUNT_MAX } from '@/common/constant'
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {
     token: '',
+    id: '',
     owner: '',
     email: '',
     name: '',
@@ -87,7 +88,7 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
     },
 
     // 设置用户配置信息
-    SET_USER_CONFIG_INFO({ state, dispatch }, configInfo: UserConfigInfoStateTypes) {
+    SET_USER_CONFIG_INFO({ state, dispatch }, configInfo: UserConfigInfoModel) {
       // eslint-disable-next-line no-restricted-syntax
       for (const key in configInfo) {
         // eslint-disable-next-line no-prototype-builtins

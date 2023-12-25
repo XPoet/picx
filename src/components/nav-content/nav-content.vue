@@ -66,6 +66,7 @@ import { useRouter } from 'vue-router'
 import { useStore } from '@/stores'
 import { ElementPlusSizeEnum } from '@/common/model'
 import { navInfoList } from './nav-content.data'
+import i18n from '@/plugins/vue/i18n'
 
 const router = useRouter()
 const store = useStore()
@@ -89,13 +90,13 @@ const onNavClick = (e: any) => {
 
   if (path === '/management') {
     if (userConfigInfo.selectedRepo === '') {
-      ElMessage.warning('请选择一个仓库')
+      ElMessage.warning(i18n.global.t('upload.message2'))
       router.push('/config')
       return
     }
 
     if (userConfigInfo.selectedDir === '') {
-      ElMessage.warning('目录不能为空')
+      ElMessage.warning(i18n.global.t('upload.message3'))
       router.push('/config')
       return
     }

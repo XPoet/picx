@@ -197,15 +197,8 @@ li {
 }
 
 
-.toggle-language-message {
+.custom-message-container {
   box-sizing border-box
-  background var(--background-color)
-  border-radius 3rem
-  box-shadow var(--el-box-shadow-light)
-
-  .el-icon {
-    display none
-  }
 
   .content-box {
     line-height 2
@@ -215,14 +208,16 @@ li {
     }
 
     .btn {
+      display inline-block
       margin-left 2rem
-      padding 2rem 4rem
+      padding 0 6rem
       font-size 12rem
       border-style solid
       border-width 1rem
       border-radius 4rem
       cursor pointer
     }
+
 
     .confirm {
       color var(--el-color-primary)
@@ -235,6 +230,7 @@ li {
         border-color var(--el-color-primary)
       }
     }
+
 
     .cancel {
       color var(--el-color-info)

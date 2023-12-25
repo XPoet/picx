@@ -1,0 +1,51 @@
+.login-container {
+  display grid
+  grid-gap 20rem
+  grid-template-rows repeat(1, 1fr)
+  grid-template-columns repeat(2, 1fr)
+
+  .box-item {
+    display flex
+    flex-direction column
+    width 100%
+    height 100%
+    color var(--text-color-4)
+    background var(--background-color-2)
+    border-radius 12rem
+
+    .tips-box {
+      display flex
+      flex-direction column
+      align-items center
+      justify-content center
+      padding 10rem
+      font-size 13rem
+
+      .tip-item {
+        display flex
+        align-items center
+        margin-bottom 8rem
+
+        .el-icon {
+          margin-right 4rem
+        }
+
+        .install-status {
+          margin-right 0
+          margin-left 4rem
+          color var(--el-color-success)
+        }
+
+        &.link {
+          color var(--el-color-primary)
+          font-weight bold
+          cursor pointer
+
+          &:hover {
+            border-bottom 1rem solid var(--el-color-primary)
+          }
+        }
+      }
+    }
+  }
+}

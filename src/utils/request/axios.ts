@@ -18,7 +18,7 @@ axios.interceptors.request.use(
     if (userConfig) {
       const { token } = userConfig
       if (config.baseURL?.includes(baseURL) && token) {
-        config.headers.Authorization = `token ${token}`
+        config.headers.Authorization = `Bearer ${token}`
       }
     }
     return config

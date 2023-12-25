@@ -116,7 +116,8 @@ export const createRepo = (token: string) => {
       description: INIT_REPO_DESC,
       private: false
     },
-    headers: { Authorization: `token ${token}` },
-    success422: true
+    headers: { Authorization: `Bearer ${token}` },
+    success422: true,
+    noShowErrorMsg: true
   })
 }
