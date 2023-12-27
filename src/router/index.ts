@@ -1,5 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import config from '@/views/my-config/my-config.vue'
+import login from '@/views/picx-login/picx-login.vue'
 import upload from '@/views/upload-image/upload-image.vue'
 import management from '@/views/imgs-management/imgs-management.vue'
 import settings from '@/views/my-settings/my-settings.vue'
@@ -13,15 +13,16 @@ import { setWindowTitle } from '@/utils'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'index',
-    redirect: {
-      name: 'upload'
+    name: 'login',
+    component: login,
+    meta: {
+      title: `nav.login`
     }
   },
   {
     path: '/config',
     name: 'config',
-    component: config,
+    component: () => import('@/views/my-config/my-config.vue'),
     meta: {
       title: `nav.config`
     }

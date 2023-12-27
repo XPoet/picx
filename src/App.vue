@@ -16,6 +16,7 @@ import { getLanguageByRegion, getRegionByIP, setWindowTitle, throttle } from '@/
 import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
 import MainContainer from '@/views/main-container/main-container.vue'
 import router from '@/router'
+import { initGithubAuthorize } from '@/views/picx-login/picx-login.util'
 
 const instance = getCurrentInstance()
 const store = useStore()
@@ -59,38 +60,34 @@ const setLanguage = (language: LanguageEnum) => {
   setWindowTitle(router.currentRoute.value.meta.title as string)
 }
 
-const initSetLanguage = () => {
-  // 初始化设置
-  setLanguage(userSettings.language)
-
-  // 根据 IP 自动设置
+const setLanguageByIP = () => {
   getRegionByIP().then((region) => {
     const language = getLanguageByRegion(region)
 
     if (language !== userSettings.language) {
       const confirmTxt = instance?.proxy?.$t(`confirm`, language)
-      const cancelTxt = instance?.proxy?.$t(`cancel`, language)
       const msgTxt = instance?.proxy?.$t(`toggle_language_msg`, language, {
         region: instance?.proxy?.$t(`region.${region}`, language),
         language: instance?.proxy?.$t(`language.${language}`, language)
       })
 
       const msgInstance = ElMessage({
-        customClass: 'toggle-language-message',
+        customClass: 'custom-message-container',
         duration: 0,
         offset: 20,
-        message: `<div class="content-box">
+        type: 'info',
+        message: `<div class="content-box language">
                     <span class="msg">${msgTxt}</span>
                     <spna class="btn-box">
                       <span class="confirm btn">${confirmTxt}</span>
-                      <span class="cancel btn">${cancelTxt}</span>
                     </spna>
                   </div>`,
-        dangerouslyUseHTMLString: true
+        dangerouslyUseHTMLString: true,
+        showClose: true
       })
 
       document
-        .querySelector('.toggle-language-message .content-box .confirm')
+        .querySelector('.custom-message-container .language .confirm')
         ?.addEventListener('click', () => {
           setLanguage(language)
           store.dispatch('SET_USER_SETTINGS', {
@@ -98,14 +95,16 @@ const initSetLanguage = () => {
           })
           msgInstance.close()
         })
-
-      document
-        .querySelector('.toggle-language-message .content-box .cancel')
-        ?.addEventListener('click', () => {
-          msgInstance.close()
-        })
     }
   })
+}
+
+const initSetLanguage = () => {
+  // 初始化设置
+  setLanguage(userSettings.language)
+
+  // 根据 IP 自动设置
+  setLanguageByIP()
 }
 
 const init = () => {
@@ -119,6 +118,7 @@ const init = () => {
 
   setThemeMode()
   initSetLanguage()
+  initGithubAuthorize()
 }
 
 watch(

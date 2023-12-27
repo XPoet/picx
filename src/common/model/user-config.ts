@@ -36,6 +36,7 @@ export enum DirModeEnum {
 
 export interface UserConfigInfoModel {
   token: string
+  id: string
   owner: string
   email: string
   name: string

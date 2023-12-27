@@ -18,5 +18,6 @@ declare global {
   const IEpPicture: typeof import('~icons/ep/picture')['default']
   const IEpPostcard: typeof import('~icons/ep/postcard')['default']
   const IEpSetting: typeof import('~icons/ep/setting')['default']
+  const IEpSwitch: typeof import('~icons/ep/switch')['default']
   const IEpUpload: typeof import('~icons/ep/upload')['default']
 }

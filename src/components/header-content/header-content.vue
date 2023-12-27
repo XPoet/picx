@@ -85,7 +85,7 @@
             >
               {{ $t('header.logout') }}
             </li>
-            <li class="content-item" v-else @click="router.push('/config')">
+            <li class="content-item" v-else @click="router.push('/login')">
               {{ $t('header.login') }}
             </li>
           </ul>
@@ -111,10 +111,14 @@ const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
 }
 
+// 退出登录
 const logout = () => {
   store.dispatch('LOGOUT')
-  router.push('/config')
+  router.push('/login')
   document.body.click()
+  setTimeout(() => {
+    window.location.reload()
+  })
 }
 
 const jumpOwnerRepo = () => {

@@ -23,6 +23,7 @@
     "usage_count": "Usage count"
   },
   "nav": {
+    "login": "Log in",
     "config": "Image Hosting Config",
     "upload": "Upload Image",
     "management": "Image Hosting Management",
@@ -255,5 +256,25 @@
     "zh-TW": "Traditional Chinese",
     "en": "English"
   },
-  "toggle_language_msg": "We detected that your IP is located in {region}. Do you want to switch to {language}?"
+  "toggle_language_msg": "We detected that your IP is located in {region}. Do you want to switch to {language}?",
+  "authorization": {
+    "msg_1": "GitHub OAuth authorization login has expired, please re-authorize",
+    "msg_2": "PicX APP is not installed on GitHub and has no operation permission yet",
+    "msg_3": "PicX GitHub APP is installed successfully. Do you want to authorize the login?",
+    "msg_4": "Authorization failed, try again later",
+    "btn_1": "Install now",
+    "loading_1": "Authorizing login...",
+    "text_1": "GitHub OAuth authorization login",
+    "text_2": "Fill in GitHub Token to log in",
+    "text_3": "Login using GitHub OAuth authorization",
+    "text_4": "GitHub Token has expired, please authorize your login again",
+    "text_5": "Logging in using GitHub Token",
+    "text_6": "Return to login page",
+    "text_7": "Switch",
+    "text_8": "PicX GitHub APP must be installed to log in using GitHub OAuth authorization",
+    "text_9": "Filling in the GitHub Token to log in must generate a Token with operation permissions",
+    "text_10": "View tutorial",
+    "text_11": "Install PicX GitHub APP",
+    "text_12": "Create GitHub Token"
+  }
 }
