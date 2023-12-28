@@ -98,15 +98,17 @@ const onOK = () => {
 watch(
   () => userSettings,
   (settings) => {
-    // 本地设置发生变化时，判断和云端设置是否相等
-    if (deepObjectEqual(settings, cloudSettings.value!)) {
-      // 相等情况
-      selectedAction.value = CloudSettingsActions.equal
-      saveDisabled.value = true
-    } else {
-      // 不相等情况
-      selectedAction.value = CloudSettingsActions.update
-      saveDisabled.value = false
+    if (cloudSettings.value) {
+      // 本地设置发生变化时，判断和云端设置是否相等
+      if (deepObjectEqual(settings, cloudSettings.value)) {
+        // 相等情况
+        selectedAction.value = CloudSettingsActions.equal
+        saveDisabled.value = true
+      } else {
+        // 不相等情况
+        selectedAction.value = CloudSettingsActions.update
+        saveDisabled.value = false
+      }
     }
   },
   {
