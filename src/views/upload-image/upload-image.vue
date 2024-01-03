@@ -40,10 +40,10 @@
         </div>
       </div>
 
-      <div class="row-item">
+      <!-- 部署 -->
+      <div class="row-item" v-if="userConfigInfo.logined">
         <div class="content-box">
-          <!-- 部署 -->
-          <image-hosting-deploy :disabled="!isCanDeploy" />
+          <deploy-bar :disabled="!isCanDeploy" />
         </div>
       </div>
 

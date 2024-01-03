@@ -1,4 +1,4 @@
-import { DeployServerEnum } from '@/components/image-hosting-deploy/image-hosting-deploy.model'
+import { DeployServerEnum } from '@/components/deploy-bar/deploy-bar.model'
 
 export const getDeployServerName = (server: DeployServerEnum) => {
   switch (server) {

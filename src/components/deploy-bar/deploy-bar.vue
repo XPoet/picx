@@ -35,12 +35,7 @@
             $t('settings.image_hosting_deploy.deploy_to', { server: getDeployServerName(di.type) })
           "
         >
-          <el-button
-            type="primary"
-            :disabled="disabled && di.status !== null"
-            text
-            @click="onDeploy(di)"
-          >
+          <el-button type="primary" :disabled="disabled" text @click="onDeploy(di)">
             {{ $t('settings.image_hosting_deploy.one_click_deploy') }}
           </el-button>
         </el-tooltip>
@@ -55,8 +50,8 @@ import { store } from '@/stores'
 import { checkoutGhPagesBranch } from '@/common/api'
 import { DeployStatusInfo, ImageLinkTypeEnum } from '@/common/model'
 import { formatDatetime } from '@/utils'
-import { DeployServerEnum } from '@/components/image-hosting-deploy/image-hosting-deploy.model'
-import { getDeployServerName } from '@/components/image-hosting-deploy/image-hosting-deploy.util'
+import { DeployServerEnum } from '@/components/deploy-bar/deploy-bar.model'
+import { getDeployServerName } from '@/components/deploy-bar/deploy-bar.util'
 import i18n from '@/plugins/vue/i18n'
 import { saveCloudDeployInfo } from '@/views/main-container/main-container.util'
 
@@ -98,5 +93,5 @@ const onDeploy = (deployItem: DeployStatusInfo) => {
 </script>
 
 <style scoped lang="stylus">
-@import "image-hosting-deploy.styl"
+@import "deploy-bar.styl"
 </style>
