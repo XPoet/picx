@@ -35,12 +35,7 @@
             $t('settings.image_hosting_deploy.deploy_to', { server: getDeployServerName(di.type) })
           "
         >
-          <el-button
-            type="primary"
-            :disabled="disabled && di.status !== null"
-            text
-            @click="onDeploy(di)"
-          >
+          <el-button type="primary" :disabled="disabled" text @click="onDeploy(di)">
             {{ $t('settings.image_hosting_deploy.one_click_deploy') }}
           </el-button>
         </el-tooltip>
@@ -50,15 +45,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance } from 'vue'
+import { computed } from 'vue'
 import { store } from '@/stores'
 import { checkoutGhPagesBranch } from '@/common/api'
 import { DeployStatusInfo, ImageLinkTypeEnum } from '@/common/model'
 import { formatDatetime } from '@/utils'
-import { DeployServerEnum } from '@/components/image-hosting-deploy/image-hosting-deploy.model'
-import { getDeployServerName } from '@/components/image-hosting-deploy/image-hosting-deploy.util'
-
-const instance = getCurrentInstance()
+import { DeployServerEnum } from '@/components/deploy-bar/deploy-bar.model'
+import { getDeployServerName } from '@/components/deploy-bar/deploy-bar.util'
+import i18n from '@/plugins/vue/i18n'
+import { saveCloudDeployInfo } from '@/views/main-container/main-container.util'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
@@ -74,25 +69,29 @@ const onDeploy = (deployItem: DeployStatusInfo) => {
   // eslint-disable-next-line default-case
   switch (deployItem.type) {
     case DeployServerEnum.githubPages:
-      checkoutGhPagesBranch(userConfigInfo, instance?.proxy?.$t, (event: boolean) => {
+      checkoutGhPagesBranch(userConfigInfo, (event: boolean) => {
         userSettings.deploy.github.status = event
         userSettings.deploy.github.latestTime = Date.now()
+        // 保存部署状态到云端仓库
+        saveCloudDeployInfo()
         if (event) {
+          // 部署成功
           userSettings.imageLinkType.selected = ImageLinkTypeEnum.GitHubPages
           store.dispatch('USER_SETTINGS_PERSIST')
-          ElMessage.success(instance?.proxy?.$t('settings.image_hosting_deploy.success'))
+          ElMessage.success(i18n.global.t('settings.image_hosting_deploy.success'))
         } else {
-          ElMessage.error(instance?.proxy?.$t('settings.image_hosting_deploy.fail2'))
+          // 部署失败
+          ElMessage.error(i18n.global.t('settings.image_hosting_deploy.fail2'))
         }
       })
       return
 
     case DeployServerEnum.vervel:
-      console.log('暂未实现')
+      console.log('部署 Vervel 暂未实现')
   }
 }
 </script>
 
 <style scoped lang="stylus">
-@import "image-hosting-deploy.styl"
+@import "deploy-bar.styl"
 </style>

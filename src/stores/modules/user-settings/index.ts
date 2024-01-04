@@ -16,7 +16,7 @@ import UserSettingsStateTypes, {
   ImgLinkRuleActionsEnum
 } from '@/stores/modules/user-settings/types'
 import { LS_PICX_SETTINGS } from '@/common/constant'
-import { DeployServerEnum } from '@/components/image-hosting-deploy/image-hosting-deploy.model'
+import { DeployServerEnum } from '@/components/deploy-bar/deploy-bar.model'
 import { imgLinkRuleVerification } from '@/stores/modules/user-settings/utils'
 
 const initSettings: UserSettingsModel = {

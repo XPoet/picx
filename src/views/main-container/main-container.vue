@@ -19,14 +19,35 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, computed, watch } from 'vue'
 import HeaderContent from '@/components/header-content/header-content.vue'
 import NavContent from '@/components/nav-content/nav-content.vue'
-import userConfigInfoModel from '@/utils/set-theme-mode'
+import themeModeHandle from '@/utils/set-theme-mode'
+import { getCloudDeployInfo, setCloudDeployInfo } from '@/views/main-container/main-container.util'
+import { store } from '@/stores'
+
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+
+const initDeployStatus = async () => {
+  const res = await getCloudDeployInfo()
+  if (res) {
+    setCloudDeployInfo(res.content)
+  }
+}
 
 onMounted(() => {
-  userConfigInfoModel()
+  themeModeHandle()
 })
+
+watch(
+  () => userConfigInfo.selectedBranch,
+  (nv) => {
+    if (nv && userConfigInfo.owner && userConfigInfo.selectedRepo) {
+      initDeployStatus()
+    }
+  },
+  { immediate: true, deep: true }
+)
 </script>
 
 <style scoped lang="stylus">

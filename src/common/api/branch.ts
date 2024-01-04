@@ -2,6 +2,7 @@ import { UserConfigInfoModel } from '@/common/model'
 import request from '@/utils/request'
 import axios from '@/utils/request/axios'
 import { GH_PAGES } from '@/common/constant'
+import i18n from '@/plugins/vue/i18n'
 
 /**
  * 获取分支信息
@@ -58,18 +59,13 @@ export const getBranchInfoList = (
  * 将当前分支 checkout 到 gh-pages 分支
  * 部署到 GitHub Pages，完成图片资源托管，获取访问能力
  * @param userConfigInfo
- * @param $t
  * @param cb
  */
-export const checkoutGhPagesBranch = async (
-  userConfigInfo: UserConfigInfoModel,
-  $t: any,
-  cb?: any
-) => {
+export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel, cb?: any) => {
   const { owner, selectedRepo: repo, selectedBranch } = userConfigInfo
 
   const initLoading = ElLoading.service({
-    text: $t('settings.image_hosting_deploy.deploying')
+    text: i18n.global.t('settings.image_hosting_deploy.deploying')
   })
 
   const cbHandler = (evt: boolean = false) => {

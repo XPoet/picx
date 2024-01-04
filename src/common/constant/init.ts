@@ -9,3 +9,7 @@ export const PICX_DEL_IMG_DESC = 'Delete image via PicX (https://github.com/XPoe
 export const PICX_INIT_SETTINGS_MSG = 'Init settings via PicX (https://github.com/XPoet/picx)'
 export const PICX_UPDATE_SETTINGS_MSG = 'Update settings via PicX (https://github.com/XPoet/picx)'
 export const PICX_INIT_REPO_MSG = 'Init repo via PicX (https://github.com/XPoet/picx)'
+
+export const PICX_INIT_DEPLOY_MSG = 'Init deploy status via PicX (https://github.com/XPoet/picx)'
+export const PICX_UPDATE_DEPLOY_MSG =
+  'Update deploy status via PicX (https://github.com/XPoet/picx)'

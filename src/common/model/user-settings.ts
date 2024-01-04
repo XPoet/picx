@@ -1,5 +1,5 @@
 import { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
-import { DeployServerEnum } from '@/components/image-hosting-deploy/image-hosting-deploy.model'
+import { DeployServerEnum } from '@/components/deploy-bar/deploy-bar.model'
 
 export enum ElementPlusSizeEnum {
   // eslint-disable-next-line no-unused-vars
