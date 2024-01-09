@@ -144,7 +144,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
           }
         })
       } else {
-        ElMessage.error($t('settings.link_rule.error_msg_1'))
+        ElMessage.error($t('settings_page.link_rule.error_msg_1'))
       }
     },
 

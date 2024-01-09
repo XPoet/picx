@@ -37,19 +37,19 @@ const selectedAction = ref<CloudSettingsActions>(CloudSettingsActions.save)
 const actionsTip = computed(() => {
   switch (selectedAction.value) {
     case CloudSettingsActions.save:
-      return instance?.proxy?.$t('settings.cloud_settings.tip_1')
+      return instance?.proxy?.$t('settings_page.cloud_settings.tip_1')
 
     case CloudSettingsActions.use:
-      return instance?.proxy?.$t('settings.cloud_settings.tip_2')
+      return instance?.proxy?.$t('settings_page.cloud_settings.tip_2')
 
     case CloudSettingsActions.update:
-      return instance?.proxy?.$t('settings.cloud_settings.tip_3')
+      return instance?.proxy?.$t('settings_page.cloud_settings.tip_3')
 
     case CloudSettingsActions.equal:
-      return instance?.proxy?.$t('settings.cloud_settings.tip_4')
+      return instance?.proxy?.$t('settings_page.cloud_settings.tip_4')
 
     default:
-      return instance?.proxy?.$t('settings.cloud_settings.tip_1')
+      return instance?.proxy?.$t('settings_page.cloud_settings.tip_1')
   }
 })
 
@@ -61,8 +61,8 @@ const saveToCloud = async () => {
   cloudSettings.value = JSON.parse(JSON.stringify(userSettings))
   ElMessage.success(
     cloudSettings.value === null
-      ? instance?.proxy?.$t('settings.cloud_settings.success_msg_1')
-      : instance?.proxy?.$t('settings.cloud_settings.success_msg_2')
+      ? instance?.proxy?.$t('settings_page.cloud_settings.success_msg_1')
+      : instance?.proxy?.$t('settings_page.cloud_settings.success_msg_2')
   )
 }
 

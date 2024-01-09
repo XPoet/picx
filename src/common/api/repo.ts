@@ -56,14 +56,10 @@ export const getAllRepoList = async (owner: string) => {
 }
 
 /**
- * 初始化一个空仓库
+ * 初始化仓库 README
  * @param userConfigInfo
- * @param showTips
  */
-export const initEmptyRepo = async (
-  userConfigInfo: UserConfigInfoModel,
-  showTips: boolean = true
-) => {
+export const initRepoREADME = async (userConfigInfo: UserConfigInfoModel) => {
   const README = `
 # Welcome to use PicX
 
@@ -75,17 +71,9 @@ If you like it, please give it a star on [GitHub](https://github.com/XPoet/picx)
         `
   const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
 
-  let initRepoLoading = null
-
-  if (showTips) {
-    initRepoLoading = ElLoading.service({
-      text: '正在初始化仓库...'
-    })
-  }
-
   // GitHub Git database API 不支持在空仓库上操作，需要先初始化空仓库
   // 仓库为空时，新建一个 README 文件来初始化仓库
-  const res = await request({
+  await request({
     url: `/repos/${owner}/${repo}/contents/README.md`,
     method: 'PUT',
     data: {
@@ -95,12 +83,6 @@ If you like it, please give it a star on [GitHub](https://github.com/XPoet/picx)
     },
     noShowErrorMsg: true
   })
-
-  if (res) {
-    initRepoLoading?.close()
-  } else if (showTips) {
-    ElMessage.error('仓库初始化失败')
-  }
 }
 
 /**
@@ -117,6 +99,21 @@ export const createRepo = (token: string) => {
       private: false
     },
     headers: { Authorization: `Bearer ${token}` },
+    success422: true,
+    noShowErrorMsg: true
+  })
+}
+
+/**
+ * 获取仓库信息
+ * @param owner
+ * @param repo
+ */
+export const getRepoInfo = (owner: string, repo: string) => {
+  return request({
+    url: `/repos/${owner}/${repo}`,
+    method: 'GET',
+    noCache: true,
     success422: true,
     noShowErrorMsg: true
   })

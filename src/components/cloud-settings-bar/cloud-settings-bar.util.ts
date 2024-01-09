@@ -8,12 +8,7 @@ export const getCloudSettings = async (userConfigInfo: UserConfigInfoModel) => {
     url: `/repos/${owner}/${repo}/contents/.settings`,
     method: 'GET',
     noShowErrorMsg: true,
-    cache: {
-      maxAge: 0
-    },
-    params: {
-      timestamp: Date.now() // 添加时间戳参数，防止获取缓存的数据
-    }
+    noCache: true
   })
 
   return Promise.resolve(res)

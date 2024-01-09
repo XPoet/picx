@@ -1,6 +1,6 @@
 <template>
   <div class="folder-card" @dblclick="dblclickFolder">
-    <el-tooltip v-if="mode === 'dir'" :content="$t('management.toNextDir')" placement="top">
+    <el-tooltip v-if="mode === 'dir'" :content="$t('management_page.toNextDir')" placement="top">
       <div class="icon">
         <svg
           t="1639999626518"
@@ -45,7 +45,7 @@
         ></path>
       </svg>
     </div>
-    <div class="text" v-if="mode === 'back'">{{ $t('management.back') }}</div>
+    <div class="text" v-if="mode === 'back'">{{ $t('management_page.back') }}</div>
   </div>
 </template>
 

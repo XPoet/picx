@@ -80,7 +80,7 @@ const setLanguageByIP = () => {
       const confirmTxt = instance?.proxy?.$t(`confirm`, language)
       const msgTxt = instance?.proxy?.$t(`toggle_language_msg`, language, {
         region: instance?.proxy?.$t(`region.${region}`, language),
-        language: instance?.proxy?.$t(`language.${language}`, language)
+        language: instance?.proxy?.$t(`languages.${language}`, language)
       })
 
       const msgInstance = ElMessage({

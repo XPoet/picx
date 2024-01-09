@@ -31,7 +31,7 @@
         <div class="content-box upload-area-status">
           <selected-info-bar />
           <div v-if="uploadImageList.length">
-            {{ $t('upload.uploaded') }}：{{
+            {{ $t('uploaded') }}：{{
               uploadImageList.filter((x) => x.uploadStatus.progress === 100).length
             }}
             /
@@ -54,7 +54,7 @@
             {{ $t('reset') }} <span class="shortcut-key">[ {{ shortcutKey }} + A ]</span>
           </el-button>
           <el-button :disabled="uploading" plain type="primary" @click="uploadImage">
-            {{ $t('upload.upload') }} <span class="shortcut-key">[ {{ shortcutKey }} + S ]</span>
+            {{ $t('upload') }} <span class="shortcut-key">[ {{ shortcutKey }} + S ]</span>
           </el-button>
         </div>
       </div>
@@ -144,19 +144,19 @@ const uploadImage = async () => {
   const { token, selectedRepo, selectedDir } = userConfigInfo
 
   if (!token) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload.message1') })
+    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message1') })
     await router.push('/config')
     return
   }
 
   if (!selectedRepo) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload.message2') })
+    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message2') })
     await router.push('/config')
     return
   }
 
   if (!selectedDir) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload.message3') })
+    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message3') })
     await router.push('/config')
     return
   }
@@ -164,7 +164,7 @@ const uploadImage = async () => {
   const notYetUploadList = uploadImageList.value.filter((x) => x.uploadStatus.progress === 0)
 
   if (notYetUploadList.length === 0) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload.message4') })
+    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message4') })
     return
   }
 
@@ -178,19 +178,19 @@ const uploadImage = async () => {
   switch (uploadRes) {
     // 单张图片上传成功
     case UploadStatusEnum.uploaded:
-      ElMessage.success({ message: instance?.proxy?.$t('upload.message5') })
+      ElMessage.success({ message: instance?.proxy?.$t('upload_page.message5') })
       await afterUploadSuccess(uploadedImg)
       break
 
     // 多张图片上传成功
     case UploadStatusEnum.allUploaded:
-      ElMessage.success({ message: instance?.proxy?.$t('upload.message6') })
+      ElMessage.success({ message: instance?.proxy?.$t('upload_page.message6') })
       await afterUploadSuccess(uploadedImg, true)
       break
 
     // 上传失败（网络错误等原因）
     case UploadStatusEnum.uploadFail:
-      ElMessage.error({ message: instance?.proxy?.$t('upload.message7') })
+      ElMessage.error({ message: instance?.proxy?.$t('upload_page.message7') })
   }
 }
 

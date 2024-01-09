@@ -41,7 +41,7 @@ export const githubAppAuthorizeCallback = async () => {
       installationId: installation_id
     })
 
-    ElMessageBox.confirm(i18n.global.t('authorization.msg_3'), i18n.global.t('tips'), {
+    ElMessageBox.confirm(i18n.global.t('authorization.msg_3'), i18n.global.t('tip'), {
       confirmButtonText: i18n.global.t('confirm'),
       cancelButtonText: i18n.global.t('cancel'),
       type: 'success',

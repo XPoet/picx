@@ -31,12 +31,7 @@ export const getBranchInfoList = (
     const tmpList: any[] = await request({
       url: `/repos/${owner}/${repo}/branches`,
       method: 'GET',
-      cache: {
-        maxAge: 0 // 设置缓存的最大寿命为 0，禁用缓存
-      },
-      params: {
-        timestamp: Date.now() // 添加时间戳参数，防止获取缓存的数据
-      }
+      noCache: true
     })
 
     if (tmpList && tmpList.length) {
@@ -65,7 +60,7 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
   const { owner, selectedRepo: repo, selectedBranch } = userConfigInfo
 
   const initLoading = ElLoading.service({
-    text: i18n.global.t('settings.image_hosting_deploy.deploying')
+    text: i18n.global.t('settings_page.image_hosting_deploy.deploying')
   })
 
   const cbHandler = (evt: boolean = false) => {

@@ -1,7 +1,18 @@
 import axios from './axios'
-import { CustomAxiosRequestConfig } from '@/common/model'
+import { CustomAxiosRequestConfig } from './types'
 
 export default function request(config: CustomAxiosRequestConfig): Promise<any> {
+  const isNoCache = Boolean(config?.noCache)
+  if (isNoCache) {
+    config.cache = {
+      maxAge: 0 // 设置缓存的最大寿命为 0，禁用缓存
+    }
+    config.params = config.params ? config.params : {}
+    config.params.timestamp = Date.now() // 添加时间戳参数，防止获取缓存的数据
+    // config.params['no-cache'] = Date.now()
+    delete config.noCache
+  }
+
   const requestConfig: CustomAxiosRequestConfig = {}
 
   // @ts-ignore

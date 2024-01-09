@@ -3,7 +3,7 @@
     class="image-card"
     :class="{ checked: imageObj.checked }"
     v-loading="imageObj.deleting"
-    :element-loading-text="$t('management.loadingTxt3')"
+    :element-loading-text="$t('management_page.loadingTxt3')"
     @mouseenter="isShowOperateBtn = true"
     @mouseleave="isShowOperateBtn = false"
   >
@@ -63,13 +63,13 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item @click="deleteImageTips(imageObj)">
-                {{ $t('upload.delete') }}
+                {{ $t('delete') }}
               </el-dropdown-item>
               <el-dropdown-item @click.self="showRenameInput(imageObj)">
-                {{ $t('upload.rename') }}
+                {{ $t('rename') }}
               </el-dropdown-item>
               <el-dropdown-item @click="viewImageProperties(imageObj)">
-                {{ $t('management.property') }}
+                {{ $t('management_page.property') }}
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -145,9 +145,9 @@ const deleteOriginImage = (
     if (res) {
       if (isRename) {
         isRenameImg.value = false
-        ElMessage.success({ message: instance?.proxy?.$t('management.message4') })
+        ElMessage.success({ message: instance?.proxy?.$t('management_page.message4') })
       } else {
-        ElMessage.success({ message: instance?.proxy?.$t('management.message5') })
+        ElMessage.success({ message: instance?.proxy?.$t('management_page.message5') })
       }
       await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
       await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
@@ -161,10 +161,10 @@ const deleteOriginImage = (
 const deleteImageTips = (imageObj: UploadedImageModel) => {
   ElMessageBox.confirm(
     `
-    <div>${instance?.proxy?.$t('management.delTips')}：</div>
+    <div>${instance?.proxy?.$t('management_page.delTips')}：</div>
     <strong>${imageObj.name}</strong>
     `,
-    instance?.proxy?.$t('tips'),
+    instance?.proxy?.$t('tip'),
     {
       dangerouslyUseHTMLString: true,
       type: 'warning'
@@ -199,13 +199,13 @@ const updateRename = async () => {
   const { imageObj } = props
 
   if (!renameInputValue.value) {
-    ElMessage.error({ message: instance?.proxy?.$t('management.message1') })
+    ElMessage.error({ message: instance?.proxy?.$t('management_page.message1') })
     renameInputRef.value?.focus()
     return
   }
 
   if (renameInputValue.value === getFilename(imageObj.name)) {
-    ElMessage.error({ message: instance?.proxy?.$t('management.message2') })
+    ElMessage.error({ message: instance?.proxy?.$t('management_page.message2') })
     isRenameImg.value = false
     return
   }
@@ -213,7 +213,7 @@ const updateRename = async () => {
   const renameImg = async () => {
     const loading = ElLoading.service({
       lock: true,
-      text: instance?.proxy?.$t('management.loadingTxt2')
+      text: instance?.proxy?.$t('management_page.loadingTxt2')
     })
 
     // 重命名的逻辑是先上传一张新名称的图片，再删除旧图片
@@ -253,18 +253,18 @@ const updateRename = async () => {
         await deleteOriginImage(imageObj, true)
         await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
       } else {
-        ElMessage.error({ message: instance?.proxy?.$t('management.message3') })
+        ElMessage.error({ message: instance?.proxy?.$t('management_page.message3') })
       }
     } else {
-      ElMessage.error({ message: instance?.proxy?.$t('management.message3') })
+      ElMessage.error({ message: instance?.proxy?.$t('management_page.message3') })
     }
     loading.close()
     isRenameImg.value = false
   }
 
   ElMessageBox.confirm(
-    instance?.proxy?.$t('management.renameTips', { name: renameInputValue.value }),
-    instance?.proxy?.$t('tips'),
+    instance?.proxy?.$t('management_page.renameTips', { name: renameInputValue.value }),
+    instance?.proxy?.$t('tip'),
     {
       type: 'info'
     }
@@ -289,12 +289,12 @@ const visibleChange = (e: boolean) => {
 const viewImageProperties = (imgObj: UploadedImageModel) => {
   ElMessageBox.confirm(
     `
-    <div>${instance?.proxy?.$t('management.imageName')}：<strong>${imgObj.name}</strong></div>
-    <div>${instance?.proxy?.$t('management.imageSize')}：<strong>${getFileSize(
+    <div>${instance?.proxy?.$t('management_page.imageName')}：<strong>${imgObj.name}</strong></div>
+    <div>${instance?.proxy?.$t('management_page.imageSize')}：<strong>${getFileSize(
       imgObj.size
     )} KB</strong></div>
     `,
-    instance?.proxy?.$t('management.property'),
+    instance?.proxy?.$t('management_page.property'),
     {
       showCancelButton: false,
       showConfirmButton: false,

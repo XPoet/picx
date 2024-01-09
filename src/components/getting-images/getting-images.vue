@@ -16,7 +16,7 @@
     />
     <div class="upload-area-tips" v-if="!curShowImg.base64">
       <el-icon class="icon"><IEpUploadFilled /></el-icon>
-      <div class="text">{{ $t('upload.uploadAreaTips') }}</div>
+      <div class="text">{{ $t('upload_page.upload_area_text') }}</div>
     </div>
     <img class="preview-img" v-if="curShowImg.base64" :src="curShowImg.base64" />
   </div>

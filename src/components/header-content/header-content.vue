@@ -42,7 +42,7 @@
           </template>
           <ul class="personal-center-popover">
             <li class="content-item">
-              <span class="flex-center">{{ $t('header.language') }}</span>
+              <span class="flex-center">{{ $t('language') }}</span>
               <el-select
                 size="small"
                 style="width: 100rem"
@@ -64,15 +64,15 @@
                 @change="persistUserSettings"
               >
                 <el-option
-                  :label="$t('settings.theme.system')"
+                  :label="$t('settings_page.theme.system')"
                   :value="ThemeModeEnum.system"
                 ></el-option>
                 <el-option
-                  :label="$t('settings.theme.light')"
+                  :label="$t('settings_page.theme.light')"
                   :value="ThemeModeEnum.light"
                 ></el-option>
                 <el-option
-                  :label="$t('settings.theme.dark')"
+                  :label="$t('settings_page.theme.dark')"
                   :value="ThemeModeEnum.dark"
                 ></el-option>
               </el-select>
@@ -83,10 +83,10 @@
               v-if="userConfigInfo.name || userConfigInfo.owner"
               @click="logout"
             >
-              {{ $t('header.logout') }}
+              {{ $t('logout') }}
             </li>
             <li class="content-item" v-else @click="router.push('/login')">
-              {{ $t('header.login') }}
+              {{ $t('login') }}
             </li>
           </ul>
         </el-popover>

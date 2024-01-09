@@ -6,12 +6,6 @@
         {{ userConfigInfo.selectedRepo }}
       </el-tag>
     </span>
-    <span class="info-item branch" v-if="userConfigInfo.selectedBranch">
-      {{ $t('branch') }}：
-      <el-tag disable-transitions>
-        {{ userConfigInfo.selectedBranch }}
-      </el-tag>
-    </span>
     <span class="info-item dir">
       {{ $t('dir') }}：
       <el-tag

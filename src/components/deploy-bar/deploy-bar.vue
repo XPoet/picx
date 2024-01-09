@@ -20,10 +20,10 @@
         <span class="deploy-status info-item">
           {{
             di.status === null
-              ? $t('settings.image_hosting_deploy.not_deployed')
+              ? $t('settings_page.image_hosting_deploy.not_deployed')
               : di.status === true
-              ? $t('settings.image_hosting_deploy.success')
-              : $t('settings.image_hosting_deploy.fail')
+              ? $t('settings_page.image_hosting_deploy.success')
+              : $t('settings_page.image_hosting_deploy.fail')
           }}
         </span>
       </div>
@@ -32,11 +32,13 @@
         <el-tooltip
           placement="top"
           :content="
-            $t('settings.image_hosting_deploy.deploy_to', { server: getDeployServerName(di.type) })
+            $t('settings_page.image_hosting_deploy.deploy_to', {
+              server: getDeployServerName(di.type)
+            })
           "
         >
           <el-button type="primary" :disabled="disabled" text @click="onDeploy(di)">
-            {{ $t('settings.image_hosting_deploy.one_click_deploy') }}
+            {{ $t('settings_page.image_hosting_deploy.one_click_deploy') }}
           </el-button>
         </el-tooltip>
       </div>
@@ -78,10 +80,10 @@ const onDeploy = (deployItem: DeployStatusInfo) => {
           // 部署成功
           userSettings.imageLinkType.selected = ImageLinkTypeEnum.GitHubPages
           store.dispatch('USER_SETTINGS_PERSIST')
-          ElMessage.success(i18n.global.t('settings.image_hosting_deploy.success'))
+          ElMessage.success(i18n.global.t('settings_page.image_hosting_deploy.success'))
         } else {
           // 部署失败
-          ElMessage.error(i18n.global.t('settings.image_hosting_deploy.fail2'))
+          ElMessage.error(i18n.global.t('settings_page.image_hosting_deploy.fail2'))
         }
       })
       return

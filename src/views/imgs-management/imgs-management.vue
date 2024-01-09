@@ -8,7 +8,7 @@
         <div class="right flex-start">
           <el-tooltip
             placement="top"
-            :content="$t('management.reload', { dir: userConfigInfo.viewDir })"
+            :content="$t('management_page.reload', { dir: userConfigInfo.viewDir })"
           >
             <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
               <IEpRefresh />
@@ -20,7 +20,7 @@
       <div
         class="bottom"
         v-loading="loadingImageList"
-        :element-loading-text="$t('management.loadingTxt1')"
+        :element-loading-text="$t('management_page.loadingTxt1')"
       >
         <image-selector
           v-if="currentPathImageList.length"
@@ -114,7 +114,7 @@ async function initDirImageList() {
 
   if (viewDir === '') {
     if (
-      (dirMode === DirModeEnum.newDir || dirMode === DirModeEnum.autoDir) &&
+      (dirMode === DirModeEnum.newDir || dirMode === DirModeEnum.dateDir) &&
       !getDirContent(selectedDir, dirObject)
     ) {
       userConfigInfo.selectedDir = '/'

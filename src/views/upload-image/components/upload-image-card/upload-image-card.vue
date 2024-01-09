@@ -41,7 +41,7 @@
         <el-tooltip
           placement="top"
           :offset="8"
-          :content="imgNameOperateFolded ? $t('upload.expand') : $t('upload.fold')"
+          :content="imgNameOperateFolded ? $t('upload_page.expand') : $t('upload_page.fold')"
           v-if="imgObj.uploadStatus.progress === 0"
         >
           <el-icon class="fold-btn" @click="imgNameOperateFolded = !imgNameOperateFolded">
@@ -58,7 +58,7 @@
         <!-- 哈希化 -->
         <div class="operate-item">
           <el-checkbox
-            :label="$t('upload.hash')"
+            :label="$t('upload_page.hash')"
             v-model="fileNameOperateData.isHash"
             @change="onHashRename($event)"
           ></el-checkbox>
@@ -67,7 +67,7 @@
         <!-- 重命名 -->
         <div class="operate-item">
           <el-checkbox
-            :label="$t('upload.rename')"
+            :label="$t('rename')"
             v-model="fileNameOperateData.isRename"
             @change="onRename"
           ></el-checkbox>
@@ -86,7 +86,7 @@
         <!-- 时间戳命名 -->
         <div class="operate-item">
           <el-checkbox
-            :label="$t('upload.timestamp-naming')"
+            :label="$t('upload_page.timestamp_naming')"
             v-model="fileNameOperateData.isTimestampNaming"
             @change="onTimestampNaming"
           ></el-checkbox>
@@ -102,7 +102,7 @@
           "
         >
           <el-checkbox
-            :label="$t('upload.prefixNaming')"
+            :label="$t('upload_page.prefix_naming')"
             v-model="fileNameOperateData.isPrefixNaming"
             @change="onPrefixNaming($event)"
           ></el-checkbox>
@@ -131,14 +131,14 @@
       v-if="imgObj.uploadStatus.progress === 100"
       @click="copyImageLink(imgObj.uploadedImg, userConfigInfo, userSettings)"
     >
-      {{ $t('upload.copyLink') }}
+      {{ $t('copy_link') }}
     </div>
 
     <el-tooltip
       v-if="imgObj.uploadStatus.progress === 0"
       placement="top"
       :offset="8"
-      :content="$t('upload.delete')"
+      :content="$t('delete')"
     >
       <el-icon class="del-img-btn" @click="remove(imgObj.uuid)"><IEpRemove /></el-icon>
     </el-tooltip>
@@ -267,7 +267,7 @@ watch(
   () => props.imgObj!.uploadStatus,
   (nv) => {
     if (nv.uploading) {
-      loadingText.value = instance!.proxy!.$t('upload.loading1')
+      loadingText.value = instance!.proxy!.$t('upload_page.uploading')
     }
   },
   {

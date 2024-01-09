@@ -9,12 +9,14 @@ export const imgLinkRuleVerification = (
 ) => {
   const typeTxt =
     type === ImgLinkRuleActionsEnum.add
-      ? $t('settings.link_rule.add')
-      : $t('settings.link_rule.edit')
+      ? $t('settings_page.link_rule.add')
+      : $t('settings_page.link_rule.edit')
   const tmpList = []
 
   if (!rule.rule.includes('{{path}}')) {
-    ElMessage.error($t('settings.link_rule.error_msg_2', { action: typeTxt, path: '{{path}}' }))
+    ElMessage.error(
+      $t('settings_page.link_rule.error_msg_2', { action: typeTxt, path: '{{path}}' })
+    )
     callback(false)
     return
   }
@@ -32,7 +34,7 @@ export const imgLinkRuleVerification = (
   }
 
   if (tmpList.length) {
-    const confirmTxt = $t('settings.link_rule.error_msg_3', {
+    const confirmTxt = $t('settings_page.link_rule.error_msg_3', {
       action: typeTxt,
       rules: tmpList.join('、')
     })

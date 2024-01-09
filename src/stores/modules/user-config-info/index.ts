@@ -1,5 +1,5 @@
 import { Module } from 'vuex'
-import { BranchModeEnum, UserConfigInfoModel, DirModeEnum } from '@/common/model'
+import { UserConfigInfoModel, DirModeEnum } from '@/common/model'
 import { deepAssignObject, cleanObject, formatDatetime } from '@/utils'
 import UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
 import RootStateTypes from '@/stores/types'
@@ -14,16 +14,14 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     name: '',
     avatarUrl: '',
     selectedRepo: '',
-    repoList: [],
-    branchMode: BranchModeEnum.repoBranch,
-    branchList: [],
     selectedBranch: '',
     selectedDir: '',
     dirMode: DirModeEnum.repoDir,
     dirList: [],
     logined: false,
     selectedDirList: [],
-    viewDir: ''
+    viewDir: '',
+    repoPrivate: false
   }
 
   const LSConfig: string | null = localStorage.getItem(LS_PICX_CONFIG)
@@ -32,16 +30,7 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     // Assign: oldConfig -> initConfig
     deepAssignObject(initConfig, JSON.parse(LSConfig))
 
-    if (initConfig.selectedBranch && !initConfig.branchList.length) {
-      initConfig.branchList = [
-        {
-          value: initConfig.selectedBranch,
-          label: initConfig.selectedBranch
-        }
-      ]
-    }
-
-    if (initConfig.dirMode === DirModeEnum.autoDir) {
+    if (initConfig.dirMode === DirModeEnum.dateDir) {
       initConfig.selectedDir = formatDatetime('yyyyMMdd')
     }
 

@@ -1,15 +1,14 @@
 import { computed } from 'vue'
 import { store } from '@/stores'
+import { DirModeEnum, ElementPlusSizeEnum, LanguageEnum, UserSettingsModel } from '@/common/model'
 import {
-  BranchModeEnum,
-  DirModeEnum,
-  ElementPlusSizeEnum,
-  LanguageEnum,
-  UserSettingsModel
-} from '@/common/model'
-import { createRepo, getGitHubUserInfo, initEmptyRepo } from '@/common/api'
+  createRepo,
+  getDirInfoList,
+  getGitHubUserInfo,
+  getRepoInfo,
+  initRepoREADME
+} from '@/common/api'
 import { INIT_REPO_BARNCH, INIT_REPO_NAME } from '@/common/constant'
-import { formatDatetime } from '@/utils'
 import router from '@/router'
 import i18n from '@/plugins/vue/i18n'
 
@@ -34,44 +33,31 @@ export const persistUserConfigInfo = async () => {
  * @param userInfo
  */
 export async function saveUserInfo(userInfo: any) {
-  userConfigInfo.logined = true
-  userConfigInfo.id = userInfo.id
-  userConfigInfo.owner = userInfo.login
-  userConfigInfo.name = userInfo.name
-  userConfigInfo.email = userInfo.email
-  userConfigInfo.avatarUrl = userInfo.avatar_url
-  await persistUserConfigInfo()
+  await store.dispatch('SET_USER_CONFIG_INFO', {
+    logined: true,
+    id: userInfo.id,
+    owner: userInfo.login,
+    name: userInfo.name,
+    email: userInfo.email,
+    avatarUrl: userInfo.avatar_url
+  })
 }
 
 /**
- * 重新手动配置图床，清空之前的配置信息
- */
-export const initReHandConfig = () => {
-  userConfigInfo.selectedRepo = ''
-  userConfigInfo.repoList = []
-  userConfigInfo.selectedBranch = ''
-  userConfigInfo.branchMode = BranchModeEnum.repoBranch
-  userConfigInfo.branchList = []
-  userConfigInfo.selectedDir = ''
-  userConfigInfo.dirMode = DirModeEnum.repoDir
-  userConfigInfo.dirList = []
-}
-
-/**
- * 前往 上传图片 页面
+ * 前往 [上传图片] 页面
  */
 export const goUploadPage = async () => {
   const { selectedDir, dirMode } = userConfigInfo
-  let warningMessage: string = i18n.global.t('config.message6')
+  let warningMessage: string = i18n.global.t('config_page.message_6')
 
   if (selectedDir === '') {
     // eslint-disable-next-line default-case
     switch (dirMode) {
       case DirModeEnum.newDir:
-        warningMessage = i18n.global.t('config.message7')
+        warningMessage = i18n.global.t('config_page.message_7')
         break
       case DirModeEnum.repoDir:
-        warningMessage = i18n.global.t('config.message8', { repo: userConfigInfo.selectedRepo })
+        warningMessage = i18n.global.t('config_page.message_8')
         break
     }
     ElMessage.warning({ message: warningMessage })
@@ -81,7 +67,7 @@ export const goUploadPage = async () => {
 }
 
 /**
- * GitHub APP 安装状态处理
+ * PicX GitHub APP 安装状态处理
  * @param repoInfo
  * @param authorized
  * @param token
@@ -124,68 +110,88 @@ export const installedStatusHandle = async (repoInfo: any, authorized: boolean, 
 /**
  * 一键自动配置图床
  */
-export const oneClickAutoConfig = async () => {
+export const oneClickAutoConfig = async (tokenInput: any) => {
   const { token } = userConfigInfo
 
   if (!token) {
-    ElMessage.error({ message: i18n.global.t('config.message1') })
+    ElMessage.error({ message: i18n.global.t('config_page.message_1') })
+    tokenInput?.focus()
     return
   }
 
   const loading = ElLoading.service({
     lock: true,
-    text: i18n.global.t('config.loading6')
+    text: i18n.global.t('config_page.loading_6')
   })
 
   try {
+    // 获取用户信息
     const userInfo = await getGitHubUserInfo(userConfigInfo.token)
     console.log('getGitHubUserInfo >> ', userInfo)
 
     if (!userInfo) {
       loading.close()
-      ElMessage.error({ message: i18n.global.t('config.message2') })
+      ElMessage.error({ message: i18n.global.t('config_page.message_2') })
       return
     }
 
+    // 保存 Token 到授权信息 store
     if (!store.getters.getGitHubAuthorizationInfo.isAutoAuthorize) {
       await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
         manualToken: userConfigInfo.token
       })
     }
 
+    // 保存用户信息
     await saveUserInfo(userInfo)
+
+    // 判断是否已存在 PicX 图床仓库
+    let isExistInitRepo: boolean = false
+    const initRepoInfo = await getRepoInfo(userConfigInfo.owner, INIT_REPO_NAME)
+    console.log('initRepoInfo : ', initRepoInfo)
+    if (initRepoInfo) {
+      isExistInitRepo = true
+      await store.dispatch('SET_USER_CONFIG_INFO', {
+        repoPrivate: initRepoInfo.private
+      })
+    }
 
     const repoInfo = await createRepo(userConfigInfo.token)
     console.log('createRepo >> ', repoInfo)
 
+    // ---- PicX GitHub APP 安装状态处理
     const authorizationInfo = computed(() => store.getters.getGitHubAuthorizationInfo).value
     const { token, authorized } = authorizationInfo
-
     await installedStatusHandle(repoInfo, authorized, token)
-
     if (!repoInfo) {
       loading.close()
       if (!(authorized && token)) {
-        ElMessage.error({ message: i18n.global.t('config.message3') })
+        ElMessage.error({ message: i18n.global.t('config_page.message_3') })
       }
       return
     }
+    // --------------------------------
 
-    userConfigInfo.repoList = [{ value: INIT_REPO_NAME, label: INIT_REPO_NAME }]
     userConfigInfo.selectedRepo = INIT_REPO_NAME
-    userConfigInfo.branchList = [{ value: INIT_REPO_BARNCH, label: INIT_REPO_BARNCH }]
     userConfigInfo.selectedBranch = INIT_REPO_BARNCH
-    userConfigInfo.branchMode = BranchModeEnum.repoBranch
-    userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
-    userConfigInfo.dirMode = DirModeEnum.autoDir
-    userConfigInfo.dirList = []
+
+    // 获取目录列表
+    userConfigInfo.dirList = await getDirInfoList(userConfigInfo)
+
+    userConfigInfo.dirMode = DirModeEnum.rootDir
+    userConfigInfo.selectedDir = '/'
+
     await persistUserConfigInfo()
-    await initEmptyRepo(userConfigInfo, false)
+
+    if (!isExistInitRepo) {
+      await initRepoREADME(userConfigInfo)
+    }
+
     loading.close()
-    ElMessage.success({ message: i18n.global.t('config.message4') })
-    await router.push('/upload')
+    ElMessage.success({ message: i18n.global.t('config_page.message_4') })
+    // await router.push('/upload')
   } catch (err) {
-    ElMessage.error({ message: i18n.global.t('config.message5') })
+    ElMessage.error({ message: i18n.global.t('config_page.message_5') })
     console.error('oneClickAutoConfig >> ', err)
   }
 }

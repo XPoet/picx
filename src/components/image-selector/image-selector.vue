@@ -2,18 +2,22 @@
   <div class="selector-wrapper" v-if="getImageCardCheckedNum">
     <div class="selector-left-box">
       <el-checkbox
-        :label="allChecked ? $t('management.deselectAll') : $t('management.selectAll')"
+        :label="allChecked ? $t('management_page.deselectAll') : $t('management_page.selectAll')"
         v-model="allChecked"
         @change="allCheckChange"
       ></el-checkbox>
-      <div class="item">{{ $t('management.selectTotal', { total: getImageCardCheckedNum }) }}</div>
-      <div class="item cancel-select-btn" @click="cancelPick">{{ $t('management.unselect') }}</div>
+      <div class="item">
+        {{ $t('management_page.selectTotal', { total: getImageCardCheckedNum }) }}
+      </div>
+      <div class="item cancel-select-btn" @click="cancelPick">
+        {{ $t('management_page.unselect') }}
+      </div>
     </div>
     <div class="selector-right-box">
-      <el-tooltip placement="top" :content="$t('management.batchCopy')">
+      <el-tooltip placement="top" :content="$t('management_page.batchCopy')">
         <el-icon class="btn-icon" @click="batchCopy"><IEpCopyDocument /></el-icon>
       </el-tooltip>
-      <el-tooltip placement="top" :content="$t('management.batchDelete')">
+      <el-tooltip placement="top" :content="$t('management_page.batchDelete')">
         <el-icon class="btn-icon" @click="batchDeleteImage"><IEpDelete /></el-icon>
       </el-tooltip>
     </div>
@@ -66,8 +70,10 @@ const cancelPick = () => {
 const batchDeleteImage = () => {
   if (getImageCardCheckedArr.value?.length > 0) {
     ElMessageBox.confirm(
-      instance?.proxy?.$t('management.delTips2', { total: getImageCardCheckedArr.value?.length }),
-      instance?.proxy?.$t('tips'),
+      instance?.proxy?.$t('management_page.delTips2', {
+        total: getImageCardCheckedArr.value?.length
+      }),
+      instance?.proxy?.$t('tip'),
       {
         type: 'warning'
       }
@@ -75,13 +81,13 @@ const batchDeleteImage = () => {
       .then(async () => {
         const res = await deleteImageOfGitHub(getImageCardCheckedArr.value, userConfigInfo)
         if (res === DeleteStatusEnum.deleted) {
-          ElMessage.success({ message: instance?.proxy?.$t('management.message5') })
+          ElMessage.success({ message: instance?.proxy?.$t('management_page.message5') })
         }
         if (res === DeleteStatusEnum.allDeleted) {
-          ElMessage.success({ message: instance?.proxy?.$t('management.message6') })
+          ElMessage.success({ message: instance?.proxy?.$t('management_page.message6') })
         }
         if (res === DeleteStatusEnum.deleteFail) {
-          ElMessage.error({ message: instance?.proxy?.$t('management.message7') })
+          ElMessage.error({ message: instance?.proxy?.$t('management_page.message7') })
         }
       })
       .catch(() => {

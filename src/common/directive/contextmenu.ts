@@ -39,11 +39,11 @@ const contextmenuDirective: Directive = {
 
       if (type === ContextmenuEnum.img) {
         copyItem.style.display = 'block'
-        uploadItem.innerHTML = i18n.global.t('management.contextmenu_1')
+        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_1')
       } else {
         copyItem.style.display = 'none'
-        uploadItem.innerHTML = i18n.global.t('management.contextmenu_2', {
-          dir: selectedDir === '/' ? i18n.global.t('management.contextmenu_3') : selectedDir
+        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_2', {
+          dir: selectedDir === '/' ? i18n.global.t('management_page.contextmenu_3') : selectedDir
         })
       }
 

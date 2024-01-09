@@ -2,16 +2,16 @@
   <el-card>
     <template #header>
       <div class="card-header">
-        <span>{{ $t('settings.link_rule.card_title') }}</span>
+        <span>{{ $t('settings_page.link_rule.card_title') }}</span>
       </div>
     </template>
     <el-table :data="linkRuleTableData" style="width: 100%">
       <el-table-column
         prop="name"
-        :label="$t('settings.link_rule.card_table_col_title_1')"
+        :label="$t('settings_page.link_rule.card_table_col_title_1')"
         width="120"
       />
-      <el-table-column :label="$t('settings.link_rule.card_table_col_title_2')">
+      <el-table-column :label="$t('settings_page.link_rule.card_table_col_title_2')">
         <template #default="scope">
           <div
             :contenteditable="true"
@@ -22,7 +22,7 @@
         </template>
       </el-table-column>
       <el-table-column
-        :label="$t('settings.link_rule.card_table_col_title_3')"
+        :label="$t('settings_page.link_rule.card_table_col_title_3')"
         width="80"
         align="center"
       >
@@ -48,16 +48,16 @@
         size="default"
       >
         <el-form-item
-          :label="$t('settings.link_rule.input_name_1')"
+          :label="$t('settings_page.link_rule.input_name_1')"
           prop="name"
-          :rules="[{ required: true, message: $t('settings.link_rule.input_name_1_rule') }]"
+          :rules="[{ required: true, message: $t('settings_page.link_rule.input_name_1_rule') }]"
         >
           <el-input v-model="imageLinkRuleForm.name" type="text" />
         </el-form-item>
         <el-form-item
-          :label="$t('settings.link_rule.input_name_2')"
+          :label="$t('settings_page.link_rule.input_name_2')"
           prop="rule"
-          :rules="[{ required: true, message: $t('settings.link_rule.input_name_2_rule') }]"
+          :rules="[{ required: true, message: $t('settings_page.link_rule.input_name_2_rule') }]"
         >
           <el-input v-model="imageLinkRuleForm.rule" type="text" />
         </el-form-item>
@@ -67,7 +67,7 @@
             :disabled="!imageLinkRuleForm.name || !imageLinkRuleForm.rule"
             @click="addImageLinkRule(formRef)"
           >
-            {{ $t('settings.link_rule.btn_name_1') }}
+            {{ $t('settings_page.link_rule.btn_name_1') }}
           </el-button>
         </el-form-item>
       </el-form>
@@ -111,8 +111,8 @@ const editImageLinkRule = (newRule: string, ruleObj: ImageLinkRuleModel) => {
 
 const removeImageLinkRule = (obj: ImageLinkRuleModel) => {
   ElMessageBox.confirm(
-    `${instance?.proxy?.$t('settings.link_format.delete_tips')}：<strong>${obj.name}</strong>`,
-    instance?.proxy?.$t('tips'),
+    `${instance?.proxy?.$t('settings_page.link_format.delete_tips')}：<strong>${obj.name}</strong>`,
+    instance?.proxy?.$t('tip'),
     {
       dangerouslyUseHTMLString: true,
       type: 'warning'
