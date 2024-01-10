@@ -106,7 +106,7 @@ const imageLinkRuleForm: ImageLinkRuleModel = reactive({
 const editImageLinkRule = (newRule: string, ruleObj: ImageLinkRuleModel) => {
   const tmpRuleObj = JSON.parse(JSON.stringify(ruleObj))
   tmpRuleObj.rule = newRule
-  store.dispatch('UPDATE_IMAGE_LINK_TYPE_RULE', { rule: tmpRuleObj, $t: instance?.proxy?.$t })
+  store.dispatch('UPDATE_IMAGE_LINK_TYPE_RULE', { rule: tmpRuleObj })
 }
 
 const removeImageLinkRule = (obj: ImageLinkRuleModel) => {
@@ -132,8 +132,7 @@ const addImageLinkRule = (formEl: FormInstance | undefined) => {
     if (valid) {
       imageLinkRuleForm.id = getUuid()
       store.dispatch('ADD_IMAGE_LINK_TYPE_RULE', {
-        rule: JSON.parse(JSON.stringify(imageLinkRuleForm)),
-        $t: instance?.proxy?.$t
+        rule: JSON.parse(JSON.stringify(imageLinkRuleForm))
       })
     }
   })

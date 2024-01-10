@@ -18,6 +18,7 @@ import UserSettingsStateTypes, {
 import { LS_PICX_SETTINGS } from '@/common/constant'
 import { DeployServerEnum } from '@/components/deploy-bar/deploy-bar.model'
 import { imgLinkRuleVerification } from '@/stores/modules/user-settings/utils'
+import i18n from '@/plugins/vue/i18n'
 
 const initSettings: UserSettingsModel = {
   imageName: {
@@ -34,7 +35,7 @@ const initSettings: UserSettingsModel = {
   },
   elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
-    selected: ImageLinkTypeEnum.jsDelivr,
+    selected: ImageLinkTypeEnum.GitHub,
     presetList: {
       // GitHubPages
       [`${ImageLinkTypeEnum.GitHubPages}`]: {
@@ -134,23 +135,23 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
     },
 
     // 图片链接类型 - 增加规则
-    ADD_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule, $t }) {
+    ADD_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule }) {
       const ruleObjs = state.userSettings.imageLinkType.presetList
       if (!Object.hasOwn(ruleObjs, rule.name)) {
-        imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.add, $t, (e: boolean) => {
+        imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.add, (e: boolean) => {
           if (e) {
             state.userSettings.imageLinkType.presetList[rule.name] = rule
             dispatch('USER_SETTINGS_PERSIST')
           }
         })
       } else {
-        ElMessage.error($t('settings_page.link_rule.error_msg_1'))
+        ElMessage.error(i18n.global.t('settings_page.link_rule.error_msg_1'))
       }
     },
 
     // 图片链接类型 - 修改规则
-    UPDATE_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule, $t }) {
-      imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.edit, $t, (e: boolean) => {
+    UPDATE_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule }) {
+      imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.edit, (e: boolean) => {
         if (e) {
           state.userSettings.imageLinkType.presetList[rule.name].rule = rule.rule
           dispatch('USER_SETTINGS_PERSIST')
