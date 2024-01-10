@@ -43,7 +43,7 @@
       <!-- 部署 -->
       <div class="row-item" v-if="userConfigInfo.logined">
         <div class="content-box">
-          <deploy-bar :disabled="!isCanDeploy" />
+          <deploy-status-bar :disabled="!isCanDeploy" />
         </div>
       </div>
 

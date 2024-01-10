@@ -3,7 +3,6 @@
     <div class="top-container">
       <header-content />
     </div>
-
     <div class="bottom-container">
       <div class="bottom-content">
         <div class="left">
@@ -23,15 +22,18 @@ import { onMounted, computed, watch } from 'vue'
 import HeaderContent from '@/components/header-content/header-content.vue'
 import NavContent from '@/components/nav-content/nav-content.vue'
 import themeModeHandle from '@/utils/set-theme-mode'
-import { getCloudDeployInfo, setCloudDeployInfo } from '@/views/main-container/main-container.util'
 import { store } from '@/stores'
+import {
+  getCloudDeployInfo,
+  setCloudDeployInfo
+} from '@/components/deploy-status-bar/deploy-status-bar.util'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
 const initDeployStatus = async () => {
   const res = await getCloudDeployInfo()
   if (res) {
-    setCloudDeployInfo(res.content)
+    await setCloudDeployInfo(res.content)
   }
 }
 

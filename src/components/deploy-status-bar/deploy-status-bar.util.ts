@@ -1,10 +1,11 @@
 import { computed } from 'vue'
+import { DeployServerEnum } from '@/components/deploy-status-bar/deploy-status-bar.model'
 import request from '@/utils/request'
 import { PICX_INIT_DEPLOY_MSG, PICX_UPDATE_DEPLOY_MSG } from '@/common/constant'
 import { store } from '@/stores'
 
-const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const deployStatusInfo = computed(() => store.getters.getDeployStatusInfo).value
 
 const filename = '.deploy'
 
@@ -36,7 +37,7 @@ export const saveCloudDeployInfo = async () => {
 
   const data: any = {
     message: res ? PICX_UPDATE_DEPLOY_MSG : PICX_INIT_DEPLOY_MSG,
-    content: window.btoa(JSON.stringify(userSettings.deploy))
+    content: window.btoa(JSON.stringify(deployStatusInfo))
   }
 
   if (res) {
@@ -59,8 +60,17 @@ export const saveCloudDeployInfo = async () => {
  * 设置云端仓库的部署状态到本地
  * @param content
  */
-export const setCloudDeployInfo = (content: string) => {
-  store.dispatch('SET_USER_SETTINGS', {
-    deploy: JSON.parse(window.atob(content))
-  })
+export const setCloudDeployInfo = async (content: string) => {
+  await store.dispatch('SET_DEPLOY_STATUS_INFO', JSON.parse(window.atob(content)))
+}
+
+export const getDeployServerName = (server: DeployServerEnum) => {
+  switch (server) {
+    case DeployServerEnum.githubPages:
+      return 'GitHub Pages'
+    case DeployServerEnum.vervel:
+      return 'Vercel'
+    default:
+      return 'GitHub Pages'
+  }
 }

@@ -16,7 +16,6 @@ import UserSettingsStateTypes, {
   ImgLinkRuleActionsEnum
 } from '@/stores/modules/user-settings/types'
 import { LS_PICX_SETTINGS } from '@/common/constant'
-import { DeployServerEnum } from '@/components/deploy-bar/deploy-bar.model'
 import { imgLinkRuleVerification } from '@/stores/modules/user-settings/utils'
 import i18n from '@/plugins/vue/i18n'
 
@@ -95,14 +94,6 @@ const initSettings: UserSettingsModel = {
     position: WatermarkPositionEnum.rightBottom,
     textColor: '#FFFFFF',
     opacity: 0.5
-  },
-  deploy: {
-    github: {
-      uuid: getUuid(),
-      status: null,
-      latestTime: null,
-      type: DeployServerEnum.githubPages
-    }
   },
   language: LanguageEnum.zhCN
 }

@@ -129,7 +129,7 @@ watch(
       selectedAction.value = CloudSettingsActions.use
     }
 
-    // 判断 云端设置 和本地设置 是否相等，相等则禁止点击
+    // 判断 云端设置 和 本地设置 是否相等，相等则禁止点击
     if (settings && deepObjectEqual(settings, userSettings)) {
       saveDisabled.value = true
       selectedAction.value = CloudSettingsActions.equal

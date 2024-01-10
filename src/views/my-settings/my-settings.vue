@@ -99,7 +99,7 @@
                 :key="item.name + '-' + item.id"
                 :label="item.name"
                 :value="item.name"
-                :disabled="isDeployGitHubPages(item.name)"
+                :disabled="isGitHubPagesDeployed(item.name)"
                 class="image-link-type-rule-option"
               >
                 <span class="left">{{ item.name }}</span>
@@ -150,7 +150,7 @@
 
       <!-- 图床部署设置 -->
       <el-collapse-item :title="$t('settings_page.image_hosting_deploy.title')" name="6">
-        <deploy-bar />
+        <deploy-status-bar />
       </el-collapse-item>
 
       <!-- 主题设置 -->
@@ -185,6 +185,7 @@ import { store } from '@/stores'
 import { ImageLinkTypeEnum, ThemeModeEnum, UserSettingsModel } from '@/common/model'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
+const deployStatusInfo = computed(() => store.getters.getDeployStatusInfo).value
 
 const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
@@ -205,8 +206,8 @@ const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
   persistUserSettings()
 }
 
-const isDeployGitHubPages = (name: string) => {
-  return name === ImageLinkTypeEnum.GitHubPages && !userSettings.deploy.github.status
+const isGitHubPagesDeployed = (name: string) => {
+  return name === ImageLinkTypeEnum.GitHubPages && !deployStatusInfo.github.status
 }
 
 watch(

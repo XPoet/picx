@@ -1,10 +1,6 @@
 <template>
   <div class="deploy-box border-box">
-    <div
-      class="deploy-item border-box"
-      v-for="(di, idx) in userSettings.deploy"
-      :key="idx + di.uuid"
-    >
+    <div class="deploy-item border-box" v-for="(di, idx) in deployStatusInfo" :key="idx + di.uuid">
       <div class="left-wrap">
         <span
           class="deploy-status-icon info-item"
@@ -50,15 +46,19 @@
 import { computed } from 'vue'
 import { store } from '@/stores'
 import { checkoutGhPagesBranch } from '@/common/api'
-import { DeployStatusInfo, ImageLinkTypeEnum } from '@/common/model'
+import { ImageLinkTypeEnum } from '@/common/model'
 import { formatDatetime } from '@/utils'
-import { DeployServerEnum } from '@/components/deploy-bar/deploy-bar.model'
-import { getDeployServerName } from '@/components/deploy-bar/deploy-bar.util'
+import { DeployServerEnum } from '@/components/deploy-status-bar/deploy-status-bar.model'
+import {
+  getDeployServerName,
+  saveCloudDeployInfo
+} from '@/components/deploy-status-bar/deploy-status-bar.util'
 import i18n from '@/plugins/vue/i18n'
-import { saveCloudDeployInfo } from '@/views/main-container/main-container.util'
+import { DeployItemInfo } from '@/stores/modules/deploy-status/types'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const deployStatusInfo = computed(() => store.getters.getDeployStatusInfo).value
 
 defineProps({
   disabled: {
@@ -67,13 +67,14 @@ defineProps({
   }
 })
 
-const onDeploy = (deployItem: DeployStatusInfo) => {
+const onDeploy = (deployItem: DeployItemInfo) => {
   // eslint-disable-next-line default-case
   switch (deployItem.type) {
     case DeployServerEnum.githubPages:
+      // 部署到 GitHub Pages
       checkoutGhPagesBranch(userConfigInfo, (event: boolean) => {
-        userSettings.deploy.github.status = event
-        userSettings.deploy.github.latestTime = Date.now()
+        deployStatusInfo.github.status = event
+        deployStatusInfo.github.latestTime = Date.now()
         // 保存部署状态到云端仓库
         saveCloudDeployInfo()
         if (event) {
@@ -95,5 +96,5 @@ const onDeploy = (deployItem: DeployStatusInfo) => {
 </script>
 
 <style scoped lang="stylus">
-@import "deploy-bar.styl"
+@import "deploy-status-bar.styl"
 </style>
