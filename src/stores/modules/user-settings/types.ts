@@ -9,4 +9,5 @@ export enum ImgLinkRuleActionsEnum {
 
 export default interface UserSettingsStateTypes {
   userSettings: UserSettingsModel
+  cloudSettings?: UserSettingsModel | null
 }

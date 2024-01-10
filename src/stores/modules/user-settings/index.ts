@@ -10,7 +10,6 @@ import {
   WatermarkPositionEnum
 } from '@/common/model'
 import { deepAssignObject, getLocal, getUuid } from '@/utils'
-import UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
 import RootStateTypes from '@/stores/types'
 import UserSettingsStateTypes, {
   ImgLinkRuleActionsEnum
@@ -108,21 +107,26 @@ const initUserSettings = (): UserSettingsModel => {
 
 const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
   state: {
-    userSettings: initUserSettings()
+    userSettings: initUserSettings(),
+    cloudSettings: null
   },
 
   actions: {
-    // 设置
-    SET_USER_SETTINGS({ state, dispatch }, configInfo: UserConfigInfoStateTypes) {
+    // 设置用户设置信息
+    SET_USER_SETTINGS({ state, dispatch }, settingsInfo: UserSettingsModel) {
       // eslint-disable-next-line no-restricted-syntax
-      for (const key in configInfo) {
+      for (const key in settingsInfo) {
         // eslint-disable-next-line no-prototype-builtins
         if (state.userSettings.hasOwnProperty(key)) {
           // @ts-ignore
-          state.userSettings[key] = configInfo[key]
+          state.userSettings[key] = settingsInfo[key]
         }
       }
       dispatch('USER_SETTINGS_PERSIST')
+    },
+
+    SET_CLOUD_SETTINGS({ state }, cloudSettings: UserSettingsStateTypes['cloudSettings']) {
+      state.cloudSettings = cloudSettings
     },
 
     // 图片链接类型 - 增加规则
@@ -168,7 +172,8 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
   },
 
   getters: {
-    getUserSettings: (state): UserSettingsModel => state.userSettings
+    getUserSettings: (state): UserSettingsModel => state.userSettings,
+    getCloudSettings: (state) => state.cloudSettings
   }
 }
 

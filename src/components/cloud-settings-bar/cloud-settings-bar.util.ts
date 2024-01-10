@@ -2,10 +2,12 @@ import request from '@/utils/request'
 import { PICX_INIT_SETTINGS_MSG, PICX_UPDATE_SETTINGS_MSG } from '@/common/constant'
 import { UserConfigInfoModel, UserSettingsModel } from '@/common/model'
 
+const filename = '.settings'
+
 export const getCloudSettings = async (userConfigInfo: UserConfigInfoModel) => {
   const { owner, selectedRepo: repo } = userConfigInfo
   const res = await request({
-    url: `/repos/${owner}/${repo}/contents/.settings`,
+    url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'GET',
     noShowErrorMsg: true,
     noCache: true
@@ -34,7 +36,7 @@ export const saveCloudSettings = async (
   }
 
   const res2 = await request({
-    url: `/repos/${owner}/${repo}/contents/.settings`,
+    url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'PUT',
     data,
     noShowErrorMsg: true

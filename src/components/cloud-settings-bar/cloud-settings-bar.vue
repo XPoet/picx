@@ -17,7 +17,6 @@
 <script setup lang="ts">
 import { computed, getCurrentInstance, onMounted, ref, shallowRef, watch } from 'vue'
 import { store } from '@/stores'
-import { UserSettingsModel } from '@/common/model'
 import { deepAssignObject, deepObjectEqual } from '@/utils'
 import { CloudSettingsActions } from './cloud-settings-bar.model'
 import { getCloudSettings, saveCloudSettings } from './cloud-settings-bar.util'
@@ -28,7 +27,6 @@ const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const icon = shallowRef({ IEpCheck, IEpClose })
 
-const cloudSettings = ref<null | UserSettingsModel>(null)
 const saveLoading = ref(false)
 const saveDisabled = ref(false)
 
@@ -58,9 +56,9 @@ const saveToCloud = async () => {
   saveLoading.value = true
   await saveCloudSettings(userSettings, userConfigInfo)
   saveLoading.value = false
-  cloudSettings.value = JSON.parse(JSON.stringify(userSettings))
+  await store.dispatch('SET_CLOUD_SETTINGS', JSON.parse(JSON.stringify(userSettings)))
   ElMessage.success(
-    cloudSettings.value === null
+    store.getters.getCloudSettings === null
       ? instance?.proxy?.$t('settings_page.cloud_settings.success_msg_1')
       : instance?.proxy?.$t('settings_page.cloud_settings.success_msg_2')
   )
@@ -68,8 +66,8 @@ const saveToCloud = async () => {
 
 // 使用云端设置数据
 const useCloudSettings = () => {
-  if (cloudSettings.value) {
-    deepAssignObject(userSettings, cloudSettings.value)
+  if (store.getters.getCloudSettings) {
+    deepAssignObject(userSettings, store.getters.getCloudSettings)
     store.dispatch('USER_SETTINGS_PERSIST')
   }
 }
@@ -77,7 +75,7 @@ const useCloudSettings = () => {
 // 初始化云端设置数据
 const initCloudSettings = async () => {
   const res = await getCloudSettings(userConfigInfo)
-  cloudSettings.value = res ? JSON.parse(window.atob(res.content)) : null
+  await store.dispatch('SET_CLOUD_SETTINGS', res ? JSON.parse(window.atob(res.content)) : null)
 }
 
 // 确定操作
@@ -98,9 +96,9 @@ const onOK = () => {
 watch(
   () => userSettings,
   (settings) => {
-    if (cloudSettings.value) {
+    if (store.getters.getCloudSettings) {
       // 本地设置发生变化时，判断和云端设置是否相等
-      if (deepObjectEqual(settings, cloudSettings.value)) {
+      if (deepObjectEqual(settings, store.getters.getCloudSettings)) {
         // 相等情况
         selectedAction.value = CloudSettingsActions.equal
         saveDisabled.value = true
@@ -117,20 +115,20 @@ watch(
 )
 
 watch(
-  () => cloudSettings.value,
-  (settings) => {
+  () => store.getters.getCloudSettings,
+  (cs) => {
     // 不存在云端设置数据，提示是否保存
-    if (settings === null) {
+    if (cs === null) {
       selectedAction.value = CloudSettingsActions.save
     }
 
     // 存在云端设置数据，提示是否使用
-    if (settings) {
+    if (cs) {
       selectedAction.value = CloudSettingsActions.use
     }
 
     // 判断 云端设置 和 本地设置 是否相等，相等则禁止点击
-    if (settings && deepObjectEqual(settings, userSettings)) {
+    if (cs && deepObjectEqual(cs, userSettings)) {
       saveDisabled.value = true
       selectedAction.value = CloudSettingsActions.equal
     } else {
@@ -139,7 +137,8 @@ watch(
     }
   },
   {
-    deep: true
+    deep: true,
+    immediate: true
   }
 )
 
