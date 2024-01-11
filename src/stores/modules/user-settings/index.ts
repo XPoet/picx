@@ -20,9 +20,8 @@ import i18n from '@/plugins/vue/i18n'
 
 const initSettings: UserSettingsModel = {
   imageName: {
-    autoAddHash: true,
-    autoTimestampNaming: false,
-    prefixNaming: { enable: false, prefix: '' }
+    enableHash: true,
+    addPrefix: { enable: false, prefix: '' }
   },
   compress: {
     enable: true,

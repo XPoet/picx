@@ -58,8 +58,8 @@
         <!-- 哈希化 -->
         <div class="operate-item">
           <el-checkbox
-            :label="$t('upload_page.hash')"
-            v-model="fileNameOperateData.isHash"
+            :label="$t('upload_page.add_hash')"
+            v-model="fileNameOperateData.isAddHash"
             @change="onHashRename($event)"
           ></el-checkbox>
         </div>
@@ -83,27 +83,18 @@
           ></el-input>
         </div>
 
-        <!-- 时间戳命名 -->
-        <div class="operate-item">
-          <el-checkbox
-            :label="$t('upload_page.timestamp_naming')"
-            v-model="fileNameOperateData.isTimestampNaming"
-            @change="onTimestampNaming"
-          ></el-checkbox>
-        </div>
-
-        <!-- 命名前缀 -->
+        <!-- 添加前缀 -->
         <div
           class="operate-item"
           v-if="
             !imgObj.filename.isRename &&
-            userSettings.imageName.prefixNaming.enable &&
-            userSettings.imageName.prefixNaming.prefix
+            userSettings.imageName.addPrefix.enable &&
+            userSettings.imageName.addPrefix.prefix
           "
         >
           <el-checkbox
-            :label="$t('upload_page.prefix_naming')"
-            v-model="fileNameOperateData.isPrefixNaming"
+            :label="$t('upload_page.add_prefix')"
+            v-model="fileNameOperateData.isAddPrefix"
             @change="onPrefixNaming($event)"
           ></el-checkbox>
         </div>
@@ -167,7 +158,7 @@ import { UploadImageModel } from '@/common/model'
 import { useStore } from '@/stores'
 import { getFileSize } from '@/utils/file-utils'
 import { formatDatetime } from '@/utils/common-utils'
-import { hashRename, initImgSettings, prefixNamingTrans, rename } from './upload-image-card.util'
+import { addHashHandle, initImgSettings, addPrefixHandle, rename } from './upload-image-card.util'
 import { RENAME_MAX_LENGTH } from '@/common/constant'
 
 const store = useStore()
@@ -191,9 +182,8 @@ const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const loadingText = ref('')
 
 const fileNameOperateData = reactive({
-  isHash: false,
-  isPrefixNaming: false,
-  isTimestampNaming: false,
+  isAddHash: false,
+  isAddPrefix: false,
   isRename: false,
   newName: ''
 })
@@ -213,51 +203,28 @@ const onRename = () => {
 }
 
 const onHashRename = (e: boolean) => {
-  fileNameOperateData.isTimestampNaming = false
-  hashRename(e, props.imgObj)
+  addHashHandle(e, props.imgObj)
 }
 
 const onPrefixNaming = (e: boolean) => {
-  fileNameOperateData.isTimestampNaming = false
-  prefixNamingTrans(e, props.imgObj)
-}
-
-const onTimestampNaming = (e: boolean) => {
-  const { suffix, isPrefixNaming, isAddHash } = props.imgObj!.filename
-  if (e) {
-    fileNameOperateData.isHash = false
-    fileNameOperateData.isPrefixNaming = false
-    props.imgObj!.filename.final = `${Date.now()}.${suffix}`
-  } else {
-    prefixNamingTrans(isPrefixNaming, props.imgObj)
-    hashRename(isAddHash, props.imgObj)
-    fileNameOperateData.isHash = isAddHash
-    fileNameOperateData.isPrefixNaming = isPrefixNaming
-  }
+  addPrefixHandle(e, props.imgObj)
 }
 
 const initFilename = () => {
   const { imageName } = userSettings
   if (props.imgObj!.uploadStatus.progress === 0) {
-    props.imgObj!.filename.isTimestampNaming = imageName.autoTimestampNaming
+    props.imgObj!.filename.isAddHash = imageName.enableHash
+    props.imgObj!.filename.isAddPrefix = imageName.addPrefix.enable
+    props.imgObj!.filename.prefix = imageName.addPrefix.prefix
 
-    // 如果开启了自动时间戳命名，则将哈希化和前缀命名关闭
-    if (props.imgObj!.filename.isTimestampNaming) {
-      props.imgObj!.filename.isAddHash = false
-      props.imgObj!.filename.isPrefixNaming = false
-      onTimestampNaming(true)
-    } else {
-      props.imgObj!.filename.isAddHash = imageName.autoAddHash
-      props.imgObj!.filename.isPrefixNaming = imageName.prefixNaming.enable
-      props.imgObj!.filename.prefixName = imageName.prefixNaming.prefix
+    // 添加前缀处理
+    addPrefixHandle(imageName.addPrefix.enable, props.imgObj)
 
-      prefixNamingTrans(imageName.prefixNaming.enable, props.imgObj)
-      hashRename(imageName.autoAddHash, props.imgObj)
-    }
+    // 添加哈希值处理
+    addHashHandle(imageName.enableHash, props.imgObj)
 
-    fileNameOperateData.isTimestampNaming = props.imgObj!.filename.isTimestampNaming
-    fileNameOperateData.isHash = props.imgObj!.filename.isAddHash
-    fileNameOperateData.isPrefixNaming = props.imgObj!.filename.isPrefixNaming
+    fileNameOperateData.isAddHash = props.imgObj!.filename.isAddHash
+    fileNameOperateData.isAddPrefix = props.imgObj!.filename.isAddPrefix
     fileNameOperateData.isRename = props.imgObj!.filename.isRename
     fileNameOperateData.newName = props.imgObj!.filename.newName
   }

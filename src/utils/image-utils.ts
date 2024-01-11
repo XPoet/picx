@@ -29,14 +29,13 @@ export const createUploadImageObject = (): UploadImageModel => {
       hash: '',
       suffix: '',
       name: '',
-      prefixName: '',
+      prefix: '',
       final: '',
       initName: '',
       newName: '',
       isAddHash: true,
       isRename: false,
-      isPrefixNaming: false,
-      isTimestampNaming: false
+      isAddPrefix: false
     },
     beforeUploadStatus: {
       watermarking: false,

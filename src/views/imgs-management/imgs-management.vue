@@ -6,10 +6,7 @@
           <selected-info-bar bar-type="management" />
         </div>
         <div class="right flex-start">
-          <el-tooltip
-            placement="top"
-            :content="$t('management_page.reload', { dir: userConfigInfo.viewDir })"
-          >
+          <el-tooltip placement="top" :content="$t('management_page.reload')">
             <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
               <IEpRefresh />
             </el-icon>

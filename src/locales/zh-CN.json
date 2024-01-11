@@ -72,12 +72,11 @@
   "settings_page": {
     "img_name": {
       "title": "图片名称设置",
-      "hash_switch_name": "自动哈希化",
-      "hash_switch_desc": "上传前自动给图片名增加哈希码，确保图片名唯一，强烈建议开启",
-      "prefix_switch_name": "添加前缀命名",
-      "prefix_switch_desc": "上传前自动给图片名增加前缀，例如：abc-image.jpg，abc- 为前缀",
-      "prefix_input_placeholder": "请输入命名前缀 ...",
-      "timestamp_switch_name": "自动时间戳命名"
+      "hash_switch_name": "哈希化",
+      "hash_switch_desc": "上传时给图片名称增加哈希值，确保图片名称唯一，强烈建议开启",
+      "prefix_switch_name": "添加前缀",
+      "prefix_switch_desc": "上传时给图片名称增加前缀，例如：abc-image.jpg，abc- 为前缀",
+      "prefix_input_placeholder": "请输入前缀 ..."
     },
     "img_watermark": {
       "title": "图片水印设置",
@@ -168,13 +167,12 @@
     "message8": "图片上传成功",
     "fold": "折叠",
     "expand": "展开",
-    "hash": "哈希化",
-    "timestamp_naming": "时间戳命名",
-    "prefix_naming": "前缀命名",
+    "add_hash": "哈希化",
+    "add_prefix": "添加前缀",
     "uploading": "正在上传 ..."
   },
   "management_page": {
-    "reload": "重新加载 {dir} 目录所有数据",
+    "reload": "重新加载",
     "loadingTxt1": "加载中 ...",
     "loadingTxt2": "正在重命名 ...",
     "loadingTxt3": "删除中 ...",
@@ -203,7 +201,6 @@
     "contextmenu_2": "上传图片到 < {dir} >",
     "contextmenu_3": "根目录"
   },
-
   "toolbox": {
     "tool_1": "图片压缩",
     "tool_1_desc": "不限制图片大小和数量，不上传至服务器的离线极致压缩",

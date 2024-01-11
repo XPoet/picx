@@ -14,7 +14,7 @@
         loading="lazy"
         lazy
         :hide-on-click-modal="true"
-        :preview-src-list="[imgUrl]"
+        :preview-src-list="[imgUrl!]"
       />
     </div>
 
@@ -221,7 +221,7 @@ const updateRename = async () => {
     const suffix = getFileSuffix(imageObj.name)
     const newUuid = getUuid()
     const newFilename = `${renameInputValue.value}${
-      userSettings.imageName.autoAddHash ? `.${newUuid}` : ''
+      userSettings.imageName.enableHash ? `.${newUuid}` : ''
     }.${suffix}`
 
     let base64

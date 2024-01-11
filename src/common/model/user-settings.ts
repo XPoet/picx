@@ -40,12 +40,11 @@ export enum LanguageEnum {
 
 export interface UserSettingsModel {
   imageName: {
-    autoAddHash: boolean
-    prefixNaming: {
+    enableHash: boolean
+    addPrefix: {
       enable: boolean
       prefix: string
     }
-    autoTimestampNaming: boolean
   }
   theme: {
     mode: ThemeModeEnum

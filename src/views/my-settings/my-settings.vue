@@ -1,5 +1,6 @@
 <template>
   <div class="page-container settings-page-container">
+    <!-- yu -->
     <cloud-settings-bar style="margin-bottom: 20rem" />
 
     <el-collapse>
@@ -8,7 +9,7 @@
         <ul class="setting-list" style="margin-top: 10rem">
           <li class="setting-item has-desc">
             <el-switch
-              v-model="userSettings.imageName.autoAddHash"
+              v-model="userSettings.imageName.enableHash"
               @change="persistUserSettings"
               :active-text="$t('settings_page.img_name.hash_switch_name')"
             ></el-switch>
@@ -16,50 +17,21 @@
           </li>
           <li class="setting-item has-desc">
             <el-switch
-              v-model="userSettings.imageName.prefixNaming.enable"
+              v-model="userSettings.imageName.addPrefix.enable"
               @change="persistUserSettings"
               :active-text="$t('settings_page.img_name.prefix_switch_name')"
             ></el-switch>
             <span class="desc">{{ $t('settings_page.img_name.prefix_switch_desc') }}</span>
           </li>
-          <li class="setting-item has-desc" v-if="userSettings.imageName.prefixNaming.enable">
+          <li class="setting-item" v-if="userSettings.imageName.addPrefix.enable">
             <el-input
               class="prefix-input"
-              v-model="userSettings.imageName.prefixNaming.prefix"
+              v-model="userSettings.imageName.addPrefix.prefix"
               :placeholder="$t('settings_page.img_name.prefix_input_placeholder')"
               @input="persistUserSettings"
               clearable
               autofocus
             ></el-input>
-          </li>
-          <li class="setting-item has-desc">
-            <el-switch
-              v-model="userSettings.imageName.autoTimestampNaming"
-              @change="persistUserSettings"
-              :active-text="$t('settings_page.img_name.timestamp_switch_name')"
-            ></el-switch>
-          </li>
-        </ul>
-      </el-collapse-item>
-
-      <!-- 图片水印设置 -->
-      <el-collapse-item :title="$t('settings_page.img_watermark.title')" name="2">
-        <ul class="setting-list">
-          <li class="setting-item has-desc">
-            <el-switch
-              v-model="userSettings.watermark.enable"
-              @change="persistUserSettings"
-              :active-text="$t('settings_page.img_watermark.switch_name')"
-            ></el-switch>
-            <span class="desc">{{ $t('settings_page.img_watermark.switch_desc') }}</span>
-          </li>
-          <li class="setting-item">
-            <el-card class="settings-item-card">
-              <watermark-config-box
-                :disabled="!userSettings.watermark.enable"
-                @watermarkConfig="setWatermarkConfig"
-              />
-            </el-card>
           </li>
         </ul>
       </el-collapse-item>
@@ -82,6 +54,28 @@
                 usage-scenario="imageHosting"
                 :disabled="!userSettings.compress.enable"
                 @encoder=";(userSettings.compress.encoder = $event), persistUserSettings()"
+              />
+            </el-card>
+          </li>
+        </ul>
+      </el-collapse-item>
+
+      <!-- 图片水印设置 -->
+      <el-collapse-item :title="$t('settings_page.img_watermark.title')" name="2">
+        <ul class="setting-list">
+          <li class="setting-item has-desc">
+            <el-switch
+              v-model="userSettings.watermark.enable"
+              @change="persistUserSettings"
+              :active-text="$t('settings_page.img_watermark.switch_name')"
+            ></el-switch>
+            <span class="desc">{{ $t('settings_page.img_watermark.switch_desc') }}</span>
+          </li>
+          <li class="setting-item">
+            <el-card class="settings-item-card">
+              <watermark-config-box
+                :disabled="!userSettings.watermark.enable"
+                @watermarkConfig="setWatermarkConfig"
               />
             </el-card>
           </li>
@@ -180,7 +174,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, watch } from 'vue'
+import { computed } from 'vue'
 import { store } from '@/stores'
 import { ImageLinkTypeEnum, ThemeModeEnum, UserSettingsModel } from '@/common/model'
 
@@ -209,23 +203,6 @@ const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
 const isGitHubPagesDeployed = (name: string) => {
   return name === ImageLinkTypeEnum.GitHubPages && !deployStatusInfo.github.status
 }
-
-watch(
-  () => userSettings.imageName.autoTimestampNaming,
-  (enable) => {
-    if (enable) {
-      userSettings.imageName.autoAddHash = false
-      userSettings.imageName.prefixNaming.enable = false
-    } else {
-      userSettings.imageName.autoAddHash = true
-    }
-    persistUserSettings()
-  },
-  {
-    immediate: true,
-    deep: true
-  }
-)
 </script>
 
 <style scoped lang="stylus">

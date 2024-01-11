@@ -72,12 +72,11 @@
   "settings_page": {
     "img_name": {
       "title": "圖片名稱設定",
-      "hash_switch_name": "自動哈希化",
-      "hash_switch_desc": "上傳前自動給圖片名稱增加哈希碼，確保圖片名稱唯一，強烈建議開啟",
-      "prefix_switch_name": "加上前綴命名",
-      "prefix_switch_desc": "上傳前自動為圖片名稱增加前綴，例如：abc-image.jpg，abc- 為前綴",
-      "prefix_input_placeholder": "請輸入命名前綴 ...",
-      "timestamp_switch_name": "自動時間戳記命名"
+      "hash_switch_name": "哈希化",
+      "hash_switch_desc": "上傳時為圖片名稱增加雜湊值，確保圖片名稱唯一，強烈建議開啟",
+      "prefix_switch_name": "加上前綴",
+      "prefix_switch_desc": "上傳時為圖片名稱增加前綴，例如：abc-image.jpg，abc- 為前綴",
+      "prefix_input_placeholder": "請輸入字首 ..."
     },
     "img_watermark": {
       "title": "圖片浮水印設定",
@@ -168,13 +167,12 @@
     "message8": "圖片上傳成功",
     "fold": "折疊",
     "expand": "展開",
-    "hash": "哈希化",
-    "timestamp_naming": "時間戳記命名",
-    "prefix_naming": "前綴命名",
+    "add_hash": "哈希化",
+    "add_prefix": "新增前綴",
     "uploading": "正在上傳 ..."
   },
-  "management": {
-    "reload": "重新載入 {dir} 目錄所有資料",
+  "management_page": {
+    "reload": "重新載入",
     "loadingTxt1": "載入中 ...",
     "loadingTxt2": "正在重新命名 ...",
     "loadingTxt3": "刪除中 ...",
