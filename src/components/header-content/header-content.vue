@@ -100,6 +100,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/stores'
 import { LanguageEnum, ThemeModeEnum } from '@/common/model'
+import { getGitHubOwnerURL } from '@/utils'
 
 const router = useRouter()
 const store = useStore()
@@ -123,7 +124,7 @@ const logout = () => {
 
 const jumpOwnerRepo = () => {
   if (userConfigInfo.owner) {
-    window.open(`https://github.com/${userConfigInfo.owner}/${userConfigInfo.selectedRepo}`)
+    window.open(getGitHubOwnerURL(userConfigInfo))
   } else {
     router.push('/config')
   }

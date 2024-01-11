@@ -19,9 +19,9 @@
         <div class="tip-item link" @click="goTargetUrl(UrlTypeEnum.installGitHubAppURL)">
           <el-icon><IEpLink /></el-icon>
           {{ $t('authorization.text_11') }}
-          <el-icon class="install-status" v-if="authorizationInfo.installed"
-            ><IEpCircleCheckFilled
-          /></el-icon>
+          <el-icon class="install-status" v-if="authorizationInfo.installed">
+            <IEpCircleCheckFilled />
+          </el-icon>
         </div>
       </div>
     </div>

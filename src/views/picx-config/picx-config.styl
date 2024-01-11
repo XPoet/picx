@@ -1,23 +1,47 @@
 .config-page-container {
-  .operation {
-    display flex
-    flex-direction column
-    align-items flex-end
 
-    .el-button {
-      margin-left 20rem
+  .row-item {
+    position relative
+    box-sizing border-box
+    margin-bottom 26rem
 
-      &:first-child {
-        margin-left 0
+    &:last-child {
+      margin-bottom 0
+    }
+
+
+    &.confirm-btn {
+      float right
+    }
+
+
+    .cell-item {
+      display flex
+      align-items center
+
+      .el-icon {
+        margin-right 6rem
+        font-size 18rem
       }
     }
-  }
 
-  .refresh-icon {
-    display flex
-    align-items center
-    justify-content flex-end
-    font-size 20rem
-    cursor pointer
+
+    .dir-box {
+      .dir-item {
+        display flex
+        align-items center
+        justify-content space-between
+        margin-bottom 8rem
+      }
+    }
+
+
+    .refresh-icon {
+      display flex
+      align-items center
+      justify-content flex-end
+      font-size 20rem
+      cursor pointer
+    }
   }
 }

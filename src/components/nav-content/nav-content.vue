@@ -17,7 +17,7 @@
         </div>
       </li>
     </ul>
-    <div class="nav-item quick-actions flex-center">
+    <div v-if="userConfigInfo.logined" class="nav-item quick-actions flex-center">
       <el-popover
         placement="right-end"
         :width="userSettings.language === 'en' ? '230rem' : '190rem'"

@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { store } from '@/stores'
-import { DirModeEnum, ElementPlusSizeEnum, LanguageEnum, UserSettingsModel } from '@/common/model'
+import { DirModeEnum } from '@/common/model'
 import {
   createRepo,
   getDirInfoList,
@@ -13,13 +13,6 @@ import router from '@/router'
 import i18n from '@/plugins/vue/i18n'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-
-/**
- * 重置图床配置
- */
-export const resetConfig = async () => {
-  await store.dispatch('LOGOUT')
-}
 
 /**
  * 持久化用户图床配置信息
@@ -46,7 +39,7 @@ export async function saveUserInfo(userInfo: any) {
 /**
  * 前往 [上传图片] 页面
  */
-export const goUploadPage = async () => {
+export const goUploadPage = async (inputRef: any) => {
   const { selectedDir, dirMode } = userConfigInfo
   let warningMessage: string = i18n.global.t('config_page.message_6')
 
@@ -55,6 +48,7 @@ export const goUploadPage = async () => {
     switch (dirMode) {
       case DirModeEnum.newDir:
         warningMessage = i18n.global.t('config_page.message_7')
+        inputRef?.focus()
         break
       case DirModeEnum.repoDir:
         warningMessage = i18n.global.t('config_page.message_8')
@@ -194,20 +188,4 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
     ElMessage.error({ message: i18n.global.t('config_page.message_5') })
     console.error('oneClickAutoConfig >> ', err)
   }
-}
-
-/**
- * 设置 form 表单的 Label Width
- * @param userSettings
- */
-export const setLabelWidth = (userSettings: UserSettingsModel) => {
-  return userSettings.language === LanguageEnum.en ? '100rem' : '70rem'
-}
-
-/**
- * 设置 form 表单的 Label Position
- * @param userSettings
- */
-export const setLabelPosition = (userSettings: UserSettingsModel) => {
-  return userSettings.elementPlusSize === ElementPlusSizeEnum.large ? 'right' : 'top'
 }

@@ -1,172 +1,141 @@
 <template>
   <div class="page-container config-page-container">
-    <authorization-status-bar style="margin-bottom: 20rem" />
+    <authorization-status-bar class="row-item" />
 
     <!-- GitHub Token -->
-    <el-form
-      :label-width="setLabelWidth(userSettings)"
-      :label-position="setLabelPosition(userSettings)"
+    <el-input
+      class="row-item"
+      ref="tokenInputRef"
+      v-model="userConfigInfo.token"
+      clearable
+      :autofocus="!userConfigInfo.token"
+      show-password
+      :placeholder="$t('config_page.input_token')"
+      @keydown.enter="oneClickAutoConfig(tokenInputRef)"
     >
-      <!-- Token -->
-      <el-form-item label="Token">
-        <el-input
-          ref="tokenInputRef"
-          v-model="userConfigInfo.token"
-          clearable
-          :autofocus="!userConfigInfo.token"
-          type="password"
-          show-password
-          :placeholder="$t('config_page.input_token')"
-        ></el-input>
-      </el-form-item>
-
-      <!-- 一键配置 -->
-      <el-form-item class="operation">
-        <el-button
-          plain
-          :disabled="btnDisabled"
-          type="primary"
-          @click.prevent="oneClickAutoConfig(tokenInputRef)"
-        >
+      <template #append>
+        <el-button @click="oneClickAutoConfig(tokenInputRef)">
           {{ $t('config_page.one_click_config') }}
         </el-button>
-      </el-form-item>
-    </el-form>
+      </template>
+    </el-input>
 
     <!-- 基本信息 -->
-    <el-form
-      :label-width="setLabelWidth(userSettings)"
-      :label-position="setLabelPosition(userSettings)"
-      v-if="userConfigInfo.token && userConfigInfo.owner"
-      v-loading="userInfoLoading"
-      :element-loading-text="$t('config_page.loading_1')"
-    >
+    <el-descriptions class="row-item" v-if="userConfigInfo.token" :column="2" border>
       <!-- 用户名 -->
-      <el-form-item v-if="userConfigInfo.owner" :label="$t('username')">
-        <el-input v-model="userConfigInfo.owner" readonly></el-input>
-      </el-form-item>
+      <el-descriptions-item v-if="userConfigInfo.owner">
+        <template #label>
+          <div class="cell-item">
+            <el-icon><IEpUser /></el-icon>
+            {{ $t('username') }}
+          </div>
+        </template>
+        <el-link type="primary" :href="getGitHubOwnerURL(userConfigInfo)" target="_blank">
+          {{ userConfigInfo.owner }}
+        </el-link>
+      </el-descriptions-item>
 
       <!-- 仓库 -->
-      <el-form-item v-if="userConfigInfo.selectedRepo" :label="$t('repo')">
-        <el-input v-model="userConfigInfo.selectedRepo" readonly />
-      </el-form-item>
-    </el-form>
+      <el-descriptions-item v-if="userConfigInfo.selectedRepo">
+        <template #label>
+          <div class="cell-item">
+            <el-icon><IEpConnection /></el-icon>
+            {{ $t('repo') }}
+          </div>
+        </template>
+        <el-link type="primary" :href="getImageHostingURL(userConfigInfo)" target="_blank">
+          {{ userConfigInfo.selectedRepo }}
+        </el-link>
+      </el-descriptions-item>
 
-    <!-- 目录 -->
-    <el-form
-      :label-width="setLabelWidth(userSettings)"
-      :label-position="setLabelPosition(userSettings)"
-      v-if="userConfigInfo.token && userConfigInfo.selectedBranch"
-      v-loading="dirLoading"
-      :element-loading-text="$t('config_page.loading_5')"
-    >
       <!-- 目录模式 -->
-      <el-form-item v-if="userConfigInfo.selectedBranch" :label="$t('config_page.dir_mode')">
-        <el-radio-group v-model="userConfigInfo.dirMode" @change="dirModeChange">
-          <el-radio label="rootDir">{{ $t('config_page.root_dir') }}</el-radio>
-
-          <el-tooltip :content="$t('config_page.date_dir_tip')" placement="top" :offset="0">
-            <el-radio label="dateDir">{{ $t('config_page.date_dir') }}</el-radio>
-          </el-tooltip>
-
-          <el-radio label="repoDir">
-            {{ $t('config_page.repo_dir') }}
-          </el-radio>
-
-          <el-tooltip :content="$t('config_page.input_new_dir')" placement="top" :offset="0">
-            <el-radio label="newDir">{{ $t('config_page.create_new_dir') }}</el-radio>
-          </el-tooltip>
-        </el-radio-group>
-      </el-form-item>
-
-      <!-- 日期目录 -->
-      <el-form-item
-        v-if="userConfigInfo.dirMode === DirModeEnum.dateDir"
-        :label="$t('config_page.date_dir')"
+      <el-descriptions-item
+        :span="2"
+        v-if="userConfigInfo.selectedRepo && userConfigInfo.selectedBranch"
       >
-        <el-input v-model="userConfigInfo.selectedDir" readonly></el-input>
-      </el-form-item>
+        <template #label>
+          <div class="cell-item">
+            <el-icon><IEpFolder /></el-icon>
+            {{ $t('config_page.dir_mode') }}
+          </div>
+        </template>
+        <div class="dir-box border-box">
+          <el-radio-group class="dir-item" v-model="userConfigInfo.dirMode" @change="dirModeChange">
+            <el-radio label="rootDir">{{ $t('config_page.root_dir') }}</el-radio>
+            <el-tooltip :content="$t('config_page.date_dir_tip')" placement="top" :offset="0">
+              <el-radio label="dateDir">{{ $t('config_page.date_dir') }}</el-radio>
+            </el-tooltip>
+            <el-radio label="repoDir" v-if="userConfigInfo.dirList.length">
+              {{ $t('config_page.repo_dir') }}
+            </el-radio>
+            <el-tooltip :content="$t('config_page.input_new_dir')" placement="top" :offset="0">
+              <el-radio label="newDir">{{ $t('config_page.create_new_dir') }}</el-radio>
+            </el-tooltip>
+          </el-radio-group>
 
-      <!-- 根目录 -->
-      <el-form-item
-        v-if="userConfigInfo.dirMode === DirModeEnum.rootDir"
-        :label="$t('config_page.root_dir')"
-      >
-        <el-input v-model="userConfigInfo.selectedDir" readonly></el-input>
-      </el-form-item>
+          <!-- 根目录 / 日期目录 -->
+          <el-input
+            class="dir-item"
+            v-if="
+              userConfigInfo.dirMode === DirModeEnum.rootDir ||
+              userConfigInfo.dirMode === DirModeEnum.dateDir
+            "
+            v-model="userConfigInfo.selectedDir"
+            readonly
+          ></el-input>
 
-      <!-- 新建目录 -->
-      <el-form-item
-        v-if="userConfigInfo.dirMode === DirModeEnum.newDir"
-        :label="$t('config_page.create_new_dir')"
-      >
-        <el-input
-          ref="newDirInputRef"
-          v-model="userConfigInfo.selectedDir"
-          @input="persistUserConfigInfo()"
-          clearable
-          :placeholder="$t('config_page.placeholder_4')"
-        ></el-input>
-      </el-form-item>
+          <!-- 新建目录 -->
+          <el-input
+            class="dir-item"
+            v-if="userConfigInfo.dirMode === DirModeEnum.newDir"
+            ref="newDirInputRef"
+            v-model="userConfigInfo.selectedDir"
+            @input="persistUserConfigInfo()"
+            clearable
+            :placeholder="$t('config_page.placeholder_4')"
+          ></el-input>
 
-      <!-- 仓库目录 -->
-      <el-form-item
-        v-if="userConfigInfo.dirList.length && userConfigInfo.dirMode === DirModeEnum.repoDir"
-        :label="$t('config_page.select_dir')"
-      >
-        <repo-dir-cascader
-          :el-key="repoDirCascaderKey"
-          :el-size="userSettings.elementPlusSize"
-          :style="{ width: 'calc(100% - ' + refreshIconWidth + 'rem)' }"
-        />
-        <el-icon
-          class="refresh-icon"
-          :style="{ width: refreshIconWidth + 'rem' }"
-          @click="refreshDirData"
-        >
-          <IEpRefresh />
-        </el-icon>
-      </el-form-item>
-    </el-form>
+          <!-- 仓库目录 -->
+          <div class="dir-item" v-if="userConfigInfo.dirMode === DirModeEnum.repoDir">
+            <repo-dir-cascader
+              :el-key="repoDirCascaderKey"
+              :el-size="userSettings.elementPlusSize"
+              :style="{ width: 'calc(100% - ' + refreshIconWidth + 'rem)' }"
+            />
+            <el-icon
+              class="refresh-icon"
+              :style="{ width: refreshIconWidth + 'rem' }"
+              @click="refreshDirData"
+            >
+              <IEpRefresh />
+            </el-icon>
+          </div>
+        </div>
+      </el-descriptions-item>
+    </el-descriptions>
 
-    <!-- 操作 -->
-    <el-form
-      :label-width="setLabelWidth(userSettings)"
-      v-if="userConfigInfo.token"
-      :label-position="setLabelPosition(userSettings)"
+    <!-- 确定 -->
+    <el-button
+      class="row-item confirm-btn"
+      v-if="userConfigInfo.selectedBranch"
+      plain
+      type="primary"
+      @click="goUploadPage(newDirInputRef)"
     >
-      <el-form-item class="operation">
-        <!-- 重置 -->
-        <el-button plain :disabled="btnDisabled" @click="resetConfig()" v-if="userConfigInfo.owner">
-          {{ $t('reset') }}
-        </el-button>
-        <!-- 确认 -->
-        <el-button
-          plain
-          :disabled="btnDisabled"
-          type="primary"
-          @click="goUploadPage"
-          v-if="userConfigInfo.selectedRepo"
-        >
-          {{ $t('confirm') }}
-        </el-button>
-      </el-form-item>
-    </el-form>
+      {{ $t('confirm') }}
+    </el-button>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useStore } from '@/stores'
 import { DirModeEnum } from '@/common/model'
-import { formatDatetime } from '@/utils'
+import { formatDatetime, getGitHubOwnerURL, getImageHostingURL } from '@/utils'
 import {
   goUploadPage,
   oneClickAutoConfig,
-  persistUserConfigInfo,
-  resetConfig,
-  setLabelPosition,
-  setLabelWidth
+  persistUserConfigInfo
 } from '@/views/picx-config/picx-config.util'
 import router from '@/router'
 import { isAuthorizeExpire } from '@/views/picx-login/picx-login.util'
@@ -175,43 +144,38 @@ import i18n from '@/plugins/vue/i18n'
 
 const store = useStore()
 
-const userInfoLoading = ref(false)
-const dirLoading = ref(false)
-const branchLoading = ref(false)
 const refreshIconWidth = ref(32)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const logined = computed(() => store.getters.getUserLoginStatus).value
 const userSettings = computed(() => store.getters.getUserSettings).value
-const btnDisabled = computed(() => userInfoLoading.value || dirLoading.value || branchLoading.value)
 
 const newDirInputRef = ref<null | HTMLElement>(null)
-const repoDirCascaderKey = ref<string>('repoDirCascaderKey')
 const tokenInputRef = ref<HTMLElement | null>(null)
+const repoDirCascaderKey = ref<string>('repoDirCascaderKey')
 
 const dirModeChange = (dirMode: DirModeEnum) => {
   switch (dirMode) {
+    // 根目录
     case DirModeEnum.rootDir:
-      // 根目录
       userConfigInfo.selectedDir = '/'
       break
 
+    // 日期目录，根据当天日期自动生成
     case DirModeEnum.dateDir:
-      // 自动目录，根据当天日期自动生成
       userConfigInfo.selectedDir = formatDatetime('yyyyMMdd')
       break
 
+    // 手动输入的新建目录
     case DirModeEnum.newDir:
-      // 手动输入的新建目录
       userConfigInfo.selectedDir = 'xxx'
       newDirInputRef.value?.focus()
       break
 
+    // 仓库目录
     case DirModeEnum.repoDir:
-      // 仓库目录
-      if (!userConfigInfo.dirList.length) {
-        userConfigInfo.selectedDir = ''
-        userConfigInfo.selectedDirList = []
+      userConfigInfo.selectedDir = ''
+      if (userConfigInfo.selectedDirList.length) {
+        userConfigInfo.selectedDir = userConfigInfo.selectedDirList.join('/')
       }
       break
 
@@ -239,17 +203,6 @@ const refreshDirData = async () => {
   loading.close()
   await store.dispatch('USER_CONFIG_INFO_PERSIST')
 }
-
-watch(
-  () => logined,
-  (nv) => {
-    if (!nv) {
-      userInfoLoading.value = false
-      dirLoading.value = false
-      branchLoading.value = false
-    }
-  }
-)
 
 onMounted(() => {
   setTimeout(() => {
