@@ -2,30 +2,37 @@
   display flex
   align-items center
   justify-content space-between
-  padding 2rem 0 2rem 12rem
-  color var(--text-color-2)
+  padding-left 12rem
+  overflow hidden
+  color var(--el-color-info)
   font-size 14rem
-  border-color var(--text-color-4)
+  background-color var(--el-color-info-light-9)
+  border-color var(--el-color-info-light-5)
   border-style solid
   border-width 1rem
   border-radius 6rem
 
+  &.info {
+    color var(--el-color-info)
+    background-color var(--el-color-info-light-9)
+    border-color var(--el-color-info-light-5)
+  }
 
   &.success {
     color var(--el-color-success)
-    background var(--el-color-success-light-9)
-    border-color var(--el-color-success)
+    background-color var(--el-color-success-light-9)
+    border-color var(--el-color-success-light-5)
   }
 
   &.warning {
     color var(--el-color-warning)
-    background var(--el-color-warning-light-9)
-    border-color var(--el-color-warning)
+    background-color var(--el-color-warning-light-9)
+    border-color var(--el-color-warning-light-5)
   }
 
   &.error {
     color var(--el-color-danger)
-    background var(--el-color-danger-light-9)
-    border-color var(--el-color-danger)
+    background-color var(--el-color-danger-light-9)
+    border-color var(--el-color-danger-light-5)
   }
 }
