@@ -33,12 +33,12 @@ const elementPlusSize = ref<ElementPlusSizeEnum>(ElementPlusSizeEnum.default)
 const elementPlusLocale = ref(zhCN) // zhCN | zhTW | en
 
 const elementPlusSizeHandle = (width: number) => {
-  if (width <= 600) {
+  if (width <= 700) {
     store?.dispatch('SET_USER_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.small
     })
     elementPlusSize.value = ElementPlusSizeEnum.small
-  } else if (width <= 900) {
+  } else if (width <= 1000) {
     store?.dispatch('SET_USER_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.default
     })

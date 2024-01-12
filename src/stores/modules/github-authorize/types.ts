@@ -4,7 +4,7 @@ export interface GitHubAuthorizationInfo {
   tokenCreateTime: number
   code: string
   codeCreateTime: number
-  installed: boolean
+  installed: boolean | null
   installationId: string
   manualToken: string
   isAutoAuthorize: boolean

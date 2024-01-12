@@ -3,22 +3,20 @@
     <authorization-status-bar class="row-item" />
 
     <!-- GitHub Token -->
-    <el-input
-      class="row-item"
-      ref="tokenInputRef"
-      v-model="userConfigInfo.token"
-      clearable
-      :autofocus="!userConfigInfo.token"
-      show-password
-      :placeholder="$t('config_page.input_token')"
-      @keydown.enter="oneClickAutoConfig(tokenInputRef)"
-    >
-      <template #append>
-        <el-button @click="oneClickAutoConfig(tokenInputRef)">
-          {{ $t('config_page.one_click_config') }}
-        </el-button>
-      </template>
-    </el-input>
+    <div class="row-item token">
+      <el-input
+        ref="tokenInputRef"
+        v-model="userConfigInfo.token"
+        clearable
+        :autofocus="!userConfigInfo.token"
+        show-password
+        :placeholder="$t('config_page.input_token')"
+        @keydown.enter="oneClickAutoConfig(tokenInputRef)"
+      />
+      <el-button plain type="primary" @click="oneClickAutoConfig(tokenInputRef)">
+        {{ $t('config_page.one_click_config') }}
+      </el-button>
+    </div>
 
     <!-- 基本信息 -->
     <el-descriptions class="row-item" v-if="userConfigInfo.token" :column="2" border>
@@ -100,6 +98,7 @@
             <repo-dir-cascader
               :el-key="repoDirCascaderKey"
               :el-size="userSettings.elementPlusSize"
+              :el-clearable="true"
               :style="{ width: 'calc(100% - ' + refreshIconWidth + 'rem)' }"
             />
             <el-icon
@@ -117,7 +116,7 @@
     <!-- 确定 -->
     <el-button
       class="row-item confirm-btn"
-      v-if="userConfigInfo.selectedBranch"
+      v-if="userConfigInfo.token && userConfigInfo.selectedRepo && userConfigInfo.selectedBranch"
       plain
       type="primary"
       @click="goUploadPage(newDirInputRef)"
@@ -167,7 +166,11 @@ const dirModeChange = (dirMode: DirModeEnum) => {
 
     // 手动输入的新建目录
     case DirModeEnum.newDir:
-      userConfigInfo.selectedDir = 'xxx'
+      if (userConfigInfo.selectedDirList.length) {
+        userConfigInfo.selectedDir = userConfigInfo.selectedDirList.join('/')
+      } else {
+        userConfigInfo.selectedDir = 'xxx'
+      }
       newDirInputRef.value?.focus()
       break
 

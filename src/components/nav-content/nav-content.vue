@@ -1,61 +1,40 @@
 <template>
-  <aside class="nav">
-    <ul class="nav-list">
-      <li
-        class="nav-item flex-center"
-        v-for="(nav, idx) in navInfoList"
-        :key="idx + nav.uuid"
-        :class="{ active: nav.isActive }"
-        @click="onNavClick(nav)"
-        v-show="nav.isShow"
-      >
-        <div class="nav-content">
-          <el-icon :size="navIconSize">
-            <component :is="nav.icon"></component>
-          </el-icon>
-          <span class="nav-name">{{ $t(nav.name) }}</span>
-        </div>
-      </li>
-    </ul>
-    <div v-if="userConfigInfo.logined" class="nav-item quick-actions flex-center">
-      <el-popover
-        placement="right-end"
-        :width="userSettings.language === 'en' ? '230rem' : '190rem'"
-        trigger="click"
-        :show-arrow="false"
-        :popper-style="{
-          padding: '0'
-        }"
-      >
-        <template #reference>
-          <div class="nav-content">
-            <el-icon :size="navIconSize">
-              <IEpOperation />
+  <aside
+    class="nav-content-container border-box"
+    :class="{ folded: store.getters.getGlobalSettings.folded }"
+  >
+    <div class="top-box">
+      <ul class="nav-menu-list border-box">
+        <el-tooltip
+          placement="left"
+          :content="$t(nav.name)"
+          v-for="(nav, idx) in navInfoList"
+          :key="idx + nav.uuid"
+          :show-arrow="false"
+          :disabled="!store.getters.getGlobalSettings.folded"
+        >
+          <li
+            class="nav-menu-item border-box"
+            :class="{ active: nav.isActive }"
+            @click="onNavClick(nav)"
+            v-show="nav.isShow"
+          >
+            <el-icon class="nav-icon" :size="navIconSize">
+              <component :is="nav.icon"></component>
             </el-icon>
-            <span class="nav-name">{{ $t('nav.actions') }}</span>
-          </div>
-        </template>
-        <div class="quick-actions-popover">
-          <el-switch
-            v-model="userSettings.watermark.enable"
-            class="mb-2"
-            :active-text="$t('actions.watermark')"
-            @change="persistUserSettings"
-          />
-          <el-switch
-            v-model="userSettings.compress.enable"
-            class="mb-2"
-            :active-text="$t('actions.compress')"
-            @change="persistUserSettings"
-          />
-          <el-switch
-            v-model="userSettings.imageLinkFormat.enable"
-            class="mb-2"
-            :active-text="$t('actions.transform') + userSettings.imageLinkFormat.selected"
-            @change="persistUserSettings"
-          />
-        </div>
-      </el-popover>
+            <span class="nav-name">{{ $t(nav.name) }}</span>
+          </li>
+        </el-tooltip>
+      </ul>
+    </div>
+
+    <div class="bottom-box">
+      <div class="user-info-box border-box">
+        <user-avatar />
+      </div>
+      <div class="site-count-box border-box">
+        <site-count :showPV="true" :showUV="true" />
+      </div>
     </div>
   </aside>
 </template>
@@ -77,11 +56,11 @@ const userSettings = computed(() => store.getters.getUserSettings).value
 const navIconSize = computed(() => {
   switch (userSettings.elementPlusSize) {
     case ElementPlusSizeEnum.small:
-      return 22
+      return 21
     case ElementPlusSizeEnum.large:
-      return 30
+      return 25
     default:
-      return 26
+      return 23
   }
 })
 
@@ -112,10 +91,6 @@ const changeNavActive = (currentPath: string) => {
   })
 
   triggerRef(navInfoList)
-}
-
-const persistUserSettings = () => {
-  store.dispatch('USER_SETTINGS_PERSIST')
 }
 
 watch(

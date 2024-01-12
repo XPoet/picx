@@ -107,11 +107,14 @@ const initUserSettings = (): UserSettingsModel => {
 const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
   state: {
     userSettings: initUserSettings(),
-    cloudSettings: null
+    cloudSettings: null,
+    globalSettings: {
+      folded: false
+    }
   },
 
   actions: {
-    // 设置用户设置信息
+    // 赋值用户设置信息
     SET_USER_SETTINGS({ state, dispatch }, settingsInfo: UserSettingsModel) {
       // eslint-disable-next-line no-restricted-syntax
       for (const key in settingsInfo) {
@@ -124,8 +127,14 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
       dispatch('USER_SETTINGS_PERSIST')
     },
 
+    // 赋值云端仓库设置信息
     SET_CLOUD_SETTINGS({ state }, cloudSettings: UserSettingsStateTypes['cloudSettings']) {
       state.cloudSettings = cloudSettings
+    },
+
+    // 赋值全局设置信息
+    SET_GLOBAL_SETTINGS({ state }, globalSettings: UserSettingsStateTypes['globalSettings']) {
+      state.globalSettings = globalSettings
     },
 
     // 图片链接类型 - 增加规则
@@ -172,7 +181,8 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
 
   getters: {
     getUserSettings: (state): UserSettingsModel => state.userSettings,
-    getCloudSettings: (state) => state.cloudSettings
+    getCloudSettings: (state) => state.cloudSettings,
+    getGlobalSettings: (state) => state.globalSettings
   }
 }
 

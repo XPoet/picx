@@ -23,7 +23,7 @@
   "copy_success_2": "Image link copied successfully",
   "copy_fail_1": "Copy failed",
   "header": {
-    "not_login": "Not Logged In",
+    "not_login": "Not log in",
     "theme": "Theme",
     "usage_count": "Usage Count"
   },
@@ -37,9 +37,9 @@
     "actions": "Quick Actions"
   },
   "actions": {
-    "watermark": "Add Watermark",
-    "compress": "Compress Image",
-    "transform": "Transform"
+    "watermark": "Image watermark",
+    "compress": "Compress image",
+    "transform": "Transform "
   },
   "config_page": {
     "input_token": "Please enter GitHub Token...",
@@ -53,7 +53,7 @@
     "message_1": "GitHub Token cannot be empty",
     "message_2": "Failed to retrieve user information. Please check if the Token is correct",
     "message_3": "Auto-creation of GitHub repository failed. Please try again later",
-    "message_4": "Auto-configuration successful",
+    "message_4": "Image hosting configuration successful",
     "message_5": "One-click auto-configuration failed. Please retry",
     "message_6": "Directory cannot be empty",
     "message_7": "Please enter a new directory",
@@ -82,12 +82,12 @@
       "title": "Image Watermark Settings",
       "switch_name": "Add Watermark",
       "switch_desc": "Customize watermark text, font size, position, color, and opacity when enabled.",
-      "text": "Watermark Text",
+      "text": "Text",
       "text_input_placeholder": "Enter watermark text, limit to 20 characters",
-      "size": "Watermark Size",
-      "color": "Watermark Color",
-      "opacity": "Watermark Opacity",
-      "position": "Watermark Position",
+      "size": "Size",
+      "color": "Color",
+      "opacity": "Opacity",
+      "position": "Position",
       "position_1": "Top Left",
       "position_2": "Bottom Left",
       "position_3": "Top Right",
@@ -142,9 +142,9 @@
     },
     "theme": {
       "title": "Theme Settings",
-      "system": "System Default",
-      "dark": "Dark Mode",
-      "light": "Light Mode"
+      "system": "System",
+      "dark": "Dark",
+      "light": "Light"
     },
     "cloud_settings": {
       "tip_1": "Detected that your settings data is not saved to the cloud repository. Save now?",

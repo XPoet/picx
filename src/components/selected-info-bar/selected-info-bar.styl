@@ -2,27 +2,22 @@
   display flex
   align-items center
   justify-content flex-start
-  box-sizing border-box
-  height 100%
-  font-size 12rem
+  font-size 14rem
 
-  .info-item {
-    margin-right 10rem
+  .dir-name {
+    display flex
+    align-items center
+    justify-content flex-start
+    margin-right 6rem
+    white-space nowrap
 
-    +picx-tablet() {
-      &.repo {
-        display none
-      }
+    &.upload {
+      cursor pointer
     }
 
-    +picx-mobile() {
-      &.branch {
-        display none
-      }
-    }
-
-    &:last-child {
-      margin-right 0
+    .el-icon {
+      margin-right 4rem
+      font-size 16rem
     }
   }
 }

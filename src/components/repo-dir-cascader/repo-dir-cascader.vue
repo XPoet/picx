@@ -70,8 +70,13 @@ const cascaderProps = {
 }
 
 const cascaderChange = (e: string[]) => {
-  userConfigInfo.selectedDirList = e
-  userConfigInfo.selectedDir = e.join('/')
+  if (Array.isArray(e) && e.length) {
+    userConfigInfo.selectedDirList = e
+    userConfigInfo.selectedDir = e.join('/')
+  } else {
+    userConfigInfo.selectedDirList = []
+    userConfigInfo.selectedDir = ''
+  }
   store.dispatch('USER_CONFIG_INFO_PERSIST')
 }
 </script>

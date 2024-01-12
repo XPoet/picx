@@ -37,7 +37,7 @@
     "actions": "快速操作"
   },
   "actions": {
-    "watermark": "新增浮水印",
+    "watermark": "圖片浮水印",
     "compress": "壓縮圖片",
     "transform": "轉換 "
   },
@@ -53,7 +53,7 @@
     "message_1": "GitHub Token 不能為空",
     "message_2": "使用者資訊取得失敗，請確認 Token 是否正確",
     "message_3": "自動建立 GitHub 倉儲失敗，請稍後再試",
-    "message_4": "自動設定成功",
+    "message_4": "圖床配置成功",
     "message_5": "一鍵自動設定失敗，請重試",
     "message_6": "目錄不能為空",
     "message_7": "請輸入一個新目錄",

@@ -1,28 +1,31 @@
 <template>
-  <span class="site-count" ref="siteCountDom" v-show="isShow && isProd">
-    <span id="busuanzi_value_site_uv" class="uv" v-show="isuv"></span>
-    <span id="busuanzi_value_site_pv" class="pv" v-show="!isuv"></span>+
-    {{ $t('header.usage_count') }}
-  </span>
+  <div class="site-count" ref="siteCountDom" v-show="isShow">
+    <span class="count-item" v-show="showPV"> PV <span id="busuanzi_value_site_pv"></span> </span>
+    <span class="count-item" v-show="showUV"> UV <span id="busuanzi_value_site_uv"></span> </span>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, Ref } from 'vue'
+import { onMounted, ref, Ref } from 'vue'
 
-const props = defineProps({
-  isuv: {
+defineProps({
+  showUV: {
+    type: Boolean,
+    default: false
+  },
+  showPV: {
     type: Boolean,
     default: false
   }
 })
 
 const siteCountDom: Ref = ref<null | HTMLElement>(null)
-const isShow: Ref<boolean> = ref(false)
+const isShow: Ref<boolean> = ref(true)
 
-const isProd = computed(() => import.meta.env.MODE === 'production')
+// const isProd = computed(() => import.meta.env.MODE === 'production')
 
-const getInnerText = (dom: any, isuv: boolean) => {
-  return dom.querySelector(`.${isuv ? 'u' : 'p'}v`).innerText
+const getInnerText = () => {
+  return siteCountDom.value?.querySelector('.pv')?.innerText
 }
 
 onMounted(() => {
@@ -33,7 +36,7 @@ onMounted(() => {
 
   script.onload = () => {
     const tempT = setTimeout(() => {
-      if (getInnerText(siteCountDom.value, props.isuv)) {
+      if (getInnerText()) {
         isShow.value = true
       }
       clearTimeout(tempT)
@@ -43,6 +46,17 @@ onMounted(() => {
 </script>
 <style lang="stylus">
 .site-count {
+  margin-top 4rem
+  color var(--text-color-4)
+  font-size 13rem
   transition all 0.2s ease-in
+
+  .count-item {
+    margin-right 4rem
+
+    &:last-child {
+      margin-right 0
+    }
+  }
 }
 </style>

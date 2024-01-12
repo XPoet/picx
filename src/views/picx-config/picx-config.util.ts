@@ -183,7 +183,7 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
 
     loading.close()
     ElMessage.success({ message: i18n.global.t('config_page.message_4') })
-    // await router.push('/upload')
+    await router.push('/upload')
   } catch (err) {
     ElMessage.error({ message: i18n.global.t('config_page.message_5') })
     console.error('oneClickAutoConfig >> ', err)

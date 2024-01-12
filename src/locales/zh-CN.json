@@ -37,7 +37,7 @@
     "actions": "快捷操作"
   },
   "actions": {
-    "watermark": "添加水印",
+    "watermark": "图片水印",
     "compress": "压缩图片",
     "transform": "转换 "
   },
@@ -53,7 +53,7 @@
     "message_1": "GitHub Token 不能为空",
     "message_2": "用户信息获取失败，请确认 Token 是否正确",
     "message_3": "自动创建 GitHub 仓库失败，请稍后再试",
-    "message_4": "自动配置成功",
+    "message_4": "图床配置成功",
     "message_5": "一键自动配置失败，请重试",
     "message_6": "目录不能为空",
     "message_7": "请输入一个新目录",

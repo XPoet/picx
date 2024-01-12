@@ -2,9 +2,9 @@
   <div
     class="authorization-status-box border-box"
     :class="{
-      error: isAutoAuthorize && token && isAuthorizeExpire(),
-      warning: isAutoAuthorize && token && !installed,
-      success: isAutoAuthorize && token && !isAuthorizeExpire()
+      success: isAutoAuthorize && token && !isAuthorizeExpire(),
+      warning: isAutoAuthorize && token && !isAuthorizeExpire() && installed === false,
+      error: isAutoAuthorize && token && isAuthorizeExpire()
     }"
   >
     <div>

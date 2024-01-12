@@ -29,14 +29,14 @@
       <!-- 状态信息区域 -->
       <div class="row-item">
         <div class="content-box upload-area-status">
-          <selected-info-bar />
-          <div v-if="uploadImageList.length">
+          <selected-info-bar bar-type="upload" />
+          <span class="upload-count" v-if="uploadImageList.length">
             {{ $t('uploaded') }}：{{
               uploadImageList.filter((x) => x.uploadStatus.progress === 100).length
             }}
             /
             {{ uploadImageList.length }}
-          </div>
+          </span>
         </div>
       </div>
 

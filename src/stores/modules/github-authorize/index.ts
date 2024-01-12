@@ -7,7 +7,7 @@ import { LS_PICX_AUTHORIZATION } from '@/common/constant'
 const initAuthorizationInfo = (): GitHubAuthorizationInfo => {
   const initInfo: GitHubAuthorizationInfo = {
     authorized: false,
-    installed: false,
+    installed: null,
     token: '',
     tokenCreateTime: 0,
     code: '',

@@ -7,7 +7,12 @@ export enum ImgLinkRuleActionsEnum {
   edit
 }
 
+export interface GlobalSettingsModel {
+  folded: boolean
+}
+
 export default interface UserSettingsStateTypes {
   userSettings: UserSettingsModel
   cloudSettings?: UserSettingsModel | null
+  globalSettings?: GlobalSettingsModel
 }
