@@ -14,6 +14,11 @@ const filename = '.deploy'
  */
 export const getCloudDeployInfo = async () => {
   const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
+
+  if (!owner || !repo || !branch) {
+    return null
+  }
+
   const res = await request({
     url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'GET',
