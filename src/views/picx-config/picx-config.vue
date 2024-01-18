@@ -97,7 +97,7 @@
           <div class="dir-item" v-if="userConfigInfo.dirMode === DirModeEnum.repoDir">
             <repo-dir-cascader
               :el-key="repoDirCascaderKey"
-              :el-size="userSettings.elementPlusSize"
+              :el-size="globalSettings.elementPlusSize"
               :el-clearable="true"
               :style="{ width: 'calc(100% - ' + refreshIconWidth + 'rem)' }"
             />
@@ -146,7 +146,7 @@ const store = useStore()
 const refreshIconWidth = ref(32)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const userSettings = computed(() => store.getters.getUserSettings).value
+const globalSettings = computed(() => store.getters.getGlobalSettings).value
 
 const newDirInputRef = ref<null | HTMLElement>(null)
 const tokenInputRef = ref<HTMLElement | null>(null)

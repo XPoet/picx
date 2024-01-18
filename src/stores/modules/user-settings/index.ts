@@ -30,7 +30,6 @@ const initSettings: UserSettingsModel = {
   theme: {
     mode: ThemeModeEnum.system
   },
-  elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
     selected: ImageLinkTypeEnum.GitHub,
     presetList: {
@@ -92,8 +91,7 @@ const initSettings: UserSettingsModel = {
     position: WatermarkPositionEnum.rightBottom,
     textColor: '#FFFFFF',
     opacity: 0.5
-  },
-  language: LanguageEnum.zhCN
+  }
 }
 
 const initUserSettings = (): UserSettingsModel => {
@@ -109,7 +107,9 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
     userSettings: initUserSettings(),
     cloudSettings: null,
     globalSettings: {
-      folded: false
+      folded: false,
+      elementPlusSize: ElementPlusSizeEnum.default,
+      language: LanguageEnum.zhCN
     }
   },
 
@@ -118,8 +118,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
     SET_USER_SETTINGS({ state, dispatch }, settingsInfo: UserSettingsModel) {
       // eslint-disable-next-line no-restricted-syntax
       for (const key in settingsInfo) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (state.userSettings.hasOwnProperty(key)) {
+        if (Object.hasOwn(state.userSettings, key)) {
           // @ts-ignore
           state.userSettings[key] = settingsInfo[key]
         }
@@ -134,7 +133,11 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
 
     // 赋值全局设置信息
     SET_GLOBAL_SETTINGS({ state }, globalSettings: UserSettingsStateTypes['globalSettings']) {
-      state.globalSettings = globalSettings
+      // eslint-disable-next-line guard-for-in,no-restricted-syntax
+      for (const key in globalSettings) {
+        // @ts-ignore
+        state.globalSettings[key] = globalSettings[key]
+      }
     },
 
     // 图片链接类型 - 增加规则

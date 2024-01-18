@@ -28,23 +28,23 @@ import { SS_PICX_LANG_TOGGLE_TIP } from '@/common/constant'
 
 const instance = getCurrentInstance()
 const store = useStore()
-const userSettings = computed(() => store.getters.getUserSettings).value
+const globalSettings = computed(() => store.getters.getGlobalSettings).value
 const elementPlusSize = ref<ElementPlusSizeEnum>(ElementPlusSizeEnum.default)
 const elementPlusLocale = ref(zhCN) // zhCN | zhTW | en
 
 const elementPlusSizeHandle = (width: number) => {
   if (width <= 700) {
-    store?.dispatch('SET_USER_SETTINGS', {
+    store?.dispatch('SET_GLOBAL_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.small
     })
     elementPlusSize.value = ElementPlusSizeEnum.small
   } else if (width <= 1000) {
-    store?.dispatch('SET_USER_SETTINGS', {
+    store?.dispatch('SET_GLOBAL_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.default
     })
     elementPlusSize.value = ElementPlusSizeEnum.default
   } else {
-    store?.dispatch('SET_USER_SETTINGS', {
+    store?.dispatch('SET_GLOBAL_SETTINGS', {
       elementPlusSize: ElementPlusSizeEnum.large
     })
     elementPlusSize.value = ElementPlusSizeEnum.large
@@ -76,7 +76,7 @@ const setLanguageByIP = () => {
   getRegionByIP().then((region) => {
     const language = getLanguageByRegion(region)
 
-    if (language !== userSettings.language) {
+    if (language !== globalSettings.language) {
       const confirmTxt = instance?.proxy?.$t(`confirm`, language)
       const msgTxt = instance?.proxy?.$t(`toggle_language_msg`, language, {
         region: instance?.proxy?.$t(`region.${region}`, language),
@@ -116,7 +116,7 @@ const setLanguageByIP = () => {
 
 const initSetLanguage = () => {
   // 初始化设置
-  setLanguage(userSettings.language)
+  setLanguage(globalSettings.language)
 
   // 根据 IP 自动设置
   setLanguageByIP()
@@ -137,7 +137,7 @@ const init = () => {
 }
 
 watch(
-  () => userSettings.language,
+  () => globalSettings.language,
   (language: LanguageEnum) => {
     setLanguage(language)
   }

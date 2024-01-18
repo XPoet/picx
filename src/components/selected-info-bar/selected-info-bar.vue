@@ -22,9 +22,9 @@
     </el-tag>
     <repo-dir-cascader
       :el-size="
-        userSettings.elementPlusSize === ElementPlusSizeEnum.large
+        globalSettings!.elementPlusSize === ElementPlusSizeEnum.large
           ? ElementPlusSizeEnum.default
-          : userSettings.elementPlusSize
+          : globalSettings.elementPlusSize
       "
       :el-clearable="false"
       v-if="
@@ -43,7 +43,7 @@ import { SelectedInfoBarType } from './selected-info-bar.model'
 
 const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
-const userSettings = computed(() => store.getters.getUserSettings)
+const globalSettings = computed(() => store.getters.getGlobalSettings)
 
 const props = defineProps({
   barType: {

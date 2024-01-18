@@ -5,7 +5,9 @@
     width="220rem"
     :show-arrow="false"
     :popper-style="{
-      padding: '0'
+      padding: '0',
+      'border-radius': '10rem',
+      overflow: 'hidden'
     }"
   >
     <template #reference>
@@ -35,18 +37,13 @@
     <ul class="personal-center-popover">
       <li class="content-item">
         <span class="flex-center">{{ $t('language') }}</span>
-        <el-select
-          size="small"
-          style="width: 100rem"
-          v-model="userSettings.language"
-          @change="persistUserSettings"
-        >
+        <el-select size="small" style="width: 100rem" v-model="globalSettings.language">
           <el-option label="中文简体" :value="LanguageEnum.zhCN"></el-option>
           <el-option label="中文繁體" :value="LanguageEnum.zhTW"></el-option>
           <el-option label="English" :value="LanguageEnum.en"></el-option>
         </el-select>
       </li>
-      <el-divider style="margin: 5px 0" />
+      <el-divider style="margin: 5rem 0" />
       <li class="content-item">
         <span class="flex-center">{{ $t('header.theme') }}</span>
         <el-select
@@ -69,7 +66,7 @@
           ></el-option>
         </el-select>
       </li>
-      <el-divider style="margin: 5px 0" />
+      <el-divider style="margin: 5rem 0" />
       <li class="content-item" v-if="userConfigInfo.name || userConfigInfo.owner" @click="logout">
         {{ $t('logout') }}
       </li>
@@ -92,6 +89,7 @@ const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const userSettings = computed(() => store.getters.getUserSettings).value
+const globalSettings = computed(() => store.getters.getGlobalSettings).value
 
 const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')

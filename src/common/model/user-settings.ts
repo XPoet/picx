@@ -53,7 +53,6 @@ export interface UserSettingsModel {
     enable: boolean
     encoder: CompressEncoderEnum
   }
-  elementPlusSize: ElementPlusSizeEnum
   imageLinkType: {
     selected: string
     presetList: {
@@ -74,5 +73,4 @@ export interface UserSettingsModel {
     textColor: string
     opacity: number
   }
-  language: LanguageEnum
 }

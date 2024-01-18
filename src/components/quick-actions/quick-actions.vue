@@ -2,7 +2,7 @@
   <el-popover
     v-if="userConfigInfo.logined"
     placement="bottom-end"
-    :width="userSettings.language === 'en' ? '230rem' : '190rem'"
+    :width="globalSettings.language === 'en' ? '230rem' : '190rem'"
     trigger="click"
     :show-arrow="false"
     :popper-style="{
@@ -46,6 +46,7 @@ const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const userSettings = computed(() => store.getters.getUserSettings).value
+const globalSettings = computed(() => store.getters.getGlobalSettings).value
 
 const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')

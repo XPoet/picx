@@ -1,7 +1,6 @@
 <template>
   <div class="page-container settings-page-container">
-    <!-- yu -->
-    <cloud-settings-bar style="margin-bottom: 20rem" />
+    <cloud-settings-bar />
 
     <el-collapse>
       <!-- 图片名称设置 -->

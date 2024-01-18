@@ -51,10 +51,10 @@ const router = useRouter()
 const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const userSettings = computed(() => store.getters.getUserSettings).value
+const globalSettings = computed(() => store.getters.getGlobalSettings).value
 
 const navIconSize = computed(() => {
-  switch (userSettings.elementPlusSize) {
+  switch (globalSettings.elementPlusSize) {
     case ElementPlusSizeEnum.small:
       return 21
     case ElementPlusSizeEnum.large:

@@ -3,14 +3,7 @@
     <!-- 左侧 / 上传图片列表 -->
     <div
       class="upload-page-left page-container"
-      v-if="
-        uploadImageList.length &&
-        (userSettings.elementPlusSize === ElementPlusSizeEnum.large ||
-          userSettings.elementPlusSize === ElementPlusSizeEnum.default)
-      "
-      :style="{
-        width: '300rem'
-      }"
+      v-if="uploadImageList.length && globalSettings!.elementPlusSize !== ElementPlusSizeEnum.small"
     >
       <div class="uploaded-item" v-for="(item, index) in uploadImageList" :key="index + item.uuid">
         <upload-image-card :img-obj="item" @remove="remove($event)" />
@@ -64,8 +57,8 @@
 
 <script lang="ts" setup>
 import { computed, watch, ref, Ref, onMounted, getCurrentInstance } from 'vue'
-import { useRouter } from 'vue-router'
-import { useStore } from '@/stores'
+import { store } from '@/stores'
+import router from '@/router'
 import {
   ElementPlusSizeEnum,
   UploadedImageModel,
@@ -75,17 +68,16 @@ import {
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
 import { generateUploadImageObject, starred } from './upload-image.util'
 import { uploadImagesToGitHub, uploadImageToGitHub } from '@/utils/upload-utils'
-import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
 import { SelectedInfoBarType } from '@/components/selected-info-bar/selected-info-bar.model'
+import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
 
-const store = useStore()
-const router = useRouter()
 const instance = getCurrentInstance()
 
 const gettingImagesRef: Ref = ref<null | HTMLElement>(null)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const userSettings = computed(() => store.getters.getUserSettings).value
+const globalSettings = computed(() => store.getters.getGlobalSettings).value
 const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 
 const uploadImageList = ref<UploadImageModel[]>([])
