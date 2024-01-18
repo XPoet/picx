@@ -169,7 +169,10 @@
     "expand": "Expand",
     "add_hash": "Add Hash",
     "add_prefix": "Add Prefix",
-    "uploading": "Uploading..."
+    "uploading": "Uploading...",
+    "tip_9": "{name} is not an image format",
+    "tip_10": "{name} exceeds {size} MB, skip selection",
+    "tip_11": "{name} upload failed"
   },
   "management_page": {
     "reload": "Reload",
@@ -256,5 +259,15 @@
     "text_10": "View Tutorial",
     "text_11": "Install PicX GitHub APP",
     "text_12": "Create GitHub Token"
+  },
+  "copy_repo_img": {
+    "text_1": "Copy repository images",
+    "text_2": "Please enter the repository name",
+    "text_3": "Please enter the branch name",
+    "text_4": "The repository or branch is incorrect, please re-enter",
+    "text_6": "{repo} repository images copied successfully",
+    "text_7": "{repo} repository images copy failed, try again later",
+    "text_8": "Copy other repository images",
+    "loading_1": "Copying"
   }
 }

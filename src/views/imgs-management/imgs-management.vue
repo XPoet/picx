@@ -3,10 +3,16 @@
     <div class="content-container">
       <div class="top">
         <div class="left">
-          <selected-info-bar bar-type="management" />
+          <selected-info-bar :bar-type="SelectedInfoBarType.management" />
         </div>
         <div class="right flex-start">
-          <el-tooltip placement="top" :content="$t('management_page.reload')">
+          <copy-source-repo position="management" />
+          <el-tooltip
+            placement="top"
+            :content="$t('management_page.reload')"
+            :show-arrow="false"
+            :offset="6"
+          >
             <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
               <IEpRefresh />
             </el-icon>
@@ -22,7 +28,7 @@
         <image-selector
           v-if="currentPathImageList.length"
           :currentDirImageList="currentPathImageList"
-          @update:initImageList="currentPathImageList"
+          @updateInitImageList="currentPathImageList"
           :key="renderKey"
         ></image-selector>
         <ul
@@ -59,7 +65,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, watch, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/stores'
 import { getRepoPathContent } from '@/common/api'
@@ -69,7 +75,8 @@ import ImageCard from '@/components/image-card/image-card.vue'
 import SelectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
 import FolderCard from '@/components/folder-card/folder-card.vue'
 import ImageSelector from '@/components/image-selector/image-selector.vue'
-import { UploadedImageModel, DirModeEnum, ContextmenuEnum } from '@/common/model'
+import { ContextmenuEnum, DirModeEnum, UploadedImageModel } from '@/common/model'
+import { SelectedInfoBarType } from '@/components/selected-info-bar/selected-info-bar.model'
 
 const store = useStore()
 const router = useRouter()
@@ -82,7 +89,7 @@ const renderKey = ref(new Date().getTime()) // key for update image-selector com
 const loadingImageList = ref(false)
 
 const currentPathDirList = ref([])
-const currentPathImageList = ref([])
+const currentPathImageList = ref<any>([])
 
 const isShowBatchTools = ref(false)
 

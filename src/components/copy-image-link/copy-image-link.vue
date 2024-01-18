@@ -1,8 +1,8 @@
 <template>
   <div class="copy-image-link-box border-box">
-    <el-tooltip :content="imgLinkRuleTip" placement="top">
+    <el-tooltip :content="imgLinkRuleTip" placement="top" :offset="10">
       <el-button plain type="primary" size="default" @click="oneClickCopy">
-        <el-icon><IEpCopyDocument /></el-icon>&nbsp;{{ $t('copy_link') }}
+        {{ $t('copy_link') }}
       </el-button>
     </el-tooltip>
   </div>

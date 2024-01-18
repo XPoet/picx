@@ -14,10 +14,20 @@
       </div>
     </div>
     <div class="selector-right-box">
-      <el-tooltip placement="top" :content="$t('management_page.batchCopy')">
+      <el-tooltip
+        placement="top"
+        :content="$t('management_page.batchCopy')"
+        :show-arrow="false"
+        :offset="6"
+      >
         <el-icon class="btn-icon" @click="batchCopy"><IEpCopyDocument /></el-icon>
       </el-tooltip>
-      <el-tooltip placement="top" :content="$t('management_page.batchDelete')">
+      <el-tooltip
+        placement="top"
+        :content="$t('management_page.batchDelete')"
+        :show-arrow="false"
+        :offset="6"
+      >
         <el-icon class="btn-icon" @click="batchDeleteImage"><IEpDelete /></el-icon>
       </el-tooltip>
     </div>
@@ -36,7 +46,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['update:initImageList'])
+defineEmits(['updateInitImageList'])
 
 const store = useStore()
 const allChecked = ref(false)

@@ -29,7 +29,7 @@
       <!-- 状态信息区域 -->
       <div class="row-item">
         <div class="content-box upload-area-status">
-          <selected-info-bar bar-type="upload" />
+          <selected-info-bar :bar-type="SelectedInfoBarType.upload" />
           <span class="upload-count" v-if="uploadImageList.length">
             {{ $t('uploaded') }}：{{
               uploadImageList.filter((x) => x.uploadStatus.progress === 100).length
@@ -76,6 +76,7 @@ import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
 import { generateUploadImageObject, starred } from './upload-image.util'
 import { uploadImagesToGitHub, uploadImageToGitHub } from '@/utils/upload-utils'
 import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
+import { SelectedInfoBarType } from '@/components/selected-info-bar/selected-info-bar.model'
 
 const store = useStore()
 const router = useRouter()

@@ -1,5 +1,5 @@
 {
-  "repo": "倉儲",
+  "repo": "倉庫",
   "branch": "分支",
   "dir": "目錄",
   "tip": "提示",
@@ -52,7 +52,7 @@
     "placeholder_5": "請選擇目錄 ...",
     "message_1": "GitHub Token 不能為空",
     "message_2": "使用者資訊取得失敗，請確認 Token 是否正確",
-    "message_3": "自動建立 GitHub 倉儲失敗，請稍後再試",
+    "message_3": "自動建立 GitHub 倉庫失敗，請稍後再試",
     "message_4": "圖床配置成功",
     "message_5": "一鍵自動設定失敗，請重試",
     "message_6": "目錄不能為空",
@@ -65,7 +65,7 @@
     "root_dir": "根目錄",
     "date_dir": "日期目錄",
     "date_dir_tip": "自動建立 yyyyMMdd 格式的日期目錄",
-    "repo_dir": "倉儲目錄",
+    "repo_dir": "倉庫目錄",
     "select_dir": "選擇目錄",
     "reload": "重新載入"
   },
@@ -169,7 +169,10 @@
     "expand": "展開",
     "add_hash": "哈希化",
     "add_prefix": "新增前綴",
-    "uploading": "正在上傳 ..."
+    "uploading": "正在上傳 ...",
+    "tip_9": "{name} 不是圖片格式",
+    "tip_10": "{name} 超過 {size} MB，跳過選擇",
+    "tip_11": "{name} 上傳失敗"
   },
   "management_page": {
     "reload": "重新載入",
@@ -256,5 +259,15 @@
     "text_10": "檢視教學",
     "text_11": "安裝 PicX GitHub APP",
     "text_12": "建立 GitHub Token"
+  },
+  "copy_repo_img": {
+    "text_1": "複製倉庫圖片",
+    "text_2": "請輸入倉庫名稱",
+    "text_3": "請輸入分支名稱",
+    "text_4": "倉庫或分支不正確，請重新輸入",
+    "text_6": "{repo} 倉庫圖片複製成功",
+    "text_7": "{repo} 倉庫圖片複製失敗，稍後重試",
+    "text_8": "複製其他倉庫圖片",
+    "loading_1": "複製中"
   }
 }

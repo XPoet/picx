@@ -41,9 +41,12 @@
             {{ $t('repo') }}
           </div>
         </template>
-        <el-link type="primary" :href="getImageHostingURL(userConfigInfo)" target="_blank">
-          {{ userConfigInfo.selectedRepo }}
-        </el-link>
+        <div class="repo-descriptions-item">
+          <el-link type="primary" :href="getImageHostingURL(userConfigInfo)" target="_blank">
+            {{ userConfigInfo.selectedRepo }}
+          </el-link>
+          <copy-source-repo />
+        </div>
       </el-descriptions-item>
 
       <!-- 目录模式 -->

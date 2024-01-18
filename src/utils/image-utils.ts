@@ -205,6 +205,9 @@ export function getBase64ByImageUrl(url: string, ext: string): Promise<string | 
       const dataURL: string = canvas.toDataURL(`image/${ext}`)
       resolve(dataURL)
     }
+    img.onerror = () => {
+      resolve(null)
+    }
   })
 }
 

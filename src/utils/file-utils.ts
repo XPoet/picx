@@ -3,6 +3,7 @@ import { ImageHandleResult } from '@/common/model'
 import { getUuid } from '@/utils/common-utils'
 import { imgFileToBase64 } from '@/utils/image-utils'
 import { IMG_UPLOAD_MAX_SIZE } from '@/common/constant'
+import i18n from '@/plugins/vue/i18n'
 
 /**
  * 获取文件名
@@ -69,14 +70,16 @@ export const gettingFilesHandle = (file: File): Promise<ImageHandleResult | null
     }
 
     if (!isImage(file.type)) {
-      ElMessage.error(`${file.name} 不是图片格式`)
+      ElMessage.error(i18n.global.t('upload_page.tip_9', { name: file.name }))
       resolve(null)
     }
 
     const base64 = (await imgFileToBase64(file)) || ''
 
     if (getFileSize(base64.length) >= IMG_UPLOAD_MAX_SIZE * 1024) {
-      ElMessage.error(`${file.name} 超过 ${IMG_UPLOAD_MAX_SIZE} MB，跳过选择`)
+      ElMessage.error(
+        i18n.global.t('upload_page.tip_10', { name: file.name, size: IMG_UPLOAD_MAX_SIZE })
+      )
       resolve(null)
     }
 

@@ -1,14 +1,24 @@
 <template>
   <div class="selected-info-bar-box border-box" v-if="userConfigInfo.selectedRepo">
-    <div class="dir-name" :class="{ upload: barType === 'upload' }" @click="goConfigPage">
+    <div
+      class="dir-name"
+      :class="{ upload: barType === SelectedInfoBarType.upload }"
+      @click="goConfigPage"
+    >
       <el-icon><IEpFolder /></el-icon>
       {{ $t('dir') }}
     </div>
     <el-tag
       disable-transitions
-      v-if="userConfigInfo.dirMode !== DirModeEnum.repoDir || barType === 'management'"
+      v-if="
+        userConfigInfo.dirMode !== DirModeEnum.repoDir || barType === SelectedInfoBarType.management
+      "
     >
-      {{ barType === 'management' ? userConfigInfo.viewDir : userConfigInfo.selectedDir }}
+      {{
+        barType === SelectedInfoBarType.management
+          ? userConfigInfo.viewDir
+          : userConfigInfo.selectedDir
+      }}
     </el-tag>
     <repo-dir-cascader
       :el-size="
@@ -17,7 +27,9 @@
           : userSettings.elementPlusSize
       "
       :el-clearable="false"
-      v-if="userConfigInfo.dirMode === DirModeEnum.repoDir && barType === 'upload'"
+      v-if="
+        userConfigInfo.dirMode === DirModeEnum.repoDir && barType === SelectedInfoBarType.upload
+      "
     />
   </div>
 </template>
@@ -27,6 +39,7 @@ import { computed } from 'vue'
 import { useStore } from '@/stores'
 import { DirModeEnum, ElementPlusSizeEnum } from '@/common/model'
 import router from '@/router'
+import { SelectedInfoBarType } from './selected-info-bar.model'
 
 const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
@@ -34,13 +47,13 @@ const userSettings = computed(() => store.getters.getUserSettings)
 
 const props = defineProps({
   barType: {
-    type: String as () => 'management' | 'upload',
-    default: 'upload'
+    type: Number as () => SelectedInfoBarType,
+    default: SelectedInfoBarType.upload
   }
 })
 
 const goConfigPage = () => {
-  if (props.barType === 'upload') {
+  if (props.barType === SelectedInfoBarType.upload) {
     router.push('/config')
   }
 }
