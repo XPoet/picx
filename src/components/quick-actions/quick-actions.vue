@@ -7,7 +7,8 @@
     :show-arrow="false"
     :popper-style="{
       padding: '0',
-      'border-radius': '10rem'
+      'border-radius': '10rem',
+      overflow: 'hidden'
     }"
   >
     <template #reference>
@@ -54,7 +55,7 @@ const persistUserSettings = () => {
 <style scoped lang="stylus">
 .quick-actions {
   .quick-actions-icon {
-    font-size 20rem
+    font-size 24rem
     cursor pointer
   }
 }

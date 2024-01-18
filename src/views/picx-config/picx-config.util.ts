@@ -170,17 +170,18 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
     userConfigInfo.selectedBranch = INIT_REPO_BARNCH
 
     // 获取目录列表
-    userConfigInfo.dirList = await getDirInfoList(userConfigInfo)
+    if (isExistInitRepo) {
+      userConfigInfo.dirList = await getDirInfoList(userConfigInfo)
+    }
 
     userConfigInfo.dirMode = DirModeEnum.rootDir
     userConfigInfo.selectedDir = '/'
 
-    await persistUserConfigInfo()
-
     if (!isExistInitRepo) {
       await initRepoREADME(userConfigInfo)
     }
-
+    // 持久化存储用户配置信息
+    await persistUserConfigInfo()
     loading.close()
     ElMessage.success({ message: i18n.global.t('config_page.message_4') })
     await router.push('/upload')

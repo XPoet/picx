@@ -49,7 +49,7 @@
         </div>
       </el-descriptions-item>
 
-      <!-- 目录模式 -->
+      <!-- 目录  -->
       <el-descriptions-item
         :span="2"
         v-if="userConfigInfo.selectedRepo && userConfigInfo.selectedBranch"
@@ -57,7 +57,7 @@
         <template #label>
           <div class="cell-item">
             <el-icon><IEpFolder /></el-icon>
-            {{ $t('config_page.dir_mode') }}
+            {{ $t('dir') }}
           </div>
         </template>
         <div class="dir-box border-box">

@@ -18,6 +18,7 @@ export const getDirInfoList = (
     const tmpList = await request({
       url: `/repos/${owner}/${repo}/contents/${path}`,
       method: 'GET',
+      noShowErrorMsg: true,
       params: {
         ref
       }
