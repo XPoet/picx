@@ -23,7 +23,7 @@ export const getFileBlob = (base64String: string, owner: string, repo: string) =
   return request({
     url: `/repos/${owner}/${repo}/git/blobs`,
     method: 'POST',
-    params: {
+    data: {
       owner,
       repo,
       content: base64String,

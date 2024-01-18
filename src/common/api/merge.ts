@@ -12,7 +12,7 @@ export const createTree = (owner: string, repo: string, blobs: any[], head: any)
   return request({
     url: `/repos/${owner}/${repo}/git/trees`,
     method: 'POST',
-    params: {
+    data: {
       tree: blobs.map((blob: any) => ({
         path: blob.path,
         mode: '100644',
@@ -36,7 +36,7 @@ export const createCommit = (owner: string, repo: string, tree: any, head: any, 
   return request({
     url: `/repos/${owner}/${repo}/git/commits`,
     method: 'POST',
-    params: {
+    data: {
       tree: tree.sha,
       parents: [head.commit.sha],
       message: msg || PICX_UPLOAD_IMGS_DESC
@@ -55,7 +55,7 @@ export const createRef = (owner: string, repo: string, branch: string, sha: stri
   return request({
     url: `/repos/${owner}/${repo}/git/refs/heads/${branch}`,
     method: 'PATCH',
-    params: {
+    data: {
       sha
     }
   })

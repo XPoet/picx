@@ -22,7 +22,7 @@ export const getCloudDeployInfo = async () => {
   const res = await request({
     url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'GET',
-    noShowErrorMsg: true,
+    noShowErrMsg: true,
     noCache: true,
     params: {
       branch
@@ -55,7 +55,7 @@ export const saveCloudDeployInfo = async () => {
     url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'PUT',
     data,
-    noShowErrorMsg: true
+    noShowErrMsg: true
   })
 
   return Promise.resolve(res2)

@@ -111,7 +111,7 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
       const res2 = await request({
         url: `/repos/${owner}/${repo}/git/refs`,
         method: 'POST',
-        params: {
+        data: {
           ref: `refs/heads/${GH_PAGES}`,
           sha
         }

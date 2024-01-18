@@ -18,6 +18,6 @@ export const starredRepo = (repo: string = PICX_REPO_NAME) => {
     url: `/user/starred/${repo}`,
     method: 'PUT',
     data: {},
-    noShowErrorMsg: true
+    noShowErrMsg: true
   })
 }

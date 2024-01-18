@@ -2,7 +2,7 @@ import { AxiosRequestConfig } from 'axios'
 
 export interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   success422?: boolean
-  noShowErrorMsg?: boolean
+  noShowErrMsg?: boolean
   cache?: any
   noCache?: boolean
 }

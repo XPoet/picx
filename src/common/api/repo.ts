@@ -81,7 +81,7 @@ If you like it, please give it a star on [GitHub](https://github.com/XPoet/picx)
       branch,
       content: window.btoa(README)
     },
-    noShowErrorMsg: true
+    noShowErrMsg: true
   })
 }
 
@@ -93,14 +93,14 @@ export const createRepo = (token: string) => {
   return request({
     url: '/user/repos',
     method: 'POST',
-    params: {
+    data: {
       name: INIT_REPO_NAME,
       description: INIT_REPO_DESC,
       private: false
     },
     headers: { Authorization: `Bearer ${token}` },
     success422: true,
-    noShowErrorMsg: true
+    noShowErrMsg: true
   })
 }
 
@@ -115,6 +115,6 @@ export const getRepoInfo = (owner: string, repo: string) => {
     method: 'GET',
     noCache: true,
     success422: true,
-    noShowErrorMsg: true
+    noShowErrMsg: true
   })
 }

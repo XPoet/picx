@@ -34,7 +34,7 @@ export const getSourceRepoImgContent = async (
 ) => {
   const res = await request({
     method: 'GET',
-    noShowErrorMsg: true,
+    noShowErrMsg: true,
     url: `repos/${owner}/${sourceRepo}/contents/${path}`,
     params: {
       ref: sourceRepoBranch

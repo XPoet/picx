@@ -9,7 +9,7 @@ export const getCloudSettings = async (userConfigInfo: UserConfigInfoModel) => {
   const res = await request({
     url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'GET',
-    noShowErrorMsg: true,
+    noShowErrMsg: true,
     noCache: true
   })
 
@@ -39,7 +39,7 @@ export const saveCloudSettings = async (
     url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'PUT',
     data,
-    noShowErrorMsg: true
+    noShowErrMsg: true
   })
 
   return Promise.resolve(res2)
