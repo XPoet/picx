@@ -17,11 +17,9 @@
       <span v-else>{{ $t('authorization.text_5') }}</span>
     </div>
 
-    <el-tooltip placement="top" :content="$t('authorization.text_6')">
-      <el-button text :icon="icon.IEpSwitch" @click="onOK">
-        {{ $t('authorization.text_7') }}
-      </el-button>
-    </el-tooltip>
+    <el-button text :icon="icon.IEpSwitch" @click="onOK">
+      {{ $t('authorization.text_7') }}
+    </el-button>
   </div>
 </template>
 

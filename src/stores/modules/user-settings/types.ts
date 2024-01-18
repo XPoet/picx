@@ -1,4 +1,4 @@
-import { ElementPlusSizeEnum, LanguageEnum, UserSettingsModel } from '@/common/model'
+import { ElementPlusSizeEnum, LanguageEnum, ThemeModeEnum, UserSettingsModel } from '@/common/model'
 
 export enum ImgLinkRuleActionsEnum {
   // eslint-disable-next-line no-unused-vars
@@ -11,6 +11,10 @@ export interface GlobalSettingsModel {
   folded: boolean
   elementPlusSize: ElementPlusSizeEnum
   language: LanguageEnum
+  languageToggleTip: boolean
+  theme?: {
+    mode: ThemeModeEnum
+  }
 }
 
 export default interface UserSettingsStateTypes {

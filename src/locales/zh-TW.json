@@ -179,8 +179,6 @@
     "loadingTxt1": "載入中 ...",
     "loadingTxt2": "正在重新命名 ...",
     "loadingTxt3": "刪除中 ...",
-    "back": "雙擊後退",
-    "toNextDir": "雙擊進入下一級目錄",
     "property": "屬性",
     "delTips": "此操作將會永久刪除圖片",
     "delTips2": "已選取 {total} 張圖片，是否已批次刪除？",
@@ -201,7 +199,7 @@
     "batchDelete": "批次刪除圖片",
     "selectTotal": "已選擇 {total} 張圖片",
     "contextmenu_1": "從目前位置上傳新圖片",
-    "contextmenu_2": "上傳圖片到 < {dir} >",
+    "contextmenu_2": "上傳圖片到 {dir}",
     "contextmenu_3": "根目錄"
   },
   "toolbox": {
@@ -258,7 +256,8 @@
     "text_9": "填寫 GitHub Token 登入必須產生具有操作權限的 Token",
     "text_10": "檢視教學",
     "text_11": "安裝 PicX GitHub APP",
-    "text_12": "建立 GitHub Token"
+    "text_12": "建立 GitHub Token",
+    "text_13": "立即授權"
   },
   "copy_repo_img": {
     "text_1": "複製倉庫圖片",

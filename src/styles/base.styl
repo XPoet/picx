@@ -83,6 +83,12 @@ li {
   justify-content flex-start
 }
 
+.flex-end {
+  display flex
+  align-items center
+  justify-content flex-end
+}
+
 
 .border-box {
   position relative
@@ -168,28 +174,66 @@ li {
 
 
 .personal-center-popover {
-  position relative
-  box-sizing border-box
+  width 100%
+  padding 10rem 0
+  background var(--background-color)
+
+  .user-info {
+    width 100%
+    padding 6rem 12rem
+
+    .info-item {
+      margin-bottom 2rem
+    }
+
+    .owner {
+      color var(--text-color-3)
+      font-size 16rem
+    }
+
+    .name {
+      color var(--text-color-4)
+      font-size 13rem
+    }
+  }
+
+
+  .content-item {
+    display flex
+    align-items center
+    justify-content space-between
+    width 100%
+    padding 8rem 12rem
+    color var(--text-color-3)
+    font-size 14rem
+    cursor pointer
+
+    &:hover {
+      background var(--background-color-2)
+    }
+  }
+
+  .el-divider {
+    margin 0
+  }
+}
+
+
+.global-settings-popover {
   width 100%
   padding 10rem 0
   background var(--background-color)
 
   .content-item {
-    position relative
     display flex
     align-items center
     justify-content space-between
-    box-sizing border-box
     width 100%
     height 36rem
     padding 0 12rem
     color var(--text-color-3)
     font-size 14rem
     cursor pointer
-
-    .el-icon {
-      margin-right 3rem
-    }
 
     &:hover {
       background var(--background-color-2)

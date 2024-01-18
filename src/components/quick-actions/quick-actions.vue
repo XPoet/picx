@@ -1,6 +1,5 @@
 <template>
   <el-popover
-    v-if="userConfigInfo.logined"
     placement="bottom-end"
     :width="globalSettings.language === 'en' ? '230rem' : '190rem'"
     trigger="click"
@@ -12,11 +11,11 @@
     }"
   >
     <template #reference>
-      <div class="quick-actions border-box">
-        <el-icon class="quick-actions-icon">
+      <el-button circle text>
+        <el-icon :size="22">
           <IEpOperation />
         </el-icon>
-      </div>
+      </el-button>
     </template>
     <div class="quick-actions-popover">
       <el-switch
@@ -40,11 +39,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useStore } from '@/stores'
+import { store } from '@/stores'
 
-const store = useStore()
-
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const userSettings = computed(() => store.getters.getUserSettings).value
 const globalSettings = computed(() => store.getters.getGlobalSettings).value
 
@@ -52,12 +48,3 @@ const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
 }
 </script>
-
-<style scoped lang="stylus">
-.quick-actions {
-  .quick-actions-icon {
-    font-size 24rem
-    cursor pointer
-  }
-}
-</style>

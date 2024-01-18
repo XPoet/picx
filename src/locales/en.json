@@ -12,8 +12,8 @@
   "shortcut_key": "Shortcut Key",
   "username": "Username",
   "email": "Email",
-  "login": "Login",
-  "logout": "Logout",
+  "login": "Log In",
+  "logout": "Log Out",
   "language": "Language",
   "uploaded": "Uploaded",
   "upload": "Upload",
@@ -179,8 +179,6 @@
     "loadingTxt1": "Loading...",
     "loadingTxt2": "Renaming...",
     "loadingTxt3": "Deleting...",
-    "back": "Double-click to go back",
-    "toNextDir": "Double-click to enter the next-level directory",
     "property": "Properties",
     "delTips": "This action will permanently delete the image",
     "delTips2": "Selected {total} images, do you want to delete them in bulk?",
@@ -201,7 +199,7 @@
     "batchDelete": "Batch Delete Images",
     "selectTotal": "Selected {total} images",
     "contextmenu_1": "Upload new images from the current location",
-    "contextmenu_2": "Upload images to < {dir} >",
+    "contextmenu_2": "Upload images to {dir}",
     "contextmenu_3": "Root Directory"
   },
   "toolbox": {
@@ -258,7 +256,8 @@
     "text_9": "Login with GitHub Token requires generating a Token with operational permissions.",
     "text_10": "View Tutorial",
     "text_11": "Install PicX GitHub APP",
-    "text_12": "Create GitHub Token"
+    "text_12": "Create GitHub Token",
+    "text_13": "Authorize now"
   },
   "copy_repo_img": {
     "text_1": "Copy repository images",

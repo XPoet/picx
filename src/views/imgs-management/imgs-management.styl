@@ -1,72 +1,56 @@
-$infoBarHeight = 50rem
+$top-box-height = 50rem
 
 .management-page-container {
+  display flex
+  flex-direction column
+  justify-content space-between
+  padding-top 10rem !important
   padding-bottom 0 !important
 
-  .content-container {
-    position relative
-    box-sizing border-box
+  .top-box {
+    display flex
+    align-items center
+    justify-content space-between
     width 100%
-    height 100%
-    padding-top $infoBarHeight
+    height $top-box-height
 
-    .top {
-      position absolute
-      top 0
-      left 0
-      display flex
-      align-items center
-      justify-content space-between
-      box-sizing border-box
-      width 100%
-      height $infoBarHeight
-      padding-bottom 20rem
-      font-size 14rem
 
-      .right {
-        .btn-icon {
-          margin-left 10rem
-          color var(--text-color-3)
-          font-size 22rem
-          cursor pointer
-        }
+    .right {
+      .btn-icon {
+        margin-left 10rem
+        color var(--text-color-3)
+        font-size 22rem
+        cursor pointer
       }
     }
+  }
 
 
-    .bottom {
-      position relative
-      box-sizing border-box
+  .bottom-box {
+    width 100%
+    height 'calc(100% - %s)' % $top-box-height
+    border 1rem solid var(--border-color)
+    border-bottom none
+
+    .image-management-list {
+      display flex
+      flex-wrap wrap
+      align-content flex-start
       width 100%
-      height 100%
-      border 1rem solid var(--border-color)
-      border-bottom none
-      border-top-left-radius 6rem
-      border-top-right-radius 6rem
+      padding 2rem
+      overflow-y auto
 
-
-      .image-management-list {
+      li.image-management-item {
         position relative
-        display flex
-        flex-wrap wrap
-        align-content flex-start
         box-sizing border-box
-        width 100%
-        padding 2rem
-        overflow-y auto
+        padding 10rem
 
-        li.image-management-item {
-          position relative
-          box-sizing border-box
-          padding 10rem
+        &.image {
+          width 230rem
+        }
 
-          &.image {
-            width 230rem
-          }
-
-          &:last-child {
-            margin-right 0
-          }
+        &:last-child {
+          margin-right 0
         }
       }
     }

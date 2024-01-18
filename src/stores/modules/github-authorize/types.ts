@@ -8,6 +8,7 @@ export interface GitHubAuthorizationInfo {
   installationId: string
   manualToken: string
   isAutoAuthorize: boolean
+  authorizing: boolean
 }
 
 export default interface GitHubAuthorizeStateTypes {

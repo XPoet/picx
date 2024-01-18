@@ -34,43 +34,20 @@
         </div>
       </div>
     </template>
-    <ul class="personal-center-popover">
-      <li class="content-item">
-        <span class="flex-center">{{ $t('language') }}</span>
-        <el-select size="small" style="width: 100rem" v-model="globalSettings.language">
-          <el-option label="中文简体" :value="LanguageEnum.zhCN"></el-option>
-          <el-option label="中文繁體" :value="LanguageEnum.zhTW"></el-option>
-          <el-option label="English" :value="LanguageEnum.en"></el-option>
-        </el-select>
+    <ul class="personal-center-popover border-box">
+      <li class="user-info border-box" v-if="userConfigInfo.logined">
+        <div class="info-item owner" v-if="userConfigInfo.owner">{{ userConfigInfo.owner }}</div>
+        <div class="info-item name" v-if="userConfigInfo.email">{{ userConfigInfo.email }}</div>
       </li>
-      <el-divider style="margin: 5rem 0" />
-      <li class="content-item">
-        <span class="flex-center">{{ $t('header.theme') }}</span>
-        <el-select
-          size="small"
-          style="width: 100rem"
-          v-model="userSettings.theme.mode"
-          @change="persistUserSettings"
-        >
-          <el-option
-            :label="$t('settings_page.theme.system')"
-            :value="ThemeModeEnum.system"
-          ></el-option>
-          <el-option
-            :label="$t('settings_page.theme.light')"
-            :value="ThemeModeEnum.light"
-          ></el-option>
-          <el-option
-            :label="$t('settings_page.theme.dark')"
-            :value="ThemeModeEnum.dark"
-          ></el-option>
-        </el-select>
-      </li>
-      <el-divider style="margin: 5rem 0" />
-      <li class="content-item" v-if="userConfigInfo.name || userConfigInfo.owner" @click="logout">
+      <el-divider v-if="userConfigInfo.logined" style="margin: 5rem 0" />
+      <li
+        class="content-item border-box"
+        v-if="userConfigInfo.name || userConfigInfo.owner"
+        @click="onLogout"
+      >
         {{ $t('logout') }}
       </li>
-      <li class="content-item" v-else @click="router.push('/login')">
+      <li class="content-item border-box" v-else @click="onLogin">
         {{ $t('login') }}
       </li>
     </ul>
@@ -81,22 +58,20 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/stores'
-import { LanguageEnum, ThemeModeEnum } from '@/common/model'
 import { getGitHubOwnerURL } from '@/utils'
 
 const router = useRouter()
 const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const userSettings = computed(() => store.getters.getUserSettings).value
-const globalSettings = computed(() => store.getters.getGlobalSettings).value
 
-const persistUserSettings = () => {
-  store.dispatch('USER_SETTINGS_PERSIST')
+const onLogin = () => {
+  router.push('/login')
+  document.body.click()
 }
 
 // 退出登录
-const logout = () => {
+const onLogout = () => {
   store.dispatch('LOGOUT')
   router.push('/login')
   document.body.click()

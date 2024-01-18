@@ -1,7 +1,11 @@
 <template>
-  <div class="site-count" ref="siteCountDom" v-show="isShow">
-    <span class="count-item" v-show="showPV"> PV <span id="busuanzi_value_site_pv"></span> </span>
-    <span class="count-item" v-show="showUV"> UV <span id="busuanzi_value_site_uv"></span> </span>
+  <div class="site-count border-box" ref="siteCountDom" v-show="isShow">
+    <span class="count-item border-box" v-show="showPV">
+      PV <span class="pv" id="busuanzi_value_site_pv"></span>
+    </span>
+    <span class="count-item border-box" v-show="showUV">
+      UV <span class="uv" id="busuanzi_value_site_uv"></span>
+    </span>
   </div>
 </template>
 
@@ -20,7 +24,7 @@ defineProps({
 })
 
 const siteCountDom: Ref = ref<null | HTMLElement>(null)
-const isShow: Ref<boolean> = ref(true)
+const isShow: Ref<boolean> = ref(false)
 
 // const isProd = computed(() => import.meta.env.MODE === 'production')
 
@@ -35,28 +39,26 @@ onMounted(() => {
   siteCountDom.value.appendChild(script)
 
   script.onload = () => {
-    const tempT = setTimeout(() => {
+    setTimeout(() => {
       if (getInnerText()) {
         isShow.value = true
       }
-      clearTimeout(tempT)
     }, 1500)
   }
 })
 </script>
 <style lang="stylus">
 .site-count {
-  margin-top 4rem
+  display flex
+  align-items center
+  justify-content flex-start
   color var(--text-color-4)
   font-size 13rem
   transition all 0.2s ease-in
 
-  .count-item {
-    margin-right 4rem
 
-    &:last-child {
-      margin-right 0
-    }
+  .count-item {
+    margin-left 6rem
   }
 }
 </style>

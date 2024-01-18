@@ -28,13 +28,15 @@
 
 
     .bottom-box {
-      .user-info-box {
-        padding-left 0
+      justify-content center
+      padding-left 0
+
+      .fold-icon {
+        font-size 20rem
       }
 
-      .site-count-box {
+      .site-count {
         display none
-        padding-left 0
       }
     }
   }
@@ -55,11 +57,16 @@
       cursor pointer
       user-select none
 
+      &:hover {
+        color var(--el-color-primary)
+        background var(--el-color-primary-light-9)
+      }
+
 
       &.active {
         color var(--el-color-primary)
         font-weight bold
-        background var(--el-color-primary-light-8)
+        background var(--el-color-primary-light-9)
       }
 
 
@@ -72,16 +79,14 @@
 
 
   .bottom-box {
-    text-align center
+    display flex
+    align-items center
+    justify-content space-between
+    padding-left $left-side-padding
 
-    .user-info-box {
-      width 100%
-      padding-left $left-side-padding
-    }
-
-    .site-count-box {
-      width 100%
-      padding-left $left-side-padding
+    .fold-icon {
+      font-size 18rem
+      cursor pointer
     }
   }
 }

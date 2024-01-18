@@ -1,33 +1,9 @@
-.user-avatar {
+.user-avatar-v2 {
   display flex
   align-items center
   justify-content space-between
-  width 100%
-  height 100%
-  padding 10rem
-  border 1rem solid var(--border-color)
-  border-radius $box-border-radius
   cursor pointer
   user-select none
-
-  &.folded {
-    padding 0
-    border none
-
-    .username {
-      display none
-    }
-
-    .popover-tip-icon {
-      display none
-    }
-  }
-
-  .left {
-    display flex
-    align-items center
-    justify-content flex-start
-  }
 
   .avatar {
     display flex
@@ -53,13 +29,8 @@
   }
 
 
-  .username {
-    margin-left 10rem
-    font-size 16rem
-  }
-
-
   .popover-tip-icon {
-    font-size 20rem
+    margin-left 6rem
+    font-size 22rem
   }
 }

@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue'
+import { onMounted, computed, ref, watch } from 'vue'
 import {
   githubAppAuthorize,
   githubAppAuthorizeCallback,
@@ -147,6 +147,18 @@ onMounted(() => {
   githubAppAuthorizeCallback()
   init()
 })
+
+watch(
+  () => authorizationInfo.authorizing,
+  (nv) => {
+    if (nv) {
+      store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
+        authorizing: false
+      })
+      onGitHubAuthorizeLogin()
+    }
+  }
+)
 </script>
 
 <style scoped lang="stylus">

@@ -12,19 +12,11 @@ import zhTW from 'element-plus/lib/locale/lang/zh-tw'
 import en from 'element-plus/lib/locale/lang/en'
 import setThemeMode from '@/utils/set-theme-mode'
 import { useStore } from '@/stores'
-import {
-  getLanguageByRegion,
-  getRegionByIP,
-  getSession,
-  setSession,
-  setWindowTitle,
-  throttle
-} from '@/utils'
+import { getLanguageByRegion, getRegionByIP, setWindowTitle, throttle } from '@/utils'
 import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
 import MainContainer from '@/views/main-container/main-container.vue'
 import router from '@/router'
 import { initGithubAuthorize } from '@/views/picx-login/picx-login.util'
-import { SS_PICX_LANG_TOGGLE_TIP } from '@/common/constant'
 
 const instance = getCurrentInstance()
 const store = useStore()
@@ -35,17 +27,20 @@ const elementPlusLocale = ref(zhCN) // zhCN | zhTW | en
 const elementPlusSizeHandle = (width: number) => {
   if (width <= 700) {
     store?.dispatch('SET_GLOBAL_SETTINGS', {
-      elementPlusSize: ElementPlusSizeEnum.small
+      elementPlusSize: ElementPlusSizeEnum.small,
+      folded: true
     })
     elementPlusSize.value = ElementPlusSizeEnum.small
   } else if (width <= 1000) {
     store?.dispatch('SET_GLOBAL_SETTINGS', {
-      elementPlusSize: ElementPlusSizeEnum.default
+      elementPlusSize: ElementPlusSizeEnum.default,
+      folded: false
     })
     elementPlusSize.value = ElementPlusSizeEnum.default
   } else {
     store?.dispatch('SET_GLOBAL_SETTINGS', {
-      elementPlusSize: ElementPlusSizeEnum.large
+      elementPlusSize: ElementPlusSizeEnum.large,
+      folded: false
     })
     elementPlusSize.value = ElementPlusSizeEnum.large
   }
@@ -69,7 +64,7 @@ const setLanguage = (language: LanguageEnum) => {
 }
 
 const setLanguageByIP = () => {
-  if (getSession(SS_PICX_LANG_TOGGLE_TIP) === false) {
+  if (!store.getters.getGlobalSettings.languageToggleTip) {
     return
   }
 
@@ -97,7 +92,9 @@ const setLanguageByIP = () => {
         dangerouslyUseHTMLString: true,
         showClose: true,
         onClose() {
-          setSession(SS_PICX_LANG_TOGGLE_TIP, false)
+          store.dispatch('SET_GLOBAL_SETTINGS', {
+            languageToggleTip: false
+          })
         }
       })
 

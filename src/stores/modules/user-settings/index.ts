@@ -9,12 +9,13 @@ import {
   UserSettingsModel,
   WatermarkPositionEnum
 } from '@/common/model'
-import { deepAssignObject, getLocal, getUuid } from '@/utils'
+import { deepAssignObject, getLocal, getSession, getUuid, setLocal, setSession } from '@/utils'
 import RootStateTypes from '@/stores/types'
 import UserSettingsStateTypes, {
+  GlobalSettingsModel,
   ImgLinkRuleActionsEnum
 } from '@/stores/modules/user-settings/types'
-import { LS_PICX_SETTINGS } from '@/common/constant'
+import { LS_SETTINGS, SS_GLOBAL_SETTINGS } from '@/common/constant'
 import { imgLinkRuleVerification } from '@/stores/modules/user-settings/utils'
 import i18n from '@/plugins/vue/i18n'
 
@@ -95,22 +96,33 @@ const initSettings: UserSettingsModel = {
 }
 
 const initUserSettings = (): UserSettingsModel => {
-  const LSSettings = getLocal(LS_PICX_SETTINGS)
+  const LSSettings = getLocal(LS_SETTINGS)
   if (LSSettings) {
     deepAssignObject(initSettings, LSSettings)
   }
   return initSettings
 }
 
+const initGlobalSettings = (): GlobalSettingsModel => {
+  const globalSettings: GlobalSettingsModel = {
+    folded: false,
+    elementPlusSize: ElementPlusSizeEnum.default,
+    language: LanguageEnum.zhCN,
+    languageToggleTip: true
+  }
+
+  const SSSettings = getSession(SS_GLOBAL_SETTINGS)
+  if (SSSettings) {
+    deepAssignObject(globalSettings, SSSettings)
+  }
+  return globalSettings
+}
+
 const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
   state: {
     userSettings: initUserSettings(),
     cloudSettings: null,
-    globalSettings: {
-      folded: false,
-      elementPlusSize: ElementPlusSizeEnum.default,
-      language: LanguageEnum.zhCN
-    }
+    globalSettings: initGlobalSettings()
   },
 
   actions: {
@@ -138,6 +150,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
         // @ts-ignore
         state.globalSettings[key] = globalSettings[key]
       }
+      setSession(SS_GLOBAL_SETTINGS, state.globalSettings)
     },
 
     // 图片链接类型 - 增加规则
@@ -171,9 +184,14 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
       dispatch('USER_SETTINGS_PERSIST')
     },
 
-    // 持久化
+    // 持久化用户设置数据
     USER_SETTINGS_PERSIST({ state }) {
-      localStorage.setItem(LS_PICX_SETTINGS, JSON.stringify(state.userSettings))
+      setLocal(LS_SETTINGS, state.userSettings)
+    },
+
+    // 持久化全局设置数据
+    USER_GLOBAL_PERSIST({ state }) {
+      setSession(SS_GLOBAL_SETTINGS, state.globalSettings)
     },
 
     // 退出登录
@@ -183,7 +201,7 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
   },
 
   getters: {
-    getUserSettings: (state): UserSettingsModel => state.userSettings,
+    getUserSettings: (state) => state.userSettings,
     getCloudSettings: (state) => state.cloudSettings,
     getGlobalSettings: (state) => state.globalSettings
   }

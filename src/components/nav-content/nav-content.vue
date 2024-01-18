@@ -3,7 +3,7 @@
     class="nav-content-container border-box"
     :class="{ folded: store.getters.getGlobalSettings.folded }"
   >
-    <div class="top-box">
+    <div class="top-box border-box">
       <ul class="nav-menu-list border-box">
         <el-tooltip
           placement="left"
@@ -28,13 +28,14 @@
       </ul>
     </div>
 
-    <div class="bottom-box">
-      <div class="user-info-box border-box">
-        <user-avatar />
-      </div>
-      <div class="site-count-box border-box">
-        <site-count :showPV="true" :showUV="true" />
-      </div>
+    <div class="bottom-box border-box">
+      <el-icon v-if="globalSettings.folded" class="fold-icon" @click="onFoldNav">
+        <IEpDArrowRight />
+      </el-icon>
+      <el-icon v-else class="fold-icon" @click="onFoldNav">
+        <IEpDArrowLeft />
+      </el-icon>
+      <site-count class="site-count" :showPV="true" :showUV="true" />
     </div>
   </aside>
 </template>
@@ -91,6 +92,12 @@ const changeNavActive = (currentPath: string) => {
   })
 
   triggerRef(navInfoList)
+}
+
+const onFoldNav = () => {
+  store.dispatch('SET_GLOBAL_SETTINGS', {
+    folded: !globalSettings.folded
+  })
 }
 
 watch(

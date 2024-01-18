@@ -3,7 +3,7 @@ import { UserConfigInfoModel, DirModeEnum } from '@/common/model'
 import { deepAssignObject, cleanObject, formatDatetime } from '@/utils'
 import UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
 import RootStateTypes from '@/stores/types'
-import { LS_PICX_CONFIG, NEW_DIR_COUNT_MAX } from '@/common/constant'
+import { LS_CONFIG, NEW_DIR_COUNT_MAX } from '@/common/constant'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {
@@ -24,7 +24,7 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     repoPrivate: false
   }
 
-  const LSConfig: string | null = localStorage.getItem(LS_PICX_CONFIG)
+  const LSConfig: string | null = localStorage.getItem(LS_CONFIG)
 
   if (LSConfig) {
     // Assign: oldConfig -> initConfig
@@ -110,7 +110,7 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
     // 持久化用户配置信息
     USER_CONFIG_INFO_PERSIST({ state }) {
       convertSpecialCharacter(state)
-      localStorage.setItem(LS_PICX_CONFIG, JSON.stringify(state.userConfigInfo))
+      localStorage.setItem(LS_CONFIG, JSON.stringify(state.userConfigInfo))
     },
 
     // 退出登录

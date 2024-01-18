@@ -1,65 +1,44 @@
 <template>
   <div class="page-container management-page-container">
-    <div class="content-container">
-      <div class="top">
-        <div class="left">
-          <selected-info-bar :bar-type="SelectedInfoBarType.management" />
-        </div>
-        <div class="right flex-start">
-          <copy-source-repo position="management" />
-          <el-tooltip
-            placement="top"
-            :content="$t('management_page.reload')"
-            :show-arrow="false"
-            :offset="6"
-          >
-            <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
-              <IEpRefresh />
-            </el-icon>
-          </el-tooltip>
-        </div>
-      </div>
-
-      <div
-        class="bottom"
-        v-loading="loadingImageList"
-        :element-loading-text="$t('management_page.loadingTxt1')"
+    <div class="top-box border-box">
+      <tools-bar @reload="reloadCurrentDirContent" />
+    </div>
+    <div
+      class="bottom-box border-box"
+      v-loading="loadingImageList"
+      :element-loading-text="$t('management_page.loadingTxt1')"
+    >
+      <image-selector
+        v-if="currentPathImageList.length"
+        :currentDirImageList="currentPathImageList"
+        @updateInitImageList="currentPathImageList"
+        :key="renderKey"
+      ></image-selector>
+      <ul
+        class="image-management-list border-box"
+        :style="{
+          height: isShowBatchTools ? 'calc(100% - 50rem)' : '100%'
+        }"
+        v-contextmenu="{ type: ContextmenuEnum.parentDir }"
       >
-        <image-selector
-          v-if="currentPathImageList.length"
-          :currentDirImageList="currentPathImageList"
-          @updateInitImageList="currentPathImageList"
-          :key="renderKey"
-        ></image-selector>
-        <ul
-          class="image-management-list"
-          :style="{
-            height: isShowBatchTools ? 'calc(100% - 50rem)' : '100%'
-          }"
-          v-contextmenu="{ type: ContextmenuEnum.parentDir }"
+        <li
+          class="image-management-item"
+          v-for="(dir, index) in currentPathDirList"
+          :key="'folder-card-' + dir.dir + '-' + index"
+          v-contextmenu="{ type: ContextmenuEnum.childDir, dir: dir.dir }"
         >
-          <li class="image-management-item" v-if="userConfigInfo.viewDir !== '/'">
-            <folder-card mode="back" />
-          </li>
-          <li
-            class="image-management-item"
-            v-for="(dir, index) in currentPathDirList"
-            :key="'folder-card-' + dir.dir + '-' + index"
-            v-contextmenu="{ type: ContextmenuEnum.childDir, dir: dir.dir }"
-          >
-            <folder-card :folder-obj="dir" />
-          </li>
-          <div style="width: 100%" />
-          <li
-            class="image-management-item image"
-            v-for="(image, index) in currentPathImageList"
-            :key="'image-card-' + index"
-            v-contextmenu="{ type: ContextmenuEnum.img, img: image }"
-          >
-            <image-card :image-obj="image" />
-          </li>
-        </ul>
-      </div>
+          <folder-card :folder-obj="dir" />
+        </li>
+        <div style="width: 100%" />
+        <li
+          class="image-management-item image"
+          v-for="(image, index) in currentPathImageList"
+          :key="'image-card-' + index"
+          v-contextmenu="{ type: ContextmenuEnum.img, img: image }"
+        >
+          <image-card :image-obj="image" />
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -72,11 +51,10 @@ import { getRepoPathContent } from '@/common/api'
 import { filterDirContent, getDirContent } from '@/views/imgs-management/imgs-management.util'
 
 import ImageCard from '@/components/image-card/image-card.vue'
-import SelectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
-import FolderCard from '@/components/folder-card/folder-card.vue'
 import ImageSelector from '@/components/image-selector/image-selector.vue'
 import { ContextmenuEnum, DirModeEnum, UploadedImageModel } from '@/common/model'
-import { SelectedInfoBarType } from '@/components/selected-info-bar/selected-info-bar.model'
+import ToolsBar from '@/views/imgs-management/components/tools-bar/tools-bar.vue'
+import FolderCard from '@/views/imgs-management/components/folder-card/folder-card.vue'
 
 const store = useStore()
 const router = useRouter()

@@ -2,10 +2,6 @@
   <header class="header-content-box border-box">
     <div class="header-left border-box">
       <div class="brand-box">
-        <el-icon class="fold-icon" @click="foldNavBox">
-          <IEpExpand v-if="isFolded" />
-          <IEpFold v-else />
-        </el-icon>
         <div class="logo" @click="router.push('/')">
           <img src="../../assets/logo.png" alt="PicX" />
         </div>
@@ -14,26 +10,22 @@
     </div>
 
     <div class="header-right">
-      <quick-actions />
+      <div class="btn-item" v-if="userConfigInfo.logined">
+        <quick-actions />
+      </div>
+      <div class="btn-item">
+        <user-avatar-v2 />
+      </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useStore } from '@/stores'
+import { computed } from 'vue'
+import { store } from '@/stores'
+import router from '@/router'
 
-const router = useRouter()
-const store = useStore()
-
-const isFolded = ref(false)
-const foldNavBox = () => {
-  isFolded.value = !isFolded.value
-  store.dispatch('SET_GLOBAL_SETTINGS', {
-    folded: isFolded.value
-  })
-}
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
 </script>
 
 <style scoped lang="stylus">
