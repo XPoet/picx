@@ -8,6 +8,6 @@ export const getGitHubOwnerURL = (userConfigInfo: UserConfigInfoModel) => {
 }
 
 export const getImageHostingURL = (userConfigInfo: UserConfigInfoModel) => {
-  const { owner, selectedRepo } = userConfigInfo
-  return `${gh}/${owner}/${selectedRepo}`
+  const { owner, repo } = userConfigInfo
+  return `${gh}/${owner}/${repo}`
 }

@@ -34,7 +34,7 @@
       </el-descriptions-item>
 
       <!-- 仓库 -->
-      <el-descriptions-item v-if="userConfigInfo.selectedRepo">
+      <el-descriptions-item v-if="userConfigInfo.repo">
         <template #label>
           <div class="cell-item">
             <el-icon><IEpConnection /></el-icon>
@@ -43,17 +43,14 @@
         </template>
         <div class="repo-descriptions-item">
           <el-link type="primary" :href="getImageHostingURL(userConfigInfo)" target="_blank">
-            {{ userConfigInfo.selectedRepo }}
+            {{ userConfigInfo.repo }}
           </el-link>
           <copy-source-repo />
         </div>
       </el-descriptions-item>
 
       <!-- 目录  -->
-      <el-descriptions-item
-        :span="2"
-        v-if="userConfigInfo.selectedRepo && userConfigInfo.selectedBranch"
-      >
+      <el-descriptions-item :span="2" v-if="userConfigInfo.repo && userConfigInfo.branch">
         <template #label>
           <div class="cell-item">
             <el-icon><IEpFolder /></el-icon>
@@ -119,7 +116,7 @@
     <!-- 确定 -->
     <el-button
       class="row-item confirm-btn"
-      v-if="userConfigInfo.token && userConfigInfo.selectedRepo && userConfigInfo.selectedBranch"
+      v-if="userConfigInfo.token && userConfigInfo.repo && userConfigInfo.branch"
       plain
       type="primary"
       @click="goUploadPage(newDirInputRef)"

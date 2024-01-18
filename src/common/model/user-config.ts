@@ -21,8 +21,8 @@ export interface UserConfigInfoModel {
   email: string
   name: string
   avatarUrl: string
-  selectedRepo: string
-  selectedBranch: string
+  repo: string
+  branch: string
   dirMode: DirModeEnum
   viewDir: string
   selectedDir: string

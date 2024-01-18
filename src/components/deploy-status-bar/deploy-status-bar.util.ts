@@ -13,7 +13,7 @@ const filename = '.deploy'
  * 获取云端仓库存储的部署状态信息
  */
 export const getCloudDeployInfo = async () => {
-  const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
 
   if (!owner || !repo || !branch) {
     return null
@@ -36,7 +36,7 @@ export const getCloudDeployInfo = async () => {
  * 保存部署状态信息到云端仓库
  */
 export const saveCloudDeployInfo = async () => {
-  const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
 
   const res = await getCloudDeployInfo()
 

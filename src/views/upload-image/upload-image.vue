@@ -142,7 +142,7 @@ const afterUploadSuccess = async (uploadedImg: UploadedImageModel[], isBatch: bo
 
 // 上传
 const uploadImage = async () => {
-  const { token, selectedRepo, selectedDir } = userConfigInfo
+  const { token, repo, selectedDir } = userConfigInfo
 
   if (!token) {
     ElMessage.error({ message: instance?.proxy?.$t('upload_page.message1') })
@@ -150,7 +150,7 @@ const uploadImage = async () => {
     return
   }
 
-  if (!selectedRepo) {
+  if (!repo) {
     ElMessage.error({ message: instance?.proxy?.$t('upload_page.message2') })
     await router.push('/config')
     return

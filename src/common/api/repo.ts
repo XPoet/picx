@@ -69,7 +69,7 @@ PicX is completely open source, and you can use it for free.
 
 If you like it, please give it a star on [GitHub](https://github.com/XPoet/picx).
         `
-  const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
 
   // GitHub Git database API 不支持在空仓库上操作，需要先初始化空仓库
   // 仓库为空时，新建一个 README 文件来初始化仓库

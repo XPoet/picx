@@ -5,7 +5,7 @@ import { UserConfigInfoModel, UserSettingsModel } from '@/common/model'
 const filename = '.settings'
 
 export const getCloudSettings = async (userConfigInfo: UserConfigInfoModel) => {
-  const { owner, selectedRepo: repo } = userConfigInfo
+  const { owner, repo } = userConfigInfo
   const res = await request({
     url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'GET',
@@ -20,7 +20,7 @@ export const saveCloudSettings = async (
   userSettings: UserSettingsModel,
   userConfigInfo: UserConfigInfoModel
 ) => {
-  const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
 
   const res = await getCloudSettings(userConfigInfo)
 

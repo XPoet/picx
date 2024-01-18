@@ -136,7 +136,7 @@ const deleteOriginImage = (
   if (!isRename) {
     imageObj.deleting = true
   }
-  const { owner, selectedRepo: repo } = userConfigInfo
+  const { owner, repo } = userConfigInfo
   const { path, sha } = imageObj
 
   // eslint-disable-next-line no-async-promise-executor

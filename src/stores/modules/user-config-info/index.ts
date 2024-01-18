@@ -13,8 +13,8 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     email: '',
     name: '',
     avatarUrl: '',
-    selectedRepo: '',
-    selectedBranch: '',
+    repo: '',
+    branch: '',
     selectedDir: '',
     dirMode: DirModeEnum.repoDir,
     dirList: [],
@@ -41,7 +41,7 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
 }
 
 const convertSpecialCharacter = (state: UserConfigInfoStateTypes): void => {
-  const { selectedDir, selectedBranch, dirMode } = state.userConfigInfo
+  const { selectedDir, branch, dirMode } = state.userConfigInfo
   if (dirMode === 'newDir') {
     const strList = selectedDir.split('')
     let count = 0
@@ -62,7 +62,7 @@ const convertSpecialCharacter = (state: UserConfigInfoStateTypes): void => {
     }
     state.userConfigInfo.selectedDir = newStr
   }
-  state.userConfigInfo.selectedBranch = selectedBranch.replace(/\s+/g, '-')
+  state.userConfigInfo.branch = branch.replace(/\s+/g, '-')
 }
 
 const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {

@@ -59,7 +59,7 @@ const uploadedHandle = (
  * @param imgObj
  */
 export const uploadUrlHandle = (config: UserConfigInfoModel, imgObj: UploadImageModel): string => {
-  const { owner, selectedRepo: repo, selectedDir: dir } = config
+  const { owner, repo, selectedDir: dir } = config
   const filename: string = imgObj.filename.final
 
   let path = filename
@@ -84,7 +84,7 @@ export async function uploadImagesToGitHub(
   userConfigInfo: UserConfigInfoModel,
   imgs: UploadImageModel[]
 ): Promise<boolean> {
-  const { selectedBranch: branch, selectedRepo: repo, selectedDir, owner } = userConfigInfo
+  const { branch, repo, selectedDir, owner } = userConfigInfo
 
   const blobs = []
   // eslint-disable-next-line no-restricted-syntax
@@ -159,7 +159,7 @@ export function uploadImageToGitHub(
   userConfigInfo: UserConfigInfoModel,
   img: UploadImageModel
 ): Promise<Boolean> {
-  const { selectedBranch: branch, email, owner } = userConfigInfo
+  const { branch, email, owner } = userConfigInfo
 
   const data: any = {
     message: PICX_UPLOAD_IMG_DESC,

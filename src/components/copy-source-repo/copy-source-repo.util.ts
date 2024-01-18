@@ -13,7 +13,7 @@ import {
 import i18n from '@/plugins/vue/i18n'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const { selectedBranch: branch, selectedRepo: repo, owner } = userConfigInfo
+const { branch, repo, owner } = userConfigInfo
 
 let idx = 0
 let count = 0

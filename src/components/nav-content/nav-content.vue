@@ -68,7 +68,7 @@ const onNavClick = (e: any) => {
   const { path } = e
 
   if (path === '/management') {
-    if (userConfigInfo.selectedRepo === '') {
+    if (userConfigInfo.repo === '') {
       ElMessage.warning(i18n.global.t('upload_page.message2'))
       router.push('/config')
       return

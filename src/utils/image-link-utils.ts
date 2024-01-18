@@ -21,7 +21,7 @@ export const generateImageLinks = (
   const { selected } = userSettings.imageLinkType
   const { rule } = userSettings.imageLinkType.presetList[selected]
   if (rule) {
-    const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
+    const { owner, repo, branch } = userConfigInfo
     return rule
       .replaceAll('{{owner}}', owner)
       .replaceAll('{{repo}}', repo)

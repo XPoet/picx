@@ -1,5 +1,5 @@
 <template>
-  <div class="selected-info-bar-box border-box" v-if="userConfigInfo.selectedRepo">
+  <div class="selected-info-bar-box border-box" v-if="userConfigInfo.repo">
     <div
       class="dir-name"
       :class="{ upload: barType === SelectedInfoBarType.upload }"

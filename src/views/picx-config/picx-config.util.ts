@@ -166,8 +166,8 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
     }
     // --------------------------------
 
-    userConfigInfo.selectedRepo = INIT_REPO_NAME
-    userConfigInfo.selectedBranch = INIT_REPO_BARNCH
+    userConfigInfo.repo = INIT_REPO_NAME
+    userConfigInfo.branch = INIT_REPO_BARNCH
 
     // 获取目录列表
     if (isExistInitRepo) {

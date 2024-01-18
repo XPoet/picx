@@ -58,7 +58,7 @@ export const getBranchInfoList = (
  * @param cb
  */
 export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel, cb?: any) => {
-  const { owner, selectedRepo: repo, selectedBranch } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
 
   const initLoading = ElLoading.service({
     text: i18n.global.t('settings_page.image_hosting_deploy.deploying')
@@ -94,7 +94,7 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
       // 2、获取当前分支的 SHA 值
       let sha = ''
       const res1 = await request({
-        url: `/repos/${owner}/${repo}/git/refs/heads/${selectedBranch}`,
+        url: `/repos/${owner}/${repo}/git/refs/heads/${branch}`,
         method: 'GET'
       })
 

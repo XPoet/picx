@@ -12,7 +12,7 @@ export const getDirInfoList = (
   userConfigInfo: UserConfigInfoModel,
   path: string = ''
 ): Promise<[]> => {
-  const { owner, selectedRepo: repo, selectedBranch: ref } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const tmpList = await request({
@@ -20,7 +20,7 @@ export const getDirInfoList = (
       method: 'GET',
       noShowErrMsg: true,
       params: {
-        ref
+        ref: branch
       }
     })
 
@@ -45,7 +45,7 @@ export const getDirInfoList = (
  * @param path
  */
 export const getRepoPathContent = (userConfigInfo: UserConfigInfoModel, path: string = '') => {
-  const { owner, selectedRepo: repo, selectedBranch: ref } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
 
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
@@ -54,7 +54,7 @@ export const getRepoPathContent = (userConfigInfo: UserConfigInfoModel, path: st
       method: 'GET',
       noCache: true,
       params: {
-        ref
+        ref: branch
       }
     })
 

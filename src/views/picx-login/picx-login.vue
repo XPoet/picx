@@ -130,15 +130,7 @@ const goTargetUrl = (type: UrlTypeEnum) => {
 }
 
 const init = () => {
-  const {
-    token,
-    name,
-    owner,
-    selectedRepo: repo,
-    selectedBranch: branch,
-    selectedDir: dir,
-    logined
-  } = userConfigInfo
+  const { token, name, owner, repo, branch, selectedDir: dir, logined } = userConfigInfo
 
   if (router.currentRoute.value.query?.jump !== '0') {
     if (token && name && owner && logined) {
