@@ -72,17 +72,15 @@ export const deepAssignObject = (obj1: object, obj2: object) => {
   for (const key in obj2) {
     // @ts-ignore
     if (getType(obj2[key]) !== 'object') {
-      if (obj1) {
-        // @ts-ignore
-        obj1[key] = obj2[key]
-      }
-    } else {
       // @ts-ignore
-      // eslint-disable-next-line no-lonely-if
-      if (obj1[key]) {
+      obj1[key] = obj2[key]
+    } else {
+      if (!Object.hasOwn(obj1, key)) {
         // @ts-ignore
-        deepAssignObject(obj1[key], obj2[key])
+        obj1[key] = {}
       }
+      // @ts-ignore
+      deepAssignObject(obj1[key], obj2[key])
     }
   }
 }
