@@ -1,7 +1,7 @@
 <template>
   <div
     class="getting-images-container"
-    :class="{ focus: uploadAreaActive && curShowImg.base64, disabled: disabled }"
+    :class="{ focus: uploadAreaState.isActive && curShowImg.base64, disabled: disabled }"
     @dragover.prevent
     @drop.stop.prevent="onDrop"
     @paste.stop="onPaste"
@@ -30,7 +30,7 @@ import { ImageHandleResult } from '@/common/model'
 
 const store = useStore()
 
-const uploadAreaActive = computed((): boolean => store.getters.getUploadAreaActive)
+const uploadAreaState = computed(() => store.getters.getUploadAreaState)
 
 const curShowImg = ref<{ uuid: string; base64: string }>({
   uuid: '',
@@ -73,7 +73,10 @@ const unifiedHandle = async (files: File[]) => {
 
   setCurImg()
 
-  store.commit('CHANGE_UPLOAD_AREA_ACTIVE', true)
+  store.commit('SET_UPLOAD_AREA_STATE', {
+    isActive: true
+  })
+
   emit('getImgList', imgList.value)
 }
 

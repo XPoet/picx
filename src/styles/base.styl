@@ -139,25 +139,14 @@ li {
 
   .custom-contextmenu-item {
     position relative
-    display flex
+    display none
     align-items center
     justify-content flex-start
     box-sizing border-box
+    min-width 120rem
     padding 8rem 10rem
     font-size 12rem
     cursor pointer
-
-    &.copy-link {
-      display none
-    }
-
-    &.rename-dir {
-      display none
-    }
-
-    &.remove-dir {
-      display none
-    }
 
     &:hover {
       color var(--el-color-primary)
@@ -217,7 +206,8 @@ li {
     cursor pointer
 
     &:hover {
-      background var(--background-color-2)
+      color var(--el-color-primary)
+      background var(--el-color-primary-light-9)
     }
   }
 

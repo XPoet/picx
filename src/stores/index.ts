@@ -4,7 +4,7 @@ import RootStateTypes, { AllStateTypes } from './types'
 import dirImageListModule from './modules/dir-image-list'
 import userConfigInfoModule from './modules/user-config-info'
 import imageCardModule from './modules/image-card'
-import uploadAreaActiveModule from './modules/upload-area-active'
+import uploadAreaModule from './modules/upload-area'
 import userSettingsModule from './modules/user-settings'
 import toolboxImageListModule from './modules/toolbox-image-list'
 import uploadImageListModule from './modules/upload-image-list'
@@ -17,7 +17,7 @@ export const store = createStore<RootStateTypes>({
     dirImageListModule,
     userConfigInfoModule,
     imageCardModule,
-    uploadAreaActiveModule,
+    uploadAreaModule,
     userSettingsModule,
     toolboxImageListModule,
     uploadImageListModule,

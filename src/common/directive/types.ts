@@ -1,8 +1,10 @@
 export enum ContextmenuEnum {
   // eslint-disable-next-line no-unused-vars
-  parentDir,
+  dirArea,
   // eslint-disable-next-line no-unused-vars
-  childDir,
+  dir,
   // eslint-disable-next-line no-unused-vars
-  img
+  img,
+  // eslint-disable-next-line no-unused-vars
+  uploadArea
 }

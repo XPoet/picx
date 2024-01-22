@@ -19,6 +19,7 @@
   "upload": "上傳",
   "rename": "重新命名",
   "copy_link": "複製圖片連結",
+  "paste_image": "貼上圖片",
   "copy_success_1": "圖片連結已自動複製到系統剪貼簿",
   "copy_success_2": "圖片連結複製成功",
   "copy_fail_1": "複製失敗",

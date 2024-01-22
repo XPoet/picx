@@ -1,16 +1,16 @@
 import { computed, Directive } from 'vue'
 import router from '@/router'
 import { store } from '@/stores'
-import { ContextmenuEnum, DirModeEnum } from '@/common/model'
+import { ContextmenuEnum } from './types'
+import { DirModeEnum } from '@/common/model'
 import { copyImageLink } from '@/utils'
 import i18n from '@/plugins/vue/i18n'
-import { renameFolder } from '@/common/directive/rename-dir'
-import { removeDir } from '@/common/directive/remove-dir'
 
 const menuClass = 'custom-contextmenu-container'
 let menuEle: any = null
 let isAddEventListenerOfContextmenu: boolean = false
 
+// 右键菜单指令
 const contextmenuDirective: Directive = {
   mounted(el: any, binding: any) {
     el.addEventListener('contextmenu', (e: any) => {
@@ -30,9 +30,13 @@ const contextmenuDirective: Directive = {
         menuEle.setAttribute('class', menuClass)
         menuEle.style.position = 'fixed'
         menuEle.style.zIndex = '1000'
-        menuEle.innerHTML = `<li class="custom-contextmenu-item upload-image"></li>
+        menuEle.innerHTML = `<li class="custom-contextmenu-item upload-image">
+                             </li>
+                             <li class="custom-contextmenu-item paste-image">
+                               ${i18n.global.t('paste_image')}
+                             </li>
                              <li class="custom-contextmenu-item rename-dir">
-                               ${i18n.global.t('upload.rename')}
+                               ${i18n.global.t('rename')}
                              </li>
                              <li class="custom-contextmenu-item remove-dir">
                                ${i18n.global.t('delete')}
@@ -43,30 +47,40 @@ const contextmenuDirective: Directive = {
         document.body.appendChild(menuEle)
       }
 
-      const uploadItem = menuEle?.querySelector('.upload-image')
       const copyItem = menuEle?.querySelector('.copy-link')
+      const uploadItem = menuEle?.querySelector('.upload-image')
       const renameItem = menuEle?.querySelector('.rename-dir')
       const removeItem = menuEle?.querySelector('.remove-dir')
+      const pasteItem = menuEle?.querySelector('.paste-image')
 
+      // 图片
       if (type === ContextmenuEnum.img) {
-        copyItem.style.display = 'block'
-        uploadItem.innerHTML = i18n.global.t('management.contextmenu_1')
+        copyItem.style.display = 'flex'
+        uploadItem.style.display = 'flex'
+        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_1')
       }
 
-      if (type === ContextmenuEnum.parentDir) {
-        copyItem.style.display = 'none'
-        uploadItem.innerHTML = i18n.global.t('management.contextmenu_2', {
-          dir: selectedDir === '/' ? i18n.global.t('management.contextmenu_3') : selectedDir
-        })
-      }
-
-      if (type === ContextmenuEnum.childDir) {
-        copyItem.style.display = 'none'
-        renameItem.style.display = 'block'
-        removeItem.style.display = 'block'
-        uploadItem.innerHTML = i18n.global.t('management.contextmenu_2', {
+      // 目录
+      if (type === ContextmenuEnum.dir) {
+        // renameItem.style.display = 'flex'
+        // removeItem.style.display = 'flex'
+        uploadItem.style.display = 'flex'
+        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_2', {
           dir: selectedDir
         })
+      }
+
+      // 目录区域
+      if (type === ContextmenuEnum.dirArea) {
+        uploadItem.style.display = 'flex'
+        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_2', {
+          dir: selectedDir === '/' ? i18n.global.t('management_page.contextmenu_3') : selectedDir
+        })
+      }
+
+      // 上传区域
+      if (type === ContextmenuEnum.uploadArea) {
+        pasteItem.style.display = 'flex'
       }
 
       let setLeft = e.clientX
@@ -112,7 +126,7 @@ const contextmenuDirective: Directive = {
 
         // 重命名目录
         renameItem?.addEventListener('click', async () => {
-          ElMessageBox.prompt('请输入新的名称', i18n.global.t('tips'), {
+          ElMessageBox.prompt(i18n.global.t('config_page.message_7'), i18n.global.t('tip'), {
             confirmButtonText: i18n.global.t('confirm'),
             cancelButtonText: i18n.global.t('cancel')
           }).then(async ({ value }) => {
@@ -120,22 +134,22 @@ const contextmenuDirective: Directive = {
               return
             }
 
-            const {
-              owner,
-              selectedRepo: repo,
-              token,
-              selectedBranch: branch
-            } = computed(() => store.getters.getUserConfigInfo).value
-
-            const res2 = await renameFolder(owner, repo, selectedDir, value, token, branch)
-            console.log('res2 : ', res2)
+            // TODO
+            console.log('new dir: ', value)
           })
         })
 
         // 删除目录
         removeItem?.addEventListener('click', async () => {
-          const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-          await removeDir(userConfigInfo, selectedDir)
+          // TODO
+          console.log('删除目录')
+        })
+
+        // 上传区域粘贴图片
+        pasteItem?.addEventListener('click', () => {
+          store.commit('SET_UPLOAD_AREA_STATE', {
+            isPaste: true
+          })
         })
       }
 

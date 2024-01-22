@@ -19,13 +19,13 @@
         :style="{
           height: isShowBatchTools ? 'calc(100% - 50rem)' : '100%'
         }"
-        v-contextmenu="{ type: ContextmenuEnum.parentDir }"
+        v-contextmenu="{ type: ContextmenuEnum.dirArea }"
       >
         <li
           class="image-management-item"
           v-for="(dir, index) in currentPathDirList"
           :key="'folder-card-' + dir.dir + '-' + index"
-          v-contextmenu="{ type: ContextmenuEnum.childDir, dir: dir.dir }"
+          v-contextmenu="{ type: ContextmenuEnum.dir, dir: dir.dir }"
         >
           <folder-card :folder-obj="dir" />
         </li>
@@ -52,7 +52,8 @@ import { filterDirContent, getDirContent } from '@/views/imgs-management/imgs-ma
 
 import ImageCard from '@/components/image-card/image-card.vue'
 import ImageSelector from '@/components/image-selector/image-selector.vue'
-import { ContextmenuEnum, DirModeEnum, UploadedImageModel } from '@/common/model'
+import { DirModeEnum, UploadedImageModel } from '@/common/model'
+import { ContextmenuEnum } from '@/common/directive/types'
 import ToolsBar from '@/views/imgs-management/components/tools-bar/tools-bar.vue'
 import FolderCard from '@/views/imgs-management/components/folder-card/folder-card.vue'
 

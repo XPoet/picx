@@ -4,7 +4,7 @@ import request from '@/utils/request'
 
 // eslint-disable-next-line consistent-return
 export async function getDirSha(userConfigInfo: UserConfigInfoModel, path: string) {
-  const { owner, selectedRepo: repo, token, selectedBranch: branch } = userConfigInfo
+  const { owner, repo, token, branch } = userConfigInfo
   try {
     // 设置 axios 请求头，使用 GitHub Token 进行身份验证
     axios.defaults.headers.common.Authorization = `Bearer ${token}`

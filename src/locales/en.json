@@ -19,6 +19,7 @@
   "upload": "Upload",
   "rename": "Rename",
   "copy_link": "Copy Image Link",
+  "paste_image": "Paste images",
   "copy_success_1": "Image link has been automatically copied to the system clipboard",
   "copy_success_2": "Image link copied successfully",
   "copy_fail_1": "Copy failed",
