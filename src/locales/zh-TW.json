@@ -25,7 +25,13 @@
   "header": {
     "not_login": "未登入",
     "theme": "主題",
-    "usage_count": "使用次數"
+    "usage_count": "使用次數",
+    "announcement": {
+      "text_1": "網站公告",
+      "text_2": "1、PicX v3.0 進一步簡化使用者操作，統一使用 PicX 內建的倉庫和分支",
+      "text_3": "2、如果你需要繼續使用自訂的倉庫和分支，請使用",
+      "text_4": "不再提示"
+    }
   },
   "nav": {
     "config": "圖床配置",

@@ -73,4 +73,5 @@ export interface UserSettingsModel {
     textColor: string
     opacity: number
   }
+  showAnnouncement?: boolean
 }

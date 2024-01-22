@@ -15,6 +15,7 @@ export interface GlobalSettingsModel {
   theme?: {
     mode: ThemeModeEnum
   }
+  showAnnouncement: boolean
 }
 
 export default interface UserSettingsStateTypes {

@@ -10,10 +10,13 @@
     </div>
 
     <div class="header-right">
+      <div class="btn-item">
+        <site-announcement />
+      </div>
       <div class="btn-item" v-if="userConfigInfo.logined">
         <quick-actions />
       </div>
-      <div class="btn-item">
+      <div class="btn-item avatar">
         <user-avatar-v2 />
       </div>
     </div>
@@ -24,6 +27,7 @@
 import { computed } from 'vue'
 import { store } from '@/stores'
 import router from '@/router'
+import SiteAnnouncement from '@/components/site-announcement/site-announcement.vue'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
 </script>

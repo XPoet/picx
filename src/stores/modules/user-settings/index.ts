@@ -92,7 +92,8 @@ const initSettings: UserSettingsModel = {
     position: WatermarkPositionEnum.rightBottom,
     textColor: '#FFFFFF',
     opacity: 0.5
-  }
+  },
+  showAnnouncement: true
 }
 
 const initUserSettings = (): UserSettingsModel => {
@@ -105,6 +106,7 @@ const initUserSettings = (): UserSettingsModel => {
 
 const initGlobalSettings = (): GlobalSettingsModel => {
   const globalSettings: GlobalSettingsModel = {
+    showAnnouncement: true,
     folded: false,
     elementPlusSize: ElementPlusSizeEnum.default,
     language: LanguageEnum.zhCN,
