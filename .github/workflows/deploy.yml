@@ -2,7 +2,8 @@ name: deploy
 
 on:
   push:
-    branches: [master]
+    branches:
+      - v2
 
 jobs:
   deploy:
@@ -10,10 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Setup Node.js v14.x
+      - name: Setup Node.js v16.x
         uses: actions/setup-node@v1
         with:
-          node-version: "14.x"
+          node-version: "16.x"
 
       - name: Install
         run: npm install
@@ -25,7 +26,9 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           publish_dir: ./dist
-          github_token: ${{ secrets.GH_PAGES_DEPLOY }}
+          personal_token: ${{ secrets.GH_PAGES_DEPLOY }}
+          external_repository: picx-apps/picx-v2
+          publish_branch: gh-pages
           user_name: ${{ secrets.MY_USER_NAME }}
           user_email: ${{ secrets.MY_USER_EMAIL }}
-          commit_message: Update PicX
+          commit_message: PicX v2
