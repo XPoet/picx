@@ -1,24 +1,25 @@
 <template>
   <div
-    class="image-card"
+    class="image-card border-box"
     :class="{ checked: imageObj.checked }"
     v-loading="imageObj.deleting"
     :element-loading-text="$t('management_page.loadingTxt3')"
     @mouseenter="isShowOperateBtn = true"
     @mouseleave="isShowOperateBtn = false"
+    @click.shift="onShiftClick(imageObj)"
   >
-    <div class="image-box">
+    <div class="image-box border-box">
       <el-image
         :src="imgUrl"
         fit="cover"
         loading="lazy"
         lazy
         :hide-on-click-modal="true"
-        :preview-src-list="[imgUrl!]"
+        :preview-src-list="store.getters.getUploadAreaState.pressShiftKey ? [] : [imgUrl!]"
       />
     </div>
 
-    <div class="info-box">
+    <div class="info-box border-box">
       <div class="image-info">
         <!-- 重命名操作 -->
         <div class="rename-operate" v-if="isRenameImg">
@@ -40,7 +41,7 @@
       </div>
     </div>
 
-    <!-- 图片链接操作 -->
+    <!-- 复制图片链接 -->
     <div class="copy-link-box border-box">
       <copy-image-link :img-obj="imageObj" />
     </div>
@@ -62,7 +63,7 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item @click="deleteImageTips(imageObj)">
+              <el-dropdown-item @click="deleteImageTip(imageObj)">
                 {{ $t('delete') }}
               </el-dropdown-item>
               <el-dropdown-item @click.self="showRenameInput(imageObj)">
@@ -80,10 +81,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { ElInput } from 'element-plus'
 import { useRoute } from 'vue-router'
-import { useStore } from '@/stores'
+import { store } from '@/stores'
 import { UploadedImageModel, UploadImageModel } from '@/common/model'
 import {
   getBase64ByImageUrl,
@@ -98,6 +99,7 @@ import {
 import { uploadImageToGitHub } from '@/utils/upload-utils'
 import { deleteSingleImage } from '@/common/api'
 import { RENAME_MAX_LENGTH } from '@/common/constant'
+import i18n from '@/plugins/vue/i18n'
 
 const props = defineProps({
   imageObj: {
@@ -110,9 +112,6 @@ const props = defineProps({
   }
 })
 
-const instance = getCurrentInstance()
-
-const store = useStore()
 const router = useRoute()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const userSettings = computed(() => store.getters.getUserSettings).value
@@ -145,9 +144,9 @@ const deleteOriginImage = (
     if (res) {
       if (isRename) {
         isRenameImg.value = false
-        ElMessage.success({ message: instance?.proxy?.$t('management_page.message4') })
+        ElMessage.success({ message: i18n.global.t('management_page.message4') })
       } else {
-        ElMessage.success({ message: instance?.proxy?.$t('management_page.message5') })
+        ElMessage.success({ message: i18n.global.t('management_page.message5') })
       }
       await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
       await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
@@ -158,13 +157,13 @@ const deleteOriginImage = (
   })
 }
 
-const deleteImageTips = (imageObj: UploadedImageModel) => {
+const deleteImageTip = (imageObj: UploadedImageModel) => {
   ElMessageBox.confirm(
     `
-    <div>${instance?.proxy?.$t('management_page.delTips')}：</div>
+    <div>${i18n.global.t('management_page.delTips')}：</div>
     <strong>${imageObj.name}</strong>
     `,
-    instance?.proxy?.$t('tip'),
+    i18n.global.t('tip'),
     {
       dangerouslyUseHTMLString: true,
       type: 'warning'
@@ -199,13 +198,13 @@ const updateRename = async () => {
   const { imageObj } = props
 
   if (!renameInputValue.value) {
-    ElMessage.error({ message: instance?.proxy?.$t('management_page.message1') })
+    ElMessage.error({ message: i18n.global.t('management_page.message1') })
     renameInputRef.value?.focus()
     return
   }
 
   if (renameInputValue.value === getFilename(imageObj.name)) {
-    ElMessage.error({ message: instance?.proxy?.$t('management_page.message2') })
+    ElMessage.error({ message: i18n.global.t('management_page.message2') })
     isRenameImg.value = false
     return
   }
@@ -213,11 +212,10 @@ const updateRename = async () => {
   const renameImg = async () => {
     const loading = ElLoading.service({
       lock: true,
-      text: instance?.proxy?.$t('management_page.loadingTxt2')
+      text: i18n.global.t('management_page.loadingTxt2')
     })
 
     // 重命名的逻辑是先上传一张新名称的图片，再删除旧图片
-
     const suffix = getFileSuffix(imageObj.name)
     const newUuid = getUuid()
     const newFilename = `${renameInputValue.value}${
@@ -253,18 +251,18 @@ const updateRename = async () => {
         await deleteOriginImage(imageObj, true)
         await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
       } else {
-        ElMessage.error({ message: instance?.proxy?.$t('management_page.message3') })
+        ElMessage.error({ message: i18n.global.t('management_page.message3') })
       }
     } else {
-      ElMessage.error({ message: instance?.proxy?.$t('management_page.message3') })
+      ElMessage.error({ message: i18n.global.t('management_page.message3') })
     }
     loading.close()
     isRenameImg.value = false
   }
 
   ElMessageBox.confirm(
-    instance?.proxy?.$t('management_page.renameTips', { name: renameInputValue.value }),
-    instance?.proxy?.$t('tip'),
+    i18n.global.t('management_page.renameTips', { name: renameInputValue.value }),
+    i18n.global.t('tip'),
     {
       type: 'info'
     }
@@ -289,12 +287,12 @@ const visibleChange = (e: boolean) => {
 const viewImageProperties = (imgObj: UploadedImageModel) => {
   ElMessageBox.confirm(
     `
-    <div>${instance?.proxy?.$t('management_page.imageName')}：<strong>${imgObj.name}</strong></div>
-    <div>${instance?.proxy?.$t('management_page.imageSize')}：<strong>${getFileSize(
+    <div>${i18n.global.t('management_page.imageName')}：<strong>${imgObj.name}</strong></div>
+    <div>${i18n.global.t('management_page.imageSize')}：<strong>${getFileSize(
       imgObj.size
     )} KB</strong></div>
     `,
-    instance?.proxy?.$t('management_page.property'),
+    i18n.global.t('management_page.property'),
     {
       showCancelButton: false,
       showConfirmButton: false,
@@ -302,6 +300,10 @@ const viewImageProperties = (imgObj: UploadedImageModel) => {
       type: 'info'
     }
   )
+}
+
+const onShiftClick = (imageObj: UploadedImageModel) => {
+  togglePick(imageObj)
 }
 </script>
 

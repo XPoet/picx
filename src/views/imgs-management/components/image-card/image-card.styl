@@ -1,6 +1,4 @@
 .image-card {
-  position relative
-  box-sizing border-box
   width 100%
   box-shadow 1rem 2rem 3rem var(--shadow-color)
   user-select none
@@ -10,8 +8,11 @@
     box-shadow 0 0 10rem var(--shadow-hover-color)
   }
 
+  &.checked {
+    border 2rem solid var(--el-color-primary-light-7)
+  }
+
   .image-box {
-    position relative
     width 100%
     height 150rem
 
@@ -23,8 +24,6 @@
 
 
   .info-box {
-    position relative
-    box-sizing border-box
     width 100%
     margin-top 5rem
     padding 5rem

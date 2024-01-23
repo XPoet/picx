@@ -45,23 +45,23 @@
 
 <script lang="ts" setup>
 import { computed, onMounted, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
 import { useStore } from '@/stores'
 import { getRepoPathContent } from '@/common/api'
-import { filterDirContent, getDirContent } from '@/views/imgs-management/imgs-management.util'
-
-import ImageCard from '@/components/image-card/image-card.vue'
-import ImageSelector from '@/components/image-selector/image-selector.vue'
+import {
+  filterDirContent,
+  getDirContent,
+  shiftKeyHandle
+} from '@/views/imgs-management/imgs-management.util'
 import { DirModeEnum, UploadedImageModel } from '@/common/model'
 import { ContextmenuEnum } from '@/common/directive/types'
+import ImageSelector from '@/components/image-selector/image-selector.vue'
 import ToolsBar from '@/views/imgs-management/components/tools-bar/tools-bar.vue'
 import FolderCard from '@/views/imgs-management/components/folder-card/folder-card.vue'
+import ImageCard from '@/views/imgs-management/components/image-card/image-card.vue'
 
 const store = useStore()
-const router = useRouter()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const loginStatus = computed(() => store.getters.getUserLoginStatus).value
 const dirObject = computed(() => store.getters.getDirObject).value
 
 const renderKey = ref(new Date().getTime()) // key for update image-selector component
@@ -77,8 +77,8 @@ async function dirContentHandle(dir: string) {
 
   const dirContent = getDirContent(dir, dirObject)
   if (dirContent) {
-    const dirs = filterDirContent(dir, dirContent, 'dir')
-    const images = filterDirContent(dir, dirContent, 'image')
+    const dirs = filterDirContent(dirContent, 'dir')
+    const images = filterDirContent(dirContent, 'image')
     if (!dirs.length && !images.length) {
       await getRepoPathContent(userConfigInfo, dir)
     } else {
@@ -129,17 +129,9 @@ async function reloadCurrentDirContent() {
 }
 
 onMounted(() => {
+  shiftKeyHandle()
   initDirImageList()
 })
-
-watch(
-  () => loginStatus,
-  (nv) => {
-    if (nv === false) {
-      router.push('/config')
-    }
-  }
-)
 
 watch(
   () => userConfigInfo.viewDir,
@@ -156,8 +148,8 @@ watch(
     const { viewDir } = userConfigInfo
     const dirContent = getDirContent(viewDir, nv)
     if (dirContent) {
-      currentPathDirList.value = filterDirContent(viewDir, dirContent, 'dir')
-      currentPathImageList.value = filterDirContent(viewDir, dirContent, 'image')
+      currentPathDirList.value = filterDirContent(dirContent, 'dir')
+      currentPathImageList.value = filterDirContent(dirContent, 'image')
       store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
     }
   },

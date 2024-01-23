@@ -5,7 +5,8 @@ import RootStateTypes from '../../types'
 const uploadAreaModule: Module<UploadAreaStateTypes, RootStateTypes> = {
   state: {
     isActive: false,
-    isPaste: false
+    isPaste: false,
+    pressShiftKey: false
   },
   mutations: {
     SET_UPLOAD_AREA_STATE(state: UploadAreaStateTypes, info: any) {

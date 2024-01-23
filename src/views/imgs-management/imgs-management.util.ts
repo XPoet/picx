@@ -1,4 +1,5 @@
 import { DirObject } from '@/stores/modules/dir-image-list/types'
+import { store } from '@/stores'
 
 function getContent(targetContent: any, dirList: string[], n: number): any {
   if (targetContent) {
@@ -30,11 +31,10 @@ export const getDirContent = (dirPath: string, dirObj: DirObject) => {
 
 /**
  * 过滤当前目录的内容（子目录或图片）
- * @param dirPath
  * @param content
  * @param type
  */
-export const filterDirContent = (dirPath: string, content: any, type: string): any => {
+export const filterDirContent = (content: any, type: string): any => {
   if (type === 'dir') {
     return content.childrenDirs?.filter((x: any) => x.type === 'dir')
   }
@@ -44,4 +44,24 @@ export const filterDirContent = (dirPath: string, content: any, type: string): a
   }
 
   return []
+}
+
+export const shiftKeyHandle = () => {
+  document.addEventListener('keydown', (e) => {
+    const keyCode = e.keyCode || e.which || e.charCode
+    if (keyCode === 16) {
+      store.commit('SET_UPLOAD_AREA_STATE', {
+        pressShiftKey: true
+      })
+    }
+  })
+
+  document.addEventListener('keyup', (e) => {
+    const keyCode = e.keyCode || e.which || e.charCode
+    if (keyCode === 16) {
+      store.commit('SET_UPLOAD_AREA_STATE', {
+        pressShiftKey: false
+      })
+    }
+  })
 }
