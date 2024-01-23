@@ -28,9 +28,6 @@ const initSettings: UserSettingsModel = {
     enable: true,
     encoder: CompressEncoderEnum.webP
   },
-  theme: {
-    mode: ThemeModeEnum.system
-  },
   imageLinkType: {
     selected: ImageLinkTypeEnum.GitHub,
     presetList: {
@@ -110,7 +107,9 @@ const initGlobalSettings = (): GlobalSettingsModel => {
     folded: false,
     elementPlusSize: ElementPlusSizeEnum.default,
     language: LanguageEnum.zhCN,
-    languageToggleTip: true
+    languageToggleTip: true,
+    theme: ThemeModeEnum.system,
+    useCloudSettings: false
   }
 
   const SSSettings = getSession(SS_GLOBAL_SETTINGS)

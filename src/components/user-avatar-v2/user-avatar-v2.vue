@@ -60,8 +60,8 @@
         <el-select
           size="small"
           style="width: 100rem"
-          v-model="userSettings.theme.mode"
-          @change="persistUserSettings"
+          v-model="globalSettings.theme"
+          @change="persistGlobalSettings"
         >
           <el-option
             :label="$t('settings_page.theme.system')"
@@ -103,7 +103,6 @@ const router = useRouter()
 const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const userSettings = computed(() => store.getters.getUserSettings).value
 const globalSettings = computed(() => store.getters.getGlobalSettings).value
 
 const onLogin = () => {
@@ -119,10 +118,6 @@ const onLogout = () => {
   setTimeout(() => {
     window.location.reload()
   })
-}
-
-const persistUserSettings = () => {
-  store.dispatch('USER_SETTINGS_PERSIST')
 }
 
 const persistGlobalSettings = () => {

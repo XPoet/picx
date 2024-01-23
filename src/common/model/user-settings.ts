@@ -46,9 +46,6 @@ export interface UserSettingsModel {
       prefix: string
     }
   }
-  theme: {
-    mode: ThemeModeEnum
-  }
   compress: {
     enable: boolean
     encoder: CompressEncoderEnum

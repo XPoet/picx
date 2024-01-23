@@ -12,10 +12,9 @@ export interface GlobalSettingsModel {
   elementPlusSize: ElementPlusSizeEnum
   language: LanguageEnum
   languageToggleTip: boolean
-  theme?: {
-    mode: ThemeModeEnum
-  }
+  theme: ThemeModeEnum
   showAnnouncement: boolean
+  useCloudSettings: boolean
 }
 
 export default interface UserSettingsStateTypes {

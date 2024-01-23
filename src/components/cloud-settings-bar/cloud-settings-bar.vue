@@ -76,6 +76,9 @@ const useCloudSettings = () => {
   if (store.getters.getCloudSettings) {
     deepAssignObject(userSettings, store.getters.getCloudSettings)
     store.dispatch('USER_SETTINGS_PERSIST')
+    store.dispatch('SET_GLOBAL_SETTINGS', {
+      useCloudSettings: true
+    })
   }
 }
 
@@ -125,17 +128,24 @@ watch(
 watch(
   () => store.getters.getCloudSettings,
   (cs) => {
+    // 存在云端设置数据
     if (cs) {
-      // 存在云端设置数据，提示是否使用
-      selectedAction.value = CloudSettingsActions.use
-
-      // 判断 云端数据 和 本地数据 是否相等，相等则禁止点击
-      if (deepObjectEqual(cs, userSettings)) {
+      // 已使用
+      if (store.getters.getGlobalSettings.useCloudSettings) {
+        // 判断 云端数据 和 本地数据 是否相等，相等则禁止点击
+        if (deepObjectEqual(cs, userSettings)) {
+          saveDisabled.value = true
+          selectedAction.value = CloudSettingsActions.equal
+        } else {
+          saveDisabled.value = false
+          selectedAction.value = CloudSettingsActions.update
+        }
+      } else if (deepObjectEqual(cs, userSettings)) {
         saveDisabled.value = true
         selectedAction.value = CloudSettingsActions.equal
       } else {
         saveDisabled.value = false
-        selectedAction.value = CloudSettingsActions.update
+        selectedAction.value = CloudSettingsActions.use
       }
     } else {
       // 不存在云端设置数据，提示是否保存

@@ -151,7 +151,7 @@
         <ul class="setting-list">
           <li class="setting-item">
             {{ $t('header.theme') }}：
-            <el-select v-model="userSettings.theme.mode" @change="saveUserSettings">
+            <el-select v-model="globalSettings.theme" @change="persistGlobalSettings">
               <el-option
                 :label="$t('settings_page.theme.system')"
                 :value="ThemeModeEnum.system"
@@ -178,10 +178,15 @@ import { store } from '@/stores'
 import { ImageLinkTypeEnum, ThemeModeEnum, UserSettingsModel } from '@/common/model'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
+const globalSettings = computed(() => store.getters.getGlobalSettings).value
 const deployStatusInfo = computed(() => store.getters.getDeployStatusInfo).value
 
 const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
+}
+
+const persistGlobalSettings = () => {
+  store.dispatch('USER_GLOBAL_PERSIST')
 }
 
 const saveUserSettings = () => {
