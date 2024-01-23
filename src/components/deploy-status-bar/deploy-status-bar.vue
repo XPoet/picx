@@ -1,7 +1,11 @@
 <template>
-  <div class="deploy-box border-box">
-    <div class="deploy-item border-box" v-for="(di, idx) in deployStatusInfo" :key="idx + di.uuid">
-      <div class="left-wrap">
+  <div class="deploy-status-bar-box border-box">
+    <div
+      class="deploy-item status-bar info"
+      v-for="(di, idx) in deployStatusInfo"
+      :key="idx + di.uuid"
+    >
+      <div class="left-wrap flex-start">
         <span
           class="deploy-status-icon info-item"
           :class="{
@@ -25,18 +29,9 @@
       </div>
 
       <div class="right-wrap">
-        <el-tooltip
-          placement="top"
-          :content="
-            $t('settings_page.image_hosting_deploy.deploy_to', {
-              server: getDeployServerName(di.type)
-            })
-          "
-        >
-          <el-button type="primary" :disabled="disabled" text @click="onDeploy(di)">
-            {{ $t('settings_page.image_hosting_deploy.one_click_deploy') }}
-          </el-button>
-        </el-tooltip>
+        <el-button type="primary" :disabled="disabled" text @click="onDeploy(di)">
+          {{ $t('settings_page.image_hosting_deploy.one_click_deploy') }}
+        </el-button>
       </div>
     </div>
   </div>

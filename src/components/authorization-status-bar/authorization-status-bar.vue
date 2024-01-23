@@ -1,6 +1,6 @@
 <template>
   <div
-    class="authorization-status-box border-box"
+    class="authorization-status-box status-bar"
     :class="{
       success: isAutoAuthorize && token && !isAuthorizeExpire(),
       warning: isAutoAuthorize && token && !isAuthorizeExpire() && installed === false,
@@ -17,7 +17,7 @@
       <span v-else>{{ $t('authorization.text_5') }}</span>
     </div>
 
-    <el-button text :icon="icon.IEpSwitch" @click="onOK">
+    <el-button text type="primary" :icon="icon.IEpSwitch" @click="onOK">
       {{ $t('authorization.text_7') }}
     </el-button>
   </div>

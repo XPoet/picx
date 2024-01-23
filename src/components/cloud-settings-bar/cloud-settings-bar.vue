@@ -1,5 +1,12 @@
 <template>
-  <div class="cloud-settings-data-box border-box" v-if="isShowBar">
+  <div
+    v-if="isShowBar"
+    class="cloud-settings-data-box status-bar info"
+    :class="{
+      warning: selectedAction === CloudSettingsActions.update,
+      success: selectedAction === CloudSettingsActions.equal
+    }"
+  >
     <div>{{ actionsTip }}</div>
     <el-button
       type="primary"
