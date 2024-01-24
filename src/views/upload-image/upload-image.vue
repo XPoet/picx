@@ -122,9 +122,9 @@ const afterUploadSuccess = async (uploadedImg: UploadedImageModel[], isBatch: bo
   resetGettingImages()
   // 自动复制图片链接到系统剪贴板
   if (isBatch) {
-    batchCopyImageLinks(uploadedImg, userConfigInfo, userSettings, true)
+    batchCopyImageLinks(uploadedImg, true)
   } else {
-    copyImageLink(uploadedImg[0], userConfigInfo, userSettings, true)
+    copyImageLink(uploadedImg[0], true)
   }
   await store.dispatch('SET_USER_CONFIG_INFO', {
     viewDir: userConfigInfo.selectedDir

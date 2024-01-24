@@ -26,7 +26,6 @@
   "header": {
     "not_login": "未登录",
     "theme": "主题",
-    "usage_count": "使用次数",
     "announcement": {
       "text_1": "网站公告",
       "text_2": "1、PicX v3.0 进一步简化用户操作，统一使用 PicX 内置的仓库和分支",
@@ -189,10 +188,9 @@
     "property": "属性",
     "delTips": "此操作将会永久删除图片",
     "delTips2": "已选中 {total} 张图片，是否批量删除？",
-    "renameTips": "该图片重命名为 {name} ？",
-    "message1": "图片名不能为空",
+    "message1": "图片名称不能为空",
     "message2": "图片名无改变",
-    "message3": "重命名失败",
+    "message3": "重命名失败，请重试",
     "message4": "更新成功",
     "message5": "删除成功",
     "message6": "批量删除成功",
@@ -207,7 +205,8 @@
     "selectTotal": "已选择 {total} 张图片",
     "contextmenu_1": "从当前位置上传新图片",
     "contextmenu_2": "上传图片到 {dir}",
-    "contextmenu_3": "根目录"
+    "contextmenu_3": "根目录",
+    "text_1": "请输入新的图片名称"
   },
   "toolbox": {
     "tool_1": "图片压缩",

@@ -25,78 +25,26 @@
 
   .info-box {
     width 100%
-    margin-top 5rem
     padding 5rem
 
-    .image-info {
-      display flex
-      flex-direction column
-      justify-content space-between
-      box-sizing border-box
-      width 100%
-      height 100%
-      color var(--text-color)
-
-      .rename-operate {
-        display flex
-        align-items center
-        justify-content space-between
-        height 22rem
-
-        .rename-input {
-          width 122rem
-        }
-      }
-
-
-      .filename {
-        height 18rem
-        margin-bottom 6rem
-        overflow hidden
-        font-size 14rem
-        white-space nowrap
-        text-overflow ellipsis
-      }
+    .filename {
+      color var(--text-color-3)
+      font-size 13rem
     }
   }
 
 
-  .operation-box {
+  .checked-box {
     position absolute
-    top 10rem
-    right 8rem
-    display flex
-    justify-content space-between
-    width calc(100% - 16rem)
-
-    .operation-left {
-      .picked-btn {
-        i {
-          font-weight bold
-        }
-      }
-    }
-
-    .operation-right {
-      display flex
-    }
-
-    .operation-btn {
-      display flex
-      align-items center
-      justify-content center
-      width 32rem
-      height 32rem
-      margin-right 8rem
-      font-size 18rem
-      background var(--background-color)
-      border-radius 50%
-      box-shadow 0 0 6rem var(--shadow-color)
-      cursor pointer
-
-      &:last-child {
-        margin-right 0
-      }
-    }
+    top 6rem
+    left 6rem
+    box-sizing border-box
+    width 22rem
+    height 22rem
+    padding-top 2rem
+    background var(--background-color)
+    border-radius 2rem
+    box-shadow 0 0 6rem var(--shadow-color)
+    cursor pointer
   }
 }

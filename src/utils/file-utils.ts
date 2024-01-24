@@ -10,8 +10,8 @@ import i18n from '@/plugins/vue/i18n'
  * @param filename
  */
 export const getFilename = (filename: string) => {
-  const splitIndex = filename.indexOf('.')
-  return filename.substr(0, splitIndex).trim().replace(/\s+/g, '-')
+  const splitIndex = filename.lastIndexOf('.')
+  return filename.substring(0, splitIndex).trim().replace(/\s+/g, '-')
 }
 
 /**

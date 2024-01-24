@@ -171,7 +171,7 @@
     "message6": "Bulk image upload successful",
     "message7": "Upload failed, please try again later",
     "message8": "Image uploaded successfully",
-    "fold": "Collapse",
+    "fold": "Fold",
     "expand": "Expand",
     "add_hash": "Add Hash",
     "add_prefix": "Add Prefix",
@@ -188,10 +188,9 @@
     "property": "Properties",
     "delTips": "This action will permanently delete the image",
     "delTips2": "Selected {total} images, do you want to delete them in bulk?",
-    "renameTips": "Rename this image to {name}?",
     "message1": "Image name cannot be empty",
     "message2": "No changes in image name",
-    "message3": "Rename failed",
+    "message3": "Rename failed, please try again",
     "message4": "Update successful",
     "message5": "Deletion successful",
     "message6": "Bulk deletion successful",
@@ -206,7 +205,8 @@
     "selectTotal": "Selected {total} images",
     "contextmenu_1": "Upload new images from the current location",
     "contextmenu_2": "Upload images to {dir}",
-    "contextmenu_3": "Root Directory"
+    "contextmenu_3": "Root Directory",
+    "text_1": "Please enter a new image name"
   },
   "toolbox": {
     "tool_1": "Image Compression",

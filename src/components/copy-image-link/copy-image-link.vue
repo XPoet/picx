@@ -22,7 +22,6 @@ const props = defineProps({
 })
 
 const userSettings = computed(() => store.getters.getUserSettings).value
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const imgLinkRuleTip = computed(() => {
   if (userSettings.imageLinkFormat.enable) {
     return `${userSettings.imageLinkType.selected} & ${userSettings.imageLinkFormat.selected}`
@@ -33,7 +32,7 @@ const imgLinkRuleTip = computed(() => {
 let img = ref(props.imgObj as UploadedImageModel).value
 
 const oneClickCopy = () => {
-  copyImageLink(img, userConfigInfo, userSettings)
+  copyImageLink(img)
 }
 
 onUpdated(() => {

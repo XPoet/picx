@@ -120,7 +120,7 @@
     <div
       class="after-upload-handle-container flex-center"
       v-if="imgObj.uploadStatus.progress === 100"
-      @click="copyImageLink(imgObj.uploadedImg, userConfigInfo, userSettings)"
+      @click="copyImageLink(imgObj.uploadedImg!)"
     >
       {{ $t('copy_link') }}
     </div>
@@ -172,13 +172,10 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['remove'])
+const emits = defineEmits(['remove'])
+const userSettings = computed(() => store.getters.getUserSettings).value
 
 const renameInputRef = ref<any>(null)
-
-const userSettings = computed(() => store.getters.getUserSettings).value
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-
 const loadingText = ref('')
 
 const fileNameOperateData = reactive({
@@ -191,7 +188,7 @@ const fileNameOperateData = reactive({
 const imgNameOperateFolded = ref<boolean>(true)
 
 const remove = (uuid: string) => {
-  emit('remove', uuid)
+  emits('remove', uuid)
 }
 
 const onRename = () => {

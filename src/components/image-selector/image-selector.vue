@@ -54,7 +54,6 @@ const instance = getCurrentInstance()
 
 const getImageCardCheckedArr = computed(() => store.getters.getImageCardCheckedArr)
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const userSettings = computed(() => store.getters.getUserSettings).value
 const getImageCardCheckedNum = computed(() => getImageCardCheckedArr.value.length || 0)
 
 watch(
@@ -66,7 +65,7 @@ watch(
 )
 
 const batchCopy = () => {
-  batchCopyImageLinks(getImageCardCheckedArr.value, userConfigInfo, userSettings)
+  batchCopyImageLinks(getImageCardCheckedArr.value)
 }
 
 const cancelPick = () => {
