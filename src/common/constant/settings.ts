@@ -14,6 +14,6 @@ export const IMG_UPLOAD_MAX_SIZE: number = 30 // MB
 export const RENAME_MAX_LENGTH: number = 18
 
 /**
- * GitHub APP 授权 Token 过期时间（13 小时）
+ * GitHub APP 授权 Token 过期时间（48 小时）
  */
-export const GITHUB_AUTHORIZE_EXPIRE: number = 13 * 60 * 60 * 1000
+export const GITHUB_AUTHORIZE_EXPIRE: number = 48 * 60 * 60 * 1000

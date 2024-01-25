@@ -11,6 +11,7 @@ export interface UploadedImageModel {
   size: number
   deleting: boolean
   checked: boolean
+  active?: boolean
 }
 
 /**

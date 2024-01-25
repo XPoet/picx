@@ -19,10 +19,12 @@ let isAddEventListenerOfContextmenu: boolean = false
 const contextmenuDirective: Directive = {
   mounted(el: any, binding: any) {
     el.addEventListener('contextmenu', (e: any) => {
-      const { dir, type, img } = binding.value
-
       e.preventDefault()
       e.stopPropagation()
+
+      const { type, dir, img } = binding.value
+
+      store.commit('SET_UPLOAD_AREA_STATE', { activeInfo: { dir, type, img } })
 
       const viewDir = computed(() => store.getters.getUserViewDir).value
 
@@ -63,21 +65,28 @@ const contextmenuDirective: Directive = {
       const propertyItem = menuEle?.querySelector('.property')
       const pasteImageItem = menuEle?.querySelector('.paste-image')
 
+      const hideAllContextmenu = () => {
+        menuEle.querySelectorAll('.custom-contextmenu-item').forEach((d: HTMLElement) => {
+          d.style.display = 'none'
+        })
+      }
+
+      const showContextmenu = (domList: HTMLElement[]) => {
+        domList.forEach((d: HTMLElement) => {
+          d.style.display = 'flex'
+        })
+      }
+
       // 图片
       if (type === ContextmenuEnum.img) {
-        uploadItem.style.display = 'flex'
-        copyLinkItem.style.display = 'flex'
-        removeItem.style.display = 'flex'
-        renameItem.style.display = 'flex'
-        propertyItem.style.display = 'flex'
-        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_1')
+        hideAllContextmenu()
+        showContextmenu([copyLinkItem, removeItem, renameItem, propertyItem])
       }
 
       // 目录
       if (type === ContextmenuEnum.dir) {
-        // renameItem.style.display = 'flex'
-        // removeItem.style.display = 'flex'
-        uploadItem.style.display = 'flex'
+        hideAllContextmenu()
+        showContextmenu([uploadItem])
         uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_2', {
           dir: selectedDir
         })
@@ -85,15 +94,15 @@ const contextmenuDirective: Directive = {
 
       // 目录区域
       if (type === ContextmenuEnum.dirArea) {
-        uploadItem.style.display = 'flex'
-        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_2', {
-          dir: selectedDir === '/' ? i18n.global.t('management_page.contextmenu_3') : selectedDir
-        })
+        hideAllContextmenu()
+        showContextmenu([uploadItem])
+        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_1')
       }
 
       // 上传区域
       if (type === ContextmenuEnum.uploadArea) {
-        pasteImageItem.style.display = 'flex'
+        hideAllContextmenu()
+        showContextmenu([pasteImageItem])
       }
 
       let setLeft = e.clientX
@@ -170,15 +179,17 @@ const contextmenuDirective: Directive = {
         })
       }
 
-      const closeMenu = () => {
+      const closeContextMenu = () => {
+        store.commit('SET_UPLOAD_AREA_STATE', { activeInfo: null })
         if (menuEle) {
-          document.removeEventListener('click', closeMenu)
+          document.removeEventListener('click', closeContextMenu)
           document.body.removeChild(menuEle)
           menuEle = null
           isAddEventListenerOfContextmenu = false
         }
       }
-      document.addEventListener('click', closeMenu)
+      document.addEventListener('click', closeContextMenu)
+      document.addEventListener('dblclick', closeContextMenu)
     })
   }
 }

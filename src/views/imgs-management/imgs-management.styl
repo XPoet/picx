@@ -1,4 +1,5 @@
 $top-box-height = 50rem
+$grid-gap = 20rem
 
 .management-page-container {
   display flex
@@ -32,25 +33,73 @@ $top-box-height = 50rem
     border 1rem solid var(--border-color)
     border-bottom none
 
-    .image-management-list {
-      display flex
-      flex-wrap wrap
-      align-content flex-start
+    .content-list-box {
       width 100%
-      padding 2rem
+      height 100%
+      padding $grid-gap
       overflow-y auto
 
-      li.image-management-item {
-        position relative
-        box-sizing border-box
-        padding 10rem
+      &.has-tools {
+        height calc(100% - 50rem)
+      }
 
-        &.image {
-          width 230rem
+
+      .list-item {
+        display grid
+        grid-auto-rows 120rem
+        grid-auto-flow row
+        grid-gap $grid-gap
+        grid-template-columns repeat(10, 1fr)
+      }
+
+
+      .dir-card-list {
+        margin-bottom $grid-gap
+
+        .dir-card-item {
+          grid-row span 1
+          grid-column span 1
         }
+      }
 
-        &:last-child {
-          margin-right 0
+
+      .image-card-list {
+        .image-card-item {
+          grid-row span 2
+          grid-column span 2
+        }
+      }
+
+
+      +picx-tablet-2() {
+        padding $grid-gap * 0.9
+
+        .list-item {
+          grid-auto-rows 100rem
+          grid-gap $grid-gap * 0.9
+          grid-template-columns repeat(8, 1fr)
+        }
+      }
+
+
+      +picx-tablet() {
+        padding $grid-gap * 0.8
+
+        .list-item {
+          grid-auto-rows 100rem
+          grid-gap $grid-gap * 0.8
+          grid-template-columns repeat(6, 1fr)
+        }
+      }
+
+
+      +picx-mobile() {
+        padding $grid-gap* 0.9
+
+        .list-item {
+          grid-auto-rows 120rem
+          grid-gap $grid-gap* 0.9
+          grid-template-columns repeat(4, 1fr)
         }
       }
     }

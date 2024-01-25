@@ -1,13 +1,12 @@
 <template>
   <div class="tools-bar border-box">
     <div class="left flex-start">
-      <el-button
-        text
-        circle
-        :icon="icon.IEpArrowLeftBold"
-        :disabled="userConfigInfo.viewDir === '/'"
-        @click="onBack"
-      />
+      <el-button text circle :disabled="userConfigInfo.viewDir === '/'" @click="onBack">
+        <el-icon :size="18">
+          <IEpArrowLeftBold></IEpArrowLeftBold>
+        </el-icon>
+      </el-button>
+
       <div class="dir-info flex-start">
         <el-icon><IEpFolder /></el-icon>
         {{ userConfigInfo.viewDir.split('/').join(' / ') }}
@@ -30,10 +29,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, shallowRef } from 'vue'
+import { computed } from 'vue'
 import { store } from '@/stores'
-
-const icon = shallowRef({ IEpArrowLeftBold })
 
 const emits = defineEmits(['reload'])
 

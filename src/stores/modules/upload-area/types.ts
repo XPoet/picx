@@ -3,4 +3,5 @@ export default interface UploadAreaStateTypes {
   isActive?: boolean
   isPaste?: boolean
   pressShiftKey?: boolean
+  activeInfo?: any
 }

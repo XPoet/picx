@@ -1,14 +1,16 @@
 <template>
   <div
     class="image-card border-box"
-    :class="{ checked: imageObj.checked }"
+    :class="{ checked: imageObj.checked, active: imageObj.active }"
     v-loading="imageObj.deleting"
     :element-loading-text="$t('management_page.loadingTxt3')"
     @mouseenter="isShowOperateBtn = true"
     @mouseleave="isShowOperateBtn = false"
     @click.shift="onShiftClick(imageObj)"
+    v-contextmenu="{ type: ContextmenuEnum.img, img: imageObj }"
+    ref="imageCardRef"
   >
-    <div class="image-box border-box">
+    <div class="image-card-top border-box">
       <el-image
         :src="imgUrl"
         fit="cover"
@@ -18,17 +20,19 @@
         :preview-src-list="store.getters.getUploadAreaState.pressShiftKey ? [] : [imgUrl!]"
       />
     </div>
-
-    <div class="info-box border-box">
+    <div class="image-card-bottom border-box">
       <!-- 文件名 -->
-      <div class="filename text-ellipsis">{{ imageObj.name }}</div>
+      <div class="filename text-ellipsis border-box">
+        {{ imageObj.name }}
+      </div>
+
+      <!-- 复制图片链接 -->
+      <div class="copy-link text-ellipsis border-box" @click="copyImageLink(imageObj)">
+        {{ $t('copy_link') }}
+      </div>
     </div>
 
-    <!-- 复制图片链接 -->
-    <div class="copy-link-box border-box">
-      <copy-image-link :img-obj="imageObj" />
-    </div>
-
+    <!-- 选择框 -->
     <div
       v-show="isShowOperateBtn || imageObj.checked"
       class="checked-box flex-center"
@@ -43,7 +47,8 @@
 import { computed, ref } from 'vue'
 import { store } from '@/stores'
 import { UploadedImageModel } from '@/common/model'
-import { generateImageLink } from '@/utils'
+import { copyImageLink, generateImageLink } from '@/utils'
+import { ContextmenuEnum } from '@/common/directive/types'
 
 const props = defineProps({
   imageObj: {

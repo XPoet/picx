@@ -1,5 +1,12 @@
 <template>
-  <div class="folder-card" @dblclick="onDblClick">
+  <div
+    class="folder-card border-box"
+    :class="{
+      active: folderObj.active
+    }"
+    @dblclick="onDblClick"
+    v-contextmenu="{ type: ContextmenuEnum.dir, dir: folderObj.dir }"
+  >
     <div class="icon">
       <svg
         t="1639999626518"
@@ -30,6 +37,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { store } from '@/stores'
+import { ContextmenuEnum } from '@/common/directive/types'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 

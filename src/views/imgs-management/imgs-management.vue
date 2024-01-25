@@ -11,34 +11,33 @@
       <image-selector
         v-if="currentPathImageList.length"
         :currentDirImageList="currentPathImageList"
-        @updateInitImageList="currentPathImageList"
+        @updateInitImageList="currentPathImageList as any"
         :key="renderKey"
       ></image-selector>
-      <ul
-        class="image-management-list border-box"
-        :style="{
-          height: isShowBatchTools ? 'calc(100% - 50rem)' : '100%'
-        }"
+      <div
+        class="content-list-box border-box"
+        :class="{ 'has-tools': isShowBatchTools }"
         v-contextmenu="{ type: ContextmenuEnum.dirArea }"
       >
-        <li
-          class="image-management-item"
-          v-for="(dir, index) in currentPathDirList"
-          :key="'folder-card-' + dir.dir + '-' + index"
-          v-contextmenu="{ type: ContextmenuEnum.dir, dir: dir.dir }"
-        >
-          <folder-card :folder-obj="dir" />
-        </li>
-        <div style="width: 100%" />
-        <li
-          class="image-management-item image"
-          v-for="(image, index) in currentPathImageList"
-          :key="'image-card-' + index"
-          v-contextmenu="{ type: ContextmenuEnum.img, img: image }"
-        >
-          <image-card :image-obj="image" />
-        </li>
-      </ul>
+        <ul class="dir-card-list list-item border-box">
+          <li
+            class="dir-card-item border-box"
+            v-for="(dir, idx) in currentPathDirList"
+            :key="'folder-card-' + dir.dir + '-' + idx"
+          >
+            <folder-card :class="'folder-card-' + idx" :folder-obj="dir" />
+          </li>
+        </ul>
+        <ul class="image-card-list list-item border-box">
+          <li
+            class="image-card-item border-box"
+            v-for="(image, idx) in currentPathImageList"
+            :key="'image-card-' + idx"
+          >
+            <image-card :image-obj="image" />
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -54,7 +53,7 @@ import {
 } from '@/views/imgs-management/imgs-management.util'
 import { DirModeEnum, UploadedImageModel } from '@/common/model'
 import { ContextmenuEnum } from '@/common/directive/types'
-import ImageSelector from '@/components/image-selector/image-selector.vue'
+import ImageSelector from '@/views/imgs-management/components/image-selector/image-selector.vue'
 import ToolsBar from '@/views/imgs-management/components/tools-bar/tools-bar.vue'
 import FolderCard from '@/views/imgs-management/components/folder-card/folder-card.vue'
 import ImageCard from '@/views/imgs-management/components/image-card/image-card.vue'
@@ -67,8 +66,8 @@ const dirObject = computed(() => store.getters.getDirObject).value
 const renderKey = ref(new Date().getTime()) // key for update image-selector component
 const loadingImageList = ref(false)
 
-const currentPathDirList = ref([])
-const currentPathImageList = ref<any>([])
+const currentPathDirList = ref<any[]>([])
+const currentPathImageList = ref<UploadedImageModel[]>([])
 
 const isShowBatchTools = ref(false)
 
@@ -160,6 +159,22 @@ watch(
   () => currentPathImageList.value,
   (nv: UploadedImageModel[]) => {
     isShowBatchTools.value = nv.filter((x) => x.checked).length > 0
+  },
+  { deep: true }
+)
+
+watch(
+  () => store.getters.getUploadAreaState.activeInfo,
+  (nv) => {
+    const { type, dir, img } = nv || {}
+
+    currentPathImageList.value.forEach((item) => {
+      item.active = type === ContextmenuEnum.img && item.name === img?.name
+    })
+
+    currentPathDirList.value.forEach((dirObj) => {
+      dirObj.active = type === ContextmenuEnum.dir && dirObj.dir === dir
+    })
   },
   { deep: true }
 )
