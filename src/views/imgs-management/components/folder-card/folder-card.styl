@@ -2,10 +2,25 @@
   display flex
   flex-direction column
   align-items center
-  justify-content center
+  justify-content flex-start
   width 100%
   height 100%
+  padding 12rem 6rem 6rem 6rem
   user-select none
+
+  +picx-tablet-2() {
+    padding 10rem 5rem 5rem 5rem
+  }
+
+
+  +picx-tablet() {
+    padding 8rem 4rem 4rem 4rem
+  }
+
+
+  +picx-mobile() {
+    padding 6rem 3rem 3rem 3rem
+  }
 
   &.active
   &:hover {
@@ -32,7 +47,7 @@
     width 90%
     margin-top 5rem
     overflow hidden
-    font-size 14rem
+    font-size 12rem
     text-align center
     text-overflow ellipsis
     word-wrap break-word
