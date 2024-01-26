@@ -44,10 +44,10 @@
       <div class="row-item" v-if="uploadImageList.length">
         <div class="content-box operation-btn">
           <el-button :disabled="uploading" plain type="warning" @click="resetUploadInfo">
-            {{ $t('reset') }} <span class="shortcut-key">[ {{ shortcutKey }} + A ]</span>
+            {{ $t('reset') }} <span class="shortcut-key">{{ shortcutKey }} A</span>
           </el-button>
           <el-button :disabled="uploading" plain type="primary" @click="uploadImage">
-            {{ $t('upload') }} <span class="shortcut-key">[ {{ shortcutKey }} + S ]</span>
+            {{ $t('upload') }} <span class="shortcut-key">{{ shortcutKey }} S</span>
           </el-button>
         </div>
       </div>
@@ -82,7 +82,7 @@ const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 
 const uploadImageList = ref<UploadImageModel[]>([])
 const uploading = ref(false)
-const shortcutKey = computed(() => (getOSName() === 'mac' ? 'Command' : 'Ctrl'))
+const shortcutKey = computed(() => (getOSName() === 'mac' ? '⌘' : 'Ctrl'))
 
 const isCanDeploy = ref(false)
 
