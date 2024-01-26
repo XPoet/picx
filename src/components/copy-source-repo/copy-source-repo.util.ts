@@ -12,9 +12,6 @@ import {
 } from '@/common/api'
 import i18n from '@/plugins/vue/i18n'
 
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const { branch, repo, owner } = userConfigInfo
-
 let idx = 0
 let count = 0
 const repoImgList: any[] = []
@@ -32,6 +29,8 @@ export const getSourceRepoImgContent = async (
   path: string,
   cb?: any
 ) => {
+  const { owner } = computed(() => store.getters.getUserConfigInfo).value
+
   const res = await request({
     method: 'GET',
     noShowErrMsg: true,
@@ -93,6 +92,8 @@ export const getSourceRepoImgContent = async (
  * @param sourceRepo
  */
 export const uploadSourceRepoImages = async (imgs: any[], sourceRepo: string) => {
+  const { branch, repo, owner } = computed(() => store.getters.getUserConfigInfo).value
+
   const blobs = []
   // eslint-disable-next-line no-restricted-syntax
   for (const img of imgs) {
@@ -145,6 +146,8 @@ export const uploadSourceRepoImages = async (imgs: any[], sourceRepo: string) =>
  * 刷新图床管理页面，获取最新数据
  */
 export const refreshManagementPage = async () => {
+  const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+
   const viewDir = '/'
   await store.dispatch('SET_USER_CONFIG_INFO', {
     viewDir
