@@ -210,5 +210,5 @@ const isGitHubPagesDeployed = (name: string) => {
 </script>
 
 <style scoped lang="stylus">
-@import "my-settings.styl"
+@import "picx-settings.styl"
 </style>
