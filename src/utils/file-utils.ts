@@ -28,6 +28,7 @@ export const getFileSuffix = (filename: string) => {
  * @param fileType
  */
 export const isImage = (fileType: string): boolean => {
+  fileType = fileType.toLowerCase()
   return /(png|jpg|jpeg|gif|webp|awebp|avif|svg\+xml|svg|x-icon|vnd.microsoft.icon)$/.test(fileType)
 }
 
@@ -36,6 +37,7 @@ export const isImage = (fileType: string): boolean => {
  * @param imageType
  */
 export const isNeedCompress = (imageType: string): boolean => {
+  imageType = imageType.toLowerCase()
   return /(png|jpg|jpeg|webp|avif)$/.test(imageType)
 }
 
@@ -44,6 +46,7 @@ export const isNeedCompress = (imageType: string): boolean => {
  * @param imageType
  */
 export const isNeedWatermark = (imageType: string): boolean => {
+  imageType = imageType.toLowerCase()
   return /(png|jpg|jpeg|webp|avif)$/.test(imageType)
 }
 
