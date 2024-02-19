@@ -19,7 +19,7 @@
         :class="{ 'has-tools': isShowBatchTools }"
         v-contextmenu="{ type: ContextmenuEnum.dirArea }"
       >
-        <ul class="dir-card-list list-item border-box">
+        <ul class="dir-card-list list-item border-box" v-if="currentPathDirList.length">
           <li
             class="dir-card-item border-box"
             v-for="(dir, idx) in currentPathDirList"
@@ -28,7 +28,7 @@
             <folder-card :class="'folder-card-' + idx" :folder-obj="dir" />
           </li>
         </ul>
-        <ul class="image-card-list list-item border-box">
+        <ul class="image-card-list list-item border-box" v-if="currentPathImageList.length">
           <li
             class="image-card-item border-box"
             v-for="(image, idx) in currentPathImageList"
@@ -37,6 +37,11 @@
             <image-card :image-obj="image" />
           </li>
         </ul>
+        <el-empty v-if="!currentPathImageList.length && !currentPathDirList.length">
+          <el-button type="primary" @click="router.push('/upload')">{{
+            $t('management_page.text_2')
+          }}</el-button>
+        </el-empty>
       </div>
     </div>
   </div>
@@ -57,6 +62,7 @@ import ImageSelector from '@/views/imgs-management/components/image-selector/ima
 import ToolsBar from '@/views/imgs-management/components/tools-bar/tools-bar.vue'
 import FolderCard from '@/views/imgs-management/components/folder-card/folder-card.vue'
 import ImageCard from '@/views/imgs-management/components/image-card/image-card.vue'
+import router from '@/router'
 
 const store = useStore()
 
