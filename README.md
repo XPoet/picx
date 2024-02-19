@@ -26,6 +26,10 @@
 
 **在线使用入口 https://picx.xpoet.cn**
 
+> **重要提示：**  
+> - 为进一步简化用户操作，PicX 自 `v3.0` 起，不再支持自由选择仓库和分支，统一使用内置的仓库和分支。  
+> - 如需继续使用自定义的仓库和分支，请使用 [PicX v2.0](https://v2.picx.xpoet.cn)。
+
 ## 文档 | Documents
 
 **官方文档 https://picx-docs.xpoet.cn**
