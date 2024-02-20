@@ -1,0 +1,25 @@
+$dot-size = 8rem
+
+.site-announcement-btn {
+  &.dot {
+    &::before {
+      position absolute
+      top 3rem
+      right 3rem
+      width $dot-size
+      height $dot-size
+      background var(--el-color-danger)
+      border-radius 50%
+      content ''
+    }
+  }
+}
+
+.announcement-item {
+  margin-bottom 10rem
+
+
+  &:last-child {
+    margin-bottom 0
+  }
+}

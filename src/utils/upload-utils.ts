@@ -5,10 +5,11 @@ import {
   createRef,
   createTree,
   uploadSingleImage,
-  uploadImageBlob,
+  getFileBlob,
   getBranchInfo
 } from '@/common/api'
 import { PICX_UPLOAD_IMG_DESC } from '@/common/constant'
+import i18n from '@/plugins/vue/i18n'
 
 /**
  * 图片上传成功之后的处理
@@ -58,7 +59,7 @@ const uploadedHandle = (
  * @param imgObj
  */
 export const uploadUrlHandle = (config: UserConfigInfoModel, imgObj: UploadImageModel): string => {
-  const { owner, selectedRepo: repo, selectedDir: dir } = config
+  const { owner, repo, selectedDir: dir } = config
   const filename: string = imgObj.filename.final
 
   let path = filename
@@ -75,7 +76,7 @@ export const uploadUrlHandle = (config: UserConfigInfoModel, imgObj: UploadImage
 }
 
 /**
- * 上传多张图片到 GitHub
+ * 上传多张图片到 GitHub 仓库
  * @param userConfigInfo
  * @param imgs
  */
@@ -83,19 +84,24 @@ export async function uploadImagesToGitHub(
   userConfigInfo: UserConfigInfoModel,
   imgs: UploadImageModel[]
 ): Promise<boolean> {
-  const { selectedBranch: branch, selectedRepo: repo, selectedDir, owner } = userConfigInfo
+  const { branch, repo, selectedDir, owner } = userConfigInfo
 
   const blobs = []
   // eslint-disable-next-line no-restricted-syntax
   for (const img of imgs) {
     img.uploadStatus.uploading = true
+    const tempBase64 = (
+      img.base64.compressBase64 ||
+      img.base64.watermarkBase64 ||
+      img.base64.originalBase64
+    ).split(',')[1]
     // 上传图片文件，为仓库创建 blobs
-    const blobRes = await uploadImageBlob(img, owner, repo)
+    const blobRes = await getFileBlob(tempBase64, owner, repo)
     if (blobRes) {
       blobs.push({ img, ...blobRes })
     } else {
       img.uploadStatus.uploading = false
-      ElMessage.error(`${img.filename.final} 上传失败`)
+      ElMessage.error(i18n.global.t('upload_page.tip_11', { name: img.filename.final }))
     }
   }
 
@@ -145,7 +151,7 @@ export async function uploadImagesToGitHub(
 }
 
 /**
- * 上传一张图片到 GitHub
+ * 上传一张图片到 GitHub 仓库
  * @param userConfigInfo
  * @param img
  */
@@ -153,7 +159,7 @@ export function uploadImageToGitHub(
   userConfigInfo: UserConfigInfoModel,
   img: UploadImageModel
 ): Promise<Boolean> {
-  const { selectedBranch: branch, email, owner } = userConfigInfo
+  const { branch, email, owner } = userConfigInfo
 
   const data: any = {
     message: PICX_UPLOAD_IMG_DESC,

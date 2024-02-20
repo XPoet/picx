@@ -1,0 +1,65 @@
+.user-avatar {
+  display flex
+  align-items center
+  justify-content space-between
+  width 100%
+  height 100%
+  padding 10rem
+  border 1rem solid var(--border-color)
+  border-radius $box-border-radius
+  cursor pointer
+  user-select none
+
+  &.folded {
+    padding 0
+    border none
+
+    .username {
+      display none
+    }
+
+    .popover-tip-icon {
+      display none
+    }
+  }
+
+  .left {
+    display flex
+    align-items center
+    justify-content flex-start
+  }
+
+  .avatar {
+    display flex
+    align-items center
+    justify-content center
+    box-sizing border-box
+    width 38rem
+    height 38rem
+    padding 1rem
+    color var(--text-color)
+    border 1rem solid var(--text-color)
+    border-radius 50%
+
+    img {
+      width 100%
+      height 100%
+      border-radius 50%
+    }
+
+    .user-filled-icon {
+      font-size 20rem
+    }
+  }
+
+
+  .username {
+    margin-left 10rem
+    font-size 16rem
+  }
+
+
+  .popover-tip-icon {
+    font-size 20rem
+  }
+}

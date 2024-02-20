@@ -41,7 +41,7 @@ export const githubAppAuthorizeCallback = async () => {
       installationId: installation_id
     })
 
-    ElMessageBox.confirm(i18n.global.t('authorization.msg_3'), i18n.global.t('tips'), {
+    ElMessageBox.confirm(i18n.global.t('authorization.msg_3'), i18n.global.t('tip'), {
       confirmButtonText: i18n.global.t('confirm'),
       cancelButtonText: i18n.global.t('cancel'),
       type: 'success',
@@ -122,21 +122,43 @@ export const initGithubAuthorize = async () => {
     () => store.getters.getGitHubAuthorizationInfo
   ).value
 
-  const tmpGoLogin = async () => {
-    await router.push({ path: '/login', query: { jump: '0' } })
+  const goLoginPage = async (cb?: any) => {
+    router.push({ path: '/login', query: { jump: '0' } }).then(() => {
+      // eslint-disable-next-line no-unused-expressions
+      cb && cb()
+    })
   }
 
   if (isAutoAuthorize && authorized && installed) {
     if (token && isAuthorizeExpire()) {
-      ElMessage.error({
-        message: i18n.global.t('authorization.msg_1'),
+      const msgInstance = ElMessage.error({
+        customClass: 'custom-message-container',
         duration: 0,
         showClose: true,
+        message: `<div class="content-box authorization">
+                    <span class="msg">${i18n.global.t('authorization.msg_1')}</span>
+                    <spna class="btn-box">
+                      <span class="confirm btn">${i18n.global.t('authorization.text_13')}</span>
+                    </spna>
+                  </div>`,
+        dangerouslyUseHTMLString: true,
         onClose: () => {
-          tmpGoLogin()
+          goLoginPage()
         }
       })
-      await tmpGoLogin()
+
+      document
+        .querySelector('.custom-message-container .authorization .confirm')
+        ?.addEventListener('click', () => {
+          msgInstance.close()
+          goLoginPage(() => {
+            store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
+              authorizing: true
+            })
+          })
+        })
+
+      await goLoginPage()
     }
   }
 }

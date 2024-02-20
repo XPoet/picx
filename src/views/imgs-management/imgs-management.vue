@@ -1,91 +1,79 @@
 <template>
   <div class="page-container management-page-container">
-    <div class="content-container">
-      <div class="top">
-        <div class="left">
-          <selected-info-bar bar-type="management" />
-        </div>
-        <div class="right flex-start">
-          <el-tooltip
-            placement="top"
-            :content="$t('management.reload', { dir: userConfigInfo.viewDir })"
-          >
-            <el-icon class="btn-icon" @click.stop="reloadCurrentDirContent">
-              <IEpRefresh />
-            </el-icon>
-          </el-tooltip>
-        </div>
-      </div>
-
+    <div class="top-box border-box">
+      <tools-bar @reload="reloadCurrentDirContent" />
+    </div>
+    <div
+      class="bottom-box border-box"
+      v-loading="loadingImageList"
+      :element-loading-text="$t('management_page.loadingTxt1')"
+    >
+      <image-selector
+        v-if="currentPathImageList.length"
+        :currentDirImageList="currentPathImageList"
+        @updateInitImageList="currentPathImageList as any"
+        :key="renderKey"
+      ></image-selector>
       <div
-        class="bottom"
-        v-loading="loadingImageList"
-        :element-loading-text="$t('management.loadingTxt1')"
+        class="content-list-box border-box"
+        :class="{ 'has-tools': isShowBatchTools }"
+        v-contextmenu="{ type: ContextmenuEnum.dirArea }"
       >
-        <image-selector
-          v-if="currentPathImageList.length"
-          :currentDirImageList="currentPathImageList"
-          @update:initImageList="currentPathImageList"
-          :key="renderKey"
-        ></image-selector>
-        <ul
-          class="image-management-list"
-          :style="{
-            height: isShowBatchTools ? 'calc(100% - 50rem)' : '100%'
-          }"
-          v-contextmenu="{ type: ContextmenuEnum.parentDir }"
-        >
-          <li class="image-management-item" v-if="userConfigInfo.viewDir !== '/'">
-            <folder-card mode="back" />
-          </li>
+        <ul class="dir-card-list list-item border-box" v-if="currentPathDirList.length">
           <li
-            class="image-management-item"
-            v-for="(dir, index) in currentPathDirList"
-            :key="'folder-card-' + dir.dir + '-' + index"
-            v-contextmenu="{ type: ContextmenuEnum.childDir, dir: dir.dir }"
+            class="dir-card-item border-box"
+            v-for="(dir, idx) in currentPathDirList"
+            :key="'folder-card-' + dir.dir + '-' + idx"
           >
-            <folder-card :folder-obj="dir" />
+            <folder-card :class="'folder-card-' + idx" :folder-obj="dir" />
           </li>
-          <div style="width: 100%" />
+        </ul>
+        <ul class="image-card-list list-item border-box" v-if="currentPathImageList.length">
           <li
-            class="image-management-item image"
-            v-for="(image, index) in currentPathImageList"
-            :key="'image-card-' + index"
-            v-contextmenu="{ type: ContextmenuEnum.img, img: image }"
+            class="image-card-item border-box"
+            v-for="(image, idx) in currentPathImageList"
+            :key="'image-card-' + idx"
           >
             <image-card :image-obj="image" />
           </li>
         </ul>
+        <el-empty v-if="!currentPathImageList.length && !currentPathDirList.length">
+          <el-button type="primary" @click="router.push('/upload')">{{
+            $t('management_page.text_2')
+          }}</el-button>
+        </el-empty>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, watch, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useStore } from '@/stores'
 import { getRepoPathContent } from '@/common/api'
-import { filterDirContent, getDirContent } from '@/views/imgs-management/imgs-management.util'
-
-import ImageCard from '@/components/image-card/image-card.vue'
-import SelectedInfoBar from '@/components/selected-info-bar/selected-info-bar.vue'
-import FolderCard from '@/components/folder-card/folder-card.vue'
-import ImageSelector from '@/components/image-selector/image-selector.vue'
-import { UploadedImageModel, DirModeEnum, ContextmenuEnum } from '@/common/model'
+import {
+  filterDirContent,
+  getDirContent,
+  shiftKeyHandle
+} from '@/views/imgs-management/imgs-management.util'
+import { DirModeEnum, UploadedImageModel } from '@/common/model'
+import { ContextmenuEnum } from '@/common/directive/types'
+import ImageSelector from '@/views/imgs-management/components/image-selector/image-selector.vue'
+import ToolsBar from '@/views/imgs-management/components/tools-bar/tools-bar.vue'
+import FolderCard from '@/views/imgs-management/components/folder-card/folder-card.vue'
+import ImageCard from '@/views/imgs-management/components/image-card/image-card.vue'
+import router from '@/router'
 
 const store = useStore()
-const router = useRouter()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const loginStatus = computed(() => store.getters.getUserLoginStatus).value
 const dirObject = computed(() => store.getters.getDirObject).value
 
 const renderKey = ref(new Date().getTime()) // key for update image-selector component
 const loadingImageList = ref(false)
 
-const currentPathDirList = ref([])
-const currentPathImageList = ref([])
+const currentPathDirList = ref<any[]>([])
+const currentPathImageList = ref<UploadedImageModel[]>([])
 
 const isShowBatchTools = ref(false)
 
@@ -94,8 +82,8 @@ async function dirContentHandle(dir: string) {
 
   const dirContent = getDirContent(dir, dirObject)
   if (dirContent) {
-    const dirs = filterDirContent(dir, dirContent, 'dir')
-    const images = filterDirContent(dir, dirContent, 'image')
+    const dirs = filterDirContent(dirContent, 'dir')
+    const images = filterDirContent(dirContent, 'image')
     if (!dirs.length && !images.length) {
       await getRepoPathContent(userConfigInfo, dir)
     } else {
@@ -114,7 +102,7 @@ async function initDirImageList() {
 
   if (viewDir === '') {
     if (
-      (dirMode === DirModeEnum.newDir || dirMode === DirModeEnum.autoDir) &&
+      (dirMode === DirModeEnum.newDir || dirMode === DirModeEnum.dateDir) &&
       !getDirContent(selectedDir, dirObject)
     ) {
       userConfigInfo.selectedDir = '/'
@@ -146,17 +134,9 @@ async function reloadCurrentDirContent() {
 }
 
 onMounted(() => {
+  shiftKeyHandle()
   initDirImageList()
 })
-
-watch(
-  () => loginStatus,
-  (nv) => {
-    if (nv === false) {
-      router.push('/config')
-    }
-  }
-)
 
 watch(
   () => userConfigInfo.viewDir,
@@ -173,8 +153,8 @@ watch(
     const { viewDir } = userConfigInfo
     const dirContent = getDirContent(viewDir, nv)
     if (dirContent) {
-      currentPathDirList.value = filterDirContent(viewDir, dirContent, 'dir')
-      currentPathImageList.value = filterDirContent(viewDir, dirContent, 'image')
+      currentPathDirList.value = filterDirContent(dirContent, 'dir')
+      currentPathImageList.value = filterDirContent(dirContent, 'image')
       store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
     }
   },
@@ -185,6 +165,22 @@ watch(
   () => currentPathImageList.value,
   (nv: UploadedImageModel[]) => {
     isShowBatchTools.value = nv.filter((x) => x.checked).length > 0
+  },
+  { deep: true }
+)
+
+watch(
+  () => store.getters.getUploadAreaState.activeInfo,
+  (nv) => {
+    const { type, dir, img } = nv || {}
+
+    currentPathImageList.value.forEach((item) => {
+      item.active = type === ContextmenuEnum.img && item.name === img?.name
+    })
+
+    currentPathDirList.value.forEach((dirObj) => {
+      dirObj.active = type === ContextmenuEnum.dir && dirObj.dir === dir
+    })
   },
   { deep: true }
 )

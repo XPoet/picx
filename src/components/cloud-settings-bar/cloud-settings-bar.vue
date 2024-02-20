@@ -1,5 +1,12 @@
 <template>
-  <div class="cloud-settings-data-box border-box">
+  <div
+    v-if="isShowBar"
+    class="cloud-settings-data-box status-bar info"
+    :class="{
+      warning: selectedAction === CloudSettingsActions.update,
+      success: selectedAction === CloudSettingsActions.equal
+    }"
+  >
     <div>{{ actionsTip }}</div>
     <el-button
       type="primary"
@@ -7,7 +14,7 @@
       :icon="icon.IEpCheck"
       :loading="saveLoading"
       :disabled="saveDisabled"
-      @click="onOK"
+      @click="onConfirm"
     >
       {{ $t('confirm') }}
     </el-button>
@@ -15,73 +22,75 @@
 </template>
 
 <script setup lang="ts">
-import { computed, getCurrentInstance, onMounted, ref, shallowRef, watch } from 'vue'
+import { computed, onMounted, ref, shallowRef, watch } from 'vue'
 import { store } from '@/stores'
-import { UserSettingsModel } from '@/common/model'
 import { deepAssignObject, deepObjectEqual } from '@/utils'
 import { CloudSettingsActions } from './cloud-settings-bar.model'
 import { getCloudSettings, saveCloudSettings } from './cloud-settings-bar.util'
+import i18n from '@/plugins/vue/i18n'
 
-const instance = getCurrentInstance()
-
+const icon = shallowRef({ IEpCheck, IEpClose })
 const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const icon = shallowRef({ IEpCheck, IEpClose })
 
-const cloudSettings = ref<null | UserSettingsModel>(null)
 const saveLoading = ref(false)
 const saveDisabled = ref(false)
-
 const selectedAction = ref<CloudSettingsActions>(CloudSettingsActions.save)
 
 const actionsTip = computed(() => {
   switch (selectedAction.value) {
     case CloudSettingsActions.save:
-      return instance?.proxy?.$t('settings.cloud_settings.tip_1')
+      return i18n.global.t('settings_page.cloud_settings.tip_1')
 
     case CloudSettingsActions.use:
-      return instance?.proxy?.$t('settings.cloud_settings.tip_2')
+      return i18n.global.t('settings_page.cloud_settings.tip_2')
 
     case CloudSettingsActions.update:
-      return instance?.proxy?.$t('settings.cloud_settings.tip_3')
+      return i18n.global.t('settings_page.cloud_settings.tip_3')
 
     case CloudSettingsActions.equal:
-      return instance?.proxy?.$t('settings.cloud_settings.tip_4')
+      return i18n.global.t('settings_page.cloud_settings.tip_4')
 
     default:
-      return instance?.proxy?.$t('settings.cloud_settings.tip_1')
+      return i18n.global.t('settings_page.cloud_settings.tip_1')
   }
 })
+
+const isShowBar = ref(false)
 
 // 保存（更新）到云端
 const saveToCloud = async () => {
   saveLoading.value = true
   await saveCloudSettings(userSettings, userConfigInfo)
   saveLoading.value = false
-  cloudSettings.value = JSON.parse(JSON.stringify(userSettings))
   ElMessage.success(
-    cloudSettings.value === null
-      ? instance?.proxy?.$t('settings.cloud_settings.success_msg_1')
-      : instance?.proxy?.$t('settings.cloud_settings.success_msg_2')
+    store.getters.getCloudSettings === null
+      ? i18n.global.t('settings_page.cloud_settings.success_msg_1')
+      : i18n.global.t('settings_page.cloud_settings.success_msg_2')
   )
+  await store.dispatch('SET_CLOUD_SETTINGS', JSON.parse(JSON.stringify(userSettings)))
 }
 
 // 使用云端设置数据
 const useCloudSettings = () => {
-  if (cloudSettings.value) {
-    deepAssignObject(userSettings, cloudSettings.value)
+  if (store.getters.getCloudSettings) {
+    deepAssignObject(userSettings, store.getters.getCloudSettings)
     store.dispatch('USER_SETTINGS_PERSIST')
+    store.dispatch('SET_GLOBAL_SETTINGS', {
+      useCloudSettings: true
+    })
   }
 }
 
 // 初始化云端设置数据
 const initCloudSettings = async () => {
   const res = await getCloudSettings(userConfigInfo)
-  cloudSettings.value = res ? JSON.parse(window.atob(res.content)) : null
+  isShowBar.value = true
+  await store.dispatch('SET_CLOUD_SETTINGS', res ? JSON.parse(window.atob(res.content)) : null)
 }
 
 // 确定操作
-const onOK = () => {
+const onConfirm = () => {
   // eslint-disable-next-line default-case
   switch (selectedAction.value) {
     case CloudSettingsActions.save:
@@ -97,10 +106,10 @@ const onOK = () => {
 
 watch(
   () => userSettings,
-  (settings) => {
-    if (cloudSettings.value) {
+  (us) => {
+    if (store.getters.getCloudSettings) {
       // 本地设置发生变化时，判断和云端设置是否相等
-      if (deepObjectEqual(settings, cloudSettings.value)) {
+      if (deepObjectEqual(us, store.getters.getCloudSettings)) {
         // 相等情况
         selectedAction.value = CloudSettingsActions.equal
         saveDisabled.value = true
@@ -117,29 +126,35 @@ watch(
 )
 
 watch(
-  () => cloudSettings.value,
-  (settings) => {
-    // 不存在云端设置数据，提示是否保存
-    if (settings === null) {
-      selectedAction.value = CloudSettingsActions.save
-    }
-
-    // 存在云端设置数据，提示是否使用
-    if (settings) {
-      selectedAction.value = CloudSettingsActions.use
-    }
-
-    // 判断 云端设置 和本地设置 是否相等，相等则禁止点击
-    if (settings && deepObjectEqual(settings, userSettings)) {
-      saveDisabled.value = true
-      selectedAction.value = CloudSettingsActions.equal
+  () => store.getters.getCloudSettings,
+  (cs) => {
+    // 存在云端设置数据
+    if (cs) {
+      // 已使用
+      if (store.getters.getGlobalSettings.useCloudSettings) {
+        // 判断 云端数据 和 本地数据 是否相等，相等则禁止点击
+        if (deepObjectEqual(cs, userSettings)) {
+          saveDisabled.value = true
+          selectedAction.value = CloudSettingsActions.equal
+        } else {
+          saveDisabled.value = false
+          selectedAction.value = CloudSettingsActions.update
+        }
+      } else if (deepObjectEqual(cs, userSettings)) {
+        saveDisabled.value = true
+        selectedAction.value = CloudSettingsActions.equal
+      } else {
+        saveDisabled.value = false
+        selectedAction.value = CloudSettingsActions.use
+      }
     } else {
-      saveDisabled.value = false
-      selectedAction.value = CloudSettingsActions.update
+      // 不存在云端设置数据，提示是否保存
+      selectedAction.value = CloudSettingsActions.save
     }
   },
   {
-    deep: true
+    deep: true,
+    immediate: true
   }
 )
 

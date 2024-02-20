@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import { UploadImageModel } from '@/common/model'
 
 /**
  * 上传单张图片到 GitHub
@@ -15,23 +14,19 @@ export const uploadSingleImage = (url: string, data: any) => {
 }
 
 /**
- * 上传图片，获取 blob
- * @param img
+ * 上传 base64 内容，获取文件 blob
+ * @param base64String
  * @param owner
  * @param repo
  */
-export const uploadImageBlob = (img: UploadImageModel, owner: string, repo: string) => {
+export const getFileBlob = (base64String: string, owner: string, repo: string) => {
   return request({
     url: `/repos/${owner}/${repo}/git/blobs`,
     method: 'POST',
-    params: {
+    data: {
       owner,
       repo,
-      content: (
-        img.base64.compressBase64 ||
-        img.base64.watermarkBase64 ||
-        img.base64.originalBase64
-      ).split(',')[1],
+      content: base64String,
       encoding: 'base64'
     }
   })

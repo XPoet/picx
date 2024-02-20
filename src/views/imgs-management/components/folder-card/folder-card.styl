@@ -1,0 +1,58 @@
+.folder-card {
+  display flex
+  flex-direction column
+  align-items center
+  justify-content flex-start
+  width 100%
+  height 100%
+  padding 12rem 6rem 6rem 6rem
+  user-select none
+
+  +picx-tablet-2() {
+    padding 10rem 5rem 5rem 5rem
+  }
+
+
+  +picx-tablet() {
+    padding 8rem 4rem 4rem 4rem
+  }
+
+
+  +picx-mobile() {
+    padding 6rem 3rem 3rem 3rem
+  }
+
+  &.active
+  &:hover {
+    background var(--background-color-2)
+  }
+
+
+  .icon {
+    display flex
+    align-items center
+    justify-content center
+    width 50rem
+    height 50rem
+
+    svg {
+      width 100%
+      height 100%
+    }
+  }
+
+
+  .text {
+    display -webkit-box
+    width 90%
+    margin-top 5rem
+    overflow hidden
+    font-size 12rem
+    text-align center
+    text-overflow ellipsis
+    word-wrap break-word
+    word-break break-all
+    -webkit-box-orient vertical
+    -webkit-line-clamp 2
+  }
+}

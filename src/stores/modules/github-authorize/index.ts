@@ -2,22 +2,23 @@ import { Module } from 'vuex'
 import RootStateTypes from '@/stores/types'
 import GitHubAuthorizeStateTypes, { GitHubAuthorizationInfo } from './types'
 import { deepAssignObject, getLocal, setLocal } from '@/utils'
-import { LS_PICX_AUTHORIZATION } from '@/common/constant'
+import { LS_AUTHORIZATION } from '@/common/constant'
 
 const initAuthorizationInfo = (): GitHubAuthorizationInfo => {
   const initInfo: GitHubAuthorizationInfo = {
     authorized: false,
-    installed: false,
+    installed: null,
     token: '',
     tokenCreateTime: 0,
     code: '',
     codeCreateTime: 0,
     installationId: '',
     manualToken: '',
-    isAutoAuthorize: false
+    isAutoAuthorize: false,
+    authorizing: false
   }
 
-  const LSInfo = getLocal(LS_PICX_AUTHORIZATION)
+  const LSInfo = getLocal(LS_AUTHORIZATION)
 
   if (LSInfo) {
     deepAssignObject(initInfo, LSInfo)
@@ -47,12 +48,12 @@ const githubAuthorizeModule: Module<GitHubAuthorizeStateTypes, RootStateTypes> =
 
     // 持久化存储 GitHub APP 授权状态信息
     GITHUB_AUTHORIZATION_INFO_PERSIST({ state }) {
-      setLocal(LS_PICX_AUTHORIZATION, state.authorizationInfo)
+      setLocal(LS_AUTHORIZATION, state.authorizationInfo)
     }
   },
 
   getters: {
-    getGitHubAuthorizationInfo: (state): GitHubAuthorizationInfo => state.authorizationInfo
+    getGitHubAuthorizationInfo: (state) => state.authorizationInfo
   }
 }
 

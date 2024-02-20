@@ -1,72 +1,105 @@
-$infoBarHeight = 50rem
+$top-box-height = 50rem
+$grid-gap = 20rem
 
 .management-page-container {
+  display flex
+  flex-direction column
+  justify-content space-between
+  padding-top 10rem !important
   padding-bottom 0 !important
 
-  .content-container {
-    position relative
-    box-sizing border-box
+  .top-box {
+    display flex
+    align-items center
+    justify-content space-between
     width 100%
-    height 100%
-    padding-top $infoBarHeight
+    height $top-box-height
 
-    .top {
-      position absolute
-      top 0
-      left 0
-      display flex
-      align-items center
-      justify-content space-between
-      box-sizing border-box
-      width 100%
-      height $infoBarHeight
-      padding-bottom 20rem
-      font-size 14rem
 
-      .right {
-
-        .btn-icon {
-          margin-left 10rem
-          font-size 22rem
-          cursor pointer
-        }
+    .right {
+      .btn-icon {
+        margin-left 10rem
+        color var(--text-color-3)
+        font-size 22rem
+        cursor pointer
       }
     }
+  }
 
 
-    .bottom {
-      position relative
-      box-sizing border-box
+  .bottom-box {
+    width 100%
+    height 'calc(100% - %s)' % $top-box-height
+    border 1rem solid var(--border-color)
+    border-bottom none
+
+    .content-list-box {
       width 100%
       height 100%
-      border 1rem solid var(--border-color)
-      border-bottom none
-      border-top-left-radius 6rem
-      border-top-right-radius 6rem
+      padding $grid-gap
+      overflow-y auto
+
+      &.has-tools {
+        height calc(100% - 50rem)
+      }
 
 
-      .image-management-list {
-        position relative
-        display flex
-        flex-wrap wrap
-        align-content flex-start
-        box-sizing border-box
-        width 100%
-        padding 2rem
-        overflow-y auto
+      .list-item {
+        display grid
+        grid-auto-rows 120rem
+        grid-auto-flow row
+        grid-gap $grid-gap
+        grid-template-columns repeat(10, 1fr)
+      }
 
-        li.image-management-item {
-          position relative
-          box-sizing border-box
-          padding 10rem
 
-          &.image {
-            width 230rem
-          }
+      .dir-card-list {
+        margin-bottom $grid-gap
 
-          &:last-child {
-            margin-right 0
-          }
+        .dir-card-item {
+          grid-row span 1
+          grid-column span 1
+        }
+      }
+
+
+      .image-card-list {
+        .image-card-item {
+          grid-row span 2
+          grid-column span 2
+        }
+      }
+
+
+      +picx-tablet-2() {
+        padding $grid-gap * 0.9
+
+        .list-item {
+          grid-auto-rows 110rem
+          grid-gap $grid-gap * 0.9
+          grid-template-columns repeat(8, 1fr)
+        }
+      }
+
+
+      +picx-tablet() {
+        padding $grid-gap * 0.8
+
+        .list-item {
+          grid-auto-rows 100rem
+          grid-gap $grid-gap * 0.8
+          grid-template-columns repeat(6, 1fr)
+        }
+      }
+
+
+      +picx-mobile() {
+        padding $grid-gap* 0.9
+
+        .list-item {
+          grid-auto-rows 120rem
+          grid-gap $grid-gap* 0.9
+          grid-template-columns repeat(4, 1fr)
         }
       }
     }

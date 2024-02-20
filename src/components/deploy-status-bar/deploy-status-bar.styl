@@ -1,0 +1,39 @@
+.deploy-status-bar-box {
+  width 100%
+
+  .deploy-item {
+    display flex
+    align-items center
+    justify-content space-between
+    margin-bottom 10rem
+
+
+    &:last-child {
+      margin-bottom 0
+    }
+
+    .left-wrap {
+      .info-item {
+        margin-right 10rem
+      }
+    }
+
+    .deploy-status-icon {
+      display inline-block
+      width 10rem
+      height 10rem
+      background var(--el-color-info)
+      border-radius 50%
+
+      &.success {
+        background var(--el-color-success)
+      }
+
+      &.fail {
+        background var(--el-color-error)
+      }
+    }
+  }
+}
+
+

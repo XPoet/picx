@@ -29,7 +29,7 @@ const setThemeMode = () => {
   }
 
   watch(
-    () => store.getters.getUserSettings.theme.mode,
+    () => store.getters.getGlobalSettings.theme,
     async (newValue) => {
       await setThemeByConfig(newValue)
     },

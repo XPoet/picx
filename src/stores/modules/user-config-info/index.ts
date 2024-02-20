@@ -1,9 +1,9 @@
 import { Module } from 'vuex'
-import { BranchModeEnum, UserConfigInfoModel, DirModeEnum } from '@/common/model'
+import { UserConfigInfoModel, DirModeEnum } from '@/common/model'
 import { deepAssignObject, cleanObject, formatDatetime } from '@/utils'
 import UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
 import RootStateTypes from '@/stores/types'
-import { LS_PICX_CONFIG, NEW_DIR_COUNT_MAX } from '@/common/constant'
+import { LS_CONFIG, NEW_DIR_COUNT_MAX } from '@/common/constant'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {
@@ -13,35 +13,24 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     email: '',
     name: '',
     avatarUrl: '',
-    selectedRepo: '',
-    repoList: [],
-    branchMode: BranchModeEnum.repoBranch,
-    branchList: [],
-    selectedBranch: '',
+    repo: '',
+    branch: '',
     selectedDir: '',
     dirMode: DirModeEnum.repoDir,
     dirList: [],
     logined: false,
     selectedDirList: [],
-    viewDir: ''
+    viewDir: '',
+    repoPrivate: false
   }
 
-  const LSConfig: string | null = localStorage.getItem(LS_PICX_CONFIG)
+  const LSConfig: string | null = localStorage.getItem(LS_CONFIG)
 
   if (LSConfig) {
     // Assign: oldConfig -> initConfig
     deepAssignObject(initConfig, JSON.parse(LSConfig))
 
-    if (initConfig.selectedBranch && !initConfig.branchList.length) {
-      initConfig.branchList = [
-        {
-          value: initConfig.selectedBranch,
-          label: initConfig.selectedBranch
-        }
-      ]
-    }
-
-    if (initConfig.dirMode === DirModeEnum.autoDir) {
+    if (initConfig.dirMode === DirModeEnum.dateDir) {
       initConfig.selectedDir = formatDatetime('yyyyMMdd')
     }
 
@@ -52,7 +41,7 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
 }
 
 const convertSpecialCharacter = (state: UserConfigInfoStateTypes): void => {
-  const { selectedDir, selectedBranch, dirMode } = state.userConfigInfo
+  const { selectedDir, branch, dirMode } = state.userConfigInfo
   if (dirMode === 'newDir') {
     const strList = selectedDir.split('')
     let count = 0
@@ -73,7 +62,7 @@ const convertSpecialCharacter = (state: UserConfigInfoStateTypes): void => {
     }
     state.userConfigInfo.selectedDir = newStr
   }
-  state.userConfigInfo.selectedBranch = selectedBranch.replace(/\s+/g, '-')
+  state.userConfigInfo.branch = branch.replace(/\s+/g, '-')
 }
 
 const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
@@ -121,7 +110,7 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
     // 持久化用户配置信息
     USER_CONFIG_INFO_PERSIST({ state }) {
       convertSpecialCharacter(state)
-      localStorage.setItem(LS_PICX_CONFIG, JSON.stringify(state.userConfigInfo))
+      localStorage.setItem(LS_CONFIG, JSON.stringify(state.userConfigInfo))
     },
 
     // 退出登录

@@ -1,48 +1,92 @@
-.nav {
-  position relative
+.nav-content-container {
   display flex
   flex-direction column
   justify-content space-between
-  box-sizing border-box
   width 100%
   height 100%
-  background var(--background-color)
-  border-top-right-radius $box-border-radius
+  padding-top $left-side-padding
+  padding-right $left-side-padding
+  padding-bottom $left-side-padding
 
-  ul.nav-list {
-    margin 0
-    padding 0
+
+  &.folded {
+    padding-left $left-side-padding
+
+    .top-box {
+      .nav-menu-item {
+        justify-content center
+        height $left-side-folded-width - $left-side-padding * 2
+        margin-bottom 8rem
+        padding 0
+        border-radius $box-border-radius
+
+        .nav-name {
+          display none
+        }
+      }
+    }
+
+
+    .bottom-box {
+      justify-content center
+      padding-left 0
+
+      .fold-icon {
+        font-size 20rem
+      }
+
+      .site-count {
+        display none
+      }
+    }
   }
 
-  .nav-item {
-    position relative
-    box-sizing border-box
-    width 100%
-    height 78rem
-    cursor pointer
-    user-select none
 
-    &:first-child {
-      border-top-right-radius $box-border-radius
-    }
-
-    &.active {
-      color var(--el-color-primary)
-      font-weight bold
-      background var(--el-color-primary-light-9)
-    }
-
-    .nav-content {
+  .top-box {
+    .nav-menu-item {
       display flex
-      flex-direction column
       align-items center
-      justify-content center
+      justify-content flex-start
+      width 100%
+      margin-bottom 4rem
+      padding-top $left-side-padding * 0.6
+      padding-bottom $left-side-padding * 0.6
+      padding-left $left-side-padding
+      border-top-right-radius $box-border-radius
+      border-bottom-right-radius $box-border-radius
+      cursor pointer
+      user-select none
+
+      &:hover {
+        color var(--el-color-primary)
+        background var(--el-color-primary-light-9)
+      }
+
+
+      &.active {
+        color var(--el-color-primary)
+        font-weight bold
+        background var(--el-color-primary-light-9)
+      }
+
 
       .nav-name {
-        margin-top 5rem
-        font-size 12rem
-        text-align center
+        margin-left $left-side-padding * 0.5
+        font-size 14rem
       }
+    }
+  }
+
+
+  .bottom-box {
+    display flex
+    align-items center
+    justify-content space-between
+    padding-left $left-side-padding
+
+    .fold-icon {
+      font-size 18rem
+      cursor pointer
     }
   }
 }

@@ -8,14 +8,14 @@ import {
 } from '@/utils'
 
 /**
- * 前缀命名
- * @param isPrefix
+ * 图片名称添加前缀的处理
+ * @param isAddPrefix
  * @param img
  */
-export const prefixNamingTrans = (isPrefix: boolean, img: UploadImageModel) => {
-  img.filename.isPrefixNaming = isPrefix
-  if (isPrefix) {
-    img.filename.name = `${img.filename.prefixName}${img.filename.initName}`
+export const addPrefixHandle = (isAddPrefix: boolean, img: UploadImageModel) => {
+  img.filename.isAddPrefix = isAddPrefix
+  if (isAddPrefix) {
+    img.filename.name = `${img.filename.prefix}${img.filename.initName}`
   } else {
     img.filename.name = `${img.filename.initName}`
   }
@@ -27,13 +27,13 @@ export const prefixNamingTrans = (isPrefix: boolean, img: UploadImageModel) => {
 }
 
 /**
- * 命名哈希化
- * @param isHash
+ * 图片名称添加哈希值的处理
+ * @param isAddHash
  * @param img
  */
-export const hashRename = (isHash: boolean, img: UploadImageModel) => {
-  img.filename.isAddHash = isHash
-  if (isHash) {
+export const addHashHandle = (isAddHash: boolean, img: UploadImageModel) => {
+  img.filename.isAddHash = isAddHash
+  if (isAddHash) {
     img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
   } else {
     img.filename.final = `${img.filename.name}.${img.filename.suffix}`
@@ -51,7 +51,7 @@ export const rename = (isRename: boolean, img: UploadImageModel) => {
   if (isRename) {
     img.filename.name = img.filename.newName.trim().replace(/\s+/g, '-')
   } else {
-    prefixNamingTrans(img.filename.isPrefixNaming, img) // 恢复列表 prefix 选项
+    addPrefixHandle(img.filename.isAddPrefix, img) // 恢复列表 prefix 选项
   }
 
   if (img.filename.isAddHash) {

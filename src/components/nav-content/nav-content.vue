@@ -1,61 +1,41 @@
 <template>
-  <aside class="nav">
-    <ul class="nav-list">
-      <li
-        class="nav-item flex-center"
-        v-for="(nav, idx) in navInfoList"
-        :key="idx + nav.uuid"
-        :class="{ active: nav.isActive }"
-        @click="onNavClick(nav)"
-        v-show="nav.isShow"
-      >
-        <div class="nav-content">
-          <el-icon :size="navIconSize">
-            <component :is="nav.icon"></component>
-          </el-icon>
-          <span class="nav-name">{{ $t(nav.name) }}</span>
-        </div>
-      </li>
-    </ul>
-    <div class="nav-item quick-actions flex-center">
-      <el-popover
-        placement="right-end"
-        :width="userSettings.language === 'en' ? '230rem' : '190rem'"
-        trigger="click"
-        :show-arrow="false"
-        :popper-style="{
-          padding: '0'
-        }"
-      >
-        <template #reference>
-          <div class="nav-content">
-            <el-icon :size="navIconSize">
-              <IEpOperation />
+  <aside
+    class="nav-content-container border-box"
+    :class="{ folded: store.getters.getGlobalSettings.folded }"
+  >
+    <div class="top-box border-box">
+      <ul class="nav-menu-list border-box">
+        <el-tooltip
+          placement="left"
+          :content="$t(nav.name)"
+          v-for="(nav, idx) in navInfoList"
+          :key="idx + nav.uuid"
+          :show-arrow="false"
+          :disabled="!store.getters.getGlobalSettings.folded"
+        >
+          <li
+            class="nav-menu-item border-box"
+            :class="{ active: nav.isActive }"
+            @click="onNavClick(nav)"
+            v-show="nav.isShow"
+          >
+            <el-icon class="nav-icon" :size="navIconSize">
+              <component :is="nav.icon"></component>
             </el-icon>
-            <span class="nav-name">{{ $t('nav.actions') }}</span>
-          </div>
-        </template>
-        <div class="quick-actions-popover">
-          <el-switch
-            v-model="userSettings.watermark.enable"
-            class="mb-2"
-            :active-text="$t('actions.watermark')"
-            @change="persistUserSettings"
-          />
-          <el-switch
-            v-model="userSettings.compress.enable"
-            class="mb-2"
-            :active-text="$t('actions.compress')"
-            @change="persistUserSettings"
-          />
-          <el-switch
-            v-model="userSettings.imageLinkFormat.enable"
-            class="mb-2"
-            :active-text="$t('actions.transform') + userSettings.imageLinkFormat.selected"
-            @change="persistUserSettings"
-          />
-        </div>
-      </el-popover>
+            <span class="nav-name">{{ $t(nav.name) }}</span>
+          </li>
+        </el-tooltip>
+      </ul>
+    </div>
+
+    <div class="bottom-box border-box">
+      <el-icon v-if="globalSettings.folded" class="fold-icon" @click="onFoldNav">
+        <IEpDArrowRight />
+      </el-icon>
+      <el-icon v-else class="fold-icon" @click="onFoldNav">
+        <IEpDArrowLeft />
+      </el-icon>
+      <site-count class="site-count" :showPV="true" :showUV="true" />
     </div>
   </aside>
 </template>
@@ -72,16 +52,16 @@ const router = useRouter()
 const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const userSettings = computed(() => store.getters.getUserSettings).value
+const globalSettings = computed(() => store.getters.getGlobalSettings).value
 
 const navIconSize = computed(() => {
-  switch (userSettings.elementPlusSize) {
+  switch (globalSettings.elementPlusSize) {
     case ElementPlusSizeEnum.small:
-      return 22
+      return 21
     case ElementPlusSizeEnum.large:
-      return 30
+      return 25
     default:
-      return 26
+      return 23
   }
 })
 
@@ -89,14 +69,14 @@ const onNavClick = (e: any) => {
   const { path } = e
 
   if (path === '/management') {
-    if (userConfigInfo.selectedRepo === '') {
-      ElMessage.warning(i18n.global.t('upload.message2'))
+    if (userConfigInfo.repo === '') {
+      ElMessage.warning(i18n.global.t('upload_page.message2'))
       router.push('/config')
       return
     }
 
     if (userConfigInfo.selectedDir === '') {
-      ElMessage.warning(i18n.global.t('upload.message3'))
+      ElMessage.warning(i18n.global.t('upload_page.message3'))
       router.push('/config')
       return
     }
@@ -114,8 +94,10 @@ const changeNavActive = (currentPath: string) => {
   triggerRef(navInfoList)
 }
 
-const persistUserSettings = () => {
-  store.dispatch('USER_SETTINGS_PERSIST')
+const onFoldNav = () => {
+  store.dispatch('SET_GLOBAL_SETTINGS', {
+    folded: !globalSettings.folded
+  })
 }
 
 watch(

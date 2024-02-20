@@ -2,18 +2,15 @@ import request from '@/utils/request'
 import { PICX_INIT_SETTINGS_MSG, PICX_UPDATE_SETTINGS_MSG } from '@/common/constant'
 import { UserConfigInfoModel, UserSettingsModel } from '@/common/model'
 
+const filename = '.settings'
+
 export const getCloudSettings = async (userConfigInfo: UserConfigInfoModel) => {
-  const { owner, selectedRepo: repo } = userConfigInfo
+  const { owner, repo } = userConfigInfo
   const res = await request({
-    url: `/repos/${owner}/${repo}/contents/.settings`,
+    url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'GET',
-    noShowErrorMsg: true,
-    cache: {
-      maxAge: 0
-    },
-    params: {
-      timestamp: Date.now() // 添加时间戳参数，防止获取缓存的数据
-    }
+    noShowErrMsg: true,
+    noCache: true
   })
 
   return Promise.resolve(res)
@@ -23,7 +20,7 @@ export const saveCloudSettings = async (
   userSettings: UserSettingsModel,
   userConfigInfo: UserConfigInfoModel
 ) => {
-  const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
 
   const res = await getCloudSettings(userConfigInfo)
 
@@ -39,10 +36,10 @@ export const saveCloudSettings = async (
   }
 
   const res2 = await request({
-    url: `/repos/${owner}/${repo}/contents/.settings`,
+    url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'PUT',
     data,
-    noShowErrorMsg: true
+    noShowErrMsg: true
   })
 
   return Promise.resolve(res2)

@@ -1,0 +1,83 @@
+$image-card-bottom-height = 58rem
+
+.image-card {
+  display flex
+  flex-direction column
+  justify-content space-between
+  width 100%
+  height 100%
+  overflow hidden
+  border 1rem solid var(----el-color-info-light-7)
+  border-radius $box-border-radius * 0.5
+  box-shadow 1rem 2rem 3rem var(--shadow-color)
+  user-select none
+
+
+  &:hover {
+    box-shadow 0 0 10rem var(--shadow-hover-color)
+  }
+
+  &.active
+  &.checked {
+    border 2rem solid var(--el-color-primary-light-7)
+    box-shadow 0 0 10rem var(--shadow-hover-color)
+  }
+
+
+  .image-card-top {
+    width 100%
+    height 'calc(100% - %s)' % $image-card-bottom-height
+
+    .el-image {
+      width 100%
+      height 100%
+    }
+  }
+
+
+  .image-card-bottom {
+    display flex
+    flex-direction column
+    justify-content space-between
+    width 100%
+    height $image-card-bottom-height
+    padding-top 6rem
+
+    .filename {
+      width 100%
+      padding 0 8rem
+      font-size 12rem
+    }
+
+    .copy-link {
+      width 100%
+      padding 6rem 8rem
+      color var(--el-color-primary)
+      font-size 12rem
+      text-align center
+      background var(--el-color-primary-light-9)
+      border-top 1rem solid var(--el-color-primary-light-7)
+      cursor pointer
+
+      &:hover {
+        color var(--el-color-white)
+        background var(--el-color-primary)
+      }
+    }
+  }
+
+
+  .checked-box {
+    position absolute
+    top 10rem
+    left 10rem
+    box-sizing border-box
+    width 22rem
+    height 22rem
+    padding-top 2rem
+    background var(--background-color)
+    border-radius 2rem
+    box-shadow 0 0 6rem var(--shadow-color)
+    cursor pointer
+  }
+}

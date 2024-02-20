@@ -13,7 +13,8 @@ import i18n from '@/plugins/vue/i18n'
 export const getBranchInfo = (owner: string, repo: string, branch: string) => {
   return request({
     url: `/repos/${owner}/${repo}/branches/${branch}`,
-    method: 'GET'
+    method: 'GET',
+    noCache: true
   })
 }
 
@@ -31,12 +32,7 @@ export const getBranchInfoList = (
     const tmpList: any[] = await request({
       url: `/repos/${owner}/${repo}/branches`,
       method: 'GET',
-      cache: {
-        maxAge: 0 // 设置缓存的最大寿命为 0，禁用缓存
-      },
-      params: {
-        timestamp: Date.now() // 添加时间戳参数，防止获取缓存的数据
-      }
+      noCache: true
     })
 
     if (tmpList && tmpList.length) {
@@ -62,10 +58,10 @@ export const getBranchInfoList = (
  * @param cb
  */
 export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel, cb?: any) => {
-  const { owner, selectedRepo: repo, selectedBranch } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
 
   const initLoading = ElLoading.service({
-    text: i18n.global.t('settings.image_hosting_deploy.deploying')
+    text: i18n.global.t('settings_page.image_hosting_deploy.deploying')
   })
 
   const cbHandler = (evt: boolean = false) => {
@@ -98,7 +94,7 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
       // 2、获取当前分支的 SHA 值
       let sha = ''
       const res1 = await request({
-        url: `/repos/${owner}/${repo}/git/refs/heads/${selectedBranch}`,
+        url: `/repos/${owner}/${repo}/git/refs/heads/${branch}`,
         method: 'GET'
       })
 
@@ -115,7 +111,7 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
       const res2 = await request({
         url: `/repos/${owner}/${repo}/git/refs`,
         method: 'POST',
-        params: {
+        data: {
           ref: `refs/heads/${GH_PAGES}`,
           sha
         }

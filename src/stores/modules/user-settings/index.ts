@@ -9,32 +9,27 @@ import {
   UserSettingsModel,
   WatermarkPositionEnum
 } from '@/common/model'
-import { deepAssignObject, getLocal, getUuid } from '@/utils'
-import UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
+import { deepAssignObject, getLocal, getSession, getUuid, setLocal, setSession } from '@/utils'
 import RootStateTypes from '@/stores/types'
 import UserSettingsStateTypes, {
+  GlobalSettingsModel,
   ImgLinkRuleActionsEnum
 } from '@/stores/modules/user-settings/types'
-import { LS_PICX_SETTINGS } from '@/common/constant'
-import { DeployServerEnum } from '@/components/deploy-bar/deploy-bar.model'
+import { LS_SETTINGS, SS_GLOBAL_SETTINGS } from '@/common/constant'
 import { imgLinkRuleVerification } from '@/stores/modules/user-settings/utils'
+import i18n from '@/plugins/vue/i18n'
 
 const initSettings: UserSettingsModel = {
   imageName: {
-    autoAddHash: true,
-    autoTimestampNaming: false,
-    prefixNaming: { enable: false, prefix: '' }
+    enableHash: true,
+    addPrefix: { enable: false, prefix: '' }
   },
   compress: {
     enable: true,
     encoder: CompressEncoderEnum.webP
   },
-  theme: {
-    mode: ThemeModeEnum.system
-  },
-  elementPlusSize: ElementPlusSizeEnum.default,
   imageLinkType: {
-    selected: ImageLinkTypeEnum.jsDelivr,
+    selected: ImageLinkTypeEnum.GitHub,
     presetList: {
       // GitHubPages
       [`${ImageLinkTypeEnum.GitHubPages}`]: {
@@ -95,62 +90,88 @@ const initSettings: UserSettingsModel = {
     textColor: '#FFFFFF',
     opacity: 0.5
   },
-  deploy: {
-    github: {
-      uuid: getUuid(),
-      status: null,
-      latestTime: null,
-      type: DeployServerEnum.githubPages
-    }
-  },
-  language: LanguageEnum.zhCN
+  showAnnouncement: true
 }
 
 const initUserSettings = (): UserSettingsModel => {
-  const LSSettings = getLocal(LS_PICX_SETTINGS)
+  const LSSettings = getLocal(LS_SETTINGS)
   if (LSSettings) {
     deepAssignObject(initSettings, LSSettings)
   }
   return initSettings
 }
 
+const initGlobalSettings = (): GlobalSettingsModel => {
+  const globalSettings: GlobalSettingsModel = {
+    showAnnouncement: true,
+    folded: false,
+    elementPlusSize: ElementPlusSizeEnum.default,
+    language: LanguageEnum.zhCN,
+    languageToggleTip: true,
+    theme: ThemeModeEnum.system,
+    useCloudSettings: false
+  }
+
+  const SSSettings = getSession(SS_GLOBAL_SETTINGS)
+  if (SSSettings) {
+    deepAssignObject(globalSettings, SSSettings)
+  }
+  return globalSettings
+}
+
 const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
   state: {
-    userSettings: initUserSettings()
+    userSettings: initUserSettings(),
+    cloudSettings: null,
+    globalSettings: initGlobalSettings()
   },
 
   actions: {
-    // 设置
-    SET_USER_SETTINGS({ state, dispatch }, configInfo: UserConfigInfoStateTypes) {
+    // 赋值用户设置信息
+    SET_USER_SETTINGS({ state, dispatch }, settingsInfo: UserSettingsModel) {
       // eslint-disable-next-line no-restricted-syntax
-      for (const key in configInfo) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (state.userSettings.hasOwnProperty(key)) {
+      for (const key in settingsInfo) {
+        if (Object.hasOwn(state.userSettings, key)) {
           // @ts-ignore
-          state.userSettings[key] = configInfo[key]
+          state.userSettings[key] = settingsInfo[key]
         }
       }
       dispatch('USER_SETTINGS_PERSIST')
     },
 
+    // 赋值云端仓库设置信息
+    SET_CLOUD_SETTINGS({ state }, cloudSettings: UserSettingsStateTypes['cloudSettings']) {
+      state.cloudSettings = cloudSettings
+    },
+
+    // 赋值全局设置信息
+    SET_GLOBAL_SETTINGS({ state }, globalSettings: UserSettingsStateTypes['globalSettings']) {
+      // eslint-disable-next-line guard-for-in,no-restricted-syntax
+      for (const key in globalSettings) {
+        // @ts-ignore
+        state.globalSettings[key] = globalSettings[key]
+      }
+      setSession(SS_GLOBAL_SETTINGS, state.globalSettings)
+    },
+
     // 图片链接类型 - 增加规则
-    ADD_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule, $t }) {
+    ADD_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule }) {
       const ruleObjs = state.userSettings.imageLinkType.presetList
       if (!Object.hasOwn(ruleObjs, rule.name)) {
-        imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.add, $t, (e: boolean) => {
+        imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.add, (e: boolean) => {
           if (e) {
             state.userSettings.imageLinkType.presetList[rule.name] = rule
             dispatch('USER_SETTINGS_PERSIST')
           }
         })
       } else {
-        ElMessage.error($t('settings.link_rule.error_msg_1'))
+        ElMessage.error(i18n.global.t('settings_page.link_rule.error_msg_1'))
       }
     },
 
     // 图片链接类型 - 修改规则
-    UPDATE_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule, $t }) {
-      imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.edit, $t, (e: boolean) => {
+    UPDATE_IMAGE_LINK_TYPE_RULE({ state, dispatch }, { rule }) {
+      imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.edit, (e: boolean) => {
         if (e) {
           state.userSettings.imageLinkType.presetList[rule.name].rule = rule.rule
           dispatch('USER_SETTINGS_PERSIST')
@@ -164,9 +185,14 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
       dispatch('USER_SETTINGS_PERSIST')
     },
 
-    // 持久化
+    // 持久化用户设置数据
     USER_SETTINGS_PERSIST({ state }) {
-      localStorage.setItem(LS_PICX_SETTINGS, JSON.stringify(state.userSettings))
+      setLocal(LS_SETTINGS, state.userSettings)
+    },
+
+    // 持久化全局设置数据
+    USER_GLOBAL_PERSIST({ state }) {
+      setSession(SS_GLOBAL_SETTINGS, state.globalSettings)
     },
 
     // 退出登录
@@ -176,7 +202,9 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
   },
 
   getters: {
-    getUserSettings: (state): UserSettingsModel => state.userSettings
+    getUserSettings: (state) => state.userSettings,
+    getCloudSettings: (state) => state.cloudSettings,
+    getGlobalSettings: (state) => state.globalSettings
   }
 }
 

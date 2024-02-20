@@ -11,6 +11,7 @@ export interface UploadedImageModel {
   size: number
   deleting: boolean
   checked: boolean
+  active?: boolean
 }
 
 /**
@@ -32,17 +33,16 @@ export interface UploadImageModel {
   }
 
   filename: {
-    hash: string // 哈希值
-    suffix: string // 后缀
     name: string
-    final: string
-    initName: string
-    newName: string
-    isRename: boolean
+    initName: string // 初始名称
+    final: string // 最终名称
+    suffix: string // 后缀
+    isRename: boolean // 是否重命名
+    newName: string // 新名称
     isAddHash: boolean // 是否添加哈希值
-    isPrefixNaming: boolean // 是否前缀命名
-    prefixName: string // 前缀命名值
-    isTimestampNaming: boolean // 是否时间戳命名
+    hash: string // 哈希值
+    isAddPrefix: boolean // 是否添加前缀
+    prefix: string // 前缀
   }
 
   // 上传前的状态

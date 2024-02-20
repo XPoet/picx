@@ -1,0 +1,77 @@
+:deep(.el-collapse-item__header) {
+  font-size 16rem
+}
+
+
+.setting-title {
+  margin 40rem 0 25rem 0
+  font-weight bold
+  font-size 16rem
+
+  &:first-child {
+    margin-top 0
+  }
+}
+
+
+.setting-list {
+  margin 0
+  padding 0
+
+  .setting-item {
+    margin-bottom 10rem
+
+    &:last-child {
+      margin-bottom 0
+    }
+
+
+    &.has-desc {
+      display flex
+      align-items center
+      color var(--text-color-4)
+      font-size 12rem
+      user-select none
+
+      .desc {
+        margin-left 10rem
+
+        +picx-mobile() {
+          display none
+        }
+      }
+    }
+
+
+    &.cdn {
+      display flex
+      align-items center
+    }
+
+
+    .prefix-input {
+      width calc(100% - 58rem)
+      margin-left 58rem
+    }
+
+
+    :deep() .el-switch {
+      user-select none
+    }
+  }
+}
+
+
+.image-link-type-rule-option {
+
+  .left {
+    float left
+    margin-right 10rem
+  }
+
+  .right {
+    float right
+    color var(--el-text-color-secondary)
+    font-size 12rem
+  }
+}

@@ -1,54 +1,48 @@
-.header {
+.header-content-box {
   display flex
   align-items center
   justify-content space-between
-  box-sizing border-box
   width 100%
   height 100%
-  padding 0 20rem
-  background var(--background-color)
+  padding-right 20rem
+
 
   .header-left {
     display flex
     justify-content flex-start
+    width $left-side-width
     height 100%
+    padding-left $left-side-padding
+    user-select none
 
-    .brand {
+    .brand-box {
       display flex
       align-items center
       justify-content flex-start
       height 100%
       cursor pointer
 
+      .fold-icon {
+        margin-right $left-side-padding * 0.8
+        font-size 28rem
+        cursor pointer
+      }
+
       .logo {
-        width 46rem
-        height 46rem
+        width 40rem
+        height 40rem
         margin-right 10rem
 
         img {
           width 100%
+          height 100%
         }
       }
 
 
       .title {
         font-weight bold
-        font-size 36rem
-      }
-    }
-
-
-    .website-count {
-      display flex
-      align-items flex-end
-      box-sizing border-box
-      margin-left 10rem
-      padding-bottom 12rem
-      font-size 14rem
-      cursor pointer
-
-      +picx-mobile() {
-        display none
+        font-size 30rem
       }
     }
   }
@@ -58,52 +52,9 @@
     display flex
     align-items center
     justify-content flex-end
-    user-select none
 
-    .user-info {
-      display flex
-      align-items center
-      cursor pointer
-
-      .username {
-        font-size 16rem
-      }
-
-      .avatar-box {
-        display flex
-        align-items center
-        justify-content space-between
-        margin-left 12rem
-
-        .avatar {
-          display flex
-          align-items center
-          justify-content center
-          box-sizing border-box
-          width 38rem
-          height 38rem
-          padding 1rem
-          color var(--text-color)
-          border 1rem solid var(--text-color)
-          border-radius 50%
-
-          img {
-            width 100%
-            height 100%
-            border-radius 50%
-          }
-        }
-
-
-        .user-filled-icon {
-          font-size 20rem
-        }
-
-        .caret-bottom-icon {
-          margin-left 5rem
-          font-size 20rem
-        }
-      }
+    .avatar {
+      margin-left 6rem
     }
   }
 }

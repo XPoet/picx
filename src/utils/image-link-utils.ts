@@ -1,27 +1,21 @@
-import {
-  ImageLinkFormatModel,
-  UploadedImageModel,
-  UserConfigInfoModel,
-  UserSettingsModel
-} from '@/common/model'
+import { computed } from 'vue'
+import { ImageLinkFormatModel, UploadedImageModel } from '@/common/model'
 import { copyText } from '@/utils'
 import i18n from '@/plugins/vue/i18n'
+import { store } from '@/stores'
 
 /**
  * 生成一个图片链接
  * @param imageObj
- * @param userConfigInfo
- * @param userSettings
  */
-export const generateImageLinks = (
-  imageObj: UploadedImageModel,
-  userConfigInfo: UserConfigInfoModel,
-  userSettings: UserSettingsModel
-): string | null => {
+export const generateImageLink = (imageObj: UploadedImageModel): string | null => {
+  const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+  const userSettings = computed(() => store.getters.getUserSettings).value
+
   const { selected } = userSettings.imageLinkType
   const { rule } = userSettings.imageLinkType.presetList[selected]
   if (rule) {
-    const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
+    const { owner, repo, branch } = userConfigInfo
     return rule
       .replaceAll('{{owner}}', owner)
       .replaceAll('{{repo}}', repo)
@@ -35,13 +29,9 @@ export const generateImageLinks = (
  * 转换图片链接格式
  * @param imageLink
  * @param imageName
- * @param userSettings
  */
-const transformImageLink = (
-  imageLink: string | null,
-  imageName: string,
-  userSettings: UserSettingsModel
-) => {
+const transformImageLink = (imageLink: string | null, imageName: string) => {
+  const userSettings = computed(() => store.getters.getUserSettings).value
   if (userSettings.imageLinkFormat.enable) {
     const selectedFormat = userSettings.imageLinkFormat.selected
     const format = userSettings.imageLinkFormat.presetList.find(
@@ -71,21 +61,10 @@ const copyMessage = (autoCopy = false) => {
 /**
  * 复制单张图片链接
  * @param imgObj
- * @param userConfigInfo
- * @param userSettings
  * @param autoCopy
  */
-export const copyImageLink = (
-  imgObj: UploadedImageModel,
-  userConfigInfo: UserConfigInfoModel,
-  userSettings: UserSettingsModel,
-  autoCopy: boolean = false
-) => {
-  const link = transformImageLink(
-    generateImageLinks(imgObj, userConfigInfo, userSettings),
-    imgObj.name,
-    userSettings
-  )
+export const copyImageLink = (imgObj: UploadedImageModel, autoCopy: boolean = false) => {
+  const link = transformImageLink(generateImageLink(imgObj), imgObj.name)
   if (link) {
     copyText(link, () => {
       copyMessage(autoCopy)
@@ -98,24 +77,16 @@ export const copyImageLink = (
 /**
  * 批量复制图片链接
  * @param uploadedImgList 图片对象列表
- * @param userConfigInfo
- * @param userSettings
  * @param autoCopy
  */
 export const batchCopyImageLinks = (
   uploadedImgList: Array<UploadedImageModel>,
-  userConfigInfo: UserConfigInfoModel,
-  userSettings: UserSettingsModel,
   autoCopy: boolean = false
 ) => {
   if (uploadedImgList?.length > 0) {
     let linksTxt = ''
     uploadedImgList.forEach((img: UploadedImageModel, index) => {
-      const link = transformImageLink(
-        generateImageLinks(img, userConfigInfo, userSettings),
-        img.name,
-        userSettings
-      )
+      const link = transformImageLink(generateImageLink(img), img.name)
       linksTxt += `${link}${index < uploadedImgList.length - 1 ? '\n' : ''}`
     })
     copyText(linksTxt, () => {

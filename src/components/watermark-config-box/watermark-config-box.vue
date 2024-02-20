@@ -7,10 +7,10 @@
   >
     <el-row>
       <el-col :span="24">
-        <el-form-item :label="$t('settings.img_watermark.text')">
+        <el-form-item :label="$t('settings_page.img_watermark.text')">
           <el-input
             v-model="watermark.text"
-            :placeholder="$t('settings.img_watermark.text_input_placeholder')"
+            :placeholder="$t('settings_page.img_watermark.text_input_placeholder')"
             clearable
             maxlength="20"
             @input="changeWatermarkConfig"
@@ -19,7 +19,7 @@
       </el-col>
 
       <el-col :span="isTool ? 10 : 24">
-        <el-form-item :label="$t('settings.img_watermark.size')">
+        <el-form-item :label="$t('settings_page.img_watermark.size')">
           <el-input-number
             v-model="watermark.fontSize"
             :min="40"
@@ -31,13 +31,13 @@
       </el-col>
 
       <el-col :span="isTool ? 14 : 24">
-        <el-form-item :label="$t('settings.img_watermark.color')">
+        <el-form-item :label="$t('settings_page.img_watermark.color')">
           <el-color-picker v-model="watermark.textColor" @change="changeWatermarkConfig" />
         </el-form-item>
       </el-col>
 
       <el-col :span="isTool ? 10 : 24">
-        <el-form-item :label="$t('settings.img_watermark.opacity')">
+        <el-form-item :label="$t('settings_page.img_watermark.opacity')">
           <el-input-number
             v-model="watermark.opacity"
             :precision="1"
@@ -50,19 +50,19 @@
       </el-col>
 
       <el-col :span="isTool ? 14 : 24">
-        <el-form-item :label="$t('settings.img_watermark.position')">
+        <el-form-item :label="$t('settings_page.img_watermark.position')">
           <el-radio-group v-model="watermark.position" @change="changeWatermarkConfig">
             <el-radio :label="WatermarkPositionEnum.leftTop">
-              {{ $t('settings.img_watermark.position_1') }}
+              {{ $t('settings_page.img_watermark.position_1') }}
             </el-radio>
             <el-radio :label="WatermarkPositionEnum.leftBottom">
-              {{ $t('settings.img_watermark.position_2') }}
+              {{ $t('settings_page.img_watermark.position_2') }}
             </el-radio>
             <el-radio :label="WatermarkPositionEnum.rightTop">
-              {{ $t('settings.img_watermark.position_3') }}
+              {{ $t('settings_page.img_watermark.position_3') }}
             </el-radio>
             <el-radio :label="WatermarkPositionEnum.rightBottom">
-              {{ $t('settings.img_watermark.position_4') }}
+              {{ $t('settings_page.img_watermark.position_4') }}
             </el-radio>
           </el-radio-group>
         </el-form-item>
