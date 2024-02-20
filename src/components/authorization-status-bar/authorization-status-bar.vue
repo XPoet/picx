@@ -1,10 +1,10 @@
 <template>
   <div
-    class="authorization-status-box border-box"
+    class="authorization-status-box status-bar"
     :class="{
-      error: isAutoAuthorize && token && isAuthorizeExpire(),
-      warning: isAutoAuthorize && token && !installed,
-      success: isAutoAuthorize && token && !isAuthorizeExpire()
+      success: isAutoAuthorize && token && !isAuthorizeExpire(),
+      warning: isAutoAuthorize && token && !isAuthorizeExpire() && installed === false,
+      error: isAutoAuthorize && token && isAuthorizeExpire()
     }"
   >
     <div>
@@ -17,16 +17,14 @@
       <span v-else>{{ $t('authorization.text_5') }}</span>
     </div>
 
-    <el-tooltip placement="top" :content="$t('authorization.text_6')">
-      <el-button type="primary" text :icon="icon.IEpSwitch" @click="onOK">{{
-        $t('authorization.text_7')
-      }}</el-button>
-    </el-tooltip>
+    <el-button text type="primary" :icon="icon.IEpSwitch" @click="onOK">
+      {{ $t('authorization.text_7') }}
+    </el-button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, shallowRef, computed } from 'vue'
+import { shallowRef, computed } from 'vue'
 import router from '@/router'
 import { store } from '@/stores'
 import { isAuthorizeExpire } from '@/views/picx-login/picx-login.util'
@@ -40,8 +38,6 @@ const { token, isAutoAuthorize, installed } = computed(
 const onOK = () => {
   router.push({ path: '/login', query: { jump: '0' } })
 }
-
-onMounted(() => {})
 </script>
 
 <style scoped lang="stylus">

@@ -9,9 +9,11 @@
     font-size 0.95px
   }
 
+
   +picx-tablet() {
     font-size 0.9px
   }
+
 
   +picx-mobile() {
     font-size 0.8px
@@ -44,6 +46,7 @@ body {
   margin 0
   padding 0
   color var(--text-color)
+  font-size 14rem
 }
 
 
@@ -62,6 +65,7 @@ ul
 ol
 li {
   margin 0
+  padding 0
   list-style none
 }
 
@@ -79,26 +83,23 @@ li {
   justify-content flex-start
 }
 
+.flex-end {
+  display flex
+  align-items center
+  justify-content flex-end
+}
 
-.page-container {
+
+.border-box {
   position relative
   box-sizing border-box
-  width 100%
-  height 100%
-  padding 30rem
-  overflow-y auto
-  background var(--background-color)
-  border-top-left-radius $box-border-radius
+}
 
-  .page-content {
-    position relative
-    left 50%
-    box-sizing border-box
-    width 100%
-    max-width 1200rem
-    height 100%
-    transform translateX(-50%)
-  }
+
+.text-ellipsis {
+  overflow hidden
+  white-space nowrap
+  text-overflow ellipsis
 }
 
 
@@ -114,6 +115,19 @@ li {
 }
 
 
+.page-container {
+  position relative
+  box-sizing border-box
+  width 100%
+  height 100%
+  padding 30rem
+  overflow-y auto
+  background var(--background-color)
+  border-top-left-radius $box-border-radius
+  border-top-right-radius $box-border-radius
+}
+
+
 .custom-contextmenu-container {
   position relative
   box-sizing border-box
@@ -125,17 +139,14 @@ li {
 
   .custom-contextmenu-item {
     position relative
-    display flex
+    display none
     align-items center
     justify-content flex-start
     box-sizing border-box
+    min-width 120rem
     padding 8rem 10rem
     font-size 12rem
     cursor pointer
-
-    &.copy-link {
-      display none
-    }
 
     &:hover {
       color var(--el-color-primary)
@@ -145,18 +156,11 @@ li {
 }
 
 
-.text-ellipsis {
-  overflow hidden
-  white-space nowrap
-  text-overflow ellipsis
-}
-
-
 .quick-actions-popover {
   position relative
   box-sizing border-box
   width 100%
-  padding 10rem
+  padding 10rem 12rem
   background var(--background-color)
   user-select none
 
@@ -167,28 +171,67 @@ li {
 
 
 .personal-center-popover {
-  position relative
-  box-sizing border-box
+  width 100%
+  padding 10rem 0
+  background var(--background-color)
+
+  .user-info {
+    width 100%
+    padding 6rem 12rem
+
+    .info-item {
+      margin-bottom 2rem
+    }
+
+    .owner {
+      color var(--text-color-3)
+      font-size 16rem
+    }
+
+    .name {
+      color var(--text-color-4)
+      font-size 13rem
+    }
+  }
+
+
+  .content-item {
+    display flex
+    align-items center
+    justify-content space-between
+    width 100%
+    padding 8rem 12rem
+    color var(--text-color-3)
+    font-size 14rem
+    cursor pointer
+
+    &:hover {
+      color var(--el-color-primary)
+      background var(--el-color-primary-light-9)
+    }
+  }
+
+  .el-divider {
+    margin 0
+  }
+}
+
+
+.global-settings-popover {
   width 100%
   padding 10rem 0
   background var(--background-color)
 
   .content-item {
-    position relative
     display flex
     align-items center
     justify-content space-between
-    box-sizing border-box
     width 100%
     height 36rem
     padding 0 12rem
     color var(--text-color-3)
     font-size 14rem
     cursor pointer
-
-    .el-icon {
-      margin-right 3rem
-    }
 
     &:hover {
       background var(--background-color-2)
@@ -246,10 +289,44 @@ li {
   }
 }
 
-.border-box {
+.status-bar {
   position relative
   box-sizing border-box
+  padding-left 12rem
+  overflow hidden
+  color var(--el-color-info)
+  font-size 13.2rem
+  background-color var(--el-color-info-light-9)
+  border-color var(--el-color-info-light-5)
+  border-style solid
+  border-width 1rem
+  border-radius 6rem
+
+  &.info {
+    color var(--el-color-info)
+    background-color var(--el-color-info-light-9)
+    border-color var(--el-color-info-light-5)
+  }
+
+  &.success {
+    color var(--el-color-success)
+    background-color var(--el-color-success-light-9)
+    border-color var(--el-color-success-light-5)
+  }
+
+  &.warning {
+    color var(--el-color-warning)
+    background-color var(--el-color-warning-light-9)
+    border-color var(--el-color-warning-light-5)
+  }
+
+  &.error {
+    color var(--el-color-danger)
+    background-color var(--el-color-danger-light-9)
+    border-color var(--el-color-danger-light-5)
+  }
 }
+
 
 
 

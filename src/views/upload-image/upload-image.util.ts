@@ -40,17 +40,14 @@ export const generateUploadImageObject = (obj: {
   const suffix = nameHandled.slice(tmpIdx + 1)
 
   tmp.filename.initName = name
-  tmp.filename.name = imageName.prefixNaming.enable
-    ? `${imageName.prefixNaming.prefix}${name}`
-    : name
-  tmp.filename.prefixName = imageName.prefixNaming.prefix
+  tmp.filename.name = imageName.addPrefix.enable ? `${imageName.addPrefix.prefix}${name}` : name
+  tmp.filename.prefix = imageName.addPrefix.prefix
   tmp.filename.hash = hash
   tmp.filename.suffix = suffix
-  tmp.filename.final = imageName.autoAddHash
+  tmp.filename.final = imageName.enableHash
     ? `${tmp.filename.name}.${hash}.${suffix}`
     : `${tmp.filename.name}.${suffix}`
-  tmp.filename.isAddHash = imageName.autoAddHash
-  tmp.filename.isPrefixNaming = imageName.prefixNaming.enable
-  tmp.filename.isTimestampNaming = imageName.autoTimestampNaming
+  tmp.filename.isAddHash = imageName.enableHash
+  tmp.filename.isAddPrefix = imageName.addPrefix.enable
   return tmp
 }

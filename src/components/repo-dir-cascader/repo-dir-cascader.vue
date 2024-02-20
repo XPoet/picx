@@ -9,7 +9,7 @@
     :key="elKey"
     v-model="userConfigInfo.selectedDirList"
     filterable
-    :placeholder="$t('config.placeholder5')"
+    :placeholder="$t('config_page.placeholder_5')"
     :clearable="elClearable"
     @change="cascaderChange"
   />
@@ -49,13 +49,13 @@ const cascaderProps = {
   checkStrictly: true,
   async lazyLoad(node: any, resolve: any) {
     const { level, pathLabels } = node
-    let dirs: any
+    let dirs: any[]
     if (level === 0) {
       dirs = userConfigInfo.dirList
     } else {
       dirs = await getDirInfoList(userConfigInfo, pathLabels.join('/'))
     }
-    if (dirs) {
+    if (dirs.length) {
       resolve(
         dirs.map((x: any) => ({
           value: x.value,
@@ -70,8 +70,13 @@ const cascaderProps = {
 }
 
 const cascaderChange = (e: string[]) => {
-  userConfigInfo.selectedDirList = e
-  userConfigInfo.selectedDir = e.join('/')
+  if (Array.isArray(e) && e.length) {
+    userConfigInfo.selectedDirList = e
+    userConfigInfo.selectedDir = e.join('/')
+  } else {
+    userConfigInfo.selectedDirList = []
+    userConfigInfo.selectedDir = ''
+  }
   store.dispatch('USER_CONFIG_INFO_PERSIST')
 }
 </script>

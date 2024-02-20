@@ -29,14 +29,13 @@ export const createUploadImageObject = (): UploadImageModel => {
       hash: '',
       suffix: '',
       name: '',
-      prefixName: '',
+      prefix: '',
       final: '',
       initName: '',
       newName: '',
       isAddHash: true,
       isRename: false,
-      isPrefixNaming: false,
-      isTimestampNaming: false
+      isAddPrefix: false
     },
     beforeUploadStatus: {
       watermarking: false,
@@ -83,7 +82,7 @@ export async function deleteImageFromGitHub(
   userConfigInfo: UserConfigInfoModel
 ): Promise<boolean> {
   imageObj.deleting = true
-  const { owner, selectedRepo: repo } = userConfigInfo
+  const { owner, repo } = userConfigInfo
   const { path, sha } = imageObj
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
@@ -115,7 +114,7 @@ export async function deleteImagesFromGitHub(
   userConfigInfo: UserConfigInfoModel
 ): Promise<void> {
   imgListDeleteStatus(imgObjs, true)
-  const { owner, selectedRepo: repo, selectedBranch: branch } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
 
   // 获取 head，用于获取当前分支信息（根目录的 tree sha 以及 head commit sha）
   const headRes: any = await getBranchInfo(owner, repo, branch)
@@ -205,6 +204,9 @@ export function getBase64ByImageUrl(url: string, ext: string): Promise<string | 
       ctx?.drawImage(img, 0, 0, width, height) // 参数可自定义
       const dataURL: string = canvas.toDataURL(`image/${ext}`)
       resolve(dataURL)
+    }
+    img.onerror = () => {
+      resolve(null)
     }
   })
 }

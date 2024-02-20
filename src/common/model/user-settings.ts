@@ -1,5 +1,4 @@
 import { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
-import { DeployServerEnum } from '@/components/deploy-bar/deploy-bar.model'
 
 export enum ElementPlusSizeEnum {
   // eslint-disable-next-line no-unused-vars
@@ -39,30 +38,18 @@ export enum LanguageEnum {
   en = 'en'
 }
 
-export interface DeployStatusInfo {
-  uuid: string
-  status: boolean | null
-  latestTime: number | null
-  type: DeployServerEnum
-}
-
 export interface UserSettingsModel {
   imageName: {
-    autoAddHash: boolean
-    prefixNaming: {
+    enableHash: boolean
+    addPrefix: {
       enable: boolean
       prefix: string
     }
-    autoTimestampNaming: boolean
-  }
-  theme: {
-    mode: ThemeModeEnum
   }
   compress: {
     enable: boolean
     encoder: CompressEncoderEnum
   }
-  elementPlusSize: ElementPlusSizeEnum
   imageLinkType: {
     selected: string
     presetList: {
@@ -83,8 +70,5 @@ export interface UserSettingsModel {
     textColor: string
     opacity: number
   }
-  deploy: {
-    [key: string]: DeployStatusInfo
-  }
-  language: LanguageEnum
+  showAnnouncement?: boolean
 }

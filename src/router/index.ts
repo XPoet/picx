@@ -2,7 +2,7 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import login from '@/views/picx-login/picx-login.vue'
 import upload from '@/views/upload-image/upload-image.vue'
 import management from '@/views/imgs-management/imgs-management.vue'
-import settings from '@/views/my-settings/my-settings.vue'
+import settings from '@/views/picx-settings/picx-settings.vue'
 import toolbox from '@/views/picx-toolbox/picx-toolbox.vue'
 import feedback from '@/views/feedback-info/feedback-info.vue'
 import compressTool from '@/components/tools/compress-tool/compress-tool.vue'
@@ -16,15 +16,15 @@ const routes: Array<RouteRecordRaw> = [
     name: 'login',
     component: login,
     meta: {
-      title: `nav.login`
+      title: 'login'
     }
   },
   {
     path: '/config',
     name: 'config',
-    component: () => import('@/views/my-config/my-config.vue'),
+    component: () => import('@/views/picx-config/picx-config.vue'),
     meta: {
-      title: `nav.config`
+      title: 'nav.config'
     }
   },
   {
@@ -32,7 +32,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'upload',
     component: upload,
     meta: {
-      title: `nav.upload`
+      title: 'nav.upload'
     }
   },
   {
@@ -40,7 +40,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Management',
     component: management,
     meta: {
-      title: `nav.management`
+      title: 'nav.management'
     }
   },
   {
@@ -48,7 +48,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'settings',
     component: settings,
     meta: {
-      title: `nav.settings`
+      title: 'nav.settings'
     }
   },
   {
@@ -56,7 +56,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Toolbox',
     component: toolbox,
     meta: {
-      title: `nav.toolbox`
+      title: 'nav.toolbox'
     },
     children: [
       {
@@ -81,7 +81,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'feedback',
     component: feedback,
     meta: {
-      title: `nav.feedback`
+      title: 'nav.feedback'
     }
   },
   {

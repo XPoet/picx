@@ -1,5 +1,5 @@
 import { store } from '@/stores'
-import { getFileSuffix, isImage, createManagementImageObject, getUuid } from '@/utils'
+import { getFileSuffix, isImage, createManagementImageObject } from '@/utils'
 import request from '@/utils/request'
 import { UserConfigInfoModel } from '@/common/model'
 
@@ -8,15 +8,19 @@ import { UserConfigInfoModel } from '@/common/model'
  * @param userConfigInfo
  * @param path 路径
  */
-export const getDirInfoList = (userConfigInfo: UserConfigInfoModel, path: string = '') => {
-  const { owner, selectedRepo: repo, selectedBranch: ref } = userConfigInfo
+export const getDirInfoList = (
+  userConfigInfo: UserConfigInfoModel,
+  path: string = ''
+): Promise<[]> => {
+  const { owner, repo, branch } = userConfigInfo
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const tmpList = await request({
       url: `/repos/${owner}/${repo}/contents/${path}`,
       method: 'GET',
+      noShowErrMsg: true,
       params: {
-        ref
+        ref: branch
       }
     })
 
@@ -30,7 +34,7 @@ export const getDirInfoList = (userConfigInfo: UserConfigInfoModel, path: string
           }))
       )
     } else {
-      resolve(null)
+      resolve([])
     }
   })
 }
@@ -41,17 +45,16 @@ export const getDirInfoList = (userConfigInfo: UserConfigInfoModel, path: string
  * @param path
  */
 export const getRepoPathContent = (userConfigInfo: UserConfigInfoModel, path: string = '') => {
-  const { owner, selectedRepo: repo, selectedBranch: ref } = userConfigInfo
+  const { owner, repo, branch } = userConfigInfo
 
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const res = await request({
       url: `/repos/${owner}/${repo}/contents/${path}`,
       method: 'GET',
+      noCache: true,
       params: {
-        // 防止浏览器缓存
-        'no-cache': getUuid(),
-        ref
+        ref: branch
       }
     })
 

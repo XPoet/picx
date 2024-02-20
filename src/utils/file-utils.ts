@@ -3,14 +3,15 @@ import { ImageHandleResult } from '@/common/model'
 import { getUuid } from '@/utils/common-utils'
 import { imgFileToBase64 } from '@/utils/image-utils'
 import { IMG_UPLOAD_MAX_SIZE } from '@/common/constant'
+import i18n from '@/plugins/vue/i18n'
 
 /**
  * 获取文件名
  * @param filename
  */
 export const getFilename = (filename: string) => {
-  const splitIndex = filename.indexOf('.')
-  return filename.substr(0, splitIndex).trim().replace(/\s+/g, '-')
+  const splitIndex = filename.lastIndexOf('.')
+  return filename.substring(0, splitIndex).trim().replace(/\s+/g, '-')
 }
 
 /**
@@ -27,6 +28,7 @@ export const getFileSuffix = (filename: string) => {
  * @param fileType
  */
 export const isImage = (fileType: string): boolean => {
+  fileType = fileType.toLowerCase()
   return /(png|jpg|jpeg|gif|webp|awebp|avif|svg\+xml|svg|x-icon|vnd.microsoft.icon)$/.test(fileType)
 }
 
@@ -35,6 +37,7 @@ export const isImage = (fileType: string): boolean => {
  * @param imageType
  */
 export const isNeedCompress = (imageType: string): boolean => {
+  imageType = imageType.toLowerCase()
   return /(png|jpg|jpeg|webp|avif)$/.test(imageType)
 }
 
@@ -43,6 +46,7 @@ export const isNeedCompress = (imageType: string): boolean => {
  * @param imageType
  */
 export const isNeedWatermark = (imageType: string): boolean => {
+  imageType = imageType.toLowerCase()
   return /(png|jpg|jpeg|webp|avif)$/.test(imageType)
 }
 
@@ -69,14 +73,16 @@ export const gettingFilesHandle = (file: File): Promise<ImageHandleResult | null
     }
 
     if (!isImage(file.type)) {
-      ElMessage.error(`${file.name} 不是图片格式`)
+      ElMessage.error(i18n.global.t('upload_page.tip_9', { name: file.name }))
       resolve(null)
     }
 
     const base64 = (await imgFileToBase64(file)) || ''
 
     if (getFileSize(base64.length) >= IMG_UPLOAD_MAX_SIZE * 1024) {
-      ElMessage.error(`${file.name} 超过 ${IMG_UPLOAD_MAX_SIZE} MB，跳过选择`)
+      ElMessage.error(
+        i18n.global.t('upload_page.tip_10', { name: file.name, size: IMG_UPLOAD_MAX_SIZE })
+      )
       resolve(null)
     }
 

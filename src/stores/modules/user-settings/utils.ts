@@ -1,20 +1,22 @@
 import { ImageLinkRuleModel } from '@/common/model'
 import { ImgLinkRuleActionsEnum } from '@/stores/modules/user-settings/types'
+import i18n from '@/plugins/vue/i18n'
 
 export const imgLinkRuleVerification = (
   rule: ImageLinkRuleModel,
   type: ImgLinkRuleActionsEnum,
-  $t: any,
   callback: any
 ) => {
   const typeTxt =
     type === ImgLinkRuleActionsEnum.add
-      ? $t('settings.link_rule.add')
-      : $t('settings.link_rule.edit')
+      ? i18n.global.t('settings_page.link_rule.add')
+      : i18n.global.t('settings_page.link_rule.edit')
   const tmpList = []
 
   if (!rule.rule.includes('{{path}}')) {
-    ElMessage.error($t('settings.link_rule.error_msg_2', { action: typeTxt, path: '{{path}}' }))
+    ElMessage.error(
+      i18n.global.t('settings_page.link_rule.error_msg_2', { action: typeTxt, path: '{{path}}' })
+    )
     callback(false)
     return
   }
@@ -32,7 +34,7 @@ export const imgLinkRuleVerification = (
   }
 
   if (tmpList.length) {
-    const confirmTxt = $t('settings.link_rule.error_msg_3', {
+    const confirmTxt = i18n.global.t('settings_page.link_rule.error_msg_3', {
       action: typeTxt,
       rules: tmpList.join('、')
     })

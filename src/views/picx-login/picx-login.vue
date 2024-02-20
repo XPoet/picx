@@ -19,9 +19,9 @@
         <div class="tip-item link" @click="goTargetUrl(UrlTypeEnum.installGitHubAppURL)">
           <el-icon><IEpLink /></el-icon>
           {{ $t('authorization.text_11') }}
-          <el-icon class="install-status" v-if="authorizationInfo.installed"
-            ><IEpCircleCheckFilled
-          /></el-icon>
+          <el-icon class="install-status" v-if="authorizationInfo.installed">
+            <IEpCircleCheckFilled />
+          </el-icon>
         </div>
       </div>
     </div>
@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue'
+import { onMounted, computed, ref, watch } from 'vue'
 import {
   githubAppAuthorize,
   githubAppAuthorizeCallback,
@@ -130,15 +130,7 @@ const goTargetUrl = (type: UrlTypeEnum) => {
 }
 
 const init = () => {
-  const {
-    token,
-    name,
-    owner,
-    selectedRepo: repo,
-    selectedBranch: branch,
-    selectedDir: dir,
-    logined
-  } = userConfigInfo
+  const { token, name, owner, repo, branch, selectedDir: dir, logined } = userConfigInfo
 
   if (router.currentRoute.value.query?.jump !== '0') {
     if (token && name && owner && logined) {
@@ -155,6 +147,18 @@ onMounted(() => {
   githubAppAuthorizeCallback()
   init()
 })
+
+watch(
+  () => authorizationInfo.authorizing,
+  (nv) => {
+    if (nv) {
+      store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
+        authorizing: false
+      })
+      onGitHubAuthorizeLogin()
+    }
+  }
+)
 </script>
 
 <style scoped lang="stylus">

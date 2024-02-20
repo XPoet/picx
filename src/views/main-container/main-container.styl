@@ -1,55 +1,46 @@
-$top-container-height = 60rem
-$left-side-width = 90rem
+$layout-padding = $left-side-padding * 0.8
+$header-margin-bottom = $left-side-padding * 0.5
 
 .main-container {
   position absolute
+  display flex
+  flex-direction column
+  justify-content space-between
   box-sizing border-box
   width 100%
   height 100%
-  font-size 15rem
   background var(--background-color-2)
 
   .top-container {
-    position relative
-    box-sizing border-box
+    flex-shrink 0
     width 100%
-    height $top-container-height
+    height $header-height
+    margin-bottom $header-margin-bottom
   }
 
 
   .bottom-container {
-    position relative
-    box-sizing border-box
+    display flex
+    justify-content space-between
     width 100%
-    height 'calc(100% - %s)' % $top-container-height
+    height 'calc(100% - %s)' % ($header-height + $header-margin-bottom)
 
-    .bottom-content {
-      position relative
-      box-sizing border-box
+
+    .bottom-left-box {
+      flex-shrink 0
+      width $left-side-width
+      height 100%
+
+      &.folded {
+        width $left-side-folded-width
+      }
+    }
+
+
+    .bottom-right-box {
       width 100%
       height 100%
-      padding-left $left-side-width
-
-
-      .left {
-        position absolute
-        top 0
-        left 0
-        box-sizing border-box
-        width $left-side-width
-        height 100%
-        padding-top $component-interval
-      }
-
-
-      .right {
-        position relative
-        box-sizing border-box
-        width 100%
-        height 100%
-        padding-top $component-interval
-        padding-left $component-interval
-      }
+      padding-right $layout-padding
     }
   }
 }

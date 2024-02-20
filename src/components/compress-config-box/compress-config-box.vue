@@ -1,6 +1,6 @@
 <template>
   <div class="compress-config-box">
-    <div class="img-encoder-title">{{ $t('settings.img_compress.radio_group_title') }}</div>
+    <div class="img-encoder-title">{{ $t('settings_page.img_compress.radio_group_title') }}</div>
     <el-radio-group
       :disabled="disabled"
       class="img-encoder-group"
@@ -9,15 +9,15 @@
     >
       <el-radio :label="CompressEncoderEnum.webP">
         {{ CompressEncoderEnum.webP }}
-        <span class="desc">{{ $t('settings.img_compress.radio_1_desc') }}</span>
+        <span class="desc">{{ $t('settings_page.img_compress.radio_1_desc') }}</span>
       </el-radio>
       <el-radio :label="CompressEncoderEnum.mozJPEG">
         {{ CompressEncoderEnum.mozJPEG }}
-        <span class="desc">{{ $t('settings.img_compress.radio_2_desc') }}</span>
+        <span class="desc">{{ $t('settings_page.img_compress.radio_2_desc') }}</span>
       </el-radio>
       <el-radio :label="CompressEncoderEnum.avif">
         {{ CompressEncoderEnum.avif }}
-        <span class="desc">{{ $t('settings.img_compress.radio_3_desc') }}</span>
+        <span class="desc">{{ $t('settings_page.img_compress.radio_3_desc') }}</span>
       </el-radio>
     </el-radio-group>
   </div>

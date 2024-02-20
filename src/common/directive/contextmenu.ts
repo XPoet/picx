@@ -1,21 +1,30 @@
 import { computed, Directive } from 'vue'
 import router from '@/router'
 import { store } from '@/stores'
-import { ContextmenuEnum, DirModeEnum } from '@/common/model'
+import { ContextmenuEnum } from './types'
+import { DirModeEnum } from '@/common/model'
 import { copyImageLink } from '@/utils'
 import i18n from '@/plugins/vue/i18n'
+import {
+  checkImgProperty,
+  onDeleteImage,
+  onRenameImage
+} from '@/views/imgs-management/components/image-card/image-card.util'
 
 const menuClass = 'custom-contextmenu-container'
 let menuEle: any = null
 let isAddEventListenerOfContextmenu: boolean = false
 
+// 右键菜单指令
 const contextmenuDirective: Directive = {
   mounted(el: any, binding: any) {
     el.addEventListener('contextmenu', (e: any) => {
-      const { dir, type, img } = binding.value
-
       e.preventDefault()
       e.stopPropagation()
+
+      const { type, dir, img } = binding.value
+
+      store.commit('SET_UPLOAD_AREA_STATE', { activeInfo: { dir, type, img } })
 
       const viewDir = computed(() => store.getters.getUserViewDir).value
 
@@ -28,23 +37,72 @@ const contextmenuDirective: Directive = {
         menuEle.setAttribute('class', menuClass)
         menuEle.style.position = 'fixed'
         menuEle.style.zIndex = '1000'
-        menuEle.innerHTML = `<li class="custom-contextmenu-item upload-image"></li><li class="custom-contextmenu-item copy-link">${i18n.global.t(
-          'copy_link'
-        )}</li>`
+        menuEle.innerHTML = `<li class="custom-contextmenu-item upload-image">
+                             </li>
+                             <li class="custom-contextmenu-item paste-image">
+                               ${i18n.global.t('paste_image')}
+                             </li>
+                             <li class="custom-contextmenu-item copy-link">
+                               ${i18n.global.t('copy_link')}
+                             </li>
+                             <li class="custom-contextmenu-item property">
+                               ${i18n.global.t('management_page.property')}
+                             </li>
+                             <li class="custom-contextmenu-item rename">
+                               ${i18n.global.t('rename')}
+                             </li>
+                             <li class="custom-contextmenu-item remove">
+                               ${i18n.global.t('delete')}
+                             </li>
+                             `
         document.body.appendChild(menuEle)
       }
 
       const uploadItem = menuEle?.querySelector('.upload-image')
-      const copyItem = menuEle?.querySelector('.copy-link')
+      const removeItem = menuEle?.querySelector('.remove')
+      const renameItem = menuEle?.querySelector('.rename')
+      const copyLinkItem = menuEle?.querySelector('.copy-link')
+      const propertyItem = menuEle?.querySelector('.property')
+      const pasteImageItem = menuEle?.querySelector('.paste-image')
 
-      if (type === ContextmenuEnum.img) {
-        copyItem.style.display = 'block'
-        uploadItem.innerHTML = i18n.global.t('management.contextmenu_1')
-      } else {
-        copyItem.style.display = 'none'
-        uploadItem.innerHTML = i18n.global.t('management.contextmenu_2', {
-          dir: selectedDir === '/' ? i18n.global.t('management.contextmenu_3') : selectedDir
+      const hideAllContextmenu = () => {
+        menuEle.querySelectorAll('.custom-contextmenu-item').forEach((d: HTMLElement) => {
+          d.style.display = 'none'
         })
+      }
+
+      const showContextmenu = (domList: HTMLElement[]) => {
+        domList.forEach((d: HTMLElement) => {
+          d.style.display = 'flex'
+        })
+      }
+
+      // 图片
+      if (type === ContextmenuEnum.img) {
+        hideAllContextmenu()
+        showContextmenu([copyLinkItem, removeItem, renameItem, propertyItem])
+      }
+
+      // 目录
+      if (type === ContextmenuEnum.dir) {
+        hideAllContextmenu()
+        showContextmenu([uploadItem])
+        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_2', {
+          dir: selectedDir
+        })
+      }
+
+      // 目录区域
+      if (type === ContextmenuEnum.dirArea) {
+        hideAllContextmenu()
+        showContextmenu([uploadItem])
+        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_1')
+      }
+
+      // 上传区域
+      if (type === ContextmenuEnum.uploadArea) {
+        hideAllContextmenu()
+        showContextmenu([pasteImageItem])
       }
 
       let setLeft = e.clientX
@@ -69,6 +127,7 @@ const contextmenuDirective: Directive = {
       if (!isAddEventListenerOfContextmenu) {
         isAddEventListenerOfContextmenu = true
 
+        // 上传图片
         uploadItem?.addEventListener('click', async () => {
           const dirMode = selectedDir === '/' ? DirModeEnum.rootDir : DirModeEnum.repoDir
           const selectedDirList = selectedDir === '/' ? [] : selectedDir.split('/')
@@ -80,22 +139,57 @@ const contextmenuDirective: Directive = {
           await router.push('/upload')
         })
 
-        copyItem?.addEventListener('click', async () => {
-          const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-          const userSettings = computed(() => store.getters.getUserSettings).value
-          copyImageLink(img, userConfigInfo, userSettings)
+        // 重命名
+        renameItem?.addEventListener('click', async () => {
+          if (type === ContextmenuEnum.img) {
+            await onRenameImage(img)
+          }
+
+          if (type === ContextmenuEnum.dir) {
+            // TODO 重命名目录
+          }
+        })
+
+        // 删除
+        removeItem?.addEventListener('click', async () => {
+          if (type === ContextmenuEnum.img) {
+            onDeleteImage(img)
+          }
+
+          if (type === ContextmenuEnum.dir) {
+            // TODO 删除目录
+          }
+        })
+
+        // 复制图片链接
+        copyLinkItem?.addEventListener('click', async () => {
+          copyImageLink(img)
+        })
+
+        // 查看图片属性
+        propertyItem?.addEventListener('click', async () => {
+          await checkImgProperty(img)
+        })
+
+        // 上传区域粘贴图片
+        pasteImageItem?.addEventListener('click', () => {
+          store.commit('SET_UPLOAD_AREA_STATE', {
+            isPaste: true
+          })
         })
       }
 
-      const closeMenu = () => {
+      const closeContextMenu = () => {
+        store.commit('SET_UPLOAD_AREA_STATE', { activeInfo: null })
         if (menuEle) {
-          document.removeEventListener('click', closeMenu)
+          document.removeEventListener('click', closeContextMenu)
           document.body.removeChild(menuEle)
           menuEle = null
           isAddEventListenerOfContextmenu = false
         }
       }
-      document.addEventListener('click', closeMenu)
+      document.addEventListener('click', closeContextMenu)
+      document.addEventListener('dblclick', closeContextMenu)
     })
   }
 }
