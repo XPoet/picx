@@ -41,7 +41,8 @@ module.exports = {
     'import/prefer-default-export': 'off',
     camelcase: 'off',
     'no-param-reassign': 'off',
-    'no-await-in-loop': 'off'
+    'no-await-in-loop': 'off',
+    'no-underscore-dangle': 'off'
   },
   globals: {
     ...dts2Globals()
