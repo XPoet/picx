@@ -2,6 +2,7 @@
   "name": "picx",
   "version": "3.0.0",
   "private": false,
+  "packageManager": "pnpm@7.33.7",
   "author": "XPoet <i@xpoet.cn>",
   "license": "AGPL-3.0",
   "bugs": {
