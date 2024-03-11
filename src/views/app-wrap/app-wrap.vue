@@ -48,12 +48,15 @@ const elementPlusSizeHandle = (width: number) => {
 
 const setLanguage = (language: LanguageEnum) => {
   if (language === LanguageEnum.zhCN) {
+    window.pluginWebUpdateNotice_.setLocale('zh_CN')
     elementPlusLocale.value = zhCN // 设置 Element Plus 组件库语言
     instance!.proxy!.$i18n.locale = 'zh-CN' // 设置 i18n 语言
   } else if (language === LanguageEnum.zhTW) {
+    window.pluginWebUpdateNotice_.setLocale('zh_TW')
     elementPlusLocale.value = zhTW
     instance!.proxy!.$i18n.locale = 'zh-TW'
   } else if (language === LanguageEnum.en) {
+    window.pluginWebUpdateNotice_.setLocale('en_US')
     elementPlusLocale.value = en
     instance!.proxy!.$i18n.locale = 'en'
   } else {

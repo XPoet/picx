@@ -5,6 +5,7 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
+import { webUpdateNotice } from '@plugin-web-update-notification/vite'
 import { ViteEnv } from '@/common/model'
 import configPWAPlugin from './pwa'
 
@@ -45,6 +46,11 @@ export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
     // add plugin vite-plugin-pwa
     if (viteEnv.VITE_USE_PWA) {
       vitePlugins.push(configPWAPlugin())
+      vitePlugins.push(
+        webUpdateNotice({
+          logVersion: true
+        })
+      )
     }
   }
 
