@@ -48,17 +48,25 @@ const elementPlusSizeHandle = (width: number) => {
 
 const setLanguage = (language: LanguageEnum) => {
   if (language === LanguageEnum.zhCN) {
-    elementPlusLocale.value = zhCN // 设置 Element Plus 组件库语言
     instance!.proxy!.$i18n.locale = 'zh-CN' // 设置 i18n 语言
+    elementPlusLocale.value = zhCN // 设置 Element Plus 组件库语言
+    // eslint-disable-next-line no-underscore-dangle
+    window.pluginWebUpdateNotice_?.setLocale('zh_CN')
   } else if (language === LanguageEnum.zhTW) {
-    elementPlusLocale.value = zhTW
     instance!.proxy!.$i18n.locale = 'zh-TW'
+    elementPlusLocale.value = zhTW
+    // eslint-disable-next-line no-underscore-dangle
+    window.pluginWebUpdateNotice_?.setLocale('zh_TW')
   } else if (language === LanguageEnum.en) {
-    elementPlusLocale.value = en
     instance!.proxy!.$i18n.locale = 'en'
+    elementPlusLocale.value = en
+    // eslint-disable-next-line no-underscore-dangle
+    window.pluginWebUpdateNotice_?.setLocale('en_US')
   } else {
     elementPlusLocale.value = zhCN
     instance!.proxy!.$i18n.locale = 'zh-CN'
+    // eslint-disable-next-line no-underscore-dangle
+    window.pluginWebUpdateNotice_?.setLocale('zh_CN')
   }
   setWindowTitle(router.currentRoute.value.meta.title as string)
 }
@@ -103,6 +111,9 @@ const setLanguageByIP = () => {
         ?.addEventListener('click', () => {
           setLanguage(language)
           store.dispatch('SET_USER_SETTINGS', {
+            language
+          })
+          store.dispatch('SET_GLOBAL_SETTINGS', {
             language
           })
           msgInstance.close()

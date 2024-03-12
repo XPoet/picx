@@ -5,13 +5,13 @@ import Components from 'unplugin-vue-components/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
+import { webUpdateNotice } from '@plugin-web-update-notification/vite'
 import { ViteEnv } from '@/common/model'
 import configPWAPlugin from './pwa'
 
 export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   const vitePlugins: (Plugin | Plugin[])[] = [vue()]
 
-  // 按需自动导入 Element Plus 组件
   vitePlugins.push(
     AutoImport({
       resolvers: [
@@ -24,6 +24,7 @@ export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
       ],
       dts: 'src/auto-imports.d.ts'
     }),
+
     Components({
       resolvers: [
         // 自动导入 Element Plus 组件
@@ -35,8 +36,14 @@ export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
       ],
       dts: 'src/components.d.ts'
     }),
+
     Icons({
       autoInstall: true
+    }),
+
+    // 更新通知插件
+    webUpdateNotice({
+      logVersion: true
     })
   )
 

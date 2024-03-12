@@ -4,6 +4,7 @@ specifiers:
   '@commitlint/cli': 17.0.3
   '@commitlint/config-conventional': ^17.0.3
   '@iconify-json/ep': ^1.1.10
+  '@plugin-web-update-notification/vite': 1.7.1
   '@types/node': ^15.0.1
   '@typescript-eslint/eslint-plugin': ^4.22.0
   '@typescript-eslint/parser': ^4.22.0
@@ -53,6 +54,7 @@ devDependencies:
   '@commitlint/cli': 17.0.3
   '@commitlint/config-conventional': 17.8.1
   '@iconify-json/ep': 1.1.11
+  '@plugin-web-update-notification/vite': 1.7.1_vite@2.7.13
   '@types/node': 15.14.9
   '@typescript-eslint/eslint-plugin': 4.33.0_s2qqtxhzmb7vugvfoyripfgp7i
   '@typescript-eslint/parser': 4.33.0_jofidmxrjzhj7l6vknpw5ecvfe
@@ -1722,6 +1724,19 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
+    dev: true
+
+  /@plugin-web-update-notification/core/1.7.1:
+    resolution: {integrity: sha512-G5xbuFE4B3TGxM9FxYwUlbGleuWNUzdbw3ZNcht1WDn85Qbhgzk7lQwuXVilxZII6LhsghJ4Zdapw0jgzuCJQw==}
+    dev: true
+
+  /@plugin-web-update-notification/vite/1.7.1_vite@2.7.13:
+    resolution: {integrity: sha512-qIP2JBt19gZGWjagZOGc0qatoLGa2h4GnrHjF1ETzVgHUuJMgBeZpqMjzO81MwbmOUQdWbvwlF3ZZhXopeXB/w==}
+    peerDependencies:
+      vite: ^5.0.0 || >4.0.0 || ^3.0.0
+    dependencies:
+      '@plugin-web-update-notification/core': 1.7.1
+      vite: 2.7.13_stylus@0.59.0
     dev: true
 
   /@rollup/plugin-babel/5.3.1_ruiheq7dzqj4xl2pvehe77v5xa:

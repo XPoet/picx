@@ -1,7 +1,8 @@
 {
   "name": "picx",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "private": false,
+  "packageManager": "pnpm@7.33.7",
   "author": "XPoet <i@xpoet.cn>",
   "license": "AGPL-3.0",
   "bugs": {
@@ -42,6 +43,7 @@
     "@commitlint/cli": "17.0.3",
     "@commitlint/config-conventional": "^17.0.3",
     "@iconify-json/ep": "^1.1.10",
+    "@plugin-web-update-notification/vite": "1.7.1",
     "@types/node": "^15.0.1",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
