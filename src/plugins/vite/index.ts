@@ -12,7 +12,6 @@ import configPWAPlugin from './pwa'
 export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
   const vitePlugins: (Plugin | Plugin[])[] = [vue()]
 
-  // 按需自动导入 Element Plus 组件
   vitePlugins.push(
     AutoImport({
       resolvers: [
@@ -25,6 +24,7 @@ export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
       ],
       dts: 'src/auto-imports.d.ts'
     }),
+
     Components({
       resolvers: [
         // 自动导入 Element Plus 组件
@@ -36,8 +36,14 @@ export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
       ],
       dts: 'src/components.d.ts'
     }),
+
     Icons({
       autoInstall: true
+    }),
+
+    // 更新通知插件
+    webUpdateNotice({
+      logVersion: true
     })
   )
 
@@ -46,11 +52,6 @@ export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
     // add plugin vite-plugin-pwa
     if (viteEnv.VITE_USE_PWA) {
       vitePlugins.push(configPWAPlugin())
-      vitePlugins.push(
-        webUpdateNotice({
-          logVersion: true
-        })
-      )
     }
   }
 

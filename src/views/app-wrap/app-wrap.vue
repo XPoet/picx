@@ -48,20 +48,25 @@ const elementPlusSizeHandle = (width: number) => {
 
 const setLanguage = (language: LanguageEnum) => {
   if (language === LanguageEnum.zhCN) {
-    window.pluginWebUpdateNotice_.setLocale('zh_CN')
-    elementPlusLocale.value = zhCN // 设置 Element Plus 组件库语言
     instance!.proxy!.$i18n.locale = 'zh-CN' // 设置 i18n 语言
+    elementPlusLocale.value = zhCN // 设置 Element Plus 组件库语言
+    // eslint-disable-next-line no-underscore-dangle
+    window.pluginWebUpdateNotice_?.setLocale('zh_CN')
   } else if (language === LanguageEnum.zhTW) {
-    window.pluginWebUpdateNotice_.setLocale('zh_TW')
-    elementPlusLocale.value = zhTW
     instance!.proxy!.$i18n.locale = 'zh-TW'
+    elementPlusLocale.value = zhTW
+    // eslint-disable-next-line no-underscore-dangle
+    window.pluginWebUpdateNotice_?.setLocale('zh_TW')
   } else if (language === LanguageEnum.en) {
-    window.pluginWebUpdateNotice_.setLocale('en_US')
-    elementPlusLocale.value = en
     instance!.proxy!.$i18n.locale = 'en'
+    elementPlusLocale.value = en
+    // eslint-disable-next-line no-underscore-dangle
+    window.pluginWebUpdateNotice_?.setLocale('en_US')
   } else {
     elementPlusLocale.value = zhCN
     instance!.proxy!.$i18n.locale = 'zh-CN'
+    // eslint-disable-next-line no-underscore-dangle
+    window.pluginWebUpdateNotice_?.setLocale('zh_CN')
   }
   setWindowTitle(router.currentRoute.value.meta.title as string)
 }
