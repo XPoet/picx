@@ -113,6 +113,9 @@ const setLanguageByIP = () => {
           store.dispatch('SET_USER_SETTINGS', {
             language
           })
+          store.dispatch('SET_GLOBAL_SETTINGS', {
+            language
+          })
           msgInstance.close()
         })
     }
