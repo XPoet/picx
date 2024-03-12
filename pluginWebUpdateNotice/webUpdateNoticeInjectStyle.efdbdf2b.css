@@ -1,0 +1,48 @@
+.plugin-web-update-notice {
+  position: fixed;
+  user-select: none;
+  z-index: 99999;
+}
+
+.plugin-web-update-notice-content {
+  background-color: #fff;
+  border-radius: 4px;
+  color: #000000d9;
+  box-shadow: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014, 0 9px 28px 8px #0000000d;
+  padding: 8px 16px;
+  line-height: 1.5715;
+  width: 280px;
+}
+
+.plugin-web-update-notice-content-title {
+  font-weight: 500;
+  margin-bottom: 4px;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.plugin-web-update-notice-content-desc {
+  font-size: 13px;
+  line-height: 20px;
+}
+.plugin-web-update-notice-tools {
+  margin-top: 4px;
+  text-align: right;
+}
+.plugin-web-update-notice-btn {
+  padding: 3px 8px;
+  line-height: 1;
+  border-radius: 4px;
+  transition: background-color .2s linear;
+  cursor: pointer;
+  font-size: 14px;
+}
+.plugin-web-update-notice-btn:hover {
+  background-color: rgba(64, 87, 109, .1);
+}
+.plugin-web-update-notice-refresh-btn {
+  color: #1677ff;
+}
+.plugin-web-update-notice-dismiss-btn {
+  color: rgba(0,0,0,.25);
+}
