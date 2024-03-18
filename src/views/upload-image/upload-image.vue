@@ -73,7 +73,7 @@ import {
   UploadStatusEnum
 } from '@/common/model'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
-import { generateUploadImageObject, starred } from './upload-image.util'
+import { generateUploadImageObject } from './upload-image.util'
 import { uploadImagesToGitHub, uploadImageToGitHub } from '@/utils/upload-utils'
 import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
 
@@ -136,7 +136,6 @@ const afterUploadSuccess = async (uploadedImg: UploadedImageModel[], isBatch: bo
   await store.dispatch('SET_USER_CONFIG_INFO', {
     viewDir: userConfigInfo.selectedDir
   })
-  await starred(userSettings)
 }
 
 // 上传
