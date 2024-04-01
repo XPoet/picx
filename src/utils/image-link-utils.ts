@@ -1,5 +1,5 @@
 import { computed } from 'vue'
-import { ImageLinkFormatModel, UploadedImageModel } from '@/common/model'
+import { ImageLinkFormatModel, ImageLinkTypeEnum, UploadedImageModel } from '@/common/model'
 import { copyText } from '@/utils'
 import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
@@ -8,13 +8,23 @@ import { store } from '@/stores'
  * 生成一个图片链接
  * @param imageObj
  */
-export const generateImageLink = (imageObj: UploadedImageModel): string | null => {
+export const generateImageLink = (
+  imageObj: UploadedImageModel,
+  syncToGitPage: boolean = true // 该图片是否已同步到github page
+): string | null => {
   const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
   const userSettings = computed(() => store.getters.getUserSettings).value
 
   const { selected } = userSettings.imageLinkType
-  const { rule } = userSettings.imageLinkType.presetList[selected]
+
+  const { rule } =
+    userSettings.imageLinkType.presetList[
+      selected !== ImageLinkTypeEnum.GitHubPages || syncToGitPage
+        ? selected
+        : ImageLinkTypeEnum.GitHub
+    ]
   if (rule) {
+    // 根据 syncToGitPage 参数决定是否执行
     const { owner, repo, branch } = userConfigInfo
     return rule
       .replaceAll('{{owner}}', owner)
@@ -64,7 +74,8 @@ const copyMessage = (autoCopy = false) => {
  * @param autoCopy
  */
 export const copyImageLink = (imgObj: UploadedImageModel, autoCopy: boolean = false) => {
-  const link = transformImageLink(generateImageLink(imgObj), imgObj.name)
+  console.log(imgObj.sync)
+  const link = transformImageLink(generateImageLink(imgObj, imgObj.sync), imgObj.name)
   if (link) {
     copyText(link, () => {
       copyMessage(autoCopy)
@@ -86,7 +97,7 @@ export const batchCopyImageLinks = (
   if (uploadedImgList?.length > 0) {
     let linksTxt = ''
     uploadedImgList.forEach((img: UploadedImageModel, index) => {
-      const link = transformImageLink(generateImageLink(img), img.name)
+      const link = transformImageLink(generateImageLink(img, img.sync), img.name)
       linksTxt += `${link}${index < uploadedImgList.length - 1 ? '\n' : ''}`
     })
     copyText(linksTxt, () => {

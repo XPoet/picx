@@ -15,6 +15,7 @@
         :src="imgUrl"
         fit="cover"
         loading="lazy"
+        @error="isSync = false"
         lazy
         :hide-on-click-modal="true"
         :preview-src-list="store.getters.getUploadAreaState.pressShiftKey ? [] : [imgUrl!]"
@@ -27,7 +28,7 @@
       </div>
 
       <!-- 复制图片链接 -->
-      <div class="copy-link text-ellipsis border-box" @click="copyImageLink(imageObj)">
+      <div class="copy-link text-ellipsis border-box" @click="copyImage(imageObj)">
         {{ $t('copy_link') }}
       </div>
     </div>
@@ -60,13 +61,19 @@ const props = defineProps({
     default: false
   }
 })
-
-const imgUrl = computed(() => generateImageLink(props.imageObj))
-
 const isShowOperateBtn = ref<boolean>(false)
+const isSync = ref<boolean>(true)
+
+const imgUrl = computed(() => generateImageLink(props.imageObj, isSync.value))
+
+const copyImage = (imageObj: UploadedImageModel) => {
+  imageObj.sync = isSync.value
+  copyImageLink(imageObj)
+}
 
 const togglePick = (imageObj: UploadedImageModel) => {
   imageObj.checked = !imageObj.checked
+  imageObj.sync = isSync.value
   store.commit('IMAGE_CARD', { imageObj })
 }
 

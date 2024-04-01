@@ -84,6 +84,11 @@ const uploading = ref(false)
 const shortcutKey = computed(() => (getOSName() === 'mac' ? '⌘' : 'Ctrl'))
 
 const isCanDeploy = ref(false)
+const resetSync = () => {
+  uploadImageList.value.forEach((item) => {
+    item.sync = false
+  })
+}
 
 const setImgList = (imgList: any[]) => {
   imgList.forEach((v) => {
@@ -119,6 +124,7 @@ const doUploadImages = async (imgList: UploadImageModel[]) => {
 // 上传成功之后的操作
 const afterUploadSuccess = async (uploadedImg: UploadedImageModel[], isBatch: boolean = false) => {
   resetGettingImages()
+  resetSync()
   // 自动复制图片链接到系统剪贴板
   if (isBatch) {
     batchCopyImageLinks(uploadedImg, true)
