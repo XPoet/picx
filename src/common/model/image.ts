@@ -12,6 +12,7 @@ export interface UploadedImageModel {
   deleting: boolean
   checked: boolean
   active?: boolean
+  deployed?: boolean
 }
 
 /**

@@ -63,6 +63,11 @@ $image-card-bottom-height = 58rem
         color var(--el-color-white)
         background var(--el-color-primary)
       }
+
+      &.disabled {
+        cursor not-allowed
+        pointer-events none
+      }
     }
   }
 
@@ -79,5 +84,12 @@ $image-card-bottom-height = 58rem
     border-radius 2rem
     box-shadow 0 0 6rem var(--shadow-color)
     cursor pointer
+  }
+
+
+  .deploy-status-box {
+    position absolute
+    top 10rem
+    right 10rem
   }
 }

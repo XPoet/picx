@@ -68,7 +68,8 @@ export const createManagementImageObject = (item: any, selectedDir: string): Upl
     path: item.path,
     deleting: false,
     size: item.size,
-    checked: false
+    checked: false,
+    deployed: true
   }
 }
 
