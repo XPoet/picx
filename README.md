@@ -26,15 +26,45 @@
 
 **在线使用入口 https://picx.xpoet.cn**
 
-> **重要提示：**  
-> - 为进一步简化用户操作，PicX 自 `v3.0` 起，不再支持自由选择仓库和分支，统一使用内置的仓库和分支。  
+> **重要提示：**
+>
+> - 为进一步简化用户操作，PicX 自 `v3.0` 起，不再支持自由选择仓库和分支，统一使用内置的仓库和分支。
 > - 如需继续使用自定义的仓库和分支，请使用 [PicX v2.0](https://v2.picx.xpoet.cn)。
+
+## 通过 docker 运行 | run by docker
+
+1. 构建镜像
+
+```shell
+docker build -t picx:latest .
+```
+
+2. 启动容器
+
+```shell
+docker run -d --name picx -p 5000:80 picx:latest
+```
+
+3. 访问 `127.0.0.1:5000`
+   ![](https://github.com/alwqx/picx-images-hosting/raw/master/common/github/picx_demo.3ye905vlo3.webp)
+4. 参考官方文档 [快速开始](https://picx-docs.xpoet.cn/docs/usage-guide/get-start.html) 进行设置
+
+<details>
+<summary><b>如果构建速度较慢</b> （点击展开）</summary>
+大概率是 npm install 访问国外网络慢导致的，大陆开发者构建时可以使用国内的 mirror，以腾讯镜像源为例，修改 Dockerfile 中 `npm install` 指令为：
+
+```diff
+-RUN npm install --legacy-peer-deps
++RUN npm install --legacy-peer-deps --registry https://mirrors.cloud.tencent.com/npm/
+```
+
+</details>
 
 ## 文档 | Documents
 
 **官方文档 https://picx-docs.xpoet.cn**
 
-通过阅读 **[快速开始](https://picx-docs.xpoet.cn/docs/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX。 
+通过阅读 **[快速开始](https://picx-docs.xpoet.cn/docs/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX。
 
 ## 功能 | Features
 
@@ -45,10 +75,10 @@
 - [x] 支持 **[一键复制](https://picx-docs.xpoet.cn/docs/usage-guide/upload.html#%E5%A4%8D%E5%88%B6%E5%9B%BE%E7%89%87%E9%93%BE%E6%8E%A5)** 图片链接和 **[自由转换 Markdown / HTML / BBCode 格式](https://picx-docs.xpoet.cn/docs/usage-guide/settings.html#%E5%9B%BE%E7%89%87%E9%93%BE%E6%8E%A5%E6%A0%BC%E5%BC%8F%E8%AE%BE%E7%BD%AE)**
 - [x] 内置 **[多种图片链接规则](https://picx-docs.xpoet.cn/docs/usage-guide/settings.html#%E5%9B%BE%E7%89%87%E9%93%BE%E6%8E%A5%E8%A7%84%E5%88%99%E9%85%8D%E7%BD%AE)**（GitHub、GitHub Pages、jsDelivr、Statically 等）
 - [x] 支持 **[自定义配置图片链接规则](https://picx-docs.xpoet.cn/docs/usage-guide/settings.html#%E9%85%8D%E7%BD%AE%E8%87%AA%E5%AE%9A%E4%B9%89%E5%9B%BE%E7%89%87%E9%93%BE%E6%8E%A5%E8%A7%84%E5%88%99)**
-- [x] 支持 **[图片压缩](https://picx-docs.xpoet.cn/docs/usage-guide/settings.html#%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9%E8%AE%BE%E7%BD%AE)** (内置高效压缩算法，可配置在上传前自动压缩)
+- [x] 支持 **[图片压缩](https://picx-docs.xpoet.cn/docs/usage-guide/settings.html#%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9%E8%AE%BE%E7%BD%AE)** （内置高效压缩算法，可配置在上传前自动压缩）
 - [x] 支持配置 **[图片水印](https://picx-docs.xpoet.cn/docs/usage-guide/settings.html#%E5%9B%BE%E7%89%87%E6%B0%B4%E5%8D%B0%E8%AE%BE%E7%BD%AE)**
 - [x] 支持 **PWA**
-- [x] 支持 **[暗夜模式](https://picx-docs.xpoet.cn/docs/usage-guide/settings.html#%E4%B8%BB%E9%A2%98%E8%AE%BE%E7%BD%AE)** (自动切换 / 自由切换)
+- [x] 支持 **[暗夜模式](https://picx-docs.xpoet.cn/docs/usage-guide/settings.html#%E4%B8%BB%E9%A2%98%E8%AE%BE%E7%BD%AE)** （自动切换 / 自由切换）
 - [x] i18n（中文简体、中文繁体、英文）
 - [x] 工具箱（[图片压缩](https://picx-docs.xpoet.cn/docs/usage-guide/toolbox.html#%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9)、[图片转 Base64](https://picx-docs.xpoet.cn/docs/usage-guide/toolbox.html#%E5%9B%BE%E7%89%87%E8%BD%AC-base64)、[图片水印](https://picx-docs.xpoet.cn/docs/usage-guide/toolbox.html#%E5%9B%BE%E7%89%87%E6%B0%B4%E5%8D%B0)）
 
@@ -66,7 +96,7 @@
   <img src="https://contrib.rocks/image?repo=XPoet/picx" />
 </a>
 
-##  反馈 | Feedback
+## 反馈 | Feedback
 
 在使用过程中，如遇问题，请仔细阅读 **[官方文档](https://picx-docs.xpoet.cn)**，或在 GitHub 发起 **[Issue](https://github.com/XPoet/picx/issues)**。
 
@@ -78,6 +108,6 @@ PicX 的更新迭代依靠作者工作之外的时间，维护不易，如果对
 
 ## 许可 | License
 
-**[AGPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)** 
+**[AGPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)**
 
 Copyright © 2020-Present XPoet
