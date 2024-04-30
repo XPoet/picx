@@ -41,7 +41,8 @@ const uploadedHandle = (
     sha: res.sha,
     path: res.path,
     deleting: false,
-    size: res.size
+    size: res.size,
+    deployed: true
   }
 
   img.uploadedImg = uploadedImg

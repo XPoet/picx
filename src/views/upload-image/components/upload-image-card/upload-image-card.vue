@@ -120,7 +120,7 @@
     <div
       class="after-upload-handle-container flex-center"
       v-if="imgObj.uploadStatus.progress === 100"
-      @click="copyImageUri(imgObj!)"
+      @click="copyImageLink(imgObj.uploadedImg!)"
     >
       {{ $t('copy_link') }}
     </div>
@@ -177,11 +177,7 @@ const userSettings = computed(() => store.getters.getUserSettings).value
 
 const renameInputRef = ref<any>(null)
 const loadingText = ref('')
-const copyImageUri = (imgObj: UploadImageModel) => {
-  const img = imgObj.uploadedImg!
-  img.sync = false
-  copyImageLink(img)
-}
+
 const fileNameOperateData = reactive({
   isAddHash: false,
   isAddPrefix: false,
