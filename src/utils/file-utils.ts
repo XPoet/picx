@@ -29,7 +29,9 @@ export const getFileSuffix = (filename: string) => {
  */
 export const isImage = (fileType: string): boolean => {
   fileType = fileType.toLowerCase()
-  return /(png|jpg|jpeg|gif|webp|awebp|avif|svg\+xml|svg|x-icon|vnd.microsoft.icon)$/.test(fileType)
+  return /(png|jpg|jpeg|gif|webp|awebp|avif|svg\+xml|svg|x-icon|vnd.microsoft.icon|ico)$/.test(
+    fileType
+  )
 }
 
 /**
