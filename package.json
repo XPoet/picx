@@ -1,6 +1,6 @@
 {
   "name": "picx",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "private": false,
   "packageManager": "pnpm@7.33.7",
   "author": "XPoet <i@xpoet.cn>",
