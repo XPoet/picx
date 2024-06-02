@@ -133,5 +133,7 @@ export enum ImageLinkTypeEnum {
   // eslint-disable-next-line no-unused-vars
   ChinaJsDelivr = 'ChinaJsDelivr',
   // eslint-disable-next-line no-unused-vars
-  Statically = 'Statically'
+  Statically = 'Statically',
+  // eslint-disable-next-line no-unused-vars
+  CnBilinyj = 'CnBIlinyj'
 }
