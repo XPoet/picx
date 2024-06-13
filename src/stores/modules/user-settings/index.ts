@@ -60,6 +60,11 @@ const initSettings: UserSettingsModel = {
         id: getUuid(),
         name: ImageLinkTypeEnum.ChinaJsDelivr,
         rule: 'https://jsd.cdn.zzko.cn/gh/{{owner}}/{{repo}}@{{branch}}/{{path}}'
+      },
+      [`${ImageLinkTypeEnum.CnBilinyj}`]: {
+        id: getUuid(),
+        name: ImageLinkTypeEnum.CnBilinyj,
+        rule: 'https://bilinyj.666888999.gay/gh/{{owner}}/{{repo}}/{{branch}}/{{path}}'
       }
     }
   },
