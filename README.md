@@ -30,6 +30,28 @@
 > - 为进一步简化用户操作，PicX 自 `v3.0` 起，不再支持自由选择仓库和分支，统一使用内置的仓库和分支。  
 > - 如需继续使用自定义的仓库和分支，请使用 [PicX v2.0](https://v2.picx.xpoet.cn)。
 
+## 命令
+安装 node 版本
+```shell
+nvm install 20
+```
+使用 pnpm 安装所有依赖
+```shell
+pnpm install
+```
+启动开发服务器
+```shell
+pnpm dev --host
+```
+构建项目
+```shell
+pnpm build
+```
+预览构建结果
+```shell
+pnpm serve --host
+```
+
 ## 文档 | Documents
 
 **官方文档 https://picx-docs.xpoet.cn**
