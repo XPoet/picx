@@ -97,7 +97,8 @@
       "position_1": "Top Left",
       "position_2": "Bottom Left",
       "position_3": "Top Right",
-      "position_4": "Bottom Right"
+      "position_4": "Bottom Right",
+      "position_5": "Random"
     },
     "img_compress": {
       "title": "Image Compression Settings",

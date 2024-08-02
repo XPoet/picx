@@ -64,6 +64,9 @@
             <el-radio :label="WatermarkPositionEnum.rightBottom">
               {{ $t('settings_page.img_watermark.position_4') }}
             </el-radio>
+            <el-radio :label="WatermarkPositionEnum.random">
+              {{ $t('settings_page.img_watermark.position_5') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-col>
