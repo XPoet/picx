@@ -97,7 +97,8 @@
       "position_1": "左上角",
       "position_2": "左下角",
       "position_3": "右上角",
-      "position_4": "右下角"
+      "position_4": "右下角",
+      "position_5": "随机"
     },
     "img_compress": {
       "title": "图片压缩设置",

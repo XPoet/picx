@@ -44,28 +44,46 @@ export async function addWatermarkToImage(
   ctx.lineWidth = 3
   ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${opacity})`
 
-  let x = 0
-  let y = 0
-
-  // eslint-disable-next-line default-case
-  switch (position) {
-    case WatermarkPositionEnum.leftTop:
-      x = 10
-      y = fontSize + 5
-      break
-    case WatermarkPositionEnum.rightTop:
-      x = canvas.width - ctx.measureText(text).width - 10
-      y = fontSize + 5
-      break
-    case WatermarkPositionEnum.leftBottom:
-      x = 10
-      y = canvas.height - 15
-      break
-    case WatermarkPositionEnum.rightBottom:
-      x = canvas.width - ctx.measureText(text).width - 10
-      y = canvas.height - 15
-      break
+  const getPosition = (position: WatermarkPositionEnum) => {
+    // eslint-disable-next-line default-case
+    switch (position) {
+      case WatermarkPositionEnum.leftTop:
+        return {
+          x: 10,
+          y: fontSize + 5
+        }
+      case WatermarkPositionEnum.rightTop:
+        return {
+          x: canvas.width - ctx.measureText(text).width - 10,
+          y: fontSize + 5
+        }
+      case WatermarkPositionEnum.leftBottom:
+        return {
+          x: 10,
+          y: canvas.height - 15
+        }
+      case WatermarkPositionEnum.rightBottom:
+        return {
+          x: canvas.width - ctx.measureText(text).width - 10,
+          y: canvas.height - 15
+        }
+      case WatermarkPositionEnum.random:
+        // eslint-disable-next-line no-case-declarations
+        const positions = [
+          WatermarkPositionEnum.leftTop,
+          WatermarkPositionEnum.leftBottom,
+          WatermarkPositionEnum.rightTop,
+          WatermarkPositionEnum.rightBottom
+        ]
+        // eslint-disable-next-line no-case-declarations
+        const randomIndex = Math.floor(Math.random() * positions.length + 1)
+        return getPosition(positions[randomIndex])
+      default:
+        return { x: 0, y: 0 }
+    }
   }
+
+  const { x, y } = getPosition(position)
 
   ctx.strokeText(text, x, y)
   ctx.fillText(text, x, y)
