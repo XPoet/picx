@@ -40,6 +40,7 @@ export enum LanguageEnum {
 
 export interface UserSettingsModel {
   imageName: {
+    enableMD5: boolean
     enableHash: boolean
     addPrefix: {
       enable: boolean

@@ -21,6 +21,7 @@ import i18n from '@/plugins/vue/i18n'
 
 const initSettings: UserSettingsModel = {
   imageName: {
+    enableMD5: false,
     enableHash: true,
     addPrefix: { enable: false, prefix: '' }
   },

@@ -78,6 +78,8 @@
   "settings_page": {
     "img_name": {
       "title": "图片名称设置",
+      "md5_switch_name": "MD5",
+      "md5_switch_desc": "使用MD5加密图片名称",
       "hash_switch_name": "哈希化",
       "hash_switch_desc": "上传时给图片名称增加哈希值，确保图片名称唯一，强烈建议开启",
       "prefix_switch_name": "添加前缀",

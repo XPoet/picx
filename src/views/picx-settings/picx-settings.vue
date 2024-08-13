@@ -8,6 +8,14 @@
         <ul class="setting-list" style="margin-top: 10rem">
           <li class="setting-item has-desc">
             <el-switch
+              v-model="userSettings.imageName.enableMD5"
+              @change="persistUserSettings"
+              :active-text="$t('settings_page.img_name.md5_switch_name')"
+            ></el-switch>
+            <span class="desc">{{ $t('settings_page.img_name.md5_switch_desc') }}</span>
+          </li>
+          <li class="setting-item has-desc">
+            <el-switch
               v-model="userSettings.imageName.enableHash"
               @change="persistUserSettings"
               :active-text="$t('settings_page.img_name.hash_switch_name')"

@@ -78,6 +78,8 @@
   "settings_page": {
     "img_name": {
       "title": "Image Name Settings",
+      "md5_switch_name": "MD5",
+      "md5_switch_desc": "Use MD5 to encrypt the image name.",
       "hash_switch_name": "Hashing",
       "hash_switch_desc": "Add a hash value to the image name during upload to ensure uniqueness. Highly recommended to enable.",
       "prefix_switch_name": "Add Prefix",

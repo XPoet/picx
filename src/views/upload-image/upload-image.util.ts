@@ -1,4 +1,5 @@
 import { computed } from 'vue'
+import { Md5 } from 'ts-md5'
 import { UploadImageModel, UserSettingsModel } from '@/common/model'
 import { starredRepo } from '@/common/api'
 import { store } from '@/stores'
@@ -36,7 +37,8 @@ export const generateUploadImageObject = (obj: {
   const nameHandled = obj.file.name.trim().replaceAll(' ', '-')
 
   const tmpIdx = nameHandled.lastIndexOf('.')
-  const name = nameHandled.slice(0, tmpIdx)
+  let name = nameHandled.slice(0, tmpIdx)
+  name = imageName.enableMD5 ? Md5.hashStr(name) : name
   const suffix = nameHandled.slice(tmpIdx + 1)
 
   tmp.filename.initName = name
