@@ -113,7 +113,7 @@ const goTargetUrl = (type: UrlTypeEnum) => {
       break
 
     case UrlTypeEnum.oauthLoginDocs:
-      window.open(`${url}/docs/usage-guide/config.html#github-oauth-授权登录`)
+      window.open(`${url}/usage-guide/config.html#github-oauth-授权登录`)
       break
 
     case UrlTypeEnum.generateTokenURL:
@@ -121,7 +121,7 @@ const goTargetUrl = (type: UrlTypeEnum) => {
       break
 
     case UrlTypeEnum.tokenLoginDocs:
-      window.open(`${url}/docs/usage-guide/config.html#填写-github-token-登录`)
+      window.open(`${url}/usage-guide/config.html#填写-github-token-登录`)
       break
 
     default:
