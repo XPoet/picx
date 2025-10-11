@@ -20,6 +20,14 @@ export const navInfoList = shallowRef([
   },
   {
     uuid: getUuid(),
+    name: 'nav.video_upload',
+    icon: IEpUpload,
+    isActive: false,
+    path: '/upload-video',
+    isShow: true
+  },
+  {
+    uuid: getUuid(),
     name: 'nav.management',
     icon: IEpPicture,
     isActive: false,

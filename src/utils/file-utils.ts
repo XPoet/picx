@@ -1,9 +1,10 @@
 import { ElMessage } from 'element-plus'
-import { ImageHandleResult } from '@/common/model'
+import { ImageHandleResult, VideoHandleResult } from '@/common/model'
 import { getUuid } from '@/utils/common-utils'
 import { imgFileToBase64 } from '@/utils/image-utils'
-import { IMG_UPLOAD_MAX_SIZE } from '@/common/constant'
+import { IMG_UPLOAD_MAX_SIZE, VIDEO_UPLOAD_MAX_SIZE } from '@/common/constant'
 import i18n from '@/plugins/vue/i18n'
+import { videoFileToBase64 } from './video-utils'
 
 /**
  * 获取文件名
@@ -92,6 +93,53 @@ export const gettingFilesHandle = (file: File): Promise<ImageHandleResult | null
       uuid: getUuid(),
       base64,
       file
+    })
+  })
+}
+
+/**
+ * 判断文件类型是否为视频格式
+ * @param fileType
+ */
+export const isVideo = (fileType: string): boolean => {
+  fileType = fileType.toLowerCase()
+  return /(mp4|mov|avi|mkv|flv|wmv|webm)$/.test(fileType)
+}
+
+/**
+ * 处理获取的视频文件
+ * @param file
+ */
+export const gettingVideoFilesHandle = (file: File): Promise<VideoHandleResult | null> => {
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve) => {
+    if (!file) {
+      resolve(null)
+    }
+
+    const fileType = file.name.split('.').pop() || ''
+
+    if (!isVideo(fileType)) {
+      ElMessage.error(i18n.global.t('upload_page.tip_9', { name: file.name }))
+      resolve(null)
+    }
+
+    const objectURL = URL.createObjectURL(file)
+
+    const base64 = (await videoFileToBase64(file)) || ''
+
+    if (getFileSize(base64.length) >= VIDEO_UPLOAD_MAX_SIZE * 1024) {
+      ElMessage.error(
+        i18n.global.t('upload_page.tip_10', { name: file.name, size: IMG_UPLOAD_MAX_SIZE })
+      )
+      resolve(null)
+    }
+
+    resolve({
+      uuid: getUuid(),
+      objectURL,
+      file,
+      base64
     })
   })
 }

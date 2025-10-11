@@ -1,5 +1,5 @@
 import { Module } from 'vuex'
-import { UploadedImageModel } from '@/common/model'
+import { UploadedImageModel, UploadedVideoModel } from '@/common/model'
 import { LS_MANAGEMENT } from '@/common/constant'
 import DirImageListStateTypes, { DirObject } from './types'
 import RootStateTypes from '../../types'
@@ -111,14 +111,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
 
         let temp = dirObj.childrenDirs?.find((x: DirObject) => x.dir === dir)
         if (!temp) {
-          temp = {
-            type: 'dir',
-            dir,
-            dirPath,
-            childrenDirs: [],
-            imageList: []
-          }
-
+          temp = createDirObject(dir, dirPath)
           dirObj.childrenDirs.push(temp)
         }
 
@@ -141,6 +134,50 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
         dirList.forEach((dir, i) => {
           dirPath += `${i > 0 ? '/' : ''}${dir}`
           tempDirObj = addImg(tempDirObj, dir, dirPath, item, i === dirList.length - 1)
+        })
+      }
+
+      dispatch('DIR_IMAGE_LIST_PERSIST')
+    },
+
+    // 图床管理 - 增加视频
+    DIR_IMAGE_LIST_ADD_VIDEO({ state, dispatch }, item: UploadedVideoModel) {
+      const addVideo = (
+        dirObj: DirObject,
+        dir: string,
+        dirPath: string,
+        Video: UploadedVideoModel,
+        isAdd: boolean = false
+      ) => {
+        if (!dirObj) {
+          return state.dirObject
+        }
+
+        let temp = dirObj.childrenDirs?.find((x: DirObject) => x.dir === dir)
+        if (!temp) {
+          temp = createDirObject(dir, dirPath)
+          dirObj.childrenDirs.push(temp)
+        }
+
+        if (isAdd && !temp.videoList.some((v) => v.name === Video.name)) {
+          temp.videoList.push(Video)
+        }
+
+        return temp
+      }
+
+      let tempDirObj: DirObject = state.dirObject
+
+      if (item.dir === '/') {
+        if (!tempDirObj.videoList.some((v) => v.name === item.name)) {
+          tempDirObj.videoList.push(item)
+        }
+      } else {
+        const dirList: string[] = item.dir.split('/')
+        let dirPath = ''
+        dirList.forEach((dir, i) => {
+          dirPath += `${i > 0 ? '/' : ''}${dir}`
+          tempDirObj = addVideo(tempDirObj, dir, dirPath, item, i === dirList.length - 1)
         })
       }
 
@@ -227,6 +264,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
 
       if (dirPath === '/') {
         tempDirObj.imageList = []
+        tempDirObj.videoList = []
         tempDirObj.childrenDirs = []
         dispatch('DIR_IMAGE_LIST_PERSIST')
         return
@@ -244,6 +282,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
 
         if (isInit) {
           temp.imageList = []
+          temp.videoList = []
           temp.childrenDirs = []
         }
 

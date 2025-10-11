@@ -1,6 +1,6 @@
 import { computed } from 'vue'
 import { ImageLinkFormatModel, UploadedImageModel } from '@/common/model'
-import { copyText } from '@/utils'
+import { copyMessage, copyText } from '@/utils'
 import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
 
@@ -30,7 +30,7 @@ export const generateImageLink = (imageObj: UploadedImageModel): string | null =
  * @param imageLink
  * @param imageName
  */
-const transformImageLink = (imageLink: string | null, imageName: string) => {
+export const transformImageLink = (imageLink: string | null, imageName: string) => {
   const userSettings = computed(() => store.getters.getUserSettings).value
   if (userSettings.imageLinkFormat.enable) {
     const selectedFormat = userSettings.imageLinkFormat.selected
@@ -46,18 +46,6 @@ const transformImageLink = (imageLink: string | null, imageName: string) => {
   return imageLink
 }
 
-const copyMessage = (autoCopy = false) => {
-  const message: string = autoCopy
-    ? i18n.global.t('copy_success_1')
-    : i18n.global.t('copy_success_2')
-
-  ElMessage({
-    type: autoCopy ? 'info' : 'success',
-    message,
-    duration: autoCopy ? 6000 : 4000
-  })
-}
-
 /**
  * 复制单张图片链接
  * @param imgObj
@@ -67,7 +55,7 @@ export const copyImageLink = (imgObj: UploadedImageModel, autoCopy: boolean = fa
   const link = transformImageLink(generateImageLink(imgObj), imgObj.name)
   if (link) {
     copyText(link, () => {
-      copyMessage(autoCopy)
+      copyMessage(autoCopy, 'image')
     })
   } else {
     ElMessage.error({ message: i18n.global.t('copy_fail_1') })

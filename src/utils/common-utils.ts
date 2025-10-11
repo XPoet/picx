@@ -193,3 +193,29 @@ export const deepObjectEqual = (obj1: object, obj2: object): boolean => {
     Object.entries(flattenObject(obj2)).toString()
   )
 }
+
+export const copyMessage = (autoCopy = false, type: 'image' | 'video' | 'total' = 'total') => {
+  const getMessageMap = {
+    image: () => {
+      return autoCopy ? i18n.global.t('copy_success_1') : i18n.global.t('copy_success_2')
+    },
+    video: () => {
+      return autoCopy
+        ? i18n.global.t('copy_success_video_1')
+        : i18n.global.t('copy_success_video_2')
+    },
+    total: () => {
+      return autoCopy
+        ? i18n.global.t('copy_success_total_1')
+        : i18n.global.t('copy_success_total_2')
+    }
+  }
+
+  const message = getMessageMap[type]()
+
+  ElMessage({
+    type: autoCopy ? 'info' : 'success',
+    message,
+    duration: autoCopy ? 6000 : 4000
+  })
+}

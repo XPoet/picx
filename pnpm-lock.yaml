@@ -1,7 +1,7 @@
 lockfileVersion: '6.0'
 
 settings:
-  autoInstallPeers: true
+  autoInstallPeers: false
   excludeLinksFromLockfile: false
 
 dependencies:
@@ -99,7 +99,7 @@ devDependencies:
     version: 0.1.2
   stylelint-stylus:
     specifier: ^0.18.0
-    version: 0.18.0(postcss-syntax@0.36.2)(stylelint@15.10.2)
+    version: 0.18.0(stylelint@15.10.2)
   stylus:
     specifier: ^0.59.0
     version: 0.59.0
@@ -111,19 +111,19 @@ devDependencies:
     version: 4.9.5
   unplugin-auto-import:
     specifier: ^0.15.2
-    version: 0.15.3(rollup@2.79.1)
+    version: 0.15.3
   unplugin-icons:
     specifier: ^0.16.1
     version: 0.16.5(@vue/compiler-sfc@3.3.4)
   unplugin-vue-components:
     specifier: ^0.24.1
-    version: 0.24.1(rollup@2.79.1)(vue@3.3.4)
+    version: 0.24.1(vue@3.3.4)
   vite:
     specifier: ~2.7.13
     version: 2.7.13(stylus@0.59.0)
   vite-plugin-pwa:
     specifier: ^0.12.8
-    version: 0.12.8(vite@2.7.13)(workbox-build@6.6.0)(workbox-window@6.6.0)
+    version: 0.12.8(vite@2.7.13)
 
 packages:
 
@@ -1835,7 +1835,7 @@ packages:
       rollup: 2.79.1
     dev: true
 
-  /@rollup/pluginutils@5.0.2(rollup@2.79.1):
+  /@rollup/pluginutils@5.0.2:
     resolution: {integrity: sha512-pTd9rIsP92h+B6wWwFbW8RkZv4hiR/xKsqre4SIuAOaOEQRxi0lqLke9k2/7WegC85GgUs9pjmOjCUi3In4vwA==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
@@ -1847,7 +1847,6 @@ packages:
       '@types/estree': 1.0.1
       estree-walker: 2.0.2
       picomatch: 2.3.1
-      rollup: 2.79.1
     dev: true
 
   /@surma/rollup-plugin-off-main-thread@2.2.3:
@@ -6204,7 +6203,7 @@ packages:
     dependencies:
       htmlparser2: 3.10.1
       postcss: 7.0.39
-      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss@8.4.27)
+      postcss-syntax: 0.36.2(postcss-html@0.36.0)(postcss-jsx@0.36.4)(postcss-less@3.1.4)(postcss-markdown@0.36.0)(postcss-scss@2.1.1)(postcss@7.0.39)
     dev: true
 
   /postcss-html@1.5.0:
@@ -6225,7 +6224,7 @@ packages:
     dependencies:
       '@babel/core': 7.22.9
       postcss: 7.0.39
-      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss@8.4.27)
+      postcss-syntax: 0.36.2(postcss-html@0.36.0)(postcss-jsx@0.36.4)(postcss-less@3.1.4)(postcss-markdown@0.36.0)(postcss-scss@2.1.1)(postcss@7.0.39)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -6244,7 +6243,7 @@ packages:
       postcss-syntax: '>=0.36.0'
     dependencies:
       postcss: 7.0.39
-      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss@8.4.27)
+      postcss-syntax: 0.36.2(postcss-html@0.36.0)(postcss-jsx@0.36.4)(postcss-less@3.1.4)(postcss-markdown@0.36.0)(postcss-scss@2.1.1)(postcss@7.0.39)
       remark: 10.0.1
       unist-util-find-all-after: 1.0.5
     dev: true
@@ -6335,7 +6334,7 @@ packages:
       - supports-color
     dev: true
 
-  /postcss-syntax@0.36.2(postcss-html@1.5.0)(postcss@8.4.27):
+  /postcss-syntax@0.36.2(postcss-html@0.36.0)(postcss-jsx@0.36.4)(postcss-less@3.1.4)(postcss-markdown@0.36.0)(postcss-scss@2.1.1)(postcss@7.0.39):
     resolution: {integrity: sha512-nBRg/i7E3SOHWxF3PpF5WnJM/jQ1YpY9000OaVXlAQj6Zp/kIqJxEDWIZ67tAd7NLuk7zqN4yqe9nc0oNAOs1w==}
     peerDependencies:
       postcss: '>=5.0.0'
@@ -6356,8 +6355,12 @@ packages:
       postcss-scss:
         optional: true
     dependencies:
-      postcss: 8.4.27
-      postcss-html: 1.5.0
+      postcss: 7.0.39
+      postcss-html: 0.36.0(postcss-syntax@0.36.2)(postcss@7.0.39)
+      postcss-jsx: 0.36.4(postcss-syntax@0.36.2)(postcss@7.0.39)
+      postcss-less: 3.1.4
+      postcss-markdown: 0.36.0(postcss-syntax@0.36.2)(postcss@7.0.39)
+      postcss-scss: 2.1.1
     dev: true
 
   /postcss-value-parser@3.3.1:
@@ -7033,6 +7036,7 @@ packages:
   /source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
     dependencies:
       whatwg-url: 7.1.0
     dev: true
@@ -7283,7 +7287,7 @@ packages:
       stylelint: 9.10.1
     dev: true
 
-  /stylelint-stylus@0.18.0(postcss-syntax@0.36.2)(stylelint@15.10.2):
+  /stylelint-stylus@0.18.0(stylelint@15.10.2):
     resolution: {integrity: sha512-n3zjLFLonPOUYY3UIUtSKzZzPB9GQo+BvtmcEQfI+4QHiNsHpfr9QrznkWT8sUB+S11dr3JRCzZ45K9lRQviSg==}
     engines: {node: ^12 || >=14}
     peerDependencies:
@@ -7300,7 +7304,6 @@ packages:
       postcss-media-query-parser: 0.2.3
       postcss-selector-parser: 6.0.13
       postcss-styl: 0.12.3
-      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss@8.4.27)
       style-search: 0.1.0
       stylelint: 15.10.2
       stylelint-config-html: 1.1.0(postcss-html@1.5.0)(stylelint@15.10.2)
@@ -7399,7 +7402,7 @@ packages:
       postcss-sass: 0.3.5
       postcss-scss: 2.1.1
       postcss-selector-parser: 3.1.2
-      postcss-syntax: 0.36.2(postcss-html@1.5.0)(postcss@8.4.27)
+      postcss-syntax: 0.36.2(postcss-html@0.36.0)(postcss-jsx@0.36.4)(postcss-less@3.1.4)(postcss-markdown@0.36.0)(postcss-scss@2.1.1)(postcss@7.0.39)
       postcss-value-parser: 3.3.1
       resolve-from: 4.0.0
       signal-exit: 3.0.7
@@ -7829,10 +7832,10 @@ packages:
       x-is-string: 0.1.0
     dev: true
 
-  /unimport@3.1.0(rollup@2.79.1):
+  /unimport@3.1.0:
     resolution: {integrity: sha512-ybK3NVWh30MdiqSyqakrrQOeiXyu5507tDA0tUf7VJHrsq4DM6S43gR7oAsZaFojM32hzX982Lqw02D3yf2aiA==}
     dependencies:
-      '@rollup/pluginutils': 5.0.2(rollup@2.79.1)
+      '@rollup/pluginutils': 5.0.2
       escape-string-regexp: 5.0.0
       fast-glob: 3.3.1
       local-pkg: 0.4.3
@@ -7911,7 +7914,7 @@ packages:
     engines: {node: '>= 10.0.0'}
     dev: true
 
-  /unplugin-auto-import@0.15.3(rollup@2.79.1):
+  /unplugin-auto-import@0.15.3:
     resolution: {integrity: sha512-RLT8SqbPn4bT7yBshZId0uPSofKWnwr66RyDaxWaFb/+f7OTDOWAsVNz+hOQLBWSjvbekr2xZY9ccS8TDHJbCQ==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -7924,11 +7927,11 @@ packages:
         optional: true
     dependencies:
       '@antfu/utils': 0.7.5
-      '@rollup/pluginutils': 5.0.2(rollup@2.79.1)
+      '@rollup/pluginutils': 5.0.2
       local-pkg: 0.4.3
       magic-string: 0.30.1
       minimatch: 9.0.3
-      unimport: 3.1.0(rollup@2.79.1)
+      unimport: 3.1.0
       unplugin: 1.4.0
     transitivePeerDependencies:
       - rollup
@@ -7966,7 +7969,7 @@ packages:
       - supports-color
     dev: true
 
-  /unplugin-vue-components@0.24.1(rollup@2.79.1)(vue@3.3.4):
+  /unplugin-vue-components@0.24.1(vue@3.3.4):
     resolution: {integrity: sha512-T3A8HkZoIE1Cja95xNqolwza0yD5IVlgZZ1PVAGvVCx8xthmjsv38xWRCtHtwl+rvZyL9uif42SRkDGw9aCfMA==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -7980,7 +7983,7 @@ packages:
         optional: true
     dependencies:
       '@antfu/utils': 0.7.5
-      '@rollup/pluginutils': 5.0.2(rollup@2.79.1)
+      '@rollup/pluginutils': 5.0.2
       chokidar: 3.5.3
       debug: 4.3.4
       fast-glob: 3.3.1
@@ -8096,12 +8099,10 @@ packages:
       vfile-message: 1.1.1
     dev: true
 
-  /vite-plugin-pwa@0.12.8(vite@2.7.13)(workbox-build@6.6.0)(workbox-window@6.6.0):
+  /vite-plugin-pwa@0.12.8(vite@2.7.13):
     resolution: {integrity: sha512-pSiFHmnJGMQJJL8aJzQ8SaraZBSBPMGvGUkCNzheIq9UQCEk/eP3UmANNmS9eupuhIpTK8AdxTOHcaMcAqAbCA==}
     peerDependencies:
       vite: ^2.0.0 || ^3.0.0-0
-      workbox-build: ^6.4.0
-      workbox-window: ^6.4.0
     dependencies:
       debug: 4.3.4
       fast-glob: 3.3.1
@@ -8111,6 +8112,7 @@ packages:
       workbox-build: 6.6.0
       workbox-window: 6.6.0
     transitivePeerDependencies:
+      - '@types/babel__core'
       - supports-color
     dev: true
 

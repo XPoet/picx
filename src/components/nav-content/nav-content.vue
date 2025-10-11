@@ -87,7 +87,8 @@ const onNavClick = (e: any) => {
 const changeNavActive = (currentPath: string) => {
   navInfoList.value.forEach((v) => {
     const temp = v
-    temp.isActive = v.path === currentPath || currentPath.includes(v.path)
+    const rootPath = `/${currentPath.split('/')[1]}`
+    temp.isActive = v.path === currentPath || rootPath === v.path
     return temp
   })
 

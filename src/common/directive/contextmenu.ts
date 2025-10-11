@@ -22,9 +22,9 @@ const contextmenuDirective: Directive = {
       e.preventDefault()
       e.stopPropagation()
 
-      const { type, dir, img } = binding.value
+      const { type, dir, img, video } = binding.value
 
-      store.commit('SET_UPLOAD_AREA_STATE', { activeInfo: { dir, type, img } })
+      store.commit('SET_UPLOAD_AREA_STATE', { activeInfo: { dir, type, img, video } })
 
       const viewDir = computed(() => store.getters.getUserViewDir).value
 

@@ -19,9 +19,14 @@
   "upload": "上传",
   "rename": "重命名",
   "copy_link": "复制图片链接",
+  "copy_video_link": "复制视频链接",
   "paste_image": "粘贴图片",
   "copy_success_1": "图片链接已自动复制到系统剪贴板",
   "copy_success_2": "图片链接复制成功",
+  "copy_success_video_1": "视频链接已自动复制到系统剪贴板",
+  "copy_success_video_2": "视频链接复制成功",
+  "copy_success_total_1": "链接已自动复制到系统剪贴板",
+  "copy_success_total_2": "链接复制成功",
   "copy_fail_1": "复制失败",
   "header": {
     "not_login": "未登录",
@@ -40,7 +45,8 @@
     "settings": "图床设置",
     "toolbox": "工具箱",
     "feedback": "帮助反馈",
-    "actions": "快捷操作"
+    "actions": "快捷操作",
+    "video_upload": "上传视频"
   },
   "actions": {
     "watermark": "图片水印",
@@ -163,6 +169,7 @@
   },
   "upload_page": {
     "upload_area_text": "拖拽 / 粘贴 / 点击此处选择图片",
+    "upload_video_area_text": "拖拽 / 粘贴 / 点击此处选择视频",
     "message1": "请先完成图床配置",
     "message2": "请选择一个仓库",
     "message3": "目录不能为空",

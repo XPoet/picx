@@ -1,7 +1,8 @@
 import { store } from '@/stores'
-import { getFileSuffix, isImage, createManagementImageObject } from '@/utils'
+import { getFileSuffix, isImage, createManagementImageObject, isVideo } from '@/utils'
 import request from '@/utils/request'
 import { UserConfigInfoModel } from '@/common/model'
+import { createManagementVideoObject } from '@/utils/video-utils'
 
 /**
  * 获取指定路径 Path 下的目录列表
@@ -65,9 +66,17 @@ export const getRepoPathContent = (userConfigInfo: UserConfigInfoModel, path: st
 
       setTimeout(() => {
         res
-          .filter((v: any) => v.type === 'file' && isImage(getFileSuffix(v.name)))
+          .filter((v: any) => {
+            const suffix = getFileSuffix(v.name)
+            return v.type === 'file' && (isImage(suffix) || isVideo(suffix))
+          })
           .forEach((x: any) => {
-            store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', createManagementImageObject(x, path))
+            const suffix = getFileSuffix(x.name)
+            if (isImage(suffix)) {
+              store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', createManagementImageObject(x, path))
+            } else if (isVideo(suffix)) {
+              store.dispatch('DIR_IMAGE_LIST_ADD_VIDEO', createManagementVideoObject(x, path))
+            }
           })
       }, 120)
 

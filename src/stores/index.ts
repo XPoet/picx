@@ -10,6 +10,7 @@ import toolboxImageListModule from './modules/toolbox-image-list'
 import uploadImageListModule from './modules/upload-image-list'
 import githubAuthorizeModule from './modules/github-authorize'
 import deployStatusModule from './modules/deploy-status'
+import uploadVideoListModule from './modules/upload-video-list'
 
 // Create a new store instance
 export const store = createStore<RootStateTypes>({
@@ -22,7 +23,8 @@ export const store = createStore<RootStateTypes>({
     toolboxImageListModule,
     uploadImageListModule,
     githubAuthorizeModule,
-    deployStatusModule
+    deployStatusModule,
+    uploadVideoListModule
   },
   state: {
     rootName: 'root'

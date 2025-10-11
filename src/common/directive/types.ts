@@ -6,5 +6,7 @@ export enum ContextmenuEnum {
   // eslint-disable-next-line no-unused-vars
   img,
   // eslint-disable-next-line no-unused-vars
-  uploadArea
+  uploadArea,
+  // eslint-disable-next-line no-unused-vars
+  video = 4
 }

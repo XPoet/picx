@@ -36,6 +36,14 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: '/upload-video',
+    name: 'upload-video',
+    component: () => import('@/views/upload-video/upload-video.vue'),
+    meta: {
+      title: 'nav.video_upload'
+    }
+  },
+  {
     path: '/management',
     name: 'Management',
     component: management,

@@ -1,4 +1,4 @@
-import { UploadedImageModel } from '@/common/model'
+import { UploadedImageModel, UploadedVideoModel } from '@/common/model'
 
 export interface DirObject {
   type: 'dir'
@@ -6,6 +6,7 @@ export interface DirObject {
   dirPath: string
   childrenDirs: DirObject[]
   imageList: UploadedImageModel[]
+  videoList: UploadedVideoModel[]
 }
 
 export default interface DirImageListStateTypes {

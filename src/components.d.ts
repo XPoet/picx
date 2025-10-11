@@ -115,6 +115,7 @@ declare module '@vue/runtime-core' {
     SiteCount: typeof import('./components/site-count/site-count.vue')['default']
     UserAvatar: typeof import('./components/user-avatar/user-avatar.vue')['default']
     UserAvatarV2: typeof import('./components/user-avatar-v2/user-avatar-v2.vue')['default']
+    VideoPreview: typeof import('./components/video-preview/video-preview.vue')['default']
     WatermarkConfigBox: typeof import('./components/watermark-config-box/watermark-config-box.vue')['default']
     WatermarkTool: typeof import('./components/tools/watermark-tool/watermark-tool.vue')['default']
   }

@@ -43,6 +43,10 @@ export const filterDirContent = (content: any, type: string): any => {
     return content.imageList.filter((x: any) => x.type === 'image')
   }
 
+  if (type === 'video') {
+    return content.videoList?.filter((x: any) => x.type === 'video') || []
+  }
+
   return []
 }
 

@@ -11,7 +11,8 @@ export const createDirObject = (dir: string, dirPath: string): DirObject => {
     dir,
     dirPath,
     childrenDirs: [],
-    imageList: []
+    imageList: [],
+    videoList: []
   }
 }
 

@@ -19,9 +19,14 @@
   "upload": "上傳",
   "rename": "重新命名",
   "copy_link": "複製圖片連結",
+  "copy_video_link": "複製影片連結",
   "paste_image": "貼上圖片",
   "copy_success_1": "圖片連結已自動複製到系統剪貼簿",
   "copy_success_2": "圖片連結複製成功",
+  "copy_success_video_1": "影片連結已自動複製到系統剪貼簿",
+  "copy_success_video_2": "影片連結複製成功",
+  "copy_success_total_1": "連結已自動複製到系統剪貼簿",
+  "copy_success_total_2": "連結複製成功",
   "copy_fail_1": "複製失敗",
   "header": {
     "not_login": "未登入",
@@ -163,6 +168,7 @@
   },
   "upload_page": {
     "upload_area_text": "拖曳 / 貼上 / 點擊此處選擇圖片",
+    "upload_video_area_text": "拖曳 / 貼上 / 點擊此處選擇影片",
     "message1": "請先完成圖床配置",
     "message2": "請選擇一個倉庫",
     "message3": "目錄不能為空",
