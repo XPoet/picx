@@ -1,41 +1,37 @@
-import { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
+import type { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
 
 export enum ElementPlusSizeEnum {
-  // eslint-disable-next-line no-unused-vars
   large = 'large',
-  // eslint-disable-next-line no-unused-vars
+
   default = 'default',
-  // eslint-disable-next-line no-unused-vars
-  small = 'small'
+
+  small = 'small',
 }
 
 export enum WatermarkPositionEnum {
-  // eslint-disable-next-line no-unused-vars
   leftTop = 'leftTop',
-  // eslint-disable-next-line no-unused-vars
+
   leftBottom = 'leftBottom',
-  // eslint-disable-next-line no-unused-vars
+
   rightTop = 'rightTop',
-  // eslint-disable-next-line no-unused-vars
-  rightBottom = 'rightBottom'
+
+  rightBottom = 'rightBottom',
 }
 
 export enum ThemeModeEnum {
-  // eslint-disable-next-line no-unused-vars
   system = 'system',
-  // eslint-disable-next-line no-unused-vars
+
   light = 'light',
-  // eslint-disable-next-line no-unused-vars
-  dark = 'dark'
+
+  dark = 'dark',
 }
 
 export enum LanguageEnum {
-  // eslint-disable-next-line no-unused-vars
   zhCN = 'zh-CN',
-  // eslint-disable-next-line no-unused-vars
+
   zhTW = 'zh-TW',
-  // eslint-disable-next-line no-unused-vars
-  en = 'en'
+
+  en = 'en',
 }
 
 export interface UserSettingsModel {

@@ -1,49 +1,113 @@
-import { InjectionKey } from 'vue'
-import { createStore, Store, useStore as baseUseStore } from 'vuex'
-import RootStateTypes, { AllStateTypes } from './types'
-import dirImageListModule from './modules/dir-image-list'
-import userConfigInfoModule from './modules/user-config-info'
-import imageCardModule from './modules/image-card'
-import uploadAreaModule from './modules/upload-area'
-import userSettingsModule from './modules/user-settings'
-import toolboxImageListModule from './modules/toolbox-image-list'
-import uploadImageListModule from './modules/upload-image-list'
-import githubAuthorizeModule from './modules/github-authorize'
-import deployStatusModule from './modules/deploy-status'
+import { createPinia } from 'pinia'
+import { usePicxStore } from './picx-store'
 
-// Create a new store instance
-export const store = createStore<RootStateTypes>({
-  modules: {
-    dirImageListModule,
-    userConfigInfoModule,
-    imageCardModule,
-    uploadAreaModule,
-    userSettingsModule,
-    toolboxImageListModule,
-    uploadImageListModule,
-    githubAuthorizeModule,
-    deployStatusModule
+export const pinia = createPinia()
+
+const picxStore = usePicxStore(pinia)
+
+/**
+ * 调用迁移期保留的 Vuex 风格 action。
+ */
+function invokeAction(type: string, payload?: unknown): unknown {
+  const action = Reflect.get(picxStore, type)
+
+  if (typeof action !== 'function') {
+    throw new TypeError(`未知的 Store action：${type}`)
+  }
+
+  return Reflect.apply(action, picxStore, payload === undefined ? [] : [payload])
+}
+
+/**
+ * Pinia 迁移兼容门面。
+ *
+ * 业务组件迁移为直接调用 Pinia action 后，可移除此门面。
+ */
+export const store = {
+  getters: {
+    get getGitHubAuthorizationInfo() {
+      return picxStore.getGitHubAuthorizationInfo
+    },
+    get getUserLoginStatus() {
+      return picxStore.getUserLoginStatus
+    },
+    get getUserConfigInfo() {
+      return picxStore.getUserConfigInfo
+    },
+    get getUserViewDir() {
+      return picxStore.getUserViewDir
+    },
+    get getUserSettings() {
+      return picxStore.getUserSettings
+    },
+    get getCloudSettings() {
+      return picxStore.getCloudSettings
+    },
+    get getGlobalSettings() {
+      return picxStore.getGlobalSettings
+    },
+    get getDirObject() {
+      return picxStore.getDirObject
+    },
+    get getImageCardArr() {
+      return picxStore.getImageCardArr
+    },
+    get getImageCardCheckedArr() {
+      return picxStore.getImageCardCheckedArr
+    },
+    get getUploadAreaState() {
+      return picxStore.getUploadAreaState
+    },
+    get getToolboxImageList() {
+      return picxStore.getToolboxImageList
+    },
+    get getUploadImageList() {
+      return picxStore.getUploadImageList
+    },
+    get getDeployStatusInfo() {
+      return picxStore.getDeployStatusInfo
+    },
   },
   state: {
-    rootName: 'root'
+    get dirImageListModule() {
+      return picxStore.dirImageListModule
+    },
+    get userConfigInfoModule() {
+      return picxStore.userConfigInfoModule
+    },
+    get imageCardModule() {
+      return picxStore.imageCardModule
+    },
+    get uploadAreaModule() {
+      return picxStore.uploadAreaModule
+    },
+    get userSettingsModule() {
+      return picxStore.userSettingsModule
+    },
+    get toolboxImageListModule() {
+      return picxStore.toolboxImageListModule
+    },
+    get uploadImageListModule() {
+      return picxStore.uploadImageListModule
+    },
+    get githubAuthorizeModule() {
+      return picxStore.githubAuthorizeModule
+    },
+    get deployStatusModule() {
+      return picxStore.deployStatusModule
+    },
   },
-  actions: {
-    // 退出登录（删除 localStorage 和 sessionStorage 数据，清空 state 的值）
-    LOGOUT({ dispatch, commit }) {
-      commit('UPLOAD_AREA_ACTIVE_LOGOUT')
-      dispatch('DIR_IMAGE_LOGOUT')
-      dispatch('USER_CONFIG_INFO_LOGOUT')
-      dispatch('USER_SETTINGS_LOGOUT')
-      dispatch('TOOLBOX_IMG_LIST_RESET')
-      dispatch('UPLOAD_IMG_LIST_RESET')
-      localStorage.clear()
-      sessionStorage.clear()
-    }
-  }
-})
+  dispatch(type: string, payload?: unknown): Promise<unknown> {
+    return Promise.resolve(invokeAction(type, payload))
+  },
+  commit(type: string, payload?: unknown): void {
+    invokeAction(type, payload)
+  },
+}
 
-export const key: InjectionKey<Store<RootStateTypes>> = Symbol('vuex-store')
-
-export function useStore<T = AllStateTypes>() {
-  return baseUseStore<T>(key)
+/**
+ * 返回全局 Pinia 兼容门面。
+ */
+export function useStore() {
+  return store
 }

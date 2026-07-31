@@ -1,48 +1,30 @@
-<template>
-  <el-cascader
-    :style="{
-      width: elWidth
-    }"
-    :size="elSize"
-    :debounce="500"
-    :props="cascaderProps"
-    :key="elKey"
-    v-model="userConfigInfo.selectedDirList"
-    filterable
-    :placeholder="$t('config_page.placeholder_5')"
-    :clearable="elClearable"
-    @change="cascaderChange"
-  />
-</template>
-
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getDirInfoList } from '@/common/api'
-import { useStore } from '@/stores'
-import { ElementPlusSizeEnum } from '@/common/model'
 import { NEW_DIR_COUNT_MAX } from '@/common/constant'
-
-const store = useStore()
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+import { ElementPlusSizeEnum } from '@/common/model'
+import { useStore } from '@/stores'
 
 defineProps({
   elKey: {
     type: String,
-    default: ''
+    default: '',
   },
   elSize: {
     type: String as () => ElementPlusSizeEnum,
-    default: ElementPlusSizeEnum.default
+    default: ElementPlusSizeEnum.default,
   },
   elWidth: {
     type: String,
-    default: '100%'
+    default: '100%',
   },
   elClearable: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
+const store = useStore()
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
 const cascaderProps = {
   lazy: true,
@@ -52,7 +34,8 @@ const cascaderProps = {
     let dirs: any[]
     if (level === 0) {
       dirs = userConfigInfo.dirList
-    } else {
+    }
+    else {
       dirs = await getDirInfoList(userConfigInfo, pathLabels.join('/'))
     }
     if (dirs.length) {
@@ -60,23 +43,42 @@ const cascaderProps = {
         dirs.map((x: any) => ({
           value: x.value,
           label: x.label,
-          leaf: level >= NEW_DIR_COUNT_MAX - 1
-        }))
+          leaf: level >= NEW_DIR_COUNT_MAX - 1,
+        })),
       )
-    } else {
+    }
+    else {
       resolve([])
     }
-  }
+  },
 }
 
-const cascaderChange = (e: string[]) => {
-  if (Array.isArray(e) && e.length) {
-    userConfigInfo.selectedDirList = e
-    userConfigInfo.selectedDir = e.join('/')
-  } else {
+const cascaderChange = (value: unknown) => {
+  if (Array.isArray(value) && value.every(item => typeof item === 'string') && value.length) {
+    userConfigInfo.selectedDirList = value
+    userConfigInfo.selectedDir = value.join('/')
+  }
+  else {
     userConfigInfo.selectedDirList = []
     userConfigInfo.selectedDir = ''
   }
   store.dispatch('USER_CONFIG_INFO_PERSIST')
 }
 </script>
+
+<template>
+  <el-cascader
+    :key="elKey"
+    v-model="userConfigInfo.selectedDirList"
+    :style="{
+      width: elWidth,
+    }"
+    :size="elSize"
+    :debounce="500"
+    :props="cascaderProps"
+    filterable
+    :placeholder="$t('config_page.placeholder_5')"
+    :clearable="elClearable"
+    @change="cascaderChange"
+  />
+</template>

@@ -1,52 +1,16 @@
-<template>
-  <div class="selector-wrapper" v-if="getImageCardCheckedNum">
-    <div class="selector-left-box">
-      <el-checkbox
-        :label="allChecked ? $t('management_page.deselectAll') : $t('management_page.selectAll')"
-        v-model="allChecked"
-        @change="allCheckChange"
-      ></el-checkbox>
-      <div class="item">
-        {{ $t('management_page.selectTotal', { total: getImageCardCheckedNum }) }}
-      </div>
-      <div class="item cancel-select-btn" @click="cancelPick">
-        {{ $t('management_page.unselect') }}
-      </div>
-    </div>
-    <div class="selector-right-box">
-      <el-tooltip
-        placement="top"
-        :content="$t('management_page.batchCopy')"
-        :show-arrow="false"
-        :offset="6"
-      >
-        <el-icon class="btn-icon" @click="batchCopy"><IEpCopyDocument /></el-icon>
-      </el-tooltip>
-      <el-tooltip
-        placement="top"
-        :content="$t('management_page.batchDelete')"
-        :show-arrow="false"
-        :offset="6"
-      >
-        <el-icon class="btn-icon" @click="batchDeleteImage"><IEpDelete /></el-icon>
-      </el-tooltip>
-    </div>
-  </div>
-</template>
 <script lang="ts" setup>
-import { computed, onMounted, watch, ref, getCurrentInstance } from 'vue'
+import type { UploadedImageModel } from '@/common/model'
+import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
+import { DeleteStatusEnum } from '@/common/model'
 import { useStore } from '@/stores'
-import { UploadedImageModel, DeleteStatusEnum } from '@/common/model'
 import { batchCopyImageLinks, deleteImageOfGitHub } from '@/utils'
 
 const props = defineProps({
   currentDirImageList: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
-
-defineEmits(['updateInitImageList'])
 
 const store = useStore()
 const allChecked = ref(false)
@@ -61,7 +25,7 @@ watch(
   (newVal) => {
     const newValCheckedNum = props.currentDirImageList.length
     allChecked.value = newVal === newValCheckedNum
-  }
+  },
 )
 
 const batchCopy = () => {
@@ -80,12 +44,12 @@ const batchDeleteImage = () => {
   if (getImageCardCheckedArr.value?.length > 0) {
     ElMessageBox.confirm(
       instance?.proxy?.$t('management_page.delTips2', {
-        total: getImageCardCheckedArr.value?.length
+        total: getImageCardCheckedArr.value?.length,
       }),
       instance?.proxy?.$t('tip'),
       {
-        type: 'warning'
-      }
+        type: 'warning',
+      },
     )
       .then(async () => {
         const res = await deleteImageOfGitHub(getImageCardCheckedArr.value, userConfigInfo)
@@ -99,9 +63,7 @@ const batchDeleteImage = () => {
           ElMessage.error({ message: instance?.proxy?.$t('management_page.message7') })
         }
       })
-      .catch(() => {
-        console.log('Cancel')
-      })
+      .catch(() => undefined)
   }
 }
 
@@ -118,6 +80,46 @@ onMounted(() => {
   allCheckChange()
 })
 </script>
+
+<template>
+  <div v-if="getImageCardCheckedNum" class="selector-wrapper">
+    <div class="selector-left-box">
+      <el-checkbox
+        v-model="allChecked"
+        :label="allChecked ? $t('management_page.deselectAll') : $t('management_page.selectAll')"
+        @change="allCheckChange"
+      />
+      <div class="item">
+        {{ $t('management_page.selectTotal', { total: getImageCardCheckedNum }) }}
+      </div>
+      <div class="item cancel-select-btn" @click="cancelPick">
+        {{ $t('management_page.unselect') }}
+      </div>
+    </div>
+    <div class="selector-right-box">
+      <el-tooltip
+        placement="top"
+        :content="$t('management_page.batchCopy')"
+        :show-arrow="false"
+        :offset="6"
+      >
+        <el-icon class="btn-icon" @click="batchCopy">
+          <IEpCopyDocument />
+        </el-icon>
+      </el-tooltip>
+      <el-tooltip
+        placement="top"
+        :content="$t('management_page.batchDelete')"
+        :show-arrow="false"
+        :offset="6"
+      >
+        <el-icon class="btn-icon" @click="batchDeleteImage">
+          <IEpDelete />
+        </el-icon>
+      </el-tooltip>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="stylus">
 @import 'image-selector.styl'

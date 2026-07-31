@@ -1,3 +1,44 @@
+<script setup lang="ts">
+import { onMounted, reactive } from 'vue'
+import { WatermarkPositionEnum } from '@/common/model'
+import { store } from '@/stores'
+
+defineProps({
+  isTool: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+const emit = defineEmits(['watermarkConfig'])
+
+const watermark = reactive({
+  text: '',
+  fontSize: 0,
+  position: WatermarkPositionEnum.rightBottom,
+  textColor: '',
+  opacity: 0,
+})
+
+const changeWatermarkConfig = () => {
+  emit('watermarkConfig', watermark)
+}
+
+onMounted(() => {
+  const initWatermark = store.getters.getUserSettings.watermark
+  watermark.text = initWatermark.text
+  watermark.textColor = initWatermark.textColor
+  watermark.fontSize = initWatermark.fontSize
+  watermark.position = initWatermark.position
+  watermark.opacity = initWatermark.opacity
+  emit('watermarkConfig', watermark)
+})
+</script>
+
 <template>
   <el-form
     class="watermark-config-form"
@@ -70,44 +111,3 @@
     </el-row>
   </el-form>
 </template>
-
-<script setup lang="ts">
-import { onMounted, reactive } from 'vue'
-import { store } from '@/stores'
-import { WatermarkPositionEnum } from '@/common/model'
-
-const watermark = reactive({
-  text: '',
-  fontSize: 0,
-  position: WatermarkPositionEnum.rightBottom,
-  textColor: '',
-  opacity: 0
-})
-
-defineProps({
-  isTool: {
-    type: Boolean,
-    default: false
-  },
-  disabled: {
-    type: Boolean,
-    default: false
-  }
-})
-
-const emit = defineEmits(['watermarkConfig'])
-
-const changeWatermarkConfig = () => {
-  emit('watermarkConfig', watermark)
-}
-
-onMounted(() => {
-  const initWatermark = store.getters.getUserSettings.watermark
-  watermark.text = initWatermark.text
-  watermark.textColor = initWatermark.textColor
-  watermark.fontSize = initWatermark.fontSize
-  watermark.position = initWatermark.position
-  watermark.opacity = initWatermark.opacity
-  emit('watermarkConfig', watermark)
-})
-</script>

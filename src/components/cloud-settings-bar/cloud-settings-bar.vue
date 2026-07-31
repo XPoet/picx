@@ -1,33 +1,10 @@
-<template>
-  <div
-    v-if="isShowBar"
-    class="cloud-settings-data-box status-bar info"
-    :class="{
-      warning: selectedAction === CloudSettingsActions.update,
-      success: selectedAction === CloudSettingsActions.equal
-    }"
-  >
-    <div>{{ actionsTip }}</div>
-    <el-button
-      type="primary"
-      text
-      :icon="icon.IEpCheck"
-      :loading="saveLoading"
-      :disabled="saveDisabled"
-      @click="onConfirm"
-    >
-      {{ $t('confirm') }}
-    </el-button>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed, onMounted, ref, shallowRef, watch } from 'vue'
+import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
 import { deepAssignObject, deepObjectEqual } from '@/utils'
 import { CloudSettingsActions } from './cloud-settings-bar.model'
 import { getCloudSettings, saveCloudSettings } from './cloud-settings-bar.util'
-import i18n from '@/plugins/vue/i18n'
 
 const icon = shallowRef({ IEpCheck, IEpClose })
 const userSettings = computed(() => store.getters.getUserSettings).value
@@ -66,7 +43,7 @@ const saveToCloud = async () => {
   ElMessage.success(
     store.getters.getCloudSettings === null
       ? i18n.global.t('settings_page.cloud_settings.success_msg_1')
-      : i18n.global.t('settings_page.cloud_settings.success_msg_2')
+      : i18n.global.t('settings_page.cloud_settings.success_msg_2'),
   )
   await store.dispatch('SET_CLOUD_SETTINGS', JSON.parse(JSON.stringify(userSettings)))
 }
@@ -77,7 +54,7 @@ const useCloudSettings = () => {
     deepAssignObject(userSettings, store.getters.getCloudSettings)
     store.dispatch('USER_SETTINGS_PERSIST')
     store.dispatch('SET_GLOBAL_SETTINGS', {
-      useCloudSettings: true
+      useCloudSettings: true,
     })
   }
 }
@@ -91,7 +68,6 @@ const initCloudSettings = async () => {
 
 // 确定操作
 const onConfirm = () => {
-  // eslint-disable-next-line default-case
   switch (selectedAction.value) {
     case CloudSettingsActions.save:
     case CloudSettingsActions.update:
@@ -113,7 +89,8 @@ watch(
         // 相等情况
         selectedAction.value = CloudSettingsActions.equal
         saveDisabled.value = true
-      } else {
+      }
+      else {
         // 不相等情况
         selectedAction.value = CloudSettingsActions.update
         saveDisabled.value = false
@@ -121,8 +98,8 @@ watch(
     }
   },
   {
-    deep: true
-  }
+    deep: true,
+  },
 )
 
 watch(
@@ -136,32 +113,59 @@ watch(
         if (deepObjectEqual(cs, userSettings)) {
           saveDisabled.value = true
           selectedAction.value = CloudSettingsActions.equal
-        } else {
+        }
+        else {
           saveDisabled.value = false
           selectedAction.value = CloudSettingsActions.update
         }
-      } else if (deepObjectEqual(cs, userSettings)) {
+      }
+      else if (deepObjectEqual(cs, userSettings)) {
         saveDisabled.value = true
         selectedAction.value = CloudSettingsActions.equal
-      } else {
+      }
+      else {
         saveDisabled.value = false
         selectedAction.value = CloudSettingsActions.use
       }
-    } else {
+    }
+    else {
       // 不存在云端设置数据，提示是否保存
       selectedAction.value = CloudSettingsActions.save
     }
   },
   {
     deep: true,
-    immediate: true
-  }
+    immediate: true,
+  },
 )
 
 onMounted(() => {
   initCloudSettings()
 })
 </script>
+
+<template>
+  <div
+    v-if="isShowBar"
+    class="cloud-settings-data-box status-bar info"
+    :class="{
+      warning: selectedAction === CloudSettingsActions.update,
+      success: selectedAction === CloudSettingsActions.equal,
+    }"
+  >
+    <div>{{ actionsTip }}</div>
+    <el-button
+      type="primary"
+      text
+      :icon="icon.IEpCheck"
+      :loading="saveLoading"
+      :disabled="saveDisabled"
+      @click="onConfirm"
+    >
+      {{ $t('confirm') }}
+    </el-button>
+  </div>
+</template>
 
 <style scoped lang="stylus">
 @import "cloud-settings-bar.styl"

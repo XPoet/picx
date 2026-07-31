@@ -26,15 +26,16 @@
 
 **在线使用入口 https://picx.xpoet.cn**
 
-> **重要提示：**  
-> - 为进一步简化用户操作，PicX 自 `v3.0` 起，不再支持自由选择仓库和分支，统一使用内置的仓库和分支。  
+> **重要提示：**
+>
+> - 为进一步简化用户操作，PicX 自 `v3.0` 起，不再支持自由选择仓库和分支，统一使用内置的仓库和分支。
 > - 如需继续使用自定义的仓库和分支，请使用 [PicX v2.0](https://v2.picx.xpoet.cn)。
 
 ## 文档 | Documents
 
 **官方文档 https://picx-docs.xpoet.cn**
 
-通过阅读 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX。 
+通过阅读 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX。
 
 ## 功能 | Features
 
@@ -66,7 +67,7 @@
   <img src="https://contrib.rocks/image?repo=XPoet/picx" />
 </a>
 
-##  反馈 | Feedback
+## 反馈 | Feedback
 
 在使用过程中，如遇问题，请仔细阅读 **[官方文档](https://picx-docs.xpoet.cn)**，或在 GitHub 发起 **[Issue](https://github.com/XPoet/picx/issues)**。
 
@@ -78,6 +79,6 @@ PicX 的更新迭代依靠作者工作之外的时间，维护不易，如果对
 
 ## 许可 | License
 
-**[AGPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)** 
+**[AGPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)**
 
 Copyright © 2020-Present XPoet

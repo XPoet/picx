@@ -1,10 +1,54 @@
+<script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
+import { CompressEncoderEnum } from '@/common/model'
+import { store } from '@/stores'
+
+const props = defineProps({
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+  usageScenario: {
+    type: String as () => 'imageHosting' | 'toolbox',
+    default: 'toolbox',
+  },
+})
+
+const emit = defineEmits(['encoder'])
+
+const userSettings = computed(() => store.getters.getUserSettings).value
+
+const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.webP)
+
+const onChangeEncoder = (encoder: string | number | boolean | undefined) => {
+  if (typeof encoder === 'string' && Object.values<string>(CompressEncoderEnum).includes(encoder)) {
+    emit('encoder', encoder)
+  }
+}
+
+const reset = () => {
+  compressEncoder.value = CompressEncoderEnum.webP
+}
+
+onMounted(() => {
+  if (props.usageScenario === 'imageHosting') {
+    compressEncoder.value = userSettings.compress.encoder
+  }
+  emit('encoder', compressEncoder.value)
+})
+
+defineExpose({ reset })
+</script>
+
 <template>
   <div class="compress-config-box">
-    <div class="img-encoder-title">{{ $t('settings_page.img_compress.radio_group_title') }}</div>
+    <div class="img-encoder-title">
+      {{ $t('settings_page.img_compress.radio_group_title') }}
+    </div>
     <el-radio-group
+      v-model="compressEncoder"
       :disabled="disabled"
       class="img-encoder-group"
-      v-model="compressEncoder"
       @change="onChangeEncoder"
     >
       <el-radio :label="CompressEncoderEnum.webP">
@@ -22,46 +66,6 @@
     </el-radio-group>
   </div>
 </template>
-
-<script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { CompressEncoderEnum } from '@/common/model'
-import { store } from '@/stores'
-
-const userSettings = computed(() => store.getters.getUserSettings).value
-
-const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.webP)
-
-const emit = defineEmits(['encoder'])
-
-const props = defineProps({
-  disabled: {
-    type: Boolean,
-    default: false
-  },
-  usageScenario: {
-    type: String as () => 'imageHosting' | 'toolbox',
-    default: 'toolbox'
-  }
-})
-
-const onChangeEncoder = (encoder: CompressEncoderEnum) => {
-  emit('encoder', encoder)
-}
-
-const reset = () => {
-  compressEncoder.value = CompressEncoderEnum.webP
-}
-
-onMounted(() => {
-  if (props.usageScenario === 'imageHosting') {
-    compressEncoder.value = userSettings.compress.encoder
-  }
-  emit('encoder', compressEncoder.value)
-})
-
-defineExpose({ reset })
-</script>
 
 <style scoped lang="stylus">
 @import "./compress-config-box.styl"

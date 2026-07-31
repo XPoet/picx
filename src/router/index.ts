@@ -1,105 +1,96 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import login from '@/views/picx-login/picx-login.vue'
-import upload from '@/views/upload-image/upload-image.vue'
-import management from '@/views/imgs-management/imgs-management.vue'
-import settings from '@/views/picx-settings/picx-settings.vue'
-import toolbox from '@/views/picx-toolbox/picx-toolbox.vue'
-import feedback from '@/views/feedback-info/feedback-info.vue'
-import compressTool from '@/components/tools/compress-tool/compress-tool.vue'
-import base64Tool from '@/components/tools/base64-tool/base64-tool.vue'
-import watermarkTool from '@/components/tools/watermark-tool/watermark-tool.vue'
+import type { RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { setWindowTitle } from '@/utils'
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'login',
-    component: login,
+    component: () => import('@/views/picx-login/picx-login.vue'),
     meta: {
-      title: 'login'
-    }
+      title: 'login',
+    },
   },
   {
     path: '/config',
     name: 'config',
     component: () => import('@/views/picx-config/picx-config.vue'),
     meta: {
-      title: 'nav.config'
-    }
+      title: 'nav.config',
+    },
   },
   {
     path: '/upload',
     name: 'upload',
-    component: upload,
+    component: () => import('@/views/upload-image/upload-image.vue'),
     meta: {
-      title: 'nav.upload'
-    }
+      title: 'nav.upload',
+    },
   },
   {
     path: '/management',
     name: 'Management',
-    component: management,
+    component: () => import('@/views/imgs-management/imgs-management.vue'),
     meta: {
-      title: 'nav.management'
-    }
+      title: 'nav.management',
+    },
   },
   {
     path: '/settings',
     name: 'settings',
-    component: settings,
+    component: () => import('@/views/picx-settings/picx-settings.vue'),
     meta: {
-      title: 'nav.settings'
-    }
+      title: 'nav.settings',
+    },
   },
   {
     path: '/toolbox',
     name: 'Toolbox',
-    component: toolbox,
+    component: () => import('@/views/picx-toolbox/picx-toolbox.vue'),
     meta: {
-      title: 'nav.toolbox'
+      title: 'nav.toolbox',
     },
     children: [
       {
         path: '/toolbox/compress',
         name: 'Compress',
-        component: compressTool
+        component: () => import('@/components/tools/compress-tool/compress-tool.vue'),
       },
       {
         path: '/toolbox/base64',
         name: 'Base64',
-        component: base64Tool
+        component: () => import('@/components/tools/base64-tool/base64-tool.vue'),
       },
       {
         path: '/toolbox/watermark',
         name: 'Watermark',
-        component: watermarkTool
-      }
-    ]
+        component: () => import('@/components/tools/watermark-tool/watermark-tool.vue'),
+      },
+    ],
   },
   {
     path: '/feedback',
     name: 'feedback',
-    component: feedback,
+    component: () => import('@/views/feedback-info/feedback-info.vue'),
     meta: {
-      title: 'nav.feedback'
-    }
+      title: 'nav.feedback',
+    },
   },
   {
     path: '/:catchAll(.*)',
-    redirect: '/'
-  }
+    redirect: '/',
+  },
 ]
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   if (to.meta.title) {
     setWindowTitle(to.meta.title as string)
   }
-  next()
 })
 
 export default router

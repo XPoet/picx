@@ -1,15 +1,16 @@
-import { computed, Directive } from 'vue'
+import type { Directive } from 'vue'
+import { computed } from 'vue'
+import { DirModeEnum } from '@/common/model'
+import i18n from '@/plugins/vue/i18n'
 import router from '@/router'
 import { store } from '@/stores'
-import { ContextmenuEnum } from './types'
-import { DirModeEnum } from '@/common/model'
 import { copyImageLink } from '@/utils'
-import i18n from '@/plugins/vue/i18n'
 import {
   checkImgProperty,
   onDeleteImage,
-  onRenameImage
+  onRenameImage,
 } from '@/views/imgs-management/components/image-card/image-card.util'
+import { ContextmenuEnum } from './types'
 
 const menuClass = 'custom-contextmenu-container'
 let menuEle: any = null
@@ -88,7 +89,7 @@ const contextmenuDirective: Directive = {
         hideAllContextmenu()
         showContextmenu([uploadItem])
         uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_2', {
-          dir: selectedDir
+          dir: selectedDir,
         })
       }
 
@@ -134,7 +135,7 @@ const contextmenuDirective: Directive = {
           await store.dispatch('SET_USER_CONFIG_INFO', {
             dirMode,
             selectedDir,
-            selectedDirList
+            selectedDirList,
           })
           await router.push('/upload')
         })
@@ -174,7 +175,7 @@ const contextmenuDirective: Directive = {
         // 上传区域粘贴图片
         pasteImageItem?.addEventListener('click', () => {
           store.commit('SET_UPLOAD_AREA_STATE', {
-            isPaste: true
+            isPaste: true,
           })
         })
       }
@@ -191,7 +192,7 @@ const contextmenuDirective: Directive = {
       document.addEventListener('click', closeContextMenu)
       document.addEventListener('dblclick', closeContextMenu)
     })
-  }
+  },
 }
 
 export default contextmenuDirective

@@ -1,5 +1,5 @@
+import type { CustomAxiosRequestConfig } from './types'
 import axios from './axios'
-import { CustomAxiosRequestConfig } from './types'
 
 export default function request(requestConfig: CustomAxiosRequestConfig): Promise<any> {
   const { success422, noShowErrMsg, noCache } = requestConfig
@@ -7,7 +7,7 @@ export default function request(requestConfig: CustomAxiosRequestConfig): Promis
   // 接口数据不缓存处理
   if (noCache) {
     requestConfig.cache = {
-      maxAge: 0 // 设置缓存的最大寿命为 0，禁用缓存
+      maxAge: 0, // 设置缓存的最大寿命为 0，禁用缓存
     }
     requestConfig.params = requestConfig.params ? requestConfig.params : {}
     requestConfig.params.timestamp = Date.now() // 添加时间戳参数，防止获取缓存的数据
@@ -22,14 +22,16 @@ export default function request(requestConfig: CustomAxiosRequestConfig): Promis
         const { status, data } = res
         if (res && (status === 200 || status === 201 || status === 204)) {
           resolve(data || 'SUCCESS')
-        } else {
+        }
+        else {
           resolve(null)
         }
       })
       .catch((err) => {
         if (success422 && err?.status === 422) {
           resolve(err?.data || 'SUCCESS')
-        } else {
+        }
+        else {
           const code = err?.status
           const msg = err?.data?.message
           if (!noShowErrMsg) {

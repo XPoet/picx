@@ -1,8 +1,8 @@
 import { computed } from 'vue'
-import { DeployServerEnum } from '@/components/deploy-status-bar/deploy-status-bar.model'
-import request from '@/utils/request'
 import { PICX_INIT_DEPLOY_MSG, PICX_UPDATE_DEPLOY_MSG } from '@/common/constant'
+import { DeployServerEnum } from '@/components/deploy-status-bar/deploy-status-bar.model'
 import { store } from '@/stores'
+import request from '@/utils/request'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const deployStatusInfo = computed(() => store.getters.getDeployStatusInfo).value
@@ -25,8 +25,8 @@ export const getCloudDeployInfo = async () => {
     noShowErrMsg: true,
     noCache: true,
     params: {
-      branch
-    }
+      branch,
+    },
   })
 
   return Promise.resolve(res)
@@ -42,12 +42,13 @@ export const saveCloudDeployInfo = async () => {
 
   const data: any = {
     message: res ? PICX_UPDATE_DEPLOY_MSG : PICX_INIT_DEPLOY_MSG,
-    content: window.btoa(JSON.stringify(deployStatusInfo))
+    content: window.btoa(JSON.stringify(deployStatusInfo)),
   }
 
   if (res) {
     data.sha = res.sha
-  } else {
+  }
+  else {
     data.branch = branch
   }
 
@@ -55,7 +56,7 @@ export const saveCloudDeployInfo = async () => {
     url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'PUT',
     data,
-    noShowErrMsg: true
+    noShowErrMsg: true,
   })
 
   return Promise.resolve(res2)

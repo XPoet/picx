@@ -1,7 +1,7 @@
+import type { UploadedImageModel, UploadImageModel } from '@/common/model'
 import { computed } from 'vue'
-import i18n from '@/plugins/vue/i18n'
-import { UploadedImageModel, UploadImageModel } from '@/common/model'
 import { deleteSingleImage } from '@/common/api'
+import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
 import {
   blobToBase64ByImageUrl,
@@ -11,7 +11,7 @@ import {
   getFilename,
   getFileSize,
   getFileSuffix,
-  getUuid
+  getUuid,
 } from '@/utils'
 import { uploadImageToGitHub } from '@/utils/upload-utils'
 
@@ -27,29 +27,24 @@ export const doDeleteImage = async (imgObj: UploadedImageModel) => {
     ElMessage.success({ message: i18n.global.t('management_page.message5') })
     await store.dispatch('DIR_IMAGE_LIST_REMOVE', imgObj)
     await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imgObj.uuid)
-  } else {
+  }
+  else {
     ElMessage.error({ message: i18n.global.t('management_page.message7') })
   }
 }
 
 export const onDeleteImage = (imgObj: UploadedImageModel) => {
   ElMessageBox.confirm(
-    `
-    <div>${i18n.global.t('management_page.delTips')}：</div>
-    <strong>${imgObj.name}</strong>
-    `,
+    `${i18n.global.t('management_page.delTips')}：${imgObj.name}`,
     i18n.global.t('tip'),
     {
-      dangerouslyUseHTMLString: true,
-      type: 'warning'
-    }
+      type: 'warning',
+    },
   )
     .then(async () => {
       await doDeleteImage(imgObj)
     })
-    .catch(() => {
-      console.log('Cancel')
-    })
+    .catch(() => undefined)
 }
 
 // 重命名的逻辑是先上传一张新名称的图片，再删除旧图片
@@ -62,7 +57,8 @@ export const doRenameImage = async (imgObj: UploadedImageModel, newName: string)
 
   if (!suffix.includes('svg')) {
     base64 = await getBase64ByImageUrl(generateImageLink(imgObj) || '', suffix)
-  } else {
+  }
+  else {
     base64 = await blobToBase64ByImageUrl(generateImageLink(imgObj) || '')
   }
 
@@ -116,30 +112,28 @@ export const onRenameImage = async (imgObj: UploadedImageModel) => {
           instance.confirmButtonLoading = false
           ElMessage.success(i18n.global.t('management_page.message4'))
           done()
-        } else {
+        }
+        else {
           ElMessage.error(i18n.global.t('management_page.message3'))
         }
-      } else {
+      }
+      else {
         done()
       }
-    }
+    },
   })
 }
 
 export const checkImgProperty = async (imgObj: UploadedImageModel) => {
   await ElMessageBox.confirm(
-    `
-    <div>${i18n.global.t('management_page.imageName')}：<strong>${imgObj.name}</strong></div>
-    <div>${i18n.global.t('management_page.imageSize')}：<strong>${getFileSize(
-      imgObj.size
-    )} KB</strong></div>
-    `,
+    `${i18n.global.t('management_page.imageName')}：${imgObj.name}\n${i18n.global.t(
+      'management_page.imageSize',
+    )}：${getFileSize(imgObj.size)} KB`,
     i18n.global.t('management_page.property'),
     {
       showCancelButton: false,
       showConfirmButton: false,
-      dangerouslyUseHTMLString: true,
-      type: 'info'
-    }
+      type: 'info',
+    },
   )
 }

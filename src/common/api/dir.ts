@@ -1,7 +1,7 @@
+import type { UserConfigInfoModel } from '@/common/model'
 import { store } from '@/stores'
-import { getFileSuffix, isImage, createManagementImageObject } from '@/utils'
+import { createManagementImageObject, getFileSuffix, isImage } from '@/utils'
 import request from '@/utils/request'
-import { UserConfigInfoModel } from '@/common/model'
 
 /**
  * 获取指定路径 Path 下的目录列表
@@ -10,7 +10,7 @@ import { UserConfigInfoModel } from '@/common/model'
  */
 export const getDirInfoList = (
   userConfigInfo: UserConfigInfoModel,
-  path: string = ''
+  path: string = '',
 ): Promise<[]> => {
   const { owner, repo, branch } = userConfigInfo
   // eslint-disable-next-line no-async-promise-executor
@@ -20,8 +20,8 @@ export const getDirInfoList = (
       method: 'GET',
       noShowErrMsg: true,
       params: {
-        ref: branch
-      }
+        ref: branch,
+      },
     })
 
     if (tmpList && tmpList.length) {
@@ -30,10 +30,11 @@ export const getDirInfoList = (
           .filter((v: any) => v.type === 'dir')
           .map((x: any) => ({
             value: x.name,
-            label: x.name
-          }))
+            label: x.name,
+          })),
       )
-    } else {
+    }
+    else {
       resolve([])
     }
   })
@@ -54,8 +55,8 @@ export const getRepoPathContent = (userConfigInfo: UserConfigInfoModel, path: st
       method: 'GET',
       noCache: true,
       params: {
-        ref: branch
-      }
+        ref: branch,
+      },
     })
 
     if (res && res.length) {
@@ -72,7 +73,8 @@ export const getRepoPathContent = (userConfigInfo: UserConfigInfoModel, path: st
       }, 120)
 
       resolve(true)
-    } else {
+    }
+    else {
       resolve(null)
     }
   })

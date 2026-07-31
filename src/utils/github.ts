@@ -1,4 +1,4 @@
-import { UserConfigInfoModel } from '@/common/model'
+import type { UserConfigInfoModel } from '@/common/model'
 
 const gh = 'https://github.com'
 

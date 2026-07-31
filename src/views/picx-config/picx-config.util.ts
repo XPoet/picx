@@ -1,16 +1,16 @@
 import { computed } from 'vue'
-import { store } from '@/stores'
-import { DirModeEnum } from '@/common/model'
 import {
   createRepo,
   getDirInfoList,
   getGitHubUserInfo,
   getRepoInfo,
-  initRepoREADME
+  initRepoREADME,
 } from '@/common/api'
 import { INIT_REPO_BARNCH, INIT_REPO_NAME } from '@/common/constant'
-import router from '@/router'
+import { DirModeEnum } from '@/common/model'
 import i18n from '@/plugins/vue/i18n'
+import router from '@/router'
+import { store } from '@/stores'
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
@@ -32,7 +32,7 @@ export async function saveUserInfo(userInfo: any) {
     owner: userInfo.login,
     name: userInfo.name,
     email: userInfo.email,
-    avatarUrl: userInfo.avatar_url
+    avatarUrl: userInfo.avatar_url,
   })
 }
 
@@ -44,7 +44,6 @@ export const goUploadPage = async (inputRef: any) => {
   let warningMessage: string = i18n.global.t('config_page.message_6')
 
   if (selectedDir === '') {
-    // eslint-disable-next-line default-case
     switch (dirMode) {
       case DirModeEnum.newDir:
         warningMessage = i18n.global.t('config_page.message_7')
@@ -55,7 +54,8 @@ export const goUploadPage = async (inputRef: any) => {
         break
     }
     ElMessage.warning({ message: warningMessage })
-  } else {
+  }
+  else {
     await router.push('/upload')
   }
 }
@@ -70,9 +70,10 @@ export const installedStatusHandle = async (repoInfo: any, authorized: boolean, 
   if (authorized && token) {
     if (repoInfo) {
       await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-        installed: true
+        installed: true,
       })
-    } else {
+    }
+    else {
       const msgInstance = ElMessage({
         customClass: 'custom-message-container',
         duration: 0,
@@ -84,7 +85,7 @@ export const installedStatusHandle = async (repoInfo: any, authorized: boolean, 
                       <span class="confirm btn">${i18n.global.t('authorization.btn_1')}</span>
                     </spna>
                   </div>`,
-        dangerouslyUseHTMLString: true
+        dangerouslyUseHTMLString: true,
       })
 
       document
@@ -115,13 +116,12 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
 
   const loading = ElLoading.service({
     lock: true,
-    text: i18n.global.t('config_page.loading_6')
+    text: i18n.global.t('config_page.loading_6'),
   })
 
   try {
     // 获取用户信息
     const userInfo = await getGitHubUserInfo(userConfigInfo.token)
-    console.log('getGitHubUserInfo >> ', userInfo)
 
     if (!userInfo) {
       loading.close()
@@ -132,7 +132,7 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
     // 保存 Token 到授权信息 store
     if (!store.getters.getGitHubAuthorizationInfo.isAutoAuthorize) {
       await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-        manualToken: userConfigInfo.token
+        manualToken: userConfigInfo.token,
       })
     }
 
@@ -142,16 +142,14 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
     // 判断是否已存在 PicX 图床仓库
     let isExistInitRepo: boolean = false
     const initRepoInfo = await getRepoInfo(userConfigInfo.owner, INIT_REPO_NAME)
-    console.log('initRepoInfo : ', initRepoInfo)
     if (initRepoInfo) {
       isExistInitRepo = true
       await store.dispatch('SET_USER_CONFIG_INFO', {
-        repoPrivate: initRepoInfo.private
+        repoPrivate: initRepoInfo.private,
       })
     }
 
     const repoInfo = await createRepo(userConfigInfo.token)
-    console.log('createRepo >> ', repoInfo)
 
     // ---- PicX GitHub APP 安装状态处理
     const authorizationInfo = computed(() => store.getters.getGitHubAuthorizationInfo).value
@@ -185,7 +183,8 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
     loading.close()
     ElMessage.success({ message: i18n.global.t('config_page.message_4') })
     await router.push('/upload')
-  } catch (err) {
+  }
+  catch (err) {
     ElMessage.error({ message: i18n.global.t('config_page.message_5') })
     console.error('oneClickAutoConfig >> ', err)
   }

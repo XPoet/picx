@@ -1,58 +1,34 @@
-<template>
-  <div
-    class="getting-images-container"
-    :class="{ focus: uploadAreaState.isActive && curShowImg.base64, disabled: disabled }"
-    @dragover.prevent
-    @drop.stop.prevent="onDrop"
-    @paste.stop="onPaste"
-  >
-    <label for="input-file-selector"></label>
-    <input
-      id="input-file-selector"
-      type="file"
-      accept="image/*"
-      @change="onSelect"
-      multiple="multiple"
-    />
-    <div class="upload-area-tips" v-if="!curShowImg.base64">
-      <el-icon class="icon"><IEpUploadFilled /></el-icon>
-      <div class="text">{{ $t('upload_page.upload_area_text') }}</div>
-    </div>
-    <img class="preview-img" v-if="curShowImg.base64" :src="curShowImg.base64" />
-  </div>
-</template>
-
 <script setup lang="ts">
+import type { ImageHandleResult } from '@/common/model'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useStore } from '@/stores'
 import { gettingFilesHandle, isImage } from '@/utils'
-import { ImageHandleResult } from '@/common/model'
+
+defineProps({
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
+})
+
+const emit = defineEmits(['getImgList'])
 
 const store = useStore()
 
 const uploadAreaState = computed(() => store.getters.getUploadAreaState)
 
-const curShowImg = ref<{ uuid: string; base64: string }>({
+const curShowImg = ref<{ uuid: string, base64: string }>({
   uuid: '',
-  base64: ''
+  base64: '',
 })
 const imgList = ref<ImageHandleResult[]>([])
-
-const emit = defineEmits(['getImgList'])
-
-defineProps({
-  disabled: {
-    type: Boolean,
-    default: false
-  }
-})
 
 const setCurImg = () => {
   const len = imgList.value.length
   const tmpImg = len > 0 ? imgList.value[len - 1] : { uuid: '', base64: '' }
   curShowImg.value = {
     uuid: tmpImg.uuid,
-    base64: tmpImg.base64
+    base64: tmpImg.base64,
   }
 }
 
@@ -63,7 +39,6 @@ const unifiedHandle = async (files: File[]) => {
 
   imgList.value = []
 
-  // eslint-disable-next-line no-restricted-syntax
   for (const file of files) {
     const res = await gettingFilesHandle(file)
     if (res) {
@@ -74,7 +49,7 @@ const unifiedHandle = async (files: File[]) => {
   setCurImg()
 
   store.commit('SET_UPLOAD_AREA_STATE', {
-    isActive: true
+    isActive: true,
   })
 
   emit('getImgList', imgList.value)
@@ -105,7 +80,7 @@ const reset = () => {
 }
 
 const remove = (uuid: string) => {
-  const rmIdx = imgList.value.findIndex((v) => v.uuid === uuid)
+  const rmIdx = imgList.value.findIndex(v => v.uuid === uuid)
   if (rmIdx !== -1) {
     imgList.value.splice(rmIdx, 1)
   }
@@ -125,6 +100,28 @@ onUnmounted(() => {
 
 defineExpose({ reset, remove })
 </script>
+
+<template>
+  <div
+    class="getting-images-container"
+    :class="{ focus: uploadAreaState.isActive && curShowImg.base64, disabled }"
+    @dragover.prevent
+    @drop.stop.prevent="onDrop"
+    @paste.stop="onPaste"
+  >
+    <label for="input-file-selector" />
+    <input id="input-file-selector" type="file" accept="image/*" multiple @change="onSelect">
+    <div v-if="!curShowImg.base64" class="upload-area-tips">
+      <el-icon class="icon">
+        <IEpUploadFilled />
+      </el-icon>
+      <div class="text">
+        {{ $t('upload_page.upload_area_text') }}
+      </div>
+    </div>
+    <img v-if="curShowImg.base64" class="preview-img" :src="curShowImg.base64">
+  </div>
+</template>
 
 <style scoped lang="stylus">
 @import "./getting-images.styl"

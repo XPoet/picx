@@ -1,10 +1,10 @@
-import { UploadImageModel, UserSettingsModel } from '@/common/model'
+import type { UploadImageModel, UserSettingsModel } from '@/common/model'
 import {
   addWatermarkToImage,
   compressImage,
   getFileSuffix,
   imgFileToBase64,
-  isNeedWatermark
+  isNeedWatermark,
 } from '@/utils'
 
 /**
@@ -16,12 +16,14 @@ export const addPrefixHandle = (isAddPrefix: boolean, img: UploadImageModel) => 
   img.filename.isAddPrefix = isAddPrefix
   if (isAddPrefix) {
     img.filename.name = `${img.filename.prefix}${img.filename.initName}`
-  } else {
+  }
+  else {
     img.filename.name = `${img.filename.initName}`
   }
   if (img.filename.isAddHash) {
     img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
-  } else {
+  }
+  else {
     img.filename.final = `${img.filename.name}.${img.filename.suffix}`
   }
 }
@@ -35,7 +37,8 @@ export const addHashHandle = (isAddHash: boolean, img: UploadImageModel) => {
   img.filename.isAddHash = isAddHash
   if (isAddHash) {
     img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
-  } else {
+  }
+  else {
     img.filename.final = `${img.filename.name}.${img.filename.suffix}`
   }
 }
@@ -50,13 +53,15 @@ export const rename = (isRename: boolean, img: UploadImageModel) => {
 
   if (isRename) {
     img.filename.name = img.filename.newName.trim().replace(/\s+/g, '-')
-  } else {
+  }
+  else {
     addPrefixHandle(img.filename.isAddPrefix, img) // 恢复列表 prefix 选项
   }
 
   if (img.filename.isAddHash) {
     img.filename.final = `${img.filename.name}.${img.filename.hash}.${img.filename.suffix}`
-  } else {
+  }
+  else {
     img.filename.final = `${img.filename.name}.${img.filename.suffix}`
   }
 }
@@ -68,7 +73,7 @@ export const rename = (isRename: boolean, img: UploadImageModel) => {
  */
 export const initImgSettings = async (
   imgObj: UploadImageModel,
-  userSettings: UserSettingsModel
+  userSettings: UserSettingsModel,
 ) => {
   const { watermark, compress } = userSettings
   let file: File = imgObj.fileInfo.originalFile!

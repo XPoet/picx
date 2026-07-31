@@ -1,5 +1,5 @@
-import request from '@/utils/request'
 import { PICX_UPLOAD_IMGS_DESC } from '@/common/constant'
+import request from '@/utils/request'
 
 /**
  * 创建 blobs 的 tree
@@ -17,10 +17,10 @@ export const createTree = (owner: string, repo: string, blobs: any[], head: any)
         path: blob.path,
         mode: '100644',
         type: 'blob',
-        sha: blob.sha
+        sha: blob.sha,
       })),
-      base_tree: head?.commit?.commit?.tree?.sha || null
-    }
+      base_tree: head?.commit?.commit?.tree?.sha || null,
+    },
   })
 }
 
@@ -39,8 +39,8 @@ export const createCommit = (owner: string, repo: string, tree: any, head: any, 
     data: {
       tree: tree.sha,
       parents: [head.commit.sha],
-      message: msg || PICX_UPLOAD_IMGS_DESC
-    }
+      message: msg || PICX_UPLOAD_IMGS_DESC,
+    },
   })
 }
 
@@ -56,7 +56,7 @@ export const createRef = (owner: string, repo: string, branch: string, sha: stri
     url: `/repos/${owner}/${repo}/git/refs/heads/${branch}`,
     method: 'PATCH',
     data: {
-      sha
-    }
+      sha,
+    },
   })
 }

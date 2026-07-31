@@ -10,6 +10,7 @@
 /node_modules
 yarn.lock
 package-lock.json
+.pnpm-store
 
 # IDEs and editors
 /.idea
@@ -40,6 +41,8 @@ testem.log
 /e2e/src/*.js
 /e2e/src/*.map
 /cypress/screenshots
+/playwright-report
+/test-results
 
 # System Files
 .DS_Store

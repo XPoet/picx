@@ -1,4 +1,5 @@
-import { UserSettingsModel, WatermarkPositionEnum } from '@/common/model'
+import type { UserSettingsModel } from '@/common/model'
+import { WatermarkPositionEnum } from '@/common/model'
 
 function loadImageFromFile(imageFile: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -18,18 +19,19 @@ function loadImageFromFile(imageFile: File): Promise<HTMLImageElement> {
 function hexToRgb(hex: string): string {
   if (hex) {
     hex = hex.replace('#', '')
-  } else {
+  }
+  else {
     return `255,255,255`
   }
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
+  const r = Number.parseInt(hex.substring(0, 2), 16)
+  const g = Number.parseInt(hex.substring(2, 4), 16)
+  const b = Number.parseInt(hex.substring(4, 6), 16)
   return `${r}, ${g}, ${b}`
 }
 
 export async function addWatermarkToImage(
   imageFile: File,
-  watermarkConfig: UserSettingsModel['watermark']
+  watermarkConfig: UserSettingsModel['watermark'],
 ): Promise<File | null> {
   const { text, fontSize, position, textColor, opacity } = watermarkConfig
   const [r, g, b] = hexToRgb(textColor).split(',')
@@ -47,7 +49,6 @@ export async function addWatermarkToImage(
   let x = 0
   let y = 0
 
-  // eslint-disable-next-line default-case
   switch (position) {
     case WatermarkPositionEnum.leftTop:
       x = 10
@@ -74,7 +75,8 @@ export async function addWatermarkToImage(
     canvas.toBlob((blob) => {
       if (!blob) {
         resolve(null)
-      } else {
+      }
+      else {
         const newFile = new File([blob], imageFile.name, { type: imageFile.type })
         resolve(newFile)
       }

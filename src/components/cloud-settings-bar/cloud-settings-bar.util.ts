@@ -1,6 +1,6 @@
-import request from '@/utils/request'
+import type { UserConfigInfoModel, UserSettingsModel } from '@/common/model'
 import { PICX_INIT_SETTINGS_MSG, PICX_UPDATE_SETTINGS_MSG } from '@/common/constant'
-import { UserConfigInfoModel, UserSettingsModel } from '@/common/model'
+import request from '@/utils/request'
 
 const filename = '.settings'
 
@@ -10,7 +10,7 @@ export const getCloudSettings = async (userConfigInfo: UserConfigInfoModel) => {
     url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'GET',
     noShowErrMsg: true,
-    noCache: true
+    noCache: true,
   })
 
   return Promise.resolve(res)
@@ -18,7 +18,7 @@ export const getCloudSettings = async (userConfigInfo: UserConfigInfoModel) => {
 
 export const saveCloudSettings = async (
   userSettings: UserSettingsModel,
-  userConfigInfo: UserConfigInfoModel
+  userConfigInfo: UserConfigInfoModel,
 ) => {
   const { owner, repo, branch } = userConfigInfo
 
@@ -26,12 +26,13 @@ export const saveCloudSettings = async (
 
   const data: any = {
     message: res ? PICX_UPDATE_SETTINGS_MSG : PICX_INIT_SETTINGS_MSG,
-    content: window.btoa(JSON.stringify(userSettings))
+    content: window.btoa(JSON.stringify(userSettings)),
   }
 
   if (res) {
     data.sha = res.sha
-  } else {
+  }
+  else {
     data.branch = branch
   }
 
@@ -39,7 +40,7 @@ export const saveCloudSettings = async (
     url: `/repos/${owner}/${repo}/contents/${filename}`,
     method: 'PUT',
     data,
-    noShowErrMsg: true
+    noShowErrMsg: true,
   })
 
   return Promise.resolve(res2)

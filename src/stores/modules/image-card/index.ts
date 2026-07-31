@@ -1,11 +1,11 @@
-import { Module } from 'vuex'
-import { ImageCardStateTypes } from './types'
-import RootStateTypes from '../../types'
-import { UploadedImageModel } from '@/common/model'
+import type { Module } from 'vuex'
+import type RootStateTypes from '../../types'
+import type { ImageCardStateTypes } from './types'
+import type { UploadedImageModel } from '@/common/model'
 
 const imageCardModule: Module<ImageCardStateTypes, RootStateTypes> = {
   state: {
-    imgCardArr: []
+    imgCardArr: [],
   },
   mutations: {
     IMAGE_CARD(state: ImageCardStateTypes, { imageObj }) {
@@ -13,7 +13,6 @@ const imageCardModule: Module<ImageCardStateTypes, RootStateTypes> = {
       if (checked) {
         state.imgCardArr.forEach((item) => {
           if (item.uuid === uuid) {
-            // eslint-disable-next-line no-param-reassign
             item.checked = true
           }
         })
@@ -25,7 +24,7 @@ const imageCardModule: Module<ImageCardStateTypes, RootStateTypes> = {
       } else {
         state.imgCardArr = []
       }
-    }
+    },
   },
   actions: {},
   getters: {
@@ -34,8 +33,8 @@ const imageCardModule: Module<ImageCardStateTypes, RootStateTypes> = {
       return state.imgCardArr.filter((item: UploadedImageModel) => {
         return item.checked
       })
-    }
-  }
+    },
+  },
 }
 
 export default imageCardModule
