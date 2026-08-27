@@ -97,6 +97,8 @@ export enum CompressEncoderEnum {
   avif = 'avif',
 
   webP = 'webP',
+
+  png = 'png',
 }
 
 /**

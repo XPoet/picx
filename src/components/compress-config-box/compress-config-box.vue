@@ -63,6 +63,10 @@ defineExpose({ reset })
         {{ CompressEncoderEnum.avif }}
         <span class="desc">{{ $t('settings_page.img_compress.radio_3_desc') }}</span>
       </el-radio>
+      <el-radio :label="CompressEncoderEnum.png">
+        {{ CompressEncoderEnum.png }}
+        <span class="desc">{{ $t('settings_page.img_compress.radio_4_desc') }}</span>
+      </el-radio>
     </el-radio-group>
   </div>
 </template>

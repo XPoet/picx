@@ -109,7 +109,8 @@
       "radio_2": "MozJPEG",
       "radio_2_desc": "Resulting format is jpg, highest compatibility with all browsers",
       "radio_3": "AVIF",
-      "radio_3_desc": "Resulting format is avif, extremely high compression rates, supported by some modern browsers"
+      "radio_3_desc": "Resulting format is avif, extremely high compression rates, supported by some modern browsers",
+      "radio_4_desc": "Resulting format is png, lossless optimisation preserving transparency, ideal for screenshots and graphics; photos may become larger"
     },
     "link_rule": {
       "title": "Image Link Rules Configuration",

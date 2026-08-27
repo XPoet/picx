@@ -79,6 +79,15 @@ async function encode(imageData: ImageData, encoder: CompressEncoderEnum): Promi
       }
     }
 
+    case Encoder.png: {
+      const { optimise: optimisePng } = await import('@jsquash/oxipng')
+      return {
+        buffer: await optimisePng(imageData, { level: 3, optimiseAlpha: true }),
+        mimeType: 'image/png',
+        extension: 'png',
+      }
+    }
+
     default:
       throw new Error(`不支持的图片编码器：${encoder}`)
   }

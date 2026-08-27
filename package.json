@@ -41,6 +41,7 @@
   "dependencies": {
     "@jsquash/avif": "2.1.1",
     "@jsquash/jpeg": "1.6.0",
+    "@jsquash/oxipng": "2.3.0",
     "@jsquash/webp": "1.5.0",
     "axios": "1.19.0",
     "element-plus": "2.14.3",

@@ -109,7 +109,8 @@
       "radio_2": "mozJPEG",
       "radio_2_desc": "压缩后图片格式为 jpg，兼容性最好，所有浏览器支持",
       "radio_3": "avif",
-      "radio_3_desc": "压缩后图片格式为 avif，压缩率极高，部分现代浏览器支持"
+      "radio_3_desc": "压缩后图片格式为 avif，压缩率极高，部分现代浏览器支持",
+      "radio_4_desc": "压缩后图片格式为 png，无损优化并保留透明通道，所有浏览器支持"
     },
     "link_rule": {
       "title": "图片链接规则配置",

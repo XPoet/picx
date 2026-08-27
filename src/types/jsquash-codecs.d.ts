@@ -13,3 +13,13 @@ declare module '@jsquash/jpeg' {
 declare module '@jsquash/webp' {
   export const encode: JSquashCodecModule['encode']
 }
+
+declare module '@jsquash/oxipng' {
+  export interface OptimiseOptions {
+    interlace: boolean
+    level: number
+    optimiseAlpha: boolean
+  }
+
+  export function optimise(data: ArrayBuffer | ImageData, options?: Partial<OptimiseOptions>): Promise<ArrayBuffer>
+}

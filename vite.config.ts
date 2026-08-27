@@ -31,7 +31,7 @@ export default defineConfig(({ command, mode }) => {
     },
     base: './',
     optimizeDeps: {
-      exclude: ['@jsquash/avif', '@jsquash/jpeg', '@jsquash/webp'],
+      exclude: ['@jsquash/avif', '@jsquash/jpeg', '@jsquash/webp', '@jsquash/oxipng'],
     },
     server: {
       port: 4000,
