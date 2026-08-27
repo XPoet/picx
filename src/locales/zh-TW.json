@@ -97,7 +97,10 @@
       "position_1": "左上角",
       "position_2": "左下角",
       "position_3": "右上角",
-      "position_4": "右下角"
+      "position_4": "右下角",
+      "position_5": "全螢幕",
+      "rotate": "旋轉角度",
+      "gap": "平鋪間距"
     },
     "img_compress": {
       "title": "圖片壓縮設定",

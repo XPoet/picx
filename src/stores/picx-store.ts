@@ -221,6 +221,8 @@ function createDefaultUserSettings(): UserSettingsModel {
       position: WatermarkPositionEnum.rightBottom,
       textColor: '#FFFFFF',
       opacity: 0.5,
+      rotate: -20,
+      gap: 80,
     },
     showAnnouncement: true,
   }

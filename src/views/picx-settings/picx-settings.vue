@@ -28,6 +28,8 @@ const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
   userSettings.watermark.opacity = config.opacity
   userSettings.watermark.position = config.position
   userSettings.watermark.fontSize = config.fontSize
+  userSettings.watermark.rotate = config.rotate
+  userSettings.watermark.gap = config.gap
   persistUserSettings()
 }
 

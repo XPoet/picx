@@ -22,6 +22,8 @@ const watermark = reactive({
   position: WatermarkPositionEnum.rightBottom,
   textColor: '',
   opacity: 0,
+  rotate: -20,
+  gap: 80,
 })
 
 const changeWatermarkConfig = () => {
@@ -35,6 +37,8 @@ onMounted(() => {
   watermark.fontSize = initWatermark.fontSize
   watermark.position = initWatermark.position
   watermark.opacity = initWatermark.opacity
+  watermark.rotate = initWatermark.rotate
+  watermark.gap = initWatermark.gap
   emit('watermarkConfig', watermark)
 })
 </script>
@@ -105,9 +109,38 @@ onMounted(() => {
             <el-radio :label="WatermarkPositionEnum.rightBottom">
               {{ $t('settings_page.img_watermark.position_4') }}
             </el-radio>
+            <el-radio :label="WatermarkPositionEnum.fullScreen">
+              {{ $t('settings_page.img_watermark.position_5') }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-col>
+
+      <template v-if="watermark.position === WatermarkPositionEnum.fullScreen">
+        <el-col :span="isTool ? 12 : 24">
+          <el-form-item :label="$t('settings_page.img_watermark.rotate')">
+            <el-input-number
+              v-model="watermark.rotate"
+              :min="-45"
+              :max="45"
+              :step="5"
+              @change="changeWatermarkConfig"
+            />
+          </el-form-item>
+        </el-col>
+
+        <el-col :span="isTool ? 12 : 24">
+          <el-form-item :label="$t('settings_page.img_watermark.gap')">
+            <el-input-number
+              v-model="watermark.gap"
+              :min="20"
+              :max="200"
+              :step="10"
+              @change="changeWatermarkConfig"
+            />
+          </el-form-item>
+        </el-col>
+      </template>
     </el-row>
   </el-form>
 </template>

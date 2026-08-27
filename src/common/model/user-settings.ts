@@ -16,6 +16,8 @@ export enum WatermarkPositionEnum {
   rightTop = 'rightTop',
 
   rightBottom = 'rightBottom',
+
+  fullScreen = 'fullScreen',
 }
 
 export enum ThemeModeEnum {
@@ -65,6 +67,10 @@ export interface UserSettingsModel {
     position: WatermarkPositionEnum
     textColor: string
     opacity: number
+    /** 全屏水印旋转角度（度），仅在 position 为 fullScreen 时生效 */
+    rotate: number
+    /** 全屏水印平铺间距（px），仅在 position 为 fullScreen 时生效 */
+    gap: number
   }
   showAnnouncement?: boolean
 }

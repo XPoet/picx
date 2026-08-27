@@ -14,6 +14,8 @@ const watermarkConfig = reactive<UserSettingsModel['watermark']>({
   opacity: 0,
   position: WatermarkPositionEnum.rightBottom,
   textColor: '',
+  rotate: -20,
+  gap: 80,
 })
 
 const gettingImagesRef = ref<any>(null)
@@ -44,6 +46,8 @@ const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
   watermarkConfig.opacity = config.opacity
   watermarkConfig.position = config.position
   watermarkConfig.fontSize = config.fontSize
+  watermarkConfig.rotate = config.rotate
+  watermarkConfig.gap = config.gap
   isWatermarked.value = false
 }
 
