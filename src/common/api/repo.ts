@@ -1,5 +1,5 @@
 import type { DirModel, UserConfigInfoModel } from '@/common/model'
-import { INIT_REPO_DESC, INIT_REPO_NAME, PICX_INIT_REPO_MSG } from '@/common/constant'
+import { INIT_REPO_DESC, PICX_INIT_REPO_MSG } from '@/common/constant'
 import request from '@/utils/request'
 
 /**
@@ -88,13 +88,14 @@ If you like it, please give it a star on [GitHub](https://github.com/XPoet/picx)
 /**
  * 创建仓库
  * @param token
+ * @param repoName
  */
-export const createRepo = (token: string) => {
+export const createRepo = (token: string, repoName: string) => {
   return request({
     url: '/user/repos',
     method: 'POST',
     data: {
-      name: INIT_REPO_NAME,
+      name: repoName,
       description: INIT_REPO_DESC,
       private: false,
     },

@@ -6,7 +6,7 @@ import {
   getRepoInfo,
   initRepoREADME,
 } from '@/common/api'
-import { INIT_REPO_BARNCH, INIT_REPO_NAME } from '@/common/constant'
+import { INIT_REPO_BARNCH, INIT_REPO_NAME, INIT_REPO_SHORT_NAME } from '@/common/constant'
 import { DirModeEnum } from '@/common/model'
 import i18n from '@/plugins/vue/i18n'
 import router from '@/router'
@@ -140,8 +140,17 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
     await saveUserInfo(userInfo)
 
     // 判断是否已存在 PicX 图床仓库
+    // 已存在 picx-images-hosting 则继续使用；不存在则改用 picx-ih
+    let initRepoName = INIT_REPO_SHORT_NAME
     let isExistInitRepo: boolean = false
-    const initRepoInfo = await getRepoInfo(userConfigInfo.owner, INIT_REPO_NAME)
+    let initRepoInfo = await getRepoInfo(userConfigInfo.owner, INIT_REPO_NAME)
+    if (initRepoInfo) {
+      initRepoName = INIT_REPO_NAME
+    }
+    else {
+      // 兼容已存在 picx-ih 的情况（如重复一键配置），视为图床仓库已存在
+      initRepoInfo = await getRepoInfo(userConfigInfo.owner, INIT_REPO_SHORT_NAME)
+    }
     if (initRepoInfo) {
       isExistInitRepo = true
       await store.dispatch('SET_USER_CONFIG_INFO', {
@@ -149,7 +158,7 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
       })
     }
 
-    const repoInfo = await createRepo(userConfigInfo.token)
+    const repoInfo = await createRepo(userConfigInfo.token, initRepoName)
 
     // ---- PicX GitHub APP 安装状态处理
     const authorizationInfo = computed(() => store.getters.getGitHubAuthorizationInfo).value
@@ -164,7 +173,7 @@ export const oneClickAutoConfig = async (tokenInput: any) => {
     }
     // --------------------------------
 
-    userConfigInfo.repo = INIT_REPO_NAME
+    userConfigInfo.repo = initRepoName
     userConfigInfo.branch = INIT_REPO_BARNCH
 
     // 获取目录列表
