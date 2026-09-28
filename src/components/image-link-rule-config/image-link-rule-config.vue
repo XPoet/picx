@@ -83,7 +83,7 @@ const addImageLinkRule = (formEl: FormInstance | undefined) => {
 </script>
 
 <template>
-  <el-card>
+  <el-card class="settings-item-card">
     <template #header>
       <div class="card-header">
         <span>{{ $t('settings_page.link_rule.card_title') }}</span>
