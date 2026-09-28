@@ -210,6 +210,7 @@
     "contextmenu_1": "Upload new images from the current location",
     "contextmenu_2": "Upload images to {dir}",
     "contextmenu_3": "Root Directory",
+    "contextmenu_4": "Open GitHub Repository",
     "text_1": "Please enter a new image name",
     "text_2": "Upload now"
   },

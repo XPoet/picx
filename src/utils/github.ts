@@ -11,3 +11,8 @@ export const getImageHostingURL = (userConfigInfo: UserConfigInfoModel) => {
   const { owner, repo } = userConfigInfo
   return `${gh}/${owner}/${repo}`
 }
+
+export const getGitHubRepoDirURL = (userConfigInfo: UserConfigInfoModel, dir: string) => {
+  const { owner, repo, branch } = userConfigInfo
+  return `${gh}/${owner}/${repo}/tree/${branch}${dir ? `/${dir}` : ''}`
+}

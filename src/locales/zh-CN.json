@@ -210,6 +210,7 @@
     "contextmenu_1": "从当前位置上传新图片",
     "contextmenu_2": "上传图片到 {dir}",
     "contextmenu_3": "根目录",
+    "contextmenu_4": "跳转 GitHub 仓库",
     "text_1": "请输入新的图片名称",
     "text_2": "立即上传"
   },
