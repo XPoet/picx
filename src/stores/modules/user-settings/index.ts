@@ -109,7 +109,6 @@ const initGlobalSettings = (): GlobalSettingsModel => {
     language: LanguageEnum.zhCN,
     languageToggleTip: true,
     theme: ThemeModeEnum.system,
-    useCloudSettings: false,
   }
 
   const SSSettings = getSession(SS_GLOBAL_SETTINGS)
@@ -122,7 +121,6 @@ const initGlobalSettings = (): GlobalSettingsModel => {
 const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
   state: {
     userSettings: initUserSettings(),
-    cloudSettings: null,
     globalSettings: initGlobalSettings(),
   },
 
@@ -136,11 +134,6 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
         }
       }
       dispatch('USER_SETTINGS_PERSIST')
-    },
-
-    // 赋值云端仓库设置信息
-    SET_CLOUD_SETTINGS({ state }, cloudSettings: UserSettingsStateTypes['cloudSettings']) {
-      state.cloudSettings = cloudSettings
     },
 
     // 赋值全局设置信息
@@ -201,7 +194,6 @@ const userSettingsModule: Module<UserSettingsStateTypes, RootStateTypes> = {
 
   getters: {
     getUserSettings: (state) => state.userSettings,
-    getCloudSettings: (state) => state.cloudSettings,
     getGlobalSettings: (state) => state.globalSettings,
   },
 }

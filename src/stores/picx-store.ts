@@ -60,7 +60,6 @@ interface PicxState {
   }
   userSettingsModule: {
     userSettings: UserSettingsModel
-    cloudSettings: UserSettingsModel | null
     globalSettings: GlobalSettingsModel
   }
   dirImageListModule: {
@@ -253,7 +252,6 @@ function createGlobalSettings(): GlobalSettingsModel {
     language: LanguageEnum.zhCN,
     languageToggleTip: true,
     theme: ThemeModeEnum.system,
-    useCloudSettings: false,
   }
   const storedSettings = getSession(SS_GLOBAL_SETTINGS) as Partial<GlobalSettingsModel> | null
 
@@ -319,7 +317,6 @@ export const usePicxStore = defineStore('picx', {
     },
     userSettingsModule: {
       userSettings: createUserSettings(),
-      cloudSettings: null,
       globalSettings: createGlobalSettings(),
     },
     dirImageListModule: {
@@ -357,7 +354,6 @@ export const usePicxStore = defineStore('picx', {
     getUserConfigInfo: state => state.userConfigInfoModule.userConfigInfo,
     getUserViewDir: state => state.userConfigInfoModule.userConfigInfo.viewDir,
     getUserSettings: state => state.userSettingsModule.userSettings,
-    getCloudSettings: state => state.userSettingsModule.cloudSettings,
     getGlobalSettings: state => state.userSettingsModule.globalSettings,
     getDirObject: state => state.dirImageListModule.dirObject,
     getImageCardArr: state => state.imageCardModule.imgCardArr,
@@ -419,10 +415,6 @@ export const usePicxStore = defineStore('picx', {
     SET_USER_SETTINGS(settingsInfo: Partial<UserSettingsModel>) {
       assignKnownProperties(this.userSettingsModule.userSettings, settingsInfo)
       this.USER_SETTINGS_PERSIST()
-    },
-
-    SET_CLOUD_SETTINGS(cloudSettings: UserSettingsModel | null) {
-      this.userSettingsModule.cloudSettings = cloudSettings
     },
 
     SET_GLOBAL_SETTINGS(globalSettings: Partial<GlobalSettingsModel>) {

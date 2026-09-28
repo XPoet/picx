@@ -40,8 +40,6 @@ const isGitHubPagesDeployed = (name: string) => {
 
 <template>
   <div class="page-container settings-page-container">
-    <cloud-settings-bar />
-
     <el-collapse>
       <!-- 图片名称设置 -->
       <el-collapse-item :title="$t('settings_page.img_name.title')" name="1">

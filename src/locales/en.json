@@ -155,14 +155,6 @@
       "system": "System",
       "dark": "Dark",
       "light": "Light"
-    },
-    "cloud_settings": {
-      "tip_1": "Detected that your settings data is not saved to the cloud repository. Save now?",
-      "tip_2": "Detected that your cloud repository has settings files. Use them?",
-      "tip_3": "Detected changes in your settings data. Synchronize with the cloud repository?",
-      "tip_4": "Local and cloud repository settings data are consistent",
-      "success_msg_1": "Save successful",
-      "success_msg_2": "Update successful"
     }
   },
   "upload_page": {

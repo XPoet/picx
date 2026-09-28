@@ -13,7 +13,6 @@ declare module 'vue' {
   export interface GlobalComponents {
     AuthorizationStatusBar: typeof import('./components/authorization-status-bar/authorization-status-bar.vue')['default']
     Base64Tool: typeof import('./components/tools/base64-tool/base64-tool.vue')['default']
-    CloudSettingsBar: typeof import('./components/cloud-settings-bar/cloud-settings-bar.vue')['default']
     CompressConfigBox: typeof import('./components/compress-config-box/compress-config-box.vue')['default']
     CompressTool: typeof import('./components/tools/compress-tool/compress-tool.vue')['default']
     CopySourceRepo: typeof import('./components/copy-source-repo/copy-source-repo.vue')['default']

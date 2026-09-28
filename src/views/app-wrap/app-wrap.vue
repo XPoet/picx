@@ -6,6 +6,7 @@ import zhTW from 'element-plus/es/locale/lang/zh-tw'
 import { computed, onMounted, shallowRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
+import { useCloudSettingsSync } from '@/composables/use-cloud-settings-sync'
 import router from '@/router'
 import { useStore } from '@/stores'
 import { getLanguageByRegion, getRegionByIP, setWindowTitle, throttle } from '@/utils'
@@ -15,6 +16,8 @@ import { initGithubAuthorize } from '@/views/picx-login/picx-login.util'
 
 const { locale, t } = useI18n()
 const store = useStore()
+// 图床设置后台静默云同步（登录后拉取云端 .settings，本地修改后自动推送）
+useCloudSettingsSync()
 const globalSettings = computed(() => store.getters.getGlobalSettings).value
 const elementPlusSize = shallowRef<ElementPlusSizeEnum>(ElementPlusSizeEnum.default)
 const elementPlusLocale = shallowRef(zhCN)

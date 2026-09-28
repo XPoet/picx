@@ -40,9 +40,6 @@ export const store = {
     get getUserSettings() {
       return picxStore.getUserSettings
     },
-    get getCloudSettings() {
-      return picxStore.getCloudSettings
-    },
     get getGlobalSettings() {
       return picxStore.getGlobalSettings
     },

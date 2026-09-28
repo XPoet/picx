@@ -18,11 +18,9 @@ export interface GlobalSettingsModel {
   languageToggleTip: boolean
   theme: ThemeModeEnum
   showAnnouncement: boolean
-  useCloudSettings: boolean
 }
 
 export default interface UserSettingsStateTypes {
   userSettings: UserSettingsModel
-  cloudSettings?: UserSettingsModel | null
   globalSettings: GlobalSettingsModel
 }
