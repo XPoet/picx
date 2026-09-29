@@ -59,6 +59,10 @@ export interface UserSettingsModel {
     selected: string
     presetList: Array<ImageLinkFormatModel>
   }
+  deploy: {
+    /** GitHub Pages 自定义域名（CNAME），空字符串表示未配置 */
+    customDomain: string
+  }
   starred?: boolean
   watermark: {
     enable: boolean

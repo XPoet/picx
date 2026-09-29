@@ -1,5 +1,6 @@
 export * from './branch'
 export * from './delete'
+export * from './deploy'
 export * from './dir'
 export * from './merge'
 export * from './repo'

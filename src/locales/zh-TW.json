@@ -148,7 +148,15 @@
       "fail": "部署失敗",
       "fail2": "部署失敗，請稍後再試",
       "deploying": "正在部署到 GitHub Pages，該過程持續 1 分鐘左右，請耐心等待 ...",
-      "not_deployed": "未部署"
+      "not_deployed": "未部署",
+      "custom_domain_label": "自訂網域",
+      "custom_domain_placeholder": "例如 img.example.com",
+      "custom_domain_desc": "儲存後會在儲存庫根目錄建立 CNAME 檔案並自動部署到 GitHub Pages，還需在 DNS 服務商處新增 CNAME 記錄指向 {pagesDomain}",
+      "custom_domain_save": "儲存",
+      "custom_domain_invalid": "網域格式不正確，請輸入如 img.example.com 的網域",
+      "custom_domain_synced": "CNAME 檔案已同步，自訂網域將在 GitHub Pages 重新部署後生效",
+      "custom_domain_deleted": "已清除自訂網域，CNAME 檔案已刪除",
+      "custom_domain_fail": "CNAME 檔案同步失敗，請稍後再試"
     },
     "theme": {
       "title": "主題設定",

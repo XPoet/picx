@@ -1,10 +1,14 @@
 <script lang="ts" setup>
 import type { UserSettingsModel } from '@/common/model'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
+import { isValidCustomDomain, normalizeCustomDomain } from '@/common/api'
 import { ImageLinkTypeEnum, ThemeModeEnum } from '@/common/model'
+import { deployGhPages } from '@/components/deploy-status-bar/deploy-status-bar.util'
+import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
+const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const globalSettings = computed(() => store.getters.getGlobalSettings).value
 const deployStatusInfo = computed(() => store.getters.getDeployStatusInfo).value
 
@@ -35,6 +39,36 @@ const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
 
 const isGitHubPagesDeployed = (name: string) => {
   return name === ImageLinkTypeEnum.GitHubPages && !deployStatusInfo.github.status
+}
+
+// 自定义域名（CNAME）
+const customDomainInput = ref(userSettings.deploy.customDomain)
+const customDomainSyncing = ref(false)
+const pagesDomain = userConfigInfo.owner
+  ? `${userConfigInfo.owner}.github.io`
+  : 'username.github.io'
+
+const saveCustomDomain = () => {
+  if (customDomainSyncing.value) {
+    return
+  }
+
+  const domain = normalizeCustomDomain(customDomainInput.value)
+  if (domain && !isValidCustomDomain(domain)) {
+    ElMessage.warning(i18n.global.t('settings_page.image_hosting_deploy.custom_domain_invalid'))
+    return
+  }
+
+  // 先持久化设置（LocalStorage + 云端 .settings 静默同步），deployGhPages 内部会先把
+  // customDomain 同步为图床仓库当前分支的 CNAME 文件，再一键部署，保证 CNAME 与设置一致
+  userSettings.deploy.customDomain = domain
+  customDomainInput.value = domain
+  persistUserSettings()
+
+  customDomainSyncing.value = true
+  deployGhPages(() => {
+    customDomainSyncing.value = false
+  })
 }
 </script>
 
@@ -181,6 +215,33 @@ const isGitHubPagesDeployed = (name: string) => {
       <!-- 图床部署设置 -->
       <el-collapse-item :title="$t('settings_page.image_hosting_deploy.title')" name="6">
         <deploy-status-bar />
+        <ul class="setting-list" style="margin-top: 10rem">
+          <li class="setting-item">
+            <div class="custom-domain-row">
+              <span class="label">
+                {{ $t('settings_page.image_hosting_deploy.custom_domain_label') }}
+              </span>
+              <el-input
+                v-model="customDomainInput"
+                class="input"
+                :placeholder="$t('settings_page.image_hosting_deploy.custom_domain_placeholder')"
+                clearable
+                :disabled="customDomainSyncing"
+                @keyup.enter="saveCustomDomain"
+              />
+              <el-button
+                type="primary"
+                :loading="customDomainSyncing"
+                @click="saveCustomDomain"
+              >
+                {{ $t('settings_page.image_hosting_deploy.custom_domain_save') }}
+              </el-button>
+            </div>
+            <div class="custom-domain-desc">
+              {{ $t('settings_page.image_hosting_deploy.custom_domain_desc', { pagesDomain }) }}
+            </div>
+          </li>
+        </ul>
       </el-collapse-item>
 
       <!-- 主题设置 -->

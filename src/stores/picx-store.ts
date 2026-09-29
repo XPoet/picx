@@ -213,6 +213,9 @@ function createDefaultUserSettings(): UserSettingsModel {
       ],
     },
     starred: false,
+    deploy: {
+      customDomain: '',
+    },
     watermark: {
       enable: false,
       text: 'PicX',

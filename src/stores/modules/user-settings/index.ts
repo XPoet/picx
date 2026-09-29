@@ -79,6 +79,9 @@ const initSettings: UserSettingsModel = {
       },
     ],
   },
+  deploy: {
+    customDomain: '',
+  },
   starred: false,
   watermark: {
     enable: false,

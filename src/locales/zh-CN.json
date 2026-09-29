@@ -148,7 +148,15 @@
       "fail": "部署失败",
       "fail2": "部署失败，请稍后再试",
       "deploying": "正在部署到 GitHub Pages，该过程持续 1 分钟左右，请耐心等待 ...",
-      "not_deployed": "未部署"
+      "not_deployed": "未部署",
+      "custom_domain_label": "自定义域名",
+      "custom_domain_placeholder": "例如 img.example.com",
+      "custom_domain_desc": "保存后会在仓库根目录创建 CNAME 文件并自动部署到 GitHub Pages，还需在 DNS 服务商处添加 CNAME 记录指向 {pagesDomain}",
+      "custom_domain_save": "保存",
+      "custom_domain_invalid": "域名格式不正确，请输入如 img.example.com 的域名",
+      "custom_domain_synced": "CNAME 文件已同步，自定义域名将在 GitHub Pages 重新部署后生效",
+      "custom_domain_deleted": "已清除自定义域名，CNAME 文件已删除",
+      "custom_domain_fail": "CNAME 文件同步失败，请稍后再试"
     },
     "theme": {
       "title": "主题设置",
