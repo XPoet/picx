@@ -131,7 +131,8 @@
       "error_msg_2": "{action}失败，图片链接规则必须包含 {path}",
       "error_msg_3": "图片链接规则缺少 {rules}，是否确认{action}？",
       "add": "添加",
-      "edit": "编辑"
+      "edit": "编辑",
+      "gh_pages_not_deployed": "图床仓库尚未部署 GitHub Pages，暂不能选择此图片链接规则，是否立即一键部署？"
     },
     "link_format": {
       "title": "图片链接格式设置",

@@ -131,7 +131,8 @@
       "error_msg_2": "{action} failed. Image link rule must include {path}",
       "error_msg_3": "Image link rule is missing {rules}. Confirm {action}?",
       "add": "Add",
-      "edit": "Edit"
+      "edit": "Edit",
+      "gh_pages_not_deployed": "GitHub Pages has not been deployed in this repo yet, so this image link rule is unavailable. Deploy it now with one click?"
     },
     "link_format": {
       "title": "Image Link Format Settings",

@@ -19,6 +19,27 @@ export const getBranchInfo = (owner: string, repo: string, branch: string) => {
 }
 
 /**
+ * 判断远端仓库是否存在指定分支（如 gh-pages）
+ * 分支不存在时 GitHub 返回 404，静默处理并视为不存在
+ * @param owner
+ * @param repo
+ * @param branch
+ */
+export const isBranchExist = async (
+  owner: string,
+  repo: string,
+  branch: string,
+): Promise<boolean> => {
+  const res = await request({
+    url: `/repos/${owner}/${repo}/branches/${branch}`,
+    method: 'GET',
+    noCache: true,
+    noShowErrMsg: true,
+  })
+  return !!res
+}
+
+/**
  * 获取分支信息列表
  * @param owner
  * @param repo

@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import type { UserSettingsModel } from '@/common/model'
 import { computed, ref } from 'vue'
-import { isValidCustomDomain, normalizeCustomDomain } from '@/common/api'
+import { isBranchExist, isValidCustomDomain, normalizeCustomDomain } from '@/common/api'
+import { GH_PAGES } from '@/common/constant'
 import { ImageLinkTypeEnum, ThemeModeEnum } from '@/common/model'
 import { deployGhPages } from '@/components/deploy-status-bar/deploy-status-bar.util'
 import i18n from '@/plugins/vue/i18n'
@@ -10,7 +11,6 @@ import { store } from '@/stores'
 const userSettings = computed(() => store.getters.getUserSettings).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const globalSettings = computed(() => store.getters.getGlobalSettings).value
-const deployStatusInfo = computed(() => store.getters.getDeployStatusInfo).value
 
 const persistUserSettings = () => {
   store.dispatch('USER_SETTINGS_PERSIST')
@@ -37,8 +37,44 @@ const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
   persistUserSettings()
 }
 
-const isGitHubPagesDeployed = (name: string) => {
-  return name === ImageLinkTypeEnum.GitHubPages && !deployStatusInfo.github.status
+// 上一次有效的图片链接规则，选择 GitHub Pages 但远端未部署 gh-pages 时用于回退
+const lastValidLinkType = ref(userSettings.imageLinkType.selected)
+
+const onImageLinkTypeChange = async (name: string) => {
+  if (name !== ImageLinkTypeEnum.GitHubPages) {
+    lastValidLinkType.value = name
+    saveUserSettings()
+    return
+  }
+
+  // 选择 GitHub Pages 时，先检查远端图床仓库是否已部署 gh-pages 分支
+  const deployed = await isBranchExist(userConfigInfo.owner, userConfigInfo.repo, GH_PAGES)
+
+  // 检查期间用户已改选其他规则，放弃本次检查结果
+  if (userSettings.imageLinkType.selected !== ImageLinkTypeEnum.GitHubPages) {
+    return
+  }
+
+  if (deployed) {
+    lastValidLinkType.value = name
+    saveUserSettings()
+    return
+  }
+
+  // 未部署 GitHub Pages：不能选择，回退后给出一键部署快捷入口
+  userSettings.imageLinkType.selected = lastValidLinkType.value
+  saveUserSettings()
+  ElMessageBox.confirm(
+    i18n.global.t('settings_page.link_rule.gh_pages_not_deployed'),
+    i18n.global.t('tip'),
+    {
+      confirmButtonText: i18n.global.t('settings_page.image_hosting_deploy.one_click_deploy'),
+      cancelButtonText: i18n.global.t('cancel'),
+      type: 'warning',
+    },
+  )
+    .then(() => deployGhPages())
+    .catch(() => {})
 }
 
 // 自定义域名（CNAME）
@@ -157,13 +193,15 @@ const saveCustomDomain = () => {
         <ul class="setting-list">
           <li class="setting-item select-row">
             <span class="label">{{ $t('settings_page.link_rule.select_title') }}：</span>
-            <el-select v-model="userSettings.imageLinkType.selected" @change="saveUserSettings">
+            <el-select
+              v-model="userSettings.imageLinkType.selected"
+              @change="onImageLinkTypeChange"
+            >
               <el-option
                 v-for="item in userSettings.imageLinkType.presetList"
                 :key="`${item.name}-${item.id}`"
                 :label="item.name"
                 :value="item.name"
-                :disabled="isGitHubPagesDeployed(item.name)"
                 class="image-link-type-rule-option"
               >
                 <span class="left">{{ item.name }}</span>
