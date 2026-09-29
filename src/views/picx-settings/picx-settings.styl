@@ -47,9 +47,20 @@
     }
 
 
-    &.cdn {
+    &.select-row {
       display flex
       align-items center
+
+      .label {
+        flex-shrink 0
+        margin-right 10rem
+        white-space nowrap
+      }
+
+      :deep() .el-select {
+        flex 1
+        min-width 0
+      }
     }
 
 

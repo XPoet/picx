@@ -155,8 +155,8 @@ const saveCustomDomain = () => {
       <!-- 图片链接规则配置 -->
       <el-collapse-item :title="$t('settings_page.link_rule.title')" name="4">
         <ul class="setting-list">
-          <li class="setting-item cdn">
-            {{ $t('settings_page.link_rule.select_title') }}：
+          <li class="setting-item select-row">
+            <span class="label">{{ $t('settings_page.link_rule.select_title') }}：</span>
             <el-select v-model="userSettings.imageLinkType.selected" @change="saveUserSettings">
               <el-option
                 v-for="item in userSettings.imageLinkType.presetList"
@@ -194,8 +194,8 @@ const saveCustomDomain = () => {
               }}
             </span>
           </li>
-          <li class="setting-item">
-            {{ $t('settings_page.link_format.select_title') }}：
+          <li class="setting-item select-row">
+            <span class="label">{{ $t('settings_page.link_format.select_title') }}：</span>
             <el-select v-model="userSettings.imageLinkFormat.selected" @change="saveUserSettings">
               <el-option
                 v-for="(item, idx) in userSettings.imageLinkFormat.presetList"
@@ -247,8 +247,8 @@ const saveCustomDomain = () => {
       <!-- 主题设置 -->
       <el-collapse-item :title="$t('settings_page.theme.title')" name="7">
         <ul class="setting-list">
-          <li class="setting-item">
-            {{ $t('header.theme') }}：
+          <li class="setting-item select-row">
+            <span class="label">{{ $t('header.theme') }}：</span>
             <el-select v-model="globalSettings.theme" @change="persistGlobalSettings">
               <el-option :label="$t('settings_page.theme.system')" :value="ThemeModeEnum.system" />
               <el-option :label="$t('settings_page.theme.light')" :value="ThemeModeEnum.light" />
