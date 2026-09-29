@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/github/license/XPoet/picx?style=flat&logo=github)](https://github.com/XPoet/picx/blob/master/LICENSE)
 [![Stars](https://img.shields.io/github/stars/XPoet/picx?style=flat&logo=github&color=3366cc)](https://github.com/XPoet/picx)
 [![Issues](https://img.shields.io/github/issues/XPoet/picx?style=flat&logo=github)](https://github.com/XPoet/picx/issues)
-[![Deploy](https://github.com/XPoet/picx/workflows/deploy/badge.svg)](https://github.com/XPoet/picx/actions/workflows/deploy.yml)
+[![Release and Deploy](https://github.com/XPoet/picx/actions/workflows/deploy.yml/badge.svg)](https://github.com/XPoet/picx/actions/workflows/deploy.yml)
 
 **[PicX](https://picx.xpoet.cn)** 是一款基于 GitHub API 开发的图床工具，提供图片上传托管、生成图片链接和常用图片工具箱服务。
 
