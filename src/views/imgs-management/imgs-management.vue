@@ -10,6 +10,7 @@ import { useStore } from '@/stores'
 import FolderCard from '@/views/imgs-management/components/folder-card/folder-card.vue'
 import ImageCard from '@/views/imgs-management/components/image-card/image-card.vue'
 import ImageSelector from '@/views/imgs-management/components/image-selector/image-selector.vue'
+import MoveImageDialog from '@/views/imgs-management/components/move-image-dialog/move-image-dialog.vue'
 import ToolsBar from '@/views/imgs-management/components/tools-bar/tools-bar.vue'
 import {
   filterDirContent,
@@ -183,6 +184,7 @@ watch(
         </el-empty>
       </div>
     </div>
+    <MoveImageDialog />
   </div>
 </template>
 

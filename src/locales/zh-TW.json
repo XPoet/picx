@@ -18,6 +18,7 @@
   "uploaded": "已上傳",
   "upload": "上傳",
   "rename": "重新命名",
+  "move": "移動到...",
   "copy_link": "複製圖片連結",
   "paste_image": "貼上圖片",
   "copy_success_1": "圖片連結已自動複製到系統剪貼簿",
@@ -214,7 +215,17 @@
     "contextmenu_4": "跳轉 GitHub 倉庫",
     "text_1": "請輸入新的圖片名稱",
     "text_2": "立即上傳",
-    "video_preview": "預覽影片"
+    "video_preview": "預覽影片",
+    "renameDirTips": "請輸入新的目錄名稱",
+    "dirNameInvalid": "目錄名稱不能包含空格或 / 等特殊字元",
+    "dirNameUnchanged": "目錄名無改變",
+    "dirNameDuplicated": "同層目錄下已存在同名目錄",
+    "dirRenameFail": "重新命名目錄失敗，請重試",
+    "delDirTips": "此操作將永久刪除該目錄及其下所有檔案",
+    "moveTips": "請選擇目標目錄",
+    "loadingTxt4": "正在移動 ...",
+    "message8": "移動成功",
+    "message9": "移動失敗，請重試"
   },
   "toolbox": {
     "tool_1": "圖片壓縮",

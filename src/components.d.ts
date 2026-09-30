@@ -52,6 +52,7 @@ declare module 'vue' {
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTag: typeof import('element-plus/es')['ElTag']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
+    ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     GettingImages: typeof import('./components/getting-images/getting-images.vue')['default']
     HeaderContent: typeof import('./components/header-content/header-content.vue')['default']
     IEpArrowLeftBold: typeof import('~icons/ep/arrow-left-bold')['default']

@@ -48,6 +48,14 @@ export const onDeleteImage = (imgObj: UploadedImageModel) => {
     .catch(() => undefined)
 }
 
+// 移动图片到其他目录（打开移动弹窗）
+export const onMoveImage = (imgObj: UploadedImageModel) => {
+  store.commit('SET_UPLOAD_AREA_STATE', {
+    isShowMoveImageDialog: true,
+    moveImageInfo: imgObj,
+  })
+}
+
 // 重命名的逻辑是先上传一张新名称的图片，再删除旧图片
 export const doRenameImage = async (imgObj: UploadedImageModel, newName: string) => {
   const suffix = getFileSuffix(imgObj.name)

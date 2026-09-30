@@ -5,9 +5,11 @@ import i18n from '@/plugins/vue/i18n'
 import router from '@/router'
 import { store } from '@/stores'
 import { copyImageLink, getGitHubRepoDirURL } from '@/utils'
+import { onDeleteDir, onRenameDir } from '@/views/imgs-management/components/folder-card/folder-card.util'
 import {
   checkImgProperty,
   onDeleteImage,
+  onMoveImage,
   onRenameImage,
 } from '@/views/imgs-management/components/image-card/image-card.util'
 import { ContextmenuEnum } from './types'
@@ -56,6 +58,9 @@ const contextmenuDirective: Directive = {
                              <li class="custom-contextmenu-item rename">
                                ${i18n.global.t('rename')}
                              </li>
+                             <li class="custom-contextmenu-item move">
+                               ${i18n.global.t('move')}
+                             </li>
                              <li class="custom-contextmenu-item remove">
                                ${i18n.global.t('delete')}
                              </li>
@@ -67,6 +72,7 @@ const contextmenuDirective: Directive = {
       const jumpRepoItem = menuEle?.querySelector('.jump-repo')
       const removeItem = menuEle?.querySelector('.remove')
       const renameItem = menuEle?.querySelector('.rename')
+      const moveItem = menuEle?.querySelector('.move')
       const copyLinkItem = menuEle?.querySelector('.copy-link')
       const propertyItem = menuEle?.querySelector('.property')
       const pasteImageItem = menuEle?.querySelector('.paste-image')
@@ -86,13 +92,13 @@ const contextmenuDirective: Directive = {
       // 图片
       if (type === ContextmenuEnum.img) {
         hideAllContextmenu()
-        showContextmenu([copyLinkItem, removeItem, renameItem, propertyItem])
+        showContextmenu([copyLinkItem, removeItem, renameItem, moveItem, propertyItem])
       }
 
       // 目录
       if (type === ContextmenuEnum.dir) {
         hideAllContextmenu()
-        showContextmenu([uploadItem, jumpRepoItem])
+        showContextmenu([uploadItem, jumpRepoItem, renameItem, removeItem])
         uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_2', {
           dir: selectedDir,
         })
@@ -158,7 +164,14 @@ const contextmenuDirective: Directive = {
           }
 
           if (type === ContextmenuEnum.dir) {
-            // TODO 重命名目录
+            onRenameDir(selectedDir)
+          }
+        })
+
+        // 移动图片到其他目录
+        moveItem?.addEventListener('click', () => {
+          if (type === ContextmenuEnum.img) {
+            onMoveImage(img)
           }
         })
 
@@ -169,7 +182,7 @@ const contextmenuDirective: Directive = {
           }
 
           if (type === ContextmenuEnum.dir) {
-            // TODO 删除目录
+            onDeleteDir(selectedDir)
           }
         })
 

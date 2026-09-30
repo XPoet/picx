@@ -18,6 +18,7 @@
   "uploaded": "已上传",
   "upload": "上传",
   "rename": "重命名",
+  "move": "移动到...",
   "copy_link": "复制图片链接",
   "paste_image": "粘贴图片",
   "copy_success_1": "图片链接已自动复制到系统剪贴板",
@@ -214,7 +215,17 @@
     "contextmenu_4": "跳转 GitHub 仓库",
     "text_1": "请输入新的图片名称",
     "text_2": "立即上传",
-    "video_preview": "预览视频"
+    "video_preview": "预览视频",
+    "renameDirTips": "请输入新的目录名称",
+    "dirNameInvalid": "目录名称不能包含空格或 / 等特殊字符",
+    "dirNameUnchanged": "目录名无改变",
+    "dirNameDuplicated": "同级目录下已存在同名目录",
+    "dirRenameFail": "重命名目录失败，请重试",
+    "delDirTips": "此操作将永久删除该目录及其下所有文件",
+    "moveTips": "请选择目标目录",
+    "loadingTxt4": "正在移动 ...",
+    "message8": "移动成功",
+    "message9": "移动失败，请重试"
   },
   "toolbox": {
     "tool_1": "图片压缩",

@@ -18,6 +18,7 @@
   "uploaded": "Uploaded",
   "upload": "Upload",
   "rename": "Rename",
+  "move": "Move to...",
   "copy_link": "Copy Image Link",
   "paste_image": "Paste images",
   "copy_success_1": "Image link has been automatically copied to the system clipboard",
@@ -214,7 +215,17 @@
     "contextmenu_4": "Open GitHub Repository",
     "text_1": "Please enter a new image name",
     "text_2": "Upload now",
-    "video_preview": "Preview video"
+    "video_preview": "Preview video",
+    "renameDirTips": "Enter a new directory name",
+    "dirNameInvalid": "Directory name cannot contain spaces or special characters such as /",
+    "dirNameUnchanged": "Directory name is unchanged",
+    "dirNameDuplicated": "A directory with the same name already exists at the same level",
+    "dirRenameFail": "Failed to rename the directory, please try again",
+    "delDirTips": "This action will permanently delete the directory and all files in it",
+    "moveTips": "Select a target directory",
+    "loadingTxt4": "Moving...",
+    "message8": "Moved successfully",
+    "message9": "Failed to move, please try again"
   },
   "toolbox": {
     "tool_1": "Image Compression",

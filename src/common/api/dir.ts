@@ -41,6 +41,20 @@ export const getDirInfoList = (
 }
 
 /**
+ * 获取仓库指定路径的内容（不做缓存）
+ * @param owner
+ * @param repo
+ * @param path
+ */
+export const getRepoDirContent = (owner: string, repo: string, path: string = '') => {
+  return request({
+    url: `/repos/${owner}/${repo}/contents/${path}`,
+    method: 'GET',
+    noCache: true,
+  })
+}
+
+/**
  * 获取指定路径 Path 下的目录和图片
  * @param userConfigInfo
  * @param path
