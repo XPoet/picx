@@ -1,6 +1,6 @@
 import { nextTick, watch } from 'vue'
-import { useStore } from '@/stores'
 import { ThemeModeEnum } from '@/common/model'
+import { useStore } from '@/stores'
 import { isDarkModeOfSystem } from '@/utils/system'
 
 const setThemeMode = () => {
@@ -23,7 +23,8 @@ const setThemeMode = () => {
   const setThemeByConfig = async (mode: ThemeModeEnum) => {
     if (mode === ThemeModeEnum.system) {
       await setHtmlClassName(isDarkModeOfSystem() ? ThemeModeEnum.dark : ThemeModeEnum.light)
-    } else {
+    }
+    else {
       await setHtmlClassName(mode)
     }
   }
@@ -33,7 +34,7 @@ const setThemeMode = () => {
     async (newValue) => {
       await setThemeByConfig(newValue)
     },
-    { deep: true, immediate: true }
+    { deep: true, immediate: true },
   )
 }
 

@@ -1,26 +1,30 @@
-import { UploadedImageModel, UserConfigInfoModel, UploadImageModel } from '@/common/model'
-import { store } from '@/stores'
+import type { UploadedImageModel, UploadImageModel, UserConfigInfoModel } from '@/common/model'
 import {
   createCommit,
   createRef,
   createTree,
-  uploadSingleImage,
+  getBranchInfo,
   getFileBlob,
-  getBranchInfo
+  uploadSingleImage,
 } from '@/common/api'
 import { PICX_UPLOAD_IMG_DESC } from '@/common/constant'
 import i18n from '@/plugins/vue/i18n'
+import { store } from '@/stores'
 
 /**
  * 图片上传成功之后的处理
  * @param res
+ * @param res.name 文件名。
+ * @param res.sha Git blob SHA。
+ * @param res.path 仓库内路径。
+ * @param res.size 文件大小。
  * @param img
  * @param userConfigInfo
  */
 const uploadedHandle = (
-  res: { name: string; sha: string; path: string; size: number },
+  res: { name: string, sha: string, path: string, size: number },
   img: UploadImageModel,
-  userConfigInfo: UserConfigInfoModel
+  userConfigInfo: UserConfigInfoModel,
 ) => {
   let dir = userConfigInfo.selectedDir
 
@@ -42,7 +46,7 @@ const uploadedHandle = (
     path: res.path,
     deleting: false,
     size: res.size,
-    deployed: true
+    deployed: true,
   }
 
   img.uploadedImg = uploadedImg
@@ -83,24 +87,25 @@ export const uploadUrlHandle = (config: UserConfigInfoModel, imgObj: UploadImage
  */
 export async function uploadImagesToGitHub(
   userConfigInfo: UserConfigInfoModel,
-  imgs: UploadImageModel[]
+  imgs: UploadImageModel[],
 ): Promise<boolean> {
   const { branch, repo, selectedDir, owner } = userConfigInfo
 
   const blobs = []
-  // eslint-disable-next-line no-restricted-syntax
+
   for (const img of imgs) {
     img.uploadStatus.uploading = true
     const tempBase64 = (
-      img.base64.compressBase64 ||
-      img.base64.watermarkBase64 ||
-      img.base64.originalBase64
+      img.base64.compressBase64
+      || img.base64.watermarkBase64
+      || img.base64.originalBase64
     ).split(',')[1]
     // 上传图片文件，为仓库创建 blobs
     const blobRes = await getFileBlob(tempBase64, owner, repo)
     if (blobRes) {
       blobs.push({ img, ...blobRes })
-    } else {
+    }
+    else {
       img.uploadStatus.uploading = false
       ElMessage.error(i18n.global.t('upload_page.tip_11', { name: img.filename.final }))
     }
@@ -120,9 +125,9 @@ export async function uploadImagesToGitHub(
     repo,
     blobs.map((x: any) => ({
       sha: x.sha,
-      path: `${finalPath}${x.img.filename.final}`
+      path: `${finalPath}${x.img.filename.final}`,
     })),
-    branchRes
+    branchRes,
   )
   if (!treeRes) {
     return Promise.resolve(false)
@@ -145,7 +150,7 @@ export async function uploadImagesToGitHub(
     uploadedHandle(
       { name, sha: blob.sha, path: `${finalPath}${name}`, size: 0 },
       blob.img,
-      userConfigInfo
+      userConfigInfo,
     )
   })
   return Promise.resolve(true)
@@ -158,24 +163,24 @@ export async function uploadImagesToGitHub(
  */
 export function uploadImageToGitHub(
   userConfigInfo: UserConfigInfoModel,
-  img: UploadImageModel
-): Promise<Boolean> {
+  img: UploadImageModel,
+): Promise<boolean> {
   const { branch, email, owner } = userConfigInfo
 
   const data: any = {
     message: PICX_UPLOAD_IMG_DESC,
     branch,
     content: (
-      img.base64.compressBase64 ||
-      img.base64.watermarkBase64 ||
-      img.base64.originalBase64
-    ).split(',')[1]
+      img.base64.compressBase64
+      || img.base64.watermarkBase64
+      || img.base64.originalBase64
+    ).split(',')[1],
   }
 
   if (email) {
     data.committer = {
       name: owner,
-      email
+      email,
     }
   }
 
@@ -184,13 +189,13 @@ export function uploadImageToGitHub(
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const uploadRes = await uploadSingleImage(uploadUrlHandle(userConfigInfo, img), data)
-    console.log('uploadSingleImage >> ', uploadRes)
     img.uploadStatus.uploading = false
     if (uploadRes) {
       const { name, sha, path, size } = uploadRes.content
       uploadedHandle({ name, sha, path, size }, img, userConfigInfo)
       resolve(true)
-    } else {
+    }
+    else {
       resolve(false)
     }
   })

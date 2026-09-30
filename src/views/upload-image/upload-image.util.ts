@@ -1,5 +1,5 @@
+import type { UploadImageModel, UserSettingsModel } from '@/common/model'
 import { computed } from 'vue'
-import { UploadImageModel, UserSettingsModel } from '@/common/model'
 import { starredRepo } from '@/common/api'
 import { store } from '@/stores'
 import { createUploadImageObject } from '@/utils'
@@ -12,7 +12,7 @@ export const starred = async (userSettings: UserSettingsModel) => {
     const res = await starredRepo()
     if (res) {
       await store.dispatch('SET_USER_SETTINGS', {
-        starred: true
+        starred: true,
       })
     }
   }

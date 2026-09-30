@@ -1,12 +1,8 @@
-import {
-  DeleteStatusEnum,
-  UploadedImageModel,
-  UploadImageModel,
-  UserConfigInfoModel
-} from '@/common/model'
-import { getUuid } from '@/utils/common-utils'
-import { store } from '@/stores'
+import type { UploadedImageModel, UploadImageModel, UserConfigInfoModel } from '@/common/model'
 import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo } from '@/common/api'
+import { DeleteStatusEnum } from '@/common/model'
+import { store } from '@/stores'
+import { getUuid } from '@/utils/common-utils'
 import request from '@/utils/request'
 
 /**
@@ -18,12 +14,12 @@ export const createUploadImageObject = (): UploadImageModel => {
     base64: {
       originalBase64: '',
       watermarkBase64: null,
-      compressBase64: null
+      compressBase64: null,
     },
     fileInfo: {
       originalFile: null,
       watermarkFile: null,
-      compressFile: null
+      compressFile: null,
     },
     filename: {
       hash: '',
@@ -35,21 +31,21 @@ export const createUploadImageObject = (): UploadImageModel => {
       newName: '',
       isAddHash: true,
       isRename: false,
-      isAddPrefix: false
+      isAddPrefix: false,
     },
     beforeUploadStatus: {
       watermarking: false,
-      compressing: false
+      compressing: false,
     },
     uploadStatus: {
       progress: 0,
-      uploading: false
+      uploading: false,
     },
     reUploadInfo: {
       dir: '',
       path: '',
-      isReUpload: false
-    }
+      isReUpload: false,
+    },
   }
 }
 
@@ -69,7 +65,7 @@ export const createManagementImageObject = (item: any, selectedDir: string): Upl
     deleting: false,
     size: item.size,
     checked: false,
-    deployed: true
+    deployed: true,
   }
 }
 
@@ -80,7 +76,7 @@ export const createManagementImageObject = (item: any, selectedDir: string): Upl
  */
 export async function deleteImageFromGitHub(
   imageObj: UploadedImageModel,
-  userConfigInfo: UserConfigInfoModel
+  userConfigInfo: UserConfigInfoModel,
 ): Promise<boolean> {
   imageObj.deleting = true
   const { owner, repo } = userConfigInfo
@@ -93,7 +89,8 @@ export async function deleteImageFromGitHub(
       resolve(true)
       await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
       await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
-    } else {
+    }
+    else {
       resolve(false)
     }
   })
@@ -112,7 +109,7 @@ const imgListDeleteStatus = (imgList: UploadedImageModel[], deleting: boolean = 
  */
 export async function deleteImagesFromGitHub(
   imgObjs: UploadedImageModel[],
-  userConfigInfo: UserConfigInfoModel
+  userConfigInfo: UserConfigInfoModel,
 ): Promise<void> {
   imgListDeleteStatus(imgObjs, true)
   const { owner, repo, branch } = userConfigInfo
@@ -128,11 +125,11 @@ export async function deleteImagesFromGitHub(
   const treeRes = await createTree(
     owner,
     repo,
-    imgObjs.map((x) => ({
+    imgObjs.map(x => ({
       path: x.path,
-      sha: null
+      sha: null,
     })),
-    headRes
+    headRes,
   )
   if (!treeRes) {
     imgListDeleteStatus(imgObjs, false)
@@ -147,7 +144,6 @@ export async function deleteImagesFromGitHub(
   }
 
   // 将当前分支 ref 指向新创建的 commit
-  // @ts-ignore
   const refRes = await createRef(owner, repo, branch, commitRes.sha)
   if (!refRes) {
     imgListDeleteStatus(imgObjs, false)
@@ -168,7 +164,7 @@ export async function deleteImagesFromGitHub(
  */
 export async function deleteImageOfGitHub(
   imgCardArr: Array<UploadedImageModel>,
-  userConfigInfo: UserConfigInfoModel
+  userConfigInfo: UserConfigInfoModel,
 ) {
   if (imgCardArr.length === 1) {
     if (await deleteImageFromGitHub(imgCardArr[0], userConfigInfo)) {
@@ -179,7 +175,8 @@ export async function deleteImageOfGitHub(
   try {
     await deleteImagesFromGitHub(imgCardArr, userConfigInfo)
     return DeleteStatusEnum.allDeleted
-  } catch (err) {
+  }
+  catch (err) {
     console.error(err)
     return DeleteStatusEnum.deleteFail
   }
@@ -222,7 +219,7 @@ export function blobToBase64ByImageUrl(url: string): Promise<string | null> {
       baseURL: '',
       url,
       method: 'GET',
-      responseType: 'blob'
+      responseType: 'blob',
     })
       .then((res) => {
         if (res) {
@@ -235,7 +232,8 @@ export function blobToBase64ByImageUrl(url: string): Promise<string | null> {
             resolve(null)
           }
           reader.readAsDataURL(res)
-        } else {
+        }
+        else {
           resolve(null)
         }
       })

@@ -1,52 +1,10 @@
-<template>
-  <aside
-    class="nav-content-container border-box"
-    :class="{ folded: store.getters.getGlobalSettings.folded }"
-  >
-    <div class="top-box border-box">
-      <ul class="nav-menu-list border-box">
-        <el-tooltip
-          placement="left"
-          :content="$t(nav.name)"
-          v-for="(nav, idx) in navInfoList"
-          :key="idx + nav.uuid"
-          :show-arrow="false"
-          :disabled="!store.getters.getGlobalSettings.folded"
-        >
-          <li
-            class="nav-menu-item border-box"
-            :class="{ active: nav.isActive }"
-            @click="onNavClick(nav)"
-            v-show="nav.isShow"
-          >
-            <el-icon class="nav-icon" :size="navIconSize">
-              <component :is="nav.icon"></component>
-            </el-icon>
-            <span class="nav-name">{{ $t(nav.name) }}</span>
-          </li>
-        </el-tooltip>
-      </ul>
-    </div>
-
-    <div class="bottom-box border-box">
-      <el-icon v-if="globalSettings.folded" class="fold-icon" @click="onFoldNav">
-        <IEpDArrowRight />
-      </el-icon>
-      <el-icon v-else class="fold-icon" @click="onFoldNav">
-        <IEpDArrowLeft />
-      </el-icon>
-      <site-count class="site-count" :showPV="true" :showUV="true" />
-    </div>
-  </aside>
-</template>
-
 <script setup lang="ts">
 import { computed, onMounted, triggerRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useStore } from '@/stores'
 import { ElementPlusSizeEnum } from '@/common/model'
-import { navInfoList } from './nav-content.data'
 import i18n from '@/plugins/vue/i18n'
+import { useStore } from '@/stores'
+import { navInfoList } from './nav-content.data'
 
 const router = useRouter()
 const store = useStore()
@@ -96,7 +54,7 @@ const changeNavActive = (currentPath: string) => {
 
 const onFoldNav = () => {
   store.dispatch('SET_GLOBAL_SETTINGS', {
-    folded: !globalSettings.folded
+    folded: !globalSettings.folded,
   })
 }
 
@@ -104,26 +62,24 @@ watch(
   () => router.currentRoute.value,
   (_n) => {
     changeNavActive(_n.path)
-  }
+  },
 )
 
 watch(
   () => userConfigInfo.logined,
   (_n) => {
     navInfoList.value.forEach((v: any) => {
-      // eslint-disable-next-line default-case
       switch (v.path) {
         case '/management':
         case '/settings':
-          // eslint-disable-next-line no-param-reassign
           v.isShow = _n
       }
     })
   },
   {
     deep: true,
-    immediate: true
-  }
+    immediate: true,
+  },
 )
 
 onMounted(() => {
@@ -132,6 +88,48 @@ onMounted(() => {
   })
 })
 </script>
+
+<template>
+  <aside
+    class="nav-content-container border-box"
+    :class="{ folded: store.getters.getGlobalSettings.folded }"
+  >
+    <div class="top-box border-box">
+      <ul class="nav-menu-list border-box">
+        <el-tooltip
+          v-for="(nav, idx) in navInfoList"
+          :key="idx + nav.uuid"
+          placement="left"
+          :content="$t(nav.name)"
+          :show-arrow="false"
+          :disabled="!store.getters.getGlobalSettings.folded"
+        >
+          <li
+            v-show="nav.isShow"
+            class="nav-menu-item border-box"
+            :class="{ active: nav.isActive }"
+            @click="onNavClick(nav)"
+          >
+            <el-icon class="nav-icon" :size="navIconSize">
+              <component :is="nav.icon" />
+            </el-icon>
+            <span class="nav-name">{{ $t(nav.name) }}</span>
+          </li>
+        </el-tooltip>
+      </ul>
+    </div>
+
+    <div class="bottom-box border-box">
+      <el-icon v-if="globalSettings.folded" class="fold-icon" @click="onFoldNav">
+        <IEpDArrowRight />
+      </el-icon>
+      <el-icon v-else class="fold-icon" @click="onFoldNav">
+        <IEpDArrowLeft />
+      </el-icon>
+      <site-count class="site-count" :show-p-v="true" :show-u-v="true" />
+    </div>
+  </aside>
+</template>
 
 <style scoped lang="stylus">
 @import "nav-content.styl"

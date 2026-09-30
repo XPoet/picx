@@ -1,0 +1,22 @@
+minimumReleaseAgeExclude:
+  - '@playwright/test@1.62.1'
+  - playwright-core@1.62.1
+  - playwright@1.62.1
+  - vite@8.2.0
+shellEmulator: true
+
+trustPolicy: no-downgrade
+trustPolicyExclude:
+  - '@trickfilm400/rollup-plugin-off-main-thread@3.0.0-pre1'
+  - semver@6.3.1
+
+enableGlobalVirtualStore: false
+pmOnFail: ignore
+verifyDepsBeforeRun: error
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+
+allowBuilds:
+  node-pty: true

@@ -1,16 +1,16 @@
 import { computed } from 'vue'
-import request from '@/utils/request'
-import { store } from '@/stores'
-import { getBase64ByImageUrl, getFileSuffix, isImage } from '@/utils'
 import {
   createCommit,
   createRef,
   createTree,
   getBranchInfo,
   getFileBlob,
-  getRepoPathContent
+  getRepoPathContent,
 } from '@/common/api'
 import i18n from '@/plugins/vue/i18n'
+import { store } from '@/stores'
+import { getBase64ByImageUrl, getFileSuffix, isImage } from '@/utils'
+import request from '@/utils/request'
 
 let idx = 0
 let count = 0
@@ -27,7 +27,7 @@ export const getSourceRepoImgContent = async (
   sourceRepo: string,
   sourceRepoBranch: string,
   path: string,
-  cb?: any
+  cb?: any,
 ) => {
   const { owner } = computed(() => store.getters.getUserConfigInfo).value
 
@@ -36,21 +36,20 @@ export const getSourceRepoImgContent = async (
     noShowErrMsg: true,
     url: `repos/${owner}/${sourceRepo}/contents/${path}`,
     params: {
-      ref: sourceRepoBranch
-    }
+      ref: sourceRepoBranch,
+    },
   })
 
   idx += 1
 
   if (!res) {
-    // eslint-disable-next-line no-unused-expressions
     cb && cb({ status: false, imgList: repoImgList })
     return
   }
 
   if (Array.isArray(res) && res.length) {
     count += res.length
-    // eslint-disable-next-line no-restricted-syntax
+
     for (const ri of res) {
       await getSourceRepoImgContent(sourceRepo, sourceRepoBranch, ri.path)
     }
@@ -75,13 +74,12 @@ export const getSourceRepoImgContent = async (
         path: res.path,
         content,
         sha: res.sha,
-        download_url: res.download_url
+        download_url: res.download_url,
       })
     }
   }
 
   if (idx > count) {
-    // eslint-disable-next-line no-unused-expressions
     cb && cb({ status: true, imgList: repoImgList })
   }
 }
@@ -95,12 +93,13 @@ export const uploadSourceRepoImages = async (imgs: any[], sourceRepo: string) =>
   const { branch, repo, owner } = computed(() => store.getters.getUserConfigInfo).value
 
   const blobs = []
-  // eslint-disable-next-line no-restricted-syntax
+
   for (const img of imgs) {
     const blobRes: any = await getFileBlob(img.content, owner, repo)
     if (blobRes) {
       blobs.push({ img, ...blobRes })
-    } else {
+    }
+    else {
       ElMessage.error(i18n.global.t('upload_page.tip_11', { name: img.name }))
     }
   }
@@ -115,9 +114,9 @@ export const uploadSourceRepoImages = async (imgs: any[], sourceRepo: string) =>
     repo,
     blobs.map((x: any) => ({
       sha: x.sha,
-      path: x.img.path
+      path: x.img.path,
     })),
-    branchRes
+    branchRes,
   )
   if (!treeRes) {
     return Promise.resolve(false)
@@ -128,7 +127,7 @@ export const uploadSourceRepoImages = async (imgs: any[], sourceRepo: string) =>
     repo,
     treeRes,
     branchRes,
-    `Copy \`${sourceRepo}\` image${imgs.length ? 's' : ''} via PicX (https://github.com/XPoet/picx)`
+    `Copy \`${sourceRepo}\` image${imgs.length ? 's' : ''} via PicX (https://github.com/XPoet/picx)`,
   )
   if (!commitRes) {
     return Promise.resolve(false)
@@ -150,7 +149,7 @@ export const refreshManagementPage = async () => {
 
   const viewDir = '/'
   await store.dispatch('SET_USER_CONFIG_INFO', {
-    viewDir
+    viewDir,
   })
   await store.dispatch('DIR_IMAGE_LIST_INIT_DIR', viewDir)
   await getRepoPathContent(userConfigInfo, viewDir)

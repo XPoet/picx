@@ -97,7 +97,10 @@
       "position_1": "Top Left",
       "position_2": "Bottom Left",
       "position_3": "Top Right",
-      "position_4": "Bottom Right"
+      "position_4": "Bottom Right",
+      "position_5": "Fullscreen",
+      "rotate": "Rotate",
+      "gap": "Spacing"
     },
     "img_compress": {
       "title": "Image Compression Settings",
@@ -109,7 +112,8 @@
       "radio_2": "MozJPEG",
       "radio_2_desc": "Resulting format is jpg, highest compatibility with all browsers",
       "radio_3": "AVIF",
-      "radio_3_desc": "Resulting format is avif, extremely high compression rates, supported by some modern browsers"
+      "radio_3_desc": "Resulting format is avif, extremely high compression rates, supported by some modern browsers",
+      "radio_4_desc": "Resulting format is png, lossless optimisation preserving transparency, ideal for screenshots and graphics; photos may become larger"
     },
     "link_rule": {
       "title": "Image Link Rules Configuration",
@@ -127,7 +131,8 @@
       "error_msg_2": "{action} failed. Image link rule must include {path}",
       "error_msg_3": "Image link rule is missing {rules}. Confirm {action}?",
       "add": "Add",
-      "edit": "Edit"
+      "edit": "Edit",
+      "gh_pages_not_deployed": "GitHub Pages has not been deployed in this repo yet, so this image link rule is unavailable. Deploy it now with one click?"
     },
     "link_format": {
       "title": "Image Link Format Settings",
@@ -144,21 +149,21 @@
       "fail": "Deployment failed",
       "fail2": "Deployment failed, please try again later",
       "deploying": "Deploying to GitHub Pages, this process takes about 1 minute, please be patient...",
-      "not_deployed": "Not deployed"
+      "not_deployed": "Not deployed",
+      "custom_domain_label": "Custom Domain",
+      "custom_domain_placeholder": "e.g. img.example.com",
+      "custom_domain_desc": "After saving, a CNAME file will be created in the repository root and deployed to GitHub Pages automatically. You also need to add a CNAME record pointing to {pagesDomain} at your DNS provider",
+      "custom_domain_save": "Save",
+      "custom_domain_invalid": "Invalid domain format, please enter a domain like img.example.com",
+      "custom_domain_synced": "CNAME file synced, the custom domain will take effect after GitHub Pages redeploys",
+      "custom_domain_deleted": "Custom domain cleared, CNAME file deleted",
+      "custom_domain_fail": "Failed to sync the CNAME file, please try again later"
     },
     "theme": {
       "title": "Theme Settings",
       "system": "System",
       "dark": "Dark",
       "light": "Light"
-    },
-    "cloud_settings": {
-      "tip_1": "Detected that your settings data is not saved to the cloud repository. Save now?",
-      "tip_2": "Detected that your cloud repository has settings files. Use them?",
-      "tip_3": "Detected changes in your settings data. Synchronize with the cloud repository?",
-      "tip_4": "Local and cloud repository settings data are consistent",
-      "success_msg_1": "Save successful",
-      "success_msg_2": "Update successful"
     }
   },
   "upload_page": {
@@ -206,6 +211,7 @@
     "contextmenu_1": "Upload new images from the current location",
     "contextmenu_2": "Upload images to {dir}",
     "contextmenu_3": "Root Directory",
+    "contextmenu_4": "Open GitHub Repository",
     "text_1": "Please enter a new image name",
     "text_2": "Upload now"
   },

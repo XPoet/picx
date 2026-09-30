@@ -1,4 +1,4 @@
-import { DirObject } from '@/stores/modules/dir-image-list/types'
+import type { DirObject } from '@/stores/modules/dir-image-list/types'
 
 /**
  * 构造一个新的目录对象
@@ -11,7 +11,7 @@ export const createDirObject = (dir: string, dirPath: string): DirObject => {
     dir,
     dirPath,
     childrenDirs: [],
-    imageList: []
+    imageList: [],
   }
 }
 
@@ -23,7 +23,7 @@ export const getUpOneLevelDir = (dirPath: string) => {
   if (dirPath === '/') {
     return {
       currentDir: '/',
-      dirPath: '/'
+      dirPath: '/',
     }
   }
 
@@ -32,7 +32,7 @@ export const getUpOneLevelDir = (dirPath: string) => {
   if (dirList.length === 1) {
     return {
       currentDir: '/',
-      dirPath: '/'
+      dirPath: '/',
     }
   }
 
@@ -40,13 +40,13 @@ export const getUpOneLevelDir = (dirPath: string) => {
     dirList.length -= 1
     return {
       currentDir: dirList[dirList.length - 1],
-      dirPath: dirList.join('/')
+      dirPath: dirList.join('/'),
     }
   }
 
   return {
     currentDir: '/',
-    dirPath: '/'
+    dirPath: '/',
   }
 }
 
@@ -70,4 +70,29 @@ export const getUpLevelDirList = (dirPath: string) => {
   })
 
   return tempL
+}
+
+/**
+ * 获取指定目录下的内容。
+ *
+ * @param dirPath 目标目录路径。
+ * @param dirObject 根目录对象。
+ * @returns 目标目录对象，不存在时返回 null。
+ */
+export function getDirContent(dirPath: string, dirObject: DirObject): DirObject | null {
+  if (dirPath === '/') {
+    return dirObject
+  }
+
+  return dirPath.split('/').reduce<DirObject | null>((currentDirectory, directoryName) => {
+    if (!currentDirectory) {
+      return null
+    }
+
+    return (
+      currentDirectory.childrenDirs.find(
+        childDirectory => childDirectory.dir === directoryName,
+      ) ?? null
+    )
+  }, dirObject)
 }

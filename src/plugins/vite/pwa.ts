@@ -18,17 +18,31 @@ export default function configPWAPlugin() {
         {
           src: './logo@192x192.png',
           sizes: '192x192',
-          type: 'image/png'
+          type: 'image/png',
         },
         {
           src: './logo@512x512.png',
-          sizes: '192x192',
-          type: 'image/png'
-        }
-      ]
+          sizes: '512x512',
+          type: 'image/png',
+        },
+      ],
     },
     workbox: {
-      skipWaiting: true
-    }
+      globPatterns: ['**/*.{js,css,html,ico,png,svg,webmanifest}'],
+      runtimeCaching: [
+        {
+          urlPattern: /\.wasm$/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'picx-image-codecs',
+            expiration: {
+              maxEntries: 24,
+              maxAgeSeconds: 60 * 60 * 24 * 30,
+            },
+          },
+        },
+      ],
+      skipWaiting: true,
+    },
   })
 }

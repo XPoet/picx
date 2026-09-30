@@ -1,15 +1,16 @@
-import { computed, Directive } from 'vue'
+import type { Directive } from 'vue'
+import { computed } from 'vue'
+import { DirModeEnum } from '@/common/model'
+import i18n from '@/plugins/vue/i18n'
 import router from '@/router'
 import { store } from '@/stores'
-import { ContextmenuEnum } from './types'
-import { DirModeEnum } from '@/common/model'
-import { copyImageLink } from '@/utils'
-import i18n from '@/plugins/vue/i18n'
+import { copyImageLink, getGitHubRepoDirURL } from '@/utils'
 import {
   checkImgProperty,
   onDeleteImage,
-  onRenameImage
+  onRenameImage,
 } from '@/views/imgs-management/components/image-card/image-card.util'
+import { ContextmenuEnum } from './types'
 
 const menuClass = 'custom-contextmenu-container'
 let menuEle: any = null
@@ -27,6 +28,7 @@ const contextmenuDirective: Directive = {
       store.commit('SET_UPLOAD_AREA_STATE', { activeInfo: { dir, type, img } })
 
       const viewDir = computed(() => store.getters.getUserViewDir).value
+      const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
       const selectedDir = dir ? `${viewDir === '/' ? '' : `${viewDir}/`}${dir}` : viewDir
 
@@ -38,6 +40,9 @@ const contextmenuDirective: Directive = {
         menuEle.style.position = 'fixed'
         menuEle.style.zIndex = '1000'
         menuEle.innerHTML = `<li class="custom-contextmenu-item upload-image">
+                             </li>
+                             <li class="custom-contextmenu-item jump-repo">
+                               ${i18n.global.t('management_page.contextmenu_4')}
                              </li>
                              <li class="custom-contextmenu-item paste-image">
                                ${i18n.global.t('paste_image')}
@@ -59,6 +64,7 @@ const contextmenuDirective: Directive = {
       }
 
       const uploadItem = menuEle?.querySelector('.upload-image')
+      const jumpRepoItem = menuEle?.querySelector('.jump-repo')
       const removeItem = menuEle?.querySelector('.remove')
       const renameItem = menuEle?.querySelector('.rename')
       const copyLinkItem = menuEle?.querySelector('.copy-link')
@@ -86,16 +92,16 @@ const contextmenuDirective: Directive = {
       // 目录
       if (type === ContextmenuEnum.dir) {
         hideAllContextmenu()
-        showContextmenu([uploadItem])
+        showContextmenu([uploadItem, jumpRepoItem])
         uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_2', {
-          dir: selectedDir
+          dir: selectedDir,
         })
       }
 
       // 目录区域
       if (type === ContextmenuEnum.dirArea) {
         hideAllContextmenu()
-        showContextmenu([uploadItem])
+        showContextmenu([uploadItem, jumpRepoItem])
         uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_1')
       }
 
@@ -134,9 +140,15 @@ const contextmenuDirective: Directive = {
           await store.dispatch('SET_USER_CONFIG_INFO', {
             dirMode,
             selectedDir,
-            selectedDirList
+            selectedDirList,
           })
           await router.push('/upload')
+        })
+
+        // 跳转 GitHub 仓库目录
+        jumpRepoItem?.addEventListener('click', () => {
+          const dirPath = selectedDir === '/' ? '' : selectedDir
+          window.open(getGitHubRepoDirURL(userConfigInfo, dirPath))
         })
 
         // 重命名
@@ -174,7 +186,7 @@ const contextmenuDirective: Directive = {
         // 上传区域粘贴图片
         pasteImageItem?.addEventListener('click', () => {
           store.commit('SET_UPLOAD_AREA_STATE', {
-            isPaste: true
+            isPaste: true,
           })
         })
       }
@@ -191,7 +203,7 @@ const contextmenuDirective: Directive = {
       document.addEventListener('click', closeContextMenu)
       document.addEventListener('dblclick', closeContextMenu)
     })
-  }
+  },
 }
 
 export default contextmenuDirective

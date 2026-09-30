@@ -70,36 +70,35 @@ export interface UploadImageModel {
  * 图片上传状态枚举
  */
 export enum UploadStatusEnum {
-  // eslint-disable-next-line no-unused-vars
   uploaded = 'uploaded',
-  // eslint-disable-next-line no-unused-vars
+
   allUploaded = 'allUploaded',
-  // eslint-disable-next-line no-unused-vars
-  uploadFail = 'uploadFail'
+
+  uploadFail = 'uploadFail',
 }
 
 /**
  * 图片删除状态枚举
  */
 export enum DeleteStatusEnum {
-  // eslint-disable-next-line no-unused-vars
   deleted = 'deleted',
-  // eslint-disable-next-line no-unused-vars
+
   allDeleted = 'allDeleted',
-  // eslint-disable-next-line no-unused-vars
-  deleteFail = 'deleteFail'
+
+  deleteFail = 'deleteFail',
 }
 
 /**
  * 图片压缩编码器枚举
  */
 export enum CompressEncoderEnum {
-  // eslint-disable-next-line no-unused-vars
   mozJPEG = 'mozJPEG',
-  // eslint-disable-next-line no-unused-vars
+
   avif = 'avif',
-  // eslint-disable-next-line no-unused-vars
-  webP = 'webP'
+
+  webP = 'webP',
+
+  png = 'png',
 }
 
 /**
@@ -124,14 +123,13 @@ export interface ImageLinkFormatModel {
  * 图片链接类型名称枚举
  */
 export enum ImageLinkTypeEnum {
-  // eslint-disable-next-line no-unused-vars
   GitHub = 'GitHub',
-  // eslint-disable-next-line no-unused-vars
+
   GitHubPages = 'GitHub Pages',
-  // eslint-disable-next-line no-unused-vars
+
   jsDelivr = 'jsDelivr',
-  // eslint-disable-next-line no-unused-vars
+
   ChinaJsDelivr = 'ChinaJsDelivr',
-  // eslint-disable-next-line no-unused-vars
-  Statically = 'Statically'
+
+  Statically = 'Statically',
 }

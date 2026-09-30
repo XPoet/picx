@@ -97,7 +97,10 @@
       "position_1": "左上角",
       "position_2": "左下角",
       "position_3": "右上角",
-      "position_4": "右下角"
+      "position_4": "右下角",
+      "position_5": "全屏",
+      "rotate": "旋转角度",
+      "gap": "平铺间距"
     },
     "img_compress": {
       "title": "图片压缩设置",
@@ -109,7 +112,8 @@
       "radio_2": "mozJPEG",
       "radio_2_desc": "压缩后图片格式为 jpg，兼容性最好，所有浏览器支持",
       "radio_3": "avif",
-      "radio_3_desc": "压缩后图片格式为 avif，压缩率极高，部分现代浏览器支持"
+      "radio_3_desc": "压缩后图片格式为 avif，压缩率极高，部分现代浏览器支持",
+      "radio_4_desc": "压缩后图片格式为 png，无损优化并保留透明通道，所有浏览器支持"
     },
     "link_rule": {
       "title": "图片链接规则配置",
@@ -127,7 +131,8 @@
       "error_msg_2": "{action}失败，图片链接规则必须包含 {path}",
       "error_msg_3": "图片链接规则缺少 {rules}，是否确认{action}？",
       "add": "添加",
-      "edit": "编辑"
+      "edit": "编辑",
+      "gh_pages_not_deployed": "图床仓库尚未部署 GitHub Pages，暂不能选择此图片链接规则，是否立即一键部署？"
     },
     "link_format": {
       "title": "图片链接格式设置",
@@ -144,21 +149,21 @@
       "fail": "部署失败",
       "fail2": "部署失败，请稍后再试",
       "deploying": "正在部署到 GitHub Pages，该过程持续 1 分钟左右，请耐心等待 ...",
-      "not_deployed": "未部署"
+      "not_deployed": "未部署",
+      "custom_domain_label": "自定义域名",
+      "custom_domain_placeholder": "例如 img.example.com",
+      "custom_domain_desc": "保存后会在仓库根目录创建 CNAME 文件并自动部署到 GitHub Pages，还需在 DNS 服务商处添加 CNAME 记录指向 {pagesDomain}",
+      "custom_domain_save": "保存",
+      "custom_domain_invalid": "域名格式不正确，请输入如 img.example.com 的域名",
+      "custom_domain_synced": "CNAME 文件已同步，自定义域名将在 GitHub Pages 重新部署后生效",
+      "custom_domain_deleted": "已清除自定义域名，CNAME 文件已删除",
+      "custom_domain_fail": "CNAME 文件同步失败，请稍后再试"
     },
     "theme": {
       "title": "主题设置",
       "system": "跟随系统",
       "dark": "暗夜",
       "light": "白昼"
-    },
-    "cloud_settings": {
-      "tip_1": "检测到你的设置数据未保存到云端仓库，是否保存？",
-      "tip_2": "检测到你的云端仓库存在设置文件，是否使用？",
-      "tip_3": "检测到你的设置数据有变化，是否同步到云端仓库？",
-      "tip_4": "本地设置数据和云端仓库设置数据一致",
-      "success_msg_1": "保存成功",
-      "success_msg_2": "更新成功"
     }
   },
   "upload_page": {
@@ -206,6 +211,7 @@
     "contextmenu_1": "从当前位置上传新图片",
     "contextmenu_2": "上传图片到 {dir}",
     "contextmenu_3": "根目录",
+    "contextmenu_4": "跳转 GitHub 仓库",
     "text_1": "请输入新的图片名称",
     "text_2": "立即上传"
   },

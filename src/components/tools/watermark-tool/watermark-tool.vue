@@ -1,61 +1,9 @@
-<template>
-  <div class="watermark-tool-container">
-    <div v-if="imgList.length" class="watermark-tool-left">
-      <img-process-state-card
-        v-for="img in imgList"
-        :img-obj="img"
-        :key="img.uuid"
-        card-type="watermark"
-        @remove="remove"
-      />
-    </div>
-    <div class="watermark-tool-right" :class="{ 'no-img': !imgList.length }">
-      <getting-images ref="gettingImagesRef" @getImgList="getImgList"></getting-images>
-
-      <watermark-config-box
-        :isTool="true"
-        @watermarkConfig="setWatermarkConfig"
-        style="margin-top: 18rem"
-      />
-
-      <div class="user-operate" :class="{ watermarked: isWatermarked && imgList.length > 1 }">
-        <el-button
-          v-if="isWatermarked && imgList.length > 1"
-          plain
-          type="success"
-          @click="download"
-        >
-          {{ $t('toolbox.batch_download') }}
-        </el-button>
-        <div>
-          <el-button v-if="imgList.length" plain type="warning" @click="reset">
-            {{ $t('reset') }}
-          </el-button>
-          <el-button
-            v-if="imgList.length"
-            :disabled="watermarking || isWatermarked || !watermarkConfig.text"
-            plain
-            type="primary"
-            @click="addWatermark"
-          >
-            {{ $t('toolbox.add_watermark') }}
-          </el-button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
+import type { ImageHandleResult, ImgProcessStateModel, UserSettingsModel } from '@/common/model'
 import { reactive, ref, watch } from 'vue'
-import {
-  ImageHandleResult,
-  ImgProcessStateModel,
-  UserSettingsModel,
-  WatermarkPositionEnum
-} from '@/common/model'
-import { addWatermarkToImage, downloadImage, imgFileToBase64 } from '@/utils'
+import { WatermarkPositionEnum } from '@/common/model'
 import { useStore } from '@/stores'
+import { addWatermarkToImage, downloadImage, imgFileToBase64 } from '@/utils'
 
 const store = useStore()
 
@@ -65,7 +13,9 @@ const watermarkConfig = reactive<UserSettingsModel['watermark']>({
   fontSize: 0,
   opacity: 0,
   position: WatermarkPositionEnum.rightBottom,
-  textColor: ''
+  textColor: '',
+  rotate: -20,
+  gap: 80,
 })
 
 const gettingImagesRef = ref<any>(null)
@@ -84,7 +34,7 @@ const getImgList = (imgs: ImageHandleResult[]) => {
       originalName: x.file.name,
       originalSize: x.file.size,
       originalBase64: x.base64,
-      originalFile: x.file
+      originalFile: x.file,
     })
   })
 }
@@ -96,6 +46,8 @@ const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
   watermarkConfig.opacity = config.opacity
   watermarkConfig.position = config.position
   watermarkConfig.fontSize = config.fontSize
+  watermarkConfig.rotate = config.rotate
+  watermarkConfig.gap = config.gap
   isWatermarked.value = false
 }
 
@@ -109,7 +61,7 @@ const reset = () => {
 // 添加水印
 const addWatermark = async () => {
   watermarking.value = true
-  // eslint-disable-next-line no-restricted-syntax
+
   for (const img of imgList.value) {
     img.processing = true
     img.finialFile = (await addWatermarkToImage(img.originalFile, watermarkConfig)) as File
@@ -142,10 +94,58 @@ watch(
   },
   {
     immediate: true,
-    deep: true
-  }
+    deep: true,
+  },
 )
 </script>
+
+<template>
+  <div class="watermark-tool-container">
+    <div v-if="imgList.length" class="watermark-tool-left">
+      <img-process-state-card
+        v-for="img in imgList"
+        :key="img.uuid"
+        :img-obj="img"
+        card-type="watermark"
+        @remove="remove"
+      />
+    </div>
+    <div class="watermark-tool-right" :class="{ 'no-img': !imgList.length }">
+      <getting-images ref="gettingImagesRef" @get-img-list="getImgList" />
+
+      <watermark-config-box
+        :is-tool="true"
+        style="margin-top: 18rem"
+        @watermark-config="setWatermarkConfig"
+      />
+
+      <div class="user-operate" :class="{ watermarked: isWatermarked && imgList.length > 1 }">
+        <el-button
+          v-if="isWatermarked && imgList.length > 1"
+          plain
+          type="success"
+          @click="download"
+        >
+          {{ $t('toolbox.batch_download') }}
+        </el-button>
+        <div>
+          <el-button v-if="imgList.length" plain type="warning" @click="reset">
+            {{ $t('reset') }}
+          </el-button>
+          <el-button
+            v-if="imgList.length"
+            :disabled="watermarking || isWatermarked || !watermarkConfig.text"
+            plain
+            type="primary"
+            @click="addWatermark"
+          >
+            {{ $t('toolbox.add_watermark') }}
+          </el-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="stylus">
 @import "./watermark-tool.styl"

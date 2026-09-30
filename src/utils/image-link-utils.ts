@@ -1,8 +1,8 @@
+import type { ImageLinkFormatModel, UploadedImageModel } from '@/common/model'
 import { computed } from 'vue'
-import { ImageLinkFormatModel, UploadedImageModel } from '@/common/model'
-import { copyText } from '@/utils'
 import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
+import { copyText } from '@/utils'
 
 /**
  * 生成一个图片链接
@@ -35,7 +35,7 @@ const transformImageLink = (imageLink: string | null, imageName: string) => {
   if (userSettings.imageLinkFormat.enable) {
     const selectedFormat = userSettings.imageLinkFormat.selected
     const format = userSettings.imageLinkFormat.presetList.find(
-      (x: ImageLinkFormatModel) => x.name === selectedFormat
+      (x: ImageLinkFormatModel) => x.name === selectedFormat,
     )?.format
     if (format) {
       return format
@@ -54,7 +54,7 @@ const copyMessage = (autoCopy = false) => {
   ElMessage({
     type: autoCopy ? 'info' : 'success',
     message,
-    duration: autoCopy ? 6000 : 4000
+    duration: autoCopy ? 6000 : 4000,
   })
 }
 
@@ -69,7 +69,8 @@ export const copyImageLink = (imgObj: UploadedImageModel, autoCopy: boolean = fa
     copyText(link, () => {
       copyMessage(autoCopy)
     })
-  } else {
+  }
+  else {
     ElMessage.error({ message: i18n.global.t('copy_fail_1') })
   }
 }
@@ -81,7 +82,7 @@ export const copyImageLink = (imgObj: UploadedImageModel, autoCopy: boolean = fa
  */
 export const batchCopyImageLinks = (
   uploadedImgList: Array<UploadedImageModel>,
-  autoCopy: boolean = false
+  autoCopy: boolean = false,
 ) => {
   if (uploadedImgList?.length > 0) {
     let linksTxt = ''
