@@ -206,7 +206,12 @@ onMounted(() => {
       <!-- 选择图片区域 -->
       <div class="row-item">
         <div class="content-box">
-          <getting-images ref="gettingImagesRef" :disabled="uploading" @get-img-list="setImgList" />
+          <getting-images
+            ref="gettingImagesRef"
+            :disabled="uploading"
+            video-enabled
+            @get-img-list="setImgList"
+          />
         </div>
       </div>
 

@@ -50,13 +50,18 @@ export const createUploadImageObject = (): UploadImageModel => {
 }
 
 /**
- * 生成一个图床管理中的图片对象
+ * 生成一个图床管理中的文件对象（图片或视频）
  * @param item
  * @param selectedDir
+ * @param type 文件类型，默认图片
  */
-export const createManagementImageObject = (item: any, selectedDir: string): UploadedImageModel => {
+export const createManagementImageObject = (
+  item: any,
+  selectedDir: string,
+  type: 'image' | 'video' = 'image',
+): UploadedImageModel => {
   return {
-    type: 'image',
+    type,
     uuid: getUuid(),
     dir: selectedDir,
     name: item.name,

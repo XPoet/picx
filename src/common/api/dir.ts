@@ -1,6 +1,6 @@
 import type { UserConfigInfoModel } from '@/common/model'
 import { store } from '@/stores'
-import { createManagementImageObject, getFileSuffix, isImage } from '@/utils'
+import { createManagementImageObject, getFileSuffix, isImage, isVideo } from '@/utils'
 import request from '@/utils/request'
 
 /**
@@ -66,9 +66,16 @@ export const getRepoPathContent = (userConfigInfo: UserConfigInfoModel, path: st
 
       setTimeout(() => {
         res
-          .filter((v: any) => v.type === 'file' && isImage(getFileSuffix(v.name)))
+          .filter(
+            (v: any) =>
+              v.type === 'file'
+              && (isImage(getFileSuffix(v.name)) || isVideo(getFileSuffix(v.name))),
+          )
           .forEach((x: any) => {
-            store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', createManagementImageObject(x, path))
+            store.dispatch(
+              'DIR_IMAGE_LIST_ADD_IMAGE',
+              createManagementImageObject(x, path, isVideo(x.name) ? 'video' : 'image'),
+            )
           })
       }, 120)
 

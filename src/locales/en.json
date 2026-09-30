@@ -167,7 +167,7 @@
     }
   },
   "upload_page": {
-    "upload_area_text": "Drag / Paste / Click here to select images",
+    "upload_area_text": "Drag / Paste / Click here to select images or videos",
     "message1": "Please complete image hosting configuration first",
     "message2": "Please select a repository",
     "message3": "Directory cannot be empty",
@@ -181,7 +181,7 @@
     "add_hash": "Add Hash",
     "add_prefix": "Add Prefix",
     "uploading": "Uploading...",
-    "tip_9": "{name} is not an image format",
+    "tip_9": "{name} is not an image or video format",
     "tip_10": "{name} exceeds {size} MB, skip selection",
     "tip_11": "{name} upload failed"
   },
@@ -213,7 +213,8 @@
     "contextmenu_3": "Root Directory",
     "contextmenu_4": "Open GitHub Repository",
     "text_1": "Please enter a new image name",
-    "text_2": "Upload now"
+    "text_2": "Upload now",
+    "video_preview": "Preview video"
   },
   "toolbox": {
     "tool_1": "Image Compression",

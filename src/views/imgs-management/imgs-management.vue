@@ -36,7 +36,7 @@ async function dirContentHandle(dir: string) {
   const dirContent = getDirContent(dir, dirObject)
   if (dirContent) {
     const dirs = filterDirContent(dirContent, 'dir')
-    const images = filterDirContent(dirContent, 'image')
+    const images = filterDirContent(dirContent, 'file')
     if (!dirs.length && !images.length) {
       await getRepoPathContent(userConfigInfo, dir)
     }
@@ -110,7 +110,7 @@ watch(
     const dirContent = getDirContent(viewDir, nv)
     if (dirContent) {
       currentPathDirList.value = filterDirContent(dirContent, 'dir')
-      currentPathImageList.value = filterDirContent(dirContent, 'image')
+      currentPathImageList.value = filterDirContent(dirContent, 'file')
       store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
     }
   },

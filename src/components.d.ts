@@ -77,6 +77,7 @@ declare module 'vue' {
     IEpUploadFilled: typeof import('~icons/ep/upload-filled')['default']
     IEpUser: typeof import('~icons/ep/user')['default']
     IEpUserFilled: typeof import('~icons/ep/user-filled')['default']
+    IEpVideoPlay: typeof import('~icons/ep/video-play')['default']
     ImageLinkRuleConfig: typeof import('./components/image-link-rule-config/image-link-rule-config.vue')['default']
     ImgProcessStateCard: typeof import('./components/tools/img-process-state-card/img-process-state-card.vue')['default']
     NavContent: typeof import('./components/nav-content/nav-content.vue')['default']

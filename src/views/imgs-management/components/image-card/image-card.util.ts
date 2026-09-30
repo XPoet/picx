@@ -12,6 +12,7 @@ import {
   getFileSize,
   getFileSuffix,
   getUuid,
+  isVideo,
 } from '@/utils'
 import { uploadImageToGitHub } from '@/utils/upload-utils'
 
@@ -55,7 +56,11 @@ export const doRenameImage = async (imgObj: UploadedImageModel, newName: string)
 
   let base64
 
-  if (!suffix.includes('svg')) {
+  if (isVideo(imgObj.name)) {
+    // 视频无法通过 canvas 绘制转码，使用 blob 方式获取 Base64
+    base64 = await blobToBase64ByImageUrl(generateImageLink(imgObj) || '')
+  }
+  else if (!suffix.includes('svg')) {
     base64 = await getBase64ByImageUrl(generateImageLink(imgObj) || '', suffix)
   }
   else {

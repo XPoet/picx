@@ -167,7 +167,7 @@
     }
   },
   "upload_page": {
-    "upload_area_text": "拖拽 / 粘贴 / 点击此处选择图片",
+    "upload_area_text": "拖拽 / 粘贴 / 点击此处选择图片或视频",
     "message1": "请先完成图床配置",
     "message2": "请选择一个仓库",
     "message3": "目录不能为空",
@@ -181,7 +181,7 @@
     "add_hash": "哈希化",
     "add_prefix": "添加前缀",
     "uploading": "正在上传 ...",
-    "tip_9": "{name} 不是图片格式",
+    "tip_9": "{name} 不是图片或视频格式",
     "tip_10": "{name} 超过 {size} MB，跳过选择",
     "tip_11": "{name} 上传失败"
   },
@@ -213,7 +213,8 @@
     "contextmenu_3": "根目录",
     "contextmenu_4": "跳转 GitHub 仓库",
     "text_1": "请输入新的图片名称",
-    "text_2": "立即上传"
+    "text_2": "立即上传",
+    "video_preview": "预览视频"
   },
   "toolbox": {
     "tool_1": "图片压缩",

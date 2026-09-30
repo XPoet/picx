@@ -6,21 +6,21 @@ import { getDirContent } from '@/stores/modules/dir-image-list/utils'
 export { getDirContent }
 
 /**
- * 获取当前目录下所有内容（子目录和图片）
+ * 获取当前目录下所有内容（子目录和文件，文件包含图片和视频）
  * @param content 当前目录内容。
  * @param type 要筛选的内容类型。
  */
 export function filterDirContent(content: DirObject, type: 'dir'): DirObject[]
-export function filterDirContent(content: DirObject, type: 'image'): UploadedImageModel[]
+export function filterDirContent(content: DirObject, type: 'file'): UploadedImageModel[]
 export function filterDirContent(
   content: DirObject,
-  type: 'dir' | 'image',
+  type: 'dir' | 'file',
 ): DirObject[] | UploadedImageModel[] {
   if (type === 'dir') {
     return content.childrenDirs.filter(directory => directory.type === 'dir')
   }
 
-  return content.imageList.filter(image => image.type === 'image')
+  return content.imageList.filter(file => file.type === 'image' || file.type === 'video')
 }
 
 export const shiftKeyHandle = () => {
