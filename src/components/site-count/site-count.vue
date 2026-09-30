@@ -1,26 +1,16 @@
-<template>
-  <div class="site-count border-box" ref="siteCountDom" v-show="isShow">
-    <span class="count-item border-box" v-show="showPV">
-      PV <span class="pv" id="busuanzi_value_site_pv"></span>
-    </span>
-    <span class="count-item border-box" v-show="showUV">
-      UV <span class="uv" id="busuanzi_value_site_uv"></span>
-    </span>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { onMounted, ref, Ref } from 'vue'
+import type { Ref } from 'vue'
+import { onMounted, ref } from 'vue'
 
 defineProps({
   showUV: {
     type: Boolean,
-    default: false
+    default: false,
   },
   showPV: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const siteCountDom: Ref = ref<null | HTMLElement>(null)
@@ -47,6 +37,18 @@ onMounted(() => {
   }
 })
 </script>
+
+<template>
+  <div v-show="isShow" ref="siteCountDom" class="site-count border-box">
+    <span v-show="showPV" class="count-item border-box">
+      PV <span id="busuanzi_value_site_pv" class="pv" />
+    </span>
+    <span v-show="showUV" class="count-item border-box">
+      UV <span id="busuanzi_value_site_uv" class="uv" />
+    </span>
+  </div>
+</template>
+
 <style lang="stylus">
 .site-count {
   display flex
@@ -55,7 +57,6 @@ onMounted(() => {
   color var(--text-color-4)
   font-size 13rem
   transition all 0.2s ease-in
-
 
   .count-item {
     margin-left 6rem

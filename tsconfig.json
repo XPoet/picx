@@ -1,35 +1,17 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
-    "jsx": "preserve",
-    "sourceMap": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "lib": ["esnext", "dom"],
-    "types": [
-      "vite/client",
-      "vite-plugin-pwa/client"
-    ],
-    "typeRoots": [
-      "./node_modules/@types/"
-    ],
-    "baseUrl": "src",
-    "paths": {
-      "@/*": ["./*"]
+  "references": [
+    {
+      "path": "./tsconfig.app.json"
+    },
+    {
+      "path": "./tsconfig.node.json"
+    },
+    {
+      "path": "./tsconfig.test.json"
+    },
+    {
+      "path": "./tsconfig.worker.json"
     }
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
-    "auto-imports.d.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+  "files": []
 }

@@ -1,29 +1,6 @@
-<template>
-  <div class="base64-tool-container">
-    <div v-if="imgList.length" class="base64-tool-left">
-      <img-process-state-card
-        card-type="base64"
-        v-for="img in imgList"
-        :img-obj="img"
-        :key="img.uuid"
-        @remove="remove"
-      />
-    </div>
-    <div class="base64-tool-right" :class="{ 'no-img': !imgList.length }">
-      <getting-images ref="gettingImagesRef" @getImgList="getImgList"></getting-images>
-
-      <div class="user-operate">
-        <el-button v-if="imgList.length" plain type="warning" @click="reset">
-          {{ $t('reset') }}
-        </el-button>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
+import type { ImageHandleResult, ImgProcessStateModel } from '@/common/model'
 import { ref, watch } from 'vue'
-import { ImageHandleResult, ImgProcessStateModel } from '@/common/model'
 import { useStore } from '@/stores'
 
 const store = useStore()
@@ -38,7 +15,7 @@ const getImgList = (imgs: ImageHandleResult[]) => {
       uuid: x.uuid,
       originalName: x.file.name,
       originalSize: x.file.size,
-      originalBase64: x.base64
+      originalBase64: x.base64,
     })
   })
 }
@@ -62,10 +39,33 @@ watch(
   },
   {
     immediate: true,
-    deep: true
-  }
+    deep: true,
+  },
 )
 </script>
+
+<template>
+  <div class="base64-tool-container">
+    <div v-if="imgList.length" class="base64-tool-left">
+      <img-process-state-card
+        v-for="img in imgList"
+        :key="img.uuid"
+        card-type="base64"
+        :img-obj="img"
+        @remove="remove"
+      />
+    </div>
+    <div class="base64-tool-right" :class="{ 'no-img': !imgList.length }">
+      <getting-images ref="gettingImagesRef" @get-img-list="getImgList" />
+
+      <div class="user-operate">
+        <el-button v-if="imgList.length" plain type="warning" @click="reset">
+          {{ $t('reset') }}
+        </el-button>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="stylus">
 @import "base64-tool.styl"

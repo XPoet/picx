@@ -1,11 +1,11 @@
-import { Module } from 'vuex'
-import RootStateTypes from '@/stores/types'
-import UploadImageListStateTypes from './types'
-import { UploadImageModel } from '@/common/model'
+import type { Module } from 'vuex'
+import type UploadImageListStateTypes from './types'
+import type { UploadImageModel } from '@/common/model'
+import type RootStateTypes from '@/stores/types'
 
 const uploadImageListModule: Module<UploadImageListStateTypes, RootStateTypes> = {
   state: {
-    uploadImageList: []
+    uploadImageList: [],
   },
 
   mutations: {},
@@ -29,12 +29,12 @@ const uploadImageListModule: Module<UploadImageListStateTypes, RootStateTypes> =
     // 上传处理的图片列表 - 重置
     UPLOAD_IMG_LIST_RESET({ state }) {
       state.uploadImageList = []
-    }
+    },
   },
 
   getters: {
-    getUploadImageList: (state): UploadImageModel[] => state.uploadImageList
-  }
+    getUploadImageList: (state): UploadImageModel[] => state.uploadImageList,
+  },
 }
 
 export default uploadImageListModule

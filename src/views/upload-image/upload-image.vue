@@ -1,75 +1,15 @@
-<template>
-  <div class="upload-page-container">
-    <!-- 左侧 / 上传图片列表 -->
-    <div
-      class="upload-page-left page-container"
-      v-if="uploadImageList.length && globalSettings!.elementPlusSize !== ElementPlusSizeEnum.small"
-    >
-      <div class="uploaded-item" v-for="(item, index) in uploadImageList" :key="index + item.uuid">
-        <upload-image-card :img-obj="item" @remove="remove($event)" />
-      </div>
-    </div>
-
-    <!-- 右侧 / 上传操作 -->
-    <div class="upload-page-right page-container" :class="{ 'has-left': uploadImageList.length }">
-      <!-- 选择图片区域 -->
-      <div class="row-item">
-        <div class="content-box">
-          <getting-images :disabled="uploading" ref="gettingImagesRef" @getImgList="setImgList" />
-        </div>
-      </div>
-
-      <!-- 状态信息区域 -->
-      <div class="row-item">
-        <div class="content-box upload-area-status">
-          <selected-info-bar />
-          <span class="upload-count" v-if="uploadImageList.length">
-            {{ $t('uploaded') }}：{{
-              uploadImageList.filter((x) => x.uploadStatus.progress === 100).length
-            }}
-            /
-            {{ uploadImageList.length }}
-          </span>
-        </div>
-      </div>
-
-      <!-- 部署 -->
-      <div class="row-item" v-if="userConfigInfo.logined">
-        <div class="content-box">
-          <deploy-status-bar :disabled="!isCanDeploy" />
-        </div>
-      </div>
-
-      <!-- 重置 & 上传   -->
-      <div class="row-item" v-if="uploadImageList.length">
-        <div class="content-box operation-btn">
-          <el-button :disabled="uploading" plain type="warning" @click="resetUploadInfo">
-            {{ $t('reset') }} <span class="shortcut-key">{{ shortcutKey }} A</span>
-          </el-button>
-          <el-button :disabled="uploading" plain type="primary" @click="uploadImage">
-            {{ $t('upload') }} <span class="shortcut-key">{{ shortcutKey }} S</span>
-          </el-button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script lang="ts" setup>
-import { computed, watch, ref, Ref, onMounted, getCurrentInstance } from 'vue'
-import { store } from '@/stores'
+import type { Ref } from 'vue'
+import type { UploadedImageModel, UploadImageModel } from '@/common/model'
+import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
+import { ElementPlusSizeEnum, UploadStatusEnum } from '@/common/model'
 import router from '@/router'
-import {
-  ElementPlusSizeEnum,
-  UploadedImageModel,
-  UploadImageModel,
-  UploadStatusEnum
-} from '@/common/model'
+import { store } from '@/stores'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
-import { generateUploadImageObject } from './upload-image.util'
 import { uploadImagesToGitHub, uploadImageToGitHub } from '@/utils/upload-utils'
-import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
 import SelectedInfoBar from '@/views/upload-image/components/dir-info-bar/dir-info-bar.vue'
+import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
+import { generateUploadImageObject } from './upload-image.util'
 
 const instance = getCurrentInstance()
 
@@ -97,7 +37,7 @@ const resetGettingImages = () => {
 }
 
 // 上传图片的具体操作
-// eslint-disable-next-line consistent-return
+
 const doUploadImages = async (imgList: UploadImageModel[]) => {
   // 单张图片
   if (imgList.length === 1) {
@@ -122,11 +62,12 @@ const afterUploadSuccess = async (uploadedImg: UploadedImageModel[], isBatch: bo
   // 自动复制图片链接到系统剪贴板
   if (isBatch) {
     batchCopyImageLinks(uploadedImg, true)
-  } else {
+  }
+  else {
     copyImageLink(uploadedImg[0], true)
   }
   await store.dispatch('SET_USER_CONFIG_INFO', {
-    viewDir: userConfigInfo.selectedDir
+    viewDir: userConfigInfo.selectedDir,
   })
 }
 
@@ -152,7 +93,7 @@ const uploadImage = async () => {
     return
   }
 
-  const notYetUploadList = uploadImageList.value.filter((x) => x.uploadStatus.progress === 0)
+  const notYetUploadList = uploadImageList.value.filter(x => x.uploadStatus.progress === 0)
 
   if (notYetUploadList.length === 0) {
     ElMessage.error({ message: instance?.proxy?.$t('upload_page.message4') })
@@ -163,9 +104,9 @@ const uploadImage = async () => {
   const uploadRes: UploadStatusEnum = (await doUploadImages(notYetUploadList)) as UploadStatusEnum
   uploading.value = false
   const uploadedImg = notYetUploadList
-    .filter((v) => v.uploadStatus.progress === 100)
+    .filter(v => v.uploadStatus.progress === 100)
     .map((x: UploadImageModel) => x.uploadedImg!)
-  // eslint-disable-next-line default-case
+
   switch (uploadRes) {
     // 单张图片上传成功
     case UploadStatusEnum.uploaded:
@@ -203,21 +144,21 @@ watch(
   () => logoutStatus,
   (_n) => {
     // 如果退出登录，清空信息
-    // eslint-disable-next-line no-unused-expressions
+
     !_n && resetUploadInfo()
-  }
+  },
 )
 
 watch(
   () => store.state.uploadImageListModule.uploadImageList,
   (nv) => {
     uploadImageList.value = nv
-    isCanDeploy.value = uploadImageList.value.some((x) => x.uploadStatus.progress === 100)
+    isCanDeploy.value = uploadImageList.value.some(x => x.uploadStatus.progress === 100)
   },
   {
     immediate: true,
-    deep: true
-  }
+    deep: true,
+  },
 )
 
 const registerShortcuts = () => {
@@ -247,6 +188,63 @@ onMounted(() => {
   registerShortcuts()
 })
 </script>
+
+<template>
+  <div class="upload-page-container">
+    <!-- 左侧 / 上传图片列表 -->
+    <div
+      v-if="uploadImageList.length && globalSettings!.elementPlusSize !== ElementPlusSizeEnum.small"
+      class="upload-page-left page-container"
+    >
+      <div v-for="(item, index) in uploadImageList" :key="index + item.uuid" class="uploaded-item">
+        <UploadImageCard :img-obj="item" @remove="remove($event)" />
+      </div>
+    </div>
+
+    <!-- 右侧 / 上传操作 -->
+    <div class="upload-page-right page-container" :class="{ 'has-left': uploadImageList.length }">
+      <!-- 选择图片区域 -->
+      <div class="row-item">
+        <div class="content-box">
+          <getting-images ref="gettingImagesRef" :disabled="uploading" @get-img-list="setImgList" />
+        </div>
+      </div>
+
+      <!-- 状态信息区域 -->
+      <div class="row-item">
+        <div class="content-box upload-area-status">
+          <SelectedInfoBar />
+          <span v-if="uploadImageList.length" class="upload-count">
+            {{ $t('uploaded') }}：{{
+              uploadImageList.filter((x) => x.uploadStatus.progress === 100).length
+            }}
+            /
+            {{ uploadImageList.length }}
+          </span>
+        </div>
+      </div>
+
+      <!-- 部署 -->
+      <div v-if="userConfigInfo.logined" class="row-item">
+        <div class="content-box">
+          <deploy-status-bar :disabled="!isCanDeploy" />
+        </div>
+      </div>
+
+      <!-- 重置 & 上传   -->
+      <div v-if="uploadImageList.length" class="row-item">
+        <div class="content-box operation-btn">
+          <el-button :disabled="uploading" plain type="warning" @click="resetUploadInfo">
+            {{ $t('reset') }} <span class="shortcut-key">{{ shortcutKey }} A</span>
+          </el-button>
+          <el-button :disabled="uploading" plain type="primary" @click="uploadImage">
+            {{ $t('upload') }} <span class="shortcut-key">{{ shortcutKey }} S</span>
+          </el-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style lang="stylus">
 @import "./upload-image.styl"

@@ -1,5 +1,6 @@
 export const PICX_REPO_NAME = 'XPoet/picx'
 export const INIT_REPO_NAME = 'picx-images-hosting'
+export const INIT_REPO_SHORT_NAME = 'picx-ih'
 export const INIT_REPO_DESC = 'PicX images hosting repository'
 export const INIT_REPO_BARNCH = 'master'
 export const GH_PAGES = 'gh-pages'
@@ -11,5 +12,9 @@ export const PICX_UPDATE_SETTINGS_MSG = 'Update settings via PicX (https://githu
 export const PICX_INIT_REPO_MSG = 'Init repo via PicX (https://github.com/XPoet/picx)'
 
 export const PICX_INIT_DEPLOY_MSG = 'Init deploy status via PicX (https://github.com/XPoet/picx)'
-export const PICX_UPDATE_DEPLOY_MSG =
-  'Update deploy status via PicX (https://github.com/XPoet/picx)'
+export const PICX_UPDATE_DEPLOY_MSG
+  = 'Update deploy status via PicX (https://github.com/XPoet/picx)'
+
+export const PICX_INIT_CNAME_MSG = 'Init CNAME via PicX (https://github.com/XPoet/picx)'
+export const PICX_UPDATE_CNAME_MSG = 'Update CNAME via PicX (https://github.com/XPoet/picx)'
+export const PICX_DEL_CNAME_MSG = 'Delete CNAME via PicX (https://github.com/XPoet/picx)'

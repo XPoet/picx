@@ -97,7 +97,10 @@
       "position_1": "左上角",
       "position_2": "左下角",
       "position_3": "右上角",
-      "position_4": "右下角"
+      "position_4": "右下角",
+      "position_5": "全螢幕",
+      "rotate": "旋轉角度",
+      "gap": "平鋪間距"
     },
     "img_compress": {
       "title": "圖片壓縮設定",
@@ -109,7 +112,8 @@
       "radio_2": "mozJPEG",
       "radio_2_desc": "壓縮後圖片格式為 jpg，相容性最好，所有瀏覽器支援",
       "radio_3": "avif",
-      "radio_3_desc": "壓縮後圖片格式為 avif，壓縮率極高，部分現代瀏覽器支援"
+      "radio_3_desc": "壓縮後圖片格式為 avif，壓縮率極高，部分現代瀏覽器支援",
+      "radio_4_desc": "壓縮後圖片格式為 png，無損最佳化並保留透明通道，適合截圖和圖形類圖片，照片類圖片體積可能增大"
     },
     "link_rule": {
       "title": "圖片連結規則配置",
@@ -127,7 +131,8 @@
       "error_msg_2": "{action}失敗，圖片連結規則必須包含 {path}",
       "error_msg_3": "圖片連結規則缺少 {rules}，是否確認{action}？",
       "add": "新增",
-      "edit": "編輯"
+      "edit": "編輯",
+      "gh_pages_not_deployed": "圖床儲存庫尚未部署 GitHub Pages，暫不能選擇此圖片連結規則，是否立即一鍵部署？"
     },
     "link_format": {
       "title": "圖片連結格式設定",
@@ -144,21 +149,21 @@
       "fail": "部署失敗",
       "fail2": "部署失敗，請稍後再試",
       "deploying": "正在部署到 GitHub Pages，該過程持續 1 分鐘左右，請耐心等待 ...",
-      "not_deployed": "未部署"
+      "not_deployed": "未部署",
+      "custom_domain_label": "自訂網域",
+      "custom_domain_placeholder": "例如 img.example.com",
+      "custom_domain_desc": "儲存後會在儲存庫根目錄建立 CNAME 檔案並自動部署到 GitHub Pages，還需在 DNS 服務商處新增 CNAME 記錄指向 {pagesDomain}",
+      "custom_domain_save": "儲存",
+      "custom_domain_invalid": "網域格式不正確，請輸入如 img.example.com 的網域",
+      "custom_domain_synced": "CNAME 檔案已同步，自訂網域將在 GitHub Pages 重新部署後生效",
+      "custom_domain_deleted": "已清除自訂網域，CNAME 檔案已刪除",
+      "custom_domain_fail": "CNAME 檔案同步失敗，請稍後再試"
     },
     "theme": {
       "title": "主題設定",
       "system": "跟隨系統",
       "dark": "黑夜",
       "light": "白晝"
-    },
-    "cloud_settings": {
-      "tip_1": "偵測到你的設定資料未儲存到雲端倉庫，是否儲存？",
-      "tip_2": "偵測到你的雲端倉庫存在設定文件，是否使用？",
-      "tip_3": "偵測到你的設定資料有變化，是否同步到雲端倉庫？",
-      "tip_4": "本地設定資料與雲端倉庫設定資料一致",
-      "success_msg_1": "保存成功",
-      "success_msg_2": "更新成功"
     }
   },
   "upload_page": {
@@ -206,6 +211,7 @@
     "contextmenu_1": "從目前位置上傳新圖片",
     "contextmenu_2": "上傳圖片到 {dir}",
     "contextmenu_3": "根目錄",
+    "contextmenu_4": "跳轉 GitHub 倉庫",
     "text_1": "請輸入新的圖片名稱",
     "text_2": "立即上傳"
   },

@@ -1,50 +1,9 @@
-<template>
-  <div class="compress-tool-container">
-    <div v-if="imgList.length" class="compress-tool-left">
-      <img-process-state-card
-        v-for="img in imgList"
-        :img-obj="img"
-        :key="img.uuid"
-        @remove="remove"
-      />
-    </div>
-    <div class="compress-tool-right" :class="{ 'no-img': !imgList.length }">
-      <getting-images ref="gettingImagesRef" @getImgList="getImgList"></getting-images>
-
-      <compress-config-box
-        ref="compressConfigBoxRef"
-        style="margin-top: 18rem"
-        @encoder="setCompressEncoder($event)"
-      />
-
-      <div class="user-operate" :class="{ compressed: isCompressed && imgList.length > 1 }">
-        <el-button v-if="isCompressed && imgList.length > 1" plain type="success" @click="download">
-          {{ $t('toolbox.batch_download') }}
-        </el-button>
-        <div>
-          <el-button v-if="imgList.length" plain type="warning" @click="reset">
-            {{ $t('reset') }}
-          </el-button>
-          <el-button
-            v-if="imgList.length"
-            :disabled="compressing || isCompressed"
-            plain
-            type="primary"
-            @click="compress"
-          >
-            {{ $t('toolbox.compress') }}
-          </el-button>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
+import type { ImageHandleResult, ImgProcessStateModel } from '@/common/model'
 import { ref, watch } from 'vue'
-import { CompressEncoderEnum, ImageHandleResult, ImgProcessStateModel } from '@/common/model'
-import { compressImage, downloadImage, imgFileToBase64 } from '@/utils'
+import { CompressEncoderEnum } from '@/common/model'
 import { useStore } from '@/stores'
+import { compressImage, downloadImage, imgFileToBase64 } from '@/utils'
 
 const store = useStore()
 
@@ -66,7 +25,7 @@ const getImgList = (imgs: ImageHandleResult[]) => {
       originalName: x.file.name,
       originalSize: x.file.size,
       originalBase64: x.base64,
-      originalFile: x.file
+      originalFile: x.file,
     })
   })
 }
@@ -87,7 +46,7 @@ const reset = () => {
 // 压缩
 const compress = async () => {
   compressing.value = true
-  // eslint-disable-next-line no-restricted-syntax
+
   for (const img of imgList.value) {
     img.processing = true
     img.finialFile = await compressImage(img.originalFile, compressEncoder.value)
@@ -120,10 +79,52 @@ watch(
   },
   {
     immediate: true,
-    deep: true
-  }
+    deep: true,
+  },
 )
 </script>
+
+<template>
+  <div class="compress-tool-container">
+    <div v-if="imgList.length" class="compress-tool-left">
+      <img-process-state-card
+        v-for="img in imgList"
+        :key="img.uuid"
+        :img-obj="img"
+        @remove="remove"
+      />
+    </div>
+    <div class="compress-tool-right" :class="{ 'no-img': !imgList.length }">
+      <getting-images ref="gettingImagesRef" @get-img-list="getImgList" />
+
+      <compress-config-box
+        ref="compressConfigBoxRef"
+        style="margin-top: 18rem"
+        @encoder="setCompressEncoder($event)"
+      />
+
+      <div class="user-operate" :class="{ compressed: isCompressed && imgList.length > 1 }">
+        <el-button v-if="isCompressed && imgList.length > 1" plain type="success" @click="download">
+          {{ $t('toolbox.batch_download') }}
+        </el-button>
+        <div>
+          <el-button v-if="imgList.length" plain type="warning" @click="reset">
+            {{ $t('reset') }}
+          </el-button>
+          <el-button
+            v-if="imgList.length"
+            :disabled="compressing || isCompressed"
+            plain
+            type="primary"
+            @click="compress"
+          >
+            {{ $t('toolbox.compress') }}
+          </el-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="stylus">
 @import "./compress-tool.styl"

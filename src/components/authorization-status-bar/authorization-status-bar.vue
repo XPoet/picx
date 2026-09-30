@@ -1,10 +1,27 @@
+<script setup lang="ts">
+import { computed, shallowRef } from 'vue'
+import router from '@/router'
+import { store } from '@/stores'
+import { isAuthorizeExpire } from '@/views/picx-login/picx-login.util'
+
+const icon = shallowRef({ IEpCheck, IEpClose, IEpSwitch })
+
+const { token, isAutoAuthorize, installed } = computed(
+  () => store.getters.getGitHubAuthorizationInfo,
+).value
+
+const onOK = () => {
+  router.push({ path: '/login', query: { jump: '0' } })
+}
+</script>
+
 <template>
   <div
     class="authorization-status-box status-bar"
     :class="{
       success: isAutoAuthorize && token && !isAuthorizeExpire(),
       warning: isAutoAuthorize && token && !isAuthorizeExpire() && installed === false,
-      error: isAutoAuthorize && token && isAuthorizeExpire()
+      error: isAutoAuthorize && token && isAuthorizeExpire(),
     }"
   >
     <div>
@@ -22,23 +39,6 @@
     </el-button>
   </div>
 </template>
-
-<script setup lang="ts">
-import { shallowRef, computed } from 'vue'
-import router from '@/router'
-import { store } from '@/stores'
-import { isAuthorizeExpire } from '@/views/picx-login/picx-login.util'
-
-const icon = shallowRef({ IEpCheck, IEpClose, IEpSwitch })
-
-const { token, isAutoAuthorize, installed } = computed(
-  () => store.getters.getGitHubAuthorizationInfo
-).value
-
-const onOK = () => {
-  router.push({ path: '/login', query: { jump: '0' } })
-}
-</script>
 
 <style scoped lang="stylus">
 @import "authorization-status-bar.styl"

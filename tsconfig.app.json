@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "rootDir": "./src",
+    "paths": {
+      "@/*": ["./src/*"],
+      "element-plus": ["./src/types/element-plus.d.ts"],
+      "element-plus/es": ["./src/types/element-plus.d.ts"],
+      "vue-i18n": ["./src/types/vue-i18n.d.ts"]
+    },
+    "types": ["vite/client", "@types/web-bluetooth"]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "src/**/*.d.ts",
+    "src/auto-imports.d.ts",
+    "src/components.d.ts"
+  ],
+  "exclude": [
+    "src/plugins/vite/**",
+    "src/stores/modules/*/index.ts",
+    "src/stores/types.ts",
+    "src/workers/**"
+  ]
+}

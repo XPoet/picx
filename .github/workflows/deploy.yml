@@ -1,32 +1,60 @@
-name: deploy
+name: Release and Deploy
 
 on:
   push:
     branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: release-and-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
 
 jobs:
-  deploy:
+  release-and-deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v5
+        with:
+          # Full history and tags are required to analyze commits since the last release
+          fetch-depth: 0
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.18.0
+          run_install: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v5
         with:
-          node-version: "16"
+          node-version-file: .nvmrc
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm install --legacy-peer-deps
+        run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: npm run build
+      - name: Verify (lint / style / typecheck / test / build)
+        run: pnpm verify
 
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Release (version bump / changelog / tag / GitHub Release)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm exec semantic-release
+
+      - name: Resolve release version
+        id: release_version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
         with:
           publish_dir: ./dist
           github_token: ${{ secrets.GH_PAGES_DEPLOY }}
           user_name: ${{ secrets.MY_USER_NAME }}
           user_email: ${{ secrets.MY_USER_EMAIL }}
-          commit_message: Update PicX
+          commit_message: Deploy PicX v${{ steps.release_version.outputs.version }}

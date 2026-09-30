@@ -1,49 +1,26 @@
-import { DirObject } from '@/stores/modules/dir-image-list/types'
+import type { UploadedImageModel } from '@/common/model'
+import type { DirObject } from '@/stores/modules/dir-image-list/types'
 import { store } from '@/stores'
+import { getDirContent } from '@/stores/modules/dir-image-list/utils'
 
-function getContent(targetContent: any, dirList: string[], n: number): any {
-  if (targetContent) {
-    if (dirList.length === n) {
-      return targetContent
-    }
-    return getContent(
-      targetContent.childrenDirs?.find((v: any) => v.dir === dirList[n]),
-      dirList,
-      // eslint-disable-next-line no-param-reassign,no-plusplus
-      ++n
-    )
-  }
-  return null
-}
+export { getDirContent }
 
 /**
  * 获取当前目录下所有内容（子目录和图片）
- * @param dirPath
- * @param dirObj
+ * @param content 当前目录内容。
+ * @param type 要筛选的内容类型。
  */
-export const getDirContent = (dirPath: string, dirObj: DirObject) => {
-  if (dirPath === '/') {
-    return dirObj
-  }
-  const dirList: string[] = dirPath.split('/')
-  return getContent(dirObj, dirList, 0)
-}
-
-/**
- * 过滤当前目录的内容（子目录或图片）
- * @param content
- * @param type
- */
-export const filterDirContent = (content: any, type: string): any => {
+export function filterDirContent(content: DirObject, type: 'dir'): DirObject[]
+export function filterDirContent(content: DirObject, type: 'image'): UploadedImageModel[]
+export function filterDirContent(
+  content: DirObject,
+  type: 'dir' | 'image',
+): DirObject[] | UploadedImageModel[] {
   if (type === 'dir') {
-    return content.childrenDirs?.filter((x: any) => x.type === 'dir')
+    return content.childrenDirs.filter(directory => directory.type === 'dir')
   }
 
-  if (type === 'image') {
-    return content.imageList.filter((x: any) => x.type === 'image')
-  }
-
-  return []
+  return content.imageList.filter(image => image.type === 'image')
 }
 
 export const shiftKeyHandle = () => {
@@ -51,7 +28,7 @@ export const shiftKeyHandle = () => {
     const keyCode = e.keyCode || e.which || e.charCode
     if (keyCode === 16) {
       store.commit('SET_UPLOAD_AREA_STATE', {
-        pressShiftKey: true
+        pressShiftKey: true,
       })
     }
   })
@@ -60,7 +37,7 @@ export const shiftKeyHandle = () => {
     const keyCode = e.keyCode || e.which || e.charCode
     if (keyCode === 16) {
       store.commit('SET_UPLOAD_AREA_STATE', {
-        pressShiftKey: false
+        pressShiftKey: false,
       })
     }
   })

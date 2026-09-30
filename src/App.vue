@@ -1,10 +1,10 @@
-<template>
-  <app-wrap />
-</template>
-
 <script setup lang="ts">
 import AppWrap from '@/views/app-wrap/app-wrap.vue'
 </script>
+
+<template>
+  <AppWrap />
+</template>
 
 <style lang="stylus">
 #app {

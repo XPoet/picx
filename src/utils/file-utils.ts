@@ -1,9 +1,9 @@
+import type { ImageHandleResult } from '@/common/model'
 import { ElMessage } from 'element-plus'
-import { ImageHandleResult } from '@/common/model'
-import { getUuid } from '@/utils/common-utils'
-import { imgFileToBase64 } from '@/utils/image-utils'
 import { IMG_UPLOAD_MAX_SIZE } from '@/common/constant'
 import i18n from '@/plugins/vue/i18n'
+import { getUuid } from '@/utils/common-utils'
+import { imgFileToBase64 } from '@/utils/image-utils'
 
 /**
  * 获取文件名
@@ -29,8 +29,8 @@ export const getFileSuffix = (filename: string) => {
  */
 export const isImage = (fileType: string): boolean => {
   fileType = fileType.toLowerCase()
-  return /(png|jpg|jpeg|gif|webp|awebp|avif|svg\+xml|svg|x-icon|vnd.microsoft.icon|ico)$/.test(
-    fileType
+  return /(?:png|jpg|jpeg|gif|webp|awebp|avif|svg\+xml|svg|x-icon|vnd.microsoft.icon|ico)$/.test(
+    fileType,
   )
 }
 
@@ -40,7 +40,7 @@ export const isImage = (fileType: string): boolean => {
  */
 export const isNeedCompress = (imageType: string): boolean => {
   imageType = imageType.toLowerCase()
-  return /(png|jpg|jpeg|webp|avif)$/.test(imageType)
+  return /(?:png|jpg|jpeg|webp|avif)$/.test(imageType)
 }
 
 /**
@@ -49,7 +49,7 @@ export const isNeedCompress = (imageType: string): boolean => {
  */
 export const isNeedWatermark = (imageType: string): boolean => {
   imageType = imageType.toLowerCase()
-  return /(png|jpg|jpeg|webp|avif)$/.test(imageType)
+  return /(?:png|jpg|jpeg|webp|avif)$/.test(imageType)
 }
 
 /**
@@ -83,7 +83,7 @@ export const gettingFilesHandle = (file: File): Promise<ImageHandleResult | null
 
     if (getFileSize(base64.length) >= IMG_UPLOAD_MAX_SIZE * 1024) {
       ElMessage.error(
-        i18n.global.t('upload_page.tip_10', { name: file.name, size: IMG_UPLOAD_MAX_SIZE })
+        i18n.global.t('upload_page.tip_10', { name: file.name, size: IMG_UPLOAD_MAX_SIZE }),
       )
       resolve(null)
     }
@@ -91,7 +91,7 @@ export const gettingFilesHandle = (file: File): Promise<ImageHandleResult | null
     resolve({
       uuid: getUuid(),
       base64,
-      file
+      file,
     })
   })
 }
