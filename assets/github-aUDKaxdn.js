@@ -1,0 +1,1 @@
+var e=`https://github.com`,t=t=>{let{owner:n}=t;return`${e}/${n}`},n=t=>{let{owner:n,repo:r}=t;return`${e}/${n}/${r}`},r=(t,n)=>{let{owner:r,repo:i,branch:a}=t;return`${e}/${r}/${i}/tree/${a}${n?`/${n}`:``}`};export{r as n,n as r,t};
