@@ -25,6 +25,7 @@ import {
   DirModeEnum,
   ElementPlusSizeEnum,
   ImageLinkTypeEnum,
+  ImageSortEnum,
   LanguageEnum,
   ThemeModeEnum,
   WatermarkPositionEnum,
@@ -163,6 +164,9 @@ function createDefaultUserSettings(): UserSettingsModel {
     compress: {
       enable: true,
       encoder: CompressEncoderEnum.webP,
+    },
+    management: {
+      sort: ImageSortEnum.default,
     },
     imageLinkType: {
       selected: ImageLinkTypeEnum.GitHub,

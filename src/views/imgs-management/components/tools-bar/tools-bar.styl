@@ -25,5 +25,19 @@
       font-size 22rem
       cursor pointer
     }
+
+    .sort-dropdown {
+      cursor pointer
+
+      // 命中区域扩大到 44×44px，负外边距补偿使图标视觉位置与相邻图标一致
+      .el-icon {
+        margin 0 -1rem 0 -11rem
+        padding 11rem
+      }
+
+      .btn-icon.is-active {
+        color var(--el-color-primary)
+      }
+    }
   }
 }

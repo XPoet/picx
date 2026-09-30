@@ -1,4 +1,9 @@
-import type { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
+import type {
+  CompressEncoderEnum,
+  ImageLinkFormatModel,
+  ImageLinkRuleModel,
+  ImageSortEnum,
+} from '@/common/model'
 
 export enum ElementPlusSizeEnum {
   large = 'large',
@@ -47,6 +52,10 @@ export interface UserSettingsModel {
   compress: {
     enable: boolean
     encoder: CompressEncoderEnum
+  }
+  management: {
+    /** 图床管理页排序模式 */
+    sort: ImageSortEnum
   }
   imageLinkType: {
     selected: string

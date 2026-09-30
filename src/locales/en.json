@@ -188,6 +188,11 @@
   },
   "management_page": {
     "reload": "Reload",
+    "sort": "Sort",
+    "sortDefault": "Default",
+    "sortNameAsc": "Name ascending",
+    "sortNameDesc": "Name descending",
+    "sortTimeDesc": "Newest first",
     "loadingTxt1": "Loading...",
     "loadingTxt2": "Renaming...",
     "loadingTxt3": "Deleting...",

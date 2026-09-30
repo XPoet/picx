@@ -48,6 +48,7 @@ const uploadedHandle = (
     deleting: false,
     size: res.size,
     deployed: true,
+    uploadTime: Date.now(),
   }
 
   img.uploadedImg = uploadedImg

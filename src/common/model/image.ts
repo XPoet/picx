@@ -1,4 +1,21 @@
 /**
+ * 图床管理页排序模式枚举
+ */
+export enum ImageSortEnum {
+  /** 默认排序（GitHub API 返回顺序） */
+  default = 'default',
+
+  /** 名称升序 */
+  nameAsc = 'nameAsc',
+
+  /** 名称降序 */
+  nameDesc = 'nameDesc',
+
+  /** 最新上传优先（按上传时间降序） */
+  timeDesc = 'timeDesc',
+}
+
+/**
  * 已上传的图片对象 Model
  */
 export interface UploadedImageModel {
@@ -13,6 +30,8 @@ export interface UploadedImageModel {
   checked: boolean
   active?: boolean
   deployed?: boolean
+  /** 上传时间（毫秒时间戳）；历史数据或未回填的数据为 undefined */
+  uploadTime?: number
 }
 
 /**

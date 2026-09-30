@@ -188,6 +188,11 @@
   },
   "management_page": {
     "reload": "重新加载",
+    "sort": "排序",
+    "sortDefault": "默认排序",
+    "sortNameAsc": "名称升序",
+    "sortNameDesc": "名称降序",
+    "sortTimeDesc": "最新上传优先",
     "loadingTxt1": "加载中 ...",
     "loadingTxt2": "正在重命名 ...",
     "loadingTxt3": "删除中 ...",
