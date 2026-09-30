@@ -63,6 +63,7 @@ export interface UploadImageModel {
     hash: string // 哈希值
     isAddPrefix: boolean // 是否添加前缀
     prefix: string // 前缀
+    timestamp: string // 时间戳命名时生成的时间戳，空字符串表示未使用时间戳命名
   }
 
   // 上传前的状态

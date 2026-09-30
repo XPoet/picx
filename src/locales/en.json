@@ -81,6 +81,8 @@
       "title": "Image Name Settings",
       "hash_switch_name": "Hashing",
       "hash_switch_desc": "Add a hash value to the image name during upload to ensure uniqueness. Highly recommended to enable.",
+      "timestamp_switch_name": "Timestamp Naming",
+      "timestamp_switch_desc": "Replace the original image name with a timestamp during upload, e.g., 1716843600000.jpg. When enabled, other naming options will be turned off automatically.",
       "prefix_switch_name": "Add Prefix",
       "prefix_switch_desc": "Add a prefix to the image name during upload, for example: abc-image.jpg, where 'abc-' is the prefix.",
       "prefix_input_placeholder": "Enter prefix ..."

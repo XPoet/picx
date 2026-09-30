@@ -159,6 +159,7 @@ function createDefaultUserSettings(): UserSettingsModel {
   return {
     imageName: {
       enableHash: true,
+      enableTimestamp: false,
       addPrefix: { enable: false, prefix: '' },
     },
     compress: {

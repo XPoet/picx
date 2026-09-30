@@ -26,6 +26,29 @@ const saveUserSettings = () => {
   })
 }
 
+// 时间戳命名与哈希化、添加前缀互斥
+const onTimestampNamingChange = () => {
+  if (userSettings.imageName.enableTimestamp) {
+    userSettings.imageName.enableHash = false
+    userSettings.imageName.addPrefix.enable = false
+  }
+  persistUserSettings()
+}
+
+const onHashNamingChange = () => {
+  if (userSettings.imageName.enableHash) {
+    userSettings.imageName.enableTimestamp = false
+  }
+  persistUserSettings()
+}
+
+const onPrefixNamingChange = () => {
+  if (userSettings.imageName.addPrefix.enable) {
+    userSettings.imageName.enableTimestamp = false
+  }
+  persistUserSettings()
+}
+
 const setWatermarkConfig = (config: UserSettingsModel['watermark']) => {
   userSettings.watermark.text = config.text
   userSettings.watermark.textColor = config.textColor
@@ -118,15 +141,23 @@ const saveCustomDomain = () => {
             <el-switch
               v-model="userSettings.imageName.enableHash"
               :active-text="$t('settings_page.img_name.hash_switch_name')"
-              @change="persistUserSettings"
+              @change="onHashNamingChange"
             />
             <span class="desc">{{ $t('settings_page.img_name.hash_switch_desc') }}</span>
           </li>
           <li class="setting-item has-desc">
             <el-switch
+              v-model="userSettings.imageName.enableTimestamp"
+              :active-text="$t('settings_page.img_name.timestamp_switch_name')"
+              @change="onTimestampNamingChange"
+            />
+            <span class="desc">{{ $t('settings_page.img_name.timestamp_switch_desc') }}</span>
+          </li>
+          <li class="setting-item has-desc">
+            <el-switch
               v-model="userSettings.imageName.addPrefix.enable"
               :active-text="$t('settings_page.img_name.prefix_switch_name')"
-              @change="persistUserSettings"
+              @change="onPrefixNamingChange"
             />
             <span class="desc">{{ $t('settings_page.img_name.prefix_switch_desc') }}</span>
           </li>

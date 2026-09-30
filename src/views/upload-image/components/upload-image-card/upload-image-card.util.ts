@@ -15,7 +15,11 @@ import {
  */
 export const addPrefixHandle = (isAddPrefix: boolean, img: UploadImageModel) => {
   img.filename.isAddPrefix = isAddPrefix
-  if (isAddPrefix) {
+  if (img.filename.timestamp) {
+    // 时间戳命名的图片，名称固定为时间戳，不叠加前缀
+    img.filename.name = img.filename.timestamp
+  }
+  else if (isAddPrefix) {
     img.filename.name = `${img.filename.prefix}${img.filename.initName}`
   }
   else {

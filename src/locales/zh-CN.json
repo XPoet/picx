@@ -81,6 +81,8 @@
       "title": "图片名称设置",
       "hash_switch_name": "哈希化",
       "hash_switch_desc": "上传时给图片名称增加哈希值，确保图片名称唯一，强烈建议开启",
+      "timestamp_switch_name": "时间戳命名",
+      "timestamp_switch_desc": "上传时用时间戳替换原始图片名称，例如：1716843600000.jpg，开启后其他命名选项将自动关闭",
       "prefix_switch_name": "添加前缀",
       "prefix_switch_desc": "上传时给图片名称增加前缀，例如：abc-image.jpg，abc- 为前缀",
       "prefix_input_placeholder": "请输入前缀 ..."

@@ -44,6 +44,8 @@ export enum LanguageEnum {
 export interface UserSettingsModel {
   imageName: {
     enableHash: boolean
+    /** 时间戳命名，开启时与其他命名选项互斥 */
+    enableTimestamp: boolean
     addPrefix: {
       enable: boolean
       prefix: string

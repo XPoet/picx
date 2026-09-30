@@ -20,6 +20,7 @@ import { deepAssignObject, getLocal, getSession, getUuid, setLocal, setSession }
 const initSettings: UserSettingsModel = {
   imageName: {
     enableHash: true,
+    enableTimestamp: false,
     addPrefix: { enable: false, prefix: '' },
   },
   compress: {
