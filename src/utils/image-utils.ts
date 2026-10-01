@@ -3,6 +3,7 @@ import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo }
 import { DeleteStatusEnum } from '@/common/model'
 import { store } from '@/stores'
 import { getUuid } from '@/utils/common-utils'
+import { purgeImageRuntimeCache } from '@/utils/image-cache-utils'
 import request from '@/utils/request'
 
 /**
@@ -95,6 +96,7 @@ export async function deleteImageFromGitHub(
       resolve(true)
       await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
       await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
+      purgeImageRuntimeCache([path])
     }
     else {
       resolve(false)
@@ -161,6 +163,7 @@ export async function deleteImagesFromGitHub(
     store.dispatch('UPLOAD_IMG_LIST_REMOVE', imgObj.uuid)
     store.dispatch('DIR_IMAGE_LIST_REMOVE', imgObj)
   })
+  purgeImageRuntimeCache(imgObjs.map(x => x.path))
 }
 
 /**

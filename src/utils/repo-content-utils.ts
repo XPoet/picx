@@ -15,6 +15,7 @@ import {
 } from '@/common/api'
 import { PICX_DEL_DIR_DESC, PICX_MOVE_IMG_DESC, PICX_RENAME_DIR_DESC } from '@/common/constant'
 import { store } from '@/stores'
+import { purgeImageRuntimeCache } from '@/utils/image-cache-utils'
 
 interface DirBlob {
   path: string
@@ -151,6 +152,7 @@ export const renameDirOnGitHub = async (
   const res = await commitTreeChanges(userConfigInfo, entries, PICX_RENAME_DIR_DESC)
   if (res) {
     store.dispatch('DIR_IMAGE_LIST_RENAME_DIR', { oldDirPath, newDirName })
+    purgeImageRuntimeCache(blobs.map(({ path }) => path))
   }
   return res
 }
@@ -174,6 +176,7 @@ export const deleteDirOnGitHub = async (
   const res = await commitTreeChanges(userConfigInfo, entries, PICX_DEL_DIR_DESC)
   if (res) {
     store.dispatch('DIR_IMAGE_LIST_REMOVE_DIR_TREE', dirPath)
+    purgeImageRuntimeCache(blobs.map(({ path }) => path))
   }
   return res
 }
@@ -199,6 +202,8 @@ export const moveImageOnGitHub = async (
   const res = await commitTreeChanges(userConfigInfo, entries, PICX_MOVE_IMG_DESC)
   if (res) {
     store.dispatch('DIR_IMAGE_LIST_MOVE_IMAGE', { img, newDir })
+    // 目标路径可能有同名旧文件被覆盖，新旧路径都要清理
+    purgeImageRuntimeCache([img.path, newPath])
   }
   return res
 }
