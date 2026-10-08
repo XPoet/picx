@@ -17,7 +17,6 @@ export interface GlobalSettingsModel {
   language: LanguageEnum
   languageToggleTip: boolean
   theme: ThemeModeEnum
-  showAnnouncement: boolean
 }
 
 export default interface UserSettingsStateTypes {

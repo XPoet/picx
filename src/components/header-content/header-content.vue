@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import SiteAnnouncement from '@/components/site-announcement/site-announcement.vue'
 import router from '@/router'
 import { store } from '@/stores'
 
@@ -21,9 +20,6 @@ const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
     </div>
 
     <div class="header-right">
-      <div class="btn-item">
-        <SiteAnnouncement />
-      </div>
       <div v-if="userConfigInfo.logined" class="btn-item">
         <quick-actions />
       </div>

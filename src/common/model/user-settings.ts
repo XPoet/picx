@@ -87,5 +87,4 @@ export interface UserSettingsModel {
     /** 全屏水印平铺间距（px），仅在 position 为 fullScreen 时生效 */
     gap: number
   }
-  showAnnouncement?: boolean
 }

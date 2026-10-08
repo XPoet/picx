@@ -94,7 +94,6 @@ const initSettings: UserSettingsModel = {
     rotate: -20,
     gap: 80,
   },
-  showAnnouncement: true,
 }
 
 const initUserSettings = (): UserSettingsModel => {
@@ -107,7 +106,6 @@ const initUserSettings = (): UserSettingsModel => {
 
 const initGlobalSettings = (): GlobalSettingsModel => {
   const globalSettings: GlobalSettingsModel = {
-    showAnnouncement: true,
     folded: false,
     elementPlusSize: ElementPlusSizeEnum.default,
     language: LanguageEnum.zhCN,
