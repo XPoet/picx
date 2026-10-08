@@ -35,18 +35,6 @@ const shortcutKey = computed(() => (getOSName() === 'win' ? 'Ctrl + D' : 'Comman
         https://picx-docs.xpoet.cn
       </el-link>
     </div>
-
-    <div class="help-info-item" style="margin-bottom: 2rem">
-      🎁 {{ $t('feedback.text_3') }}
-    </div>
-
-    <div class="help-info-item img">
-      <el-image style="width: 300rem" src="https://xpoet.cn/images/admire-code-wechat.webp" />
-    </div>
-
-    <div class="help-info-item red-text">
-      <strong> ⚠️ {{ $t('feedback.text_4') }} </strong>
-    </div>
   </div>
 </template>
 

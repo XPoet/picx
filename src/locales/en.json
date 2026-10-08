@@ -249,10 +249,8 @@
     "add_watermark": "Add Watermark"
   },
   "feedback": {
-    "text_1": "An image hosting tool built using the GitHub API, offering image upload and hosting, link generation, and a toolkit of common image utilities.",
-    "text_2": "It is recommended to add this site to your browser bookmarks for convenient use in the future.",
-    "text_3": "If PicX is helpful to you, feel free to appreciate the author and support open source.",
-    "text_4": "Disclaimer: Do not use PicX to upload images that violate local laws. The author is not responsible for any consequences."
+    "text_1": "An image hosting tool built using the GitHub API that provides image upload and hosting services, as well as image link generation.",
+    "text_2": "It is recommended to add this site to your browser bookmarks for convenient use in the future."
   },
   "region": {
     "CN": "Mainland China",
