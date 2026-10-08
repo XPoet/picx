@@ -155,7 +155,7 @@ export const throttle = <Args extends unknown[]>(
  */
 export const setWindowTitle = (title: string) => {
   if (title) {
-    document.title = `${i18n.global.t(title)} | PicX`
+    document.title = `${i18n.global.t(title)}`
   }
 }
 
