@@ -26,13 +26,7 @@
   "copy_fail_1": "Copy failed",
   "header": {
     "not_login": "Not log in",
-    "theme": "Theme",
-    "announcement": {
-      "text_1": "Website Announcement",
-      "text_2": "1. PicX v3.0 further simplifies user operations and uniformly uses built-in repository and branch",
-      "text_3": "2. If you need to continue to use customized repository and branch, please use",
-      "text_4": "Don't remind again"
-    }
+    "theme": "Theme"
   },
   "nav": {
     "config": "Image Hosting Configuration",

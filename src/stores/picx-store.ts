@@ -231,7 +231,6 @@ function createDefaultUserSettings(): UserSettingsModel {
       rotate: -20,
       gap: 80,
     },
-    showAnnouncement: true,
   }
 }
 
@@ -254,7 +253,6 @@ function createUserSettings(): UserSettingsModel {
  */
 function createGlobalSettings(): GlobalSettingsModel {
   const globalSettings: GlobalSettingsModel = {
-    showAnnouncement: true,
     folded: false,
     elementPlusSize: ElementPlusSizeEnum.default,
     language: LanguageEnum.zhCN,
