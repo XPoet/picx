@@ -2,6 +2,17 @@
 
 All notable changes of PicX are documented in this file.
 
+## [3.2.0](https://github.com/XPoet/picx/compare/v3.1.0...v3.2.0) (2026-10-08)
+
+### ✨ Features
+
+* add Ctrl/Cmd + D shortcut for one-click deploy ([#340](https://github.com/XPoet/picx/issues/340)) ([ec25c8d](https://github.com/XPoet/picx/commit/ec25c8d4138713029304b5511139a299df725e94))
+* add service worker runtime cache for image hosting images ([faf180b](https://github.com/XPoet/picx/commit/faf180bfc4a7081d5230fef00f40b486f212a30a))
+* add sort modes to the management page image list ([300c45d](https://github.com/XPoet/picx/commit/300c45d666f6a3971a5a56a4d66deb9ac368abfb))
+* add timestamp naming option to image name settings ([#339](https://github.com/XPoet/picx/issues/339)) ([7dd5ec4](https://github.com/XPoet/picx/commit/7dd5ec47731c47dcee29e4276a2cd253bcc58ef5))
+* support renaming and deleting directories and moving images in management page ([#175](https://github.com/XPoet/picx/issues/175),[#331](https://github.com/XPoet/picx/issues/331)) ([6bf5107](https://github.com/XPoet/picx/commit/6bf510781b3fa178b07dd446fc5ca1dbc15b29ef))
+* support uploading and managing mp4 videos ([6fa6272](https://github.com/XPoet/picx/commit/6fa62723d48a5409267f9df44f1bd5a3637feb02))
+
 ## [3.1.0](https://github.com/XPoet/picx/compare/v3.0.2...v3.1.0) (2026-09-30)
 
 ### ✨ Features
