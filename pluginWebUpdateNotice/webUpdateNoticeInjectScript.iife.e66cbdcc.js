@@ -15,5 +15,5 @@
     </div>`}v.innerHTML=y,document.querySelector(`.plugin-web-update-notice-anchor`).appendChild(v),h()}catch(e){console.error(`[pluginWebUpdateNotice] Failed to show notification`,e)}}return e.__checkUpdateSetup__=f,e})({});
   window.__checkUpdateSetup__({"logVersion":true,"injectFileBase":"./"});
       ;const logFn = function Q(e,t){console.log(`version: %c${e}`,`color: #1677ff`),console.log(`release time: %c${new Date(t).toLocaleString()}`,`color: #1677ff`)}
-      ;logFn('b142f4f', 1791441126734)
+      ;logFn('5befeb6', 1791442316628)
     
