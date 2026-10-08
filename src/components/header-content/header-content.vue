@@ -12,10 +12,10 @@ const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
     <div class="header-left border-box">
       <div class="brand-box">
         <div class="logo" @click="router.push('/')">
-          <img src="../../assets/logo.png" alt="PicX">
+          <img src="../../assets/logo.svg" alt="PicX">
         </div>
         <div class="title" @click="router.push('/')">
-          PicX
+          PicX · 图床
         </div>
       </div>
     </div>
