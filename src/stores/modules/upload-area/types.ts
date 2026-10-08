@@ -12,4 +12,6 @@ export default interface UploadAreaStateTypes {
   isPaste: boolean
   pressShiftKey: boolean
   activeInfo: UploadAreaActiveInfo | null
+  isShowMoveImageDialog: boolean
+  moveImageInfo: UploadedImageModel | null
 }

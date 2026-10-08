@@ -4,7 +4,7 @@ import { computed, ref } from 'vue'
 import { ContextmenuEnum } from '@/common/directive/types'
 import { ImageLinkTypeEnum } from '@/common/model'
 import { store } from '@/stores'
-import { copyImageLink, generateImageLink } from '@/utils'
+import { copyImageLink, generateImageLink, isVideo } from '@/utils'
 
 const props = defineProps({
   imageObj: {
@@ -19,6 +19,9 @@ const props = defineProps({
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 const imgUrl = computed(() => generateImageLink(props.imageObj) ?? undefined)
+
+const isVideoFile = computed(() => isVideo(props.imageObj.name))
+const isShowVideoPreview = ref(false)
 
 const noneDeployed = computed(() => {
   return (
@@ -55,9 +58,25 @@ const setDeployStatus = (status: boolean) => {
     @mouseleave="isShowOperateBtn = false"
     @click.shift="onShiftClick(imageObj)"
   >
-    <!-- 图片 -->
+    <!-- 图片 / 视频 -->
     <div class="image-card-top border-box">
+      <div
+        v-if="isVideoFile"
+        class="video-thumb-box"
+        role="button"
+        tabindex="0"
+        :aria-label="$t('management_page.video_preview')"
+        @click.stop="isShowVideoPreview = true"
+        @keydown.enter.prevent="isShowVideoPreview = true"
+        @keydown.space.prevent="isShowVideoPreview = true"
+      >
+        <video class="video-thumb" :src="imgUrl" preload="metadata" muted />
+        <el-icon class="video-play-badge" :size="24">
+          <IEpVideoPlay />
+        </el-icon>
+      </div>
       <el-image
+        v-else
         :src="imgUrl"
         fit="cover"
         loading="lazy"
@@ -105,6 +124,18 @@ const setDeployStatus = (status: boolean) => {
         {{ $t('settings_page.image_hosting_deploy.not_deployed') }}
       </el-tag>
     </div>
+
+    <!-- 视频预览弹窗 -->
+    <el-dialog
+      v-model="isShowVideoPreview"
+      class="video-preview-dialog"
+      append-to-body
+      align-center
+      destroy-on-close
+      width="min(720px, 92vw)"
+    >
+      <video class="video-preview" :src="imgUrl" controls autoplay />
+    </el-dialog>
   </div>
 </template>
 

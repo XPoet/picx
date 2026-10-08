@@ -44,31 +44,6 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/toolbox',
-    name: 'Toolbox',
-    component: () => import('@/views/picx-toolbox/picx-toolbox.vue'),
-    meta: {
-      title: 'nav.toolbox',
-    },
-    children: [
-      {
-        path: '/toolbox/compress',
-        name: 'Compress',
-        component: () => import('@/components/tools/compress-tool/compress-tool.vue'),
-      },
-      {
-        path: '/toolbox/base64',
-        name: 'Base64',
-        component: () => import('@/components/tools/base64-tool/base64-tool.vue'),
-      },
-      {
-        path: '/toolbox/watermark',
-        name: 'Watermark',
-        component: () => import('@/components/tools/watermark-tool/watermark-tool.vue'),
-      },
-    ],
-  },
-  {
     path: '/feedback',
     name: 'feedback',
     component: () => import('@/views/feedback-info/feedback-info.vue'),

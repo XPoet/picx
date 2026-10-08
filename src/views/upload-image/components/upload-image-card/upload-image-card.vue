@@ -3,7 +3,7 @@ import type { UploadImageModel } from '@/common/model'
 import { computed, getCurrentInstance, onMounted, reactive, ref, watch } from 'vue'
 import { RENAME_MAX_LENGTH } from '@/common/constant'
 import { useStore } from '@/stores'
-import { copyImageLink } from '@/utils'
+import { copyImageLink, isVideo } from '@/utils'
 import { formatDatetime } from '@/utils/common-utils'
 import { getFileSize } from '@/utils/file-utils'
 import { addHashHandle, addPrefixHandle, initImgSettings, rename } from './upload-image-card.util'
@@ -32,6 +32,19 @@ const fileNameOperateData = reactive({
 })
 
 const imgNameOperateFolded = ref<boolean>(true)
+
+// 视频文件（MIME 类型或后缀为 mp4）
+const isVideoFile = computed(() => {
+  const file = props.imgObj.fileInfo?.originalFile
+  return !!file && (isVideo(file.type) || isVideo(props.imgObj.filename.suffix))
+})
+
+const imgSrc = computed(
+  () =>
+    props.imgObj.base64.compressBase64
+    || props.imgObj.base64.watermarkBase64
+    || props.imgObj.base64.originalBase64,
+)
 
 const remove = (uuid: string) => {
   emits('remove', uuid)
@@ -110,20 +123,20 @@ onMounted(async () => {
       class="img-show-container"
       :element-loading-text="loadingText"
     >
+      <video
+        v-if="isVideoFile"
+        class="video-player"
+        :src="imgSrc"
+        controls
+        preload="metadata"
+      />
       <el-image
-        :src="
-          imgObj.base64.compressBase64
-            || imgObj.base64.watermarkBase64
-            || imgObj.base64.originalBase64
-        "
+        v-else
+        :src="imgSrc"
         fit="cover"
         loading="lazy"
         :hide-on-click-modal="true"
-        :preview-src-list="[
-          imgObj.base64.compressBase64
-            || imgObj.base64.watermarkBase64
-            || imgObj.base64.originalBase64,
-        ]"
+        :preview-src-list="[imgSrc]"
       />
     </div>
 

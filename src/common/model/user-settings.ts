@@ -1,4 +1,9 @@
-import type { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
+import type {
+  CompressEncoderEnum,
+  ImageLinkFormatModel,
+  ImageLinkRuleModel,
+  ImageSortEnum,
+} from '@/common/model'
 
 export enum ElementPlusSizeEnum {
   large = 'large',
@@ -39,6 +44,8 @@ export enum LanguageEnum {
 export interface UserSettingsModel {
   imageName: {
     enableHash: boolean
+    /** 时间戳命名，开启时与其他命名选项互斥 */
+    enableTimestamp: boolean
     addPrefix: {
       enable: boolean
       prefix: string
@@ -47,6 +54,10 @@ export interface UserSettingsModel {
   compress: {
     enable: boolean
     encoder: CompressEncoderEnum
+  }
+  management: {
+    /** 图床管理页排序模式 */
+    sort: ImageSortEnum
   }
   imageLinkType: {
     selected: string

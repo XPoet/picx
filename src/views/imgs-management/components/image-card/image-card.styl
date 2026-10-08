@@ -32,8 +32,38 @@ $image-card-bottom-height = 58rem
       width 100%
       height 100%
     }
-  }
 
+    .video-thumb-box {
+      position relative
+      display flex
+      align-items center
+      justify-content center
+      width 100%
+      height 100%
+      overflow hidden
+      background #000
+      cursor pointer
+
+      .video-thumb {
+        width 100%
+        height 100%
+        object-fit cover
+        pointer-events none
+      }
+
+      .video-play-badge {
+        position absolute
+        padding 6rem
+        color #fff
+        background rgba(0, 0, 0, 0.45)
+        border-radius 50%
+      }
+
+      &:focus-visible {
+        outline 2rem solid var(--el-color-primary)
+      }
+    }
+  }
 
   .image-card-bottom {
     display flex
@@ -92,4 +122,12 @@ $image-card-bottom-height = 58rem
     top 10rem
     right 10rem
   }
+}
+
+
+// 视频预览弹窗（append-to-body，需置于 .image-card 外层）
+.video-preview {
+  width 100%
+  background #000
+  object-fit contain
 }

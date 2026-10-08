@@ -1,21 +1,25 @@
 <script setup lang="ts">
 import type { DeployItemInfo } from '@/stores/modules/deploy-status/types'
-import { computed } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { DeployServerEnum } from '@/components/deploy-status-bar/deploy-status-bar.model'
 import {
   deployGhPages,
   getDeployServerName,
 } from '@/components/deploy-status-bar/deploy-status-bar.util'
 import { store } from '@/stores'
-import { formatDatetime } from '@/utils'
+import { formatDatetime, getOSName } from '@/utils'
 
-defineProps({
+const props = defineProps({
   disabled: {
     type: Boolean,
     default: false,
   },
 })
 const deployStatusInfo = computed(() => store.getters.getDeployStatusInfo).value
+
+const shortcutKey = computed(() => (getOSName() === 'mac' ? '⌘' : 'Ctrl'))
+
+const isDeploying = ref(false)
 
 const onDeploy = (deployItem: DeployItemInfo) => {
   if (deployItem.type !== DeployServerEnum.githubPages) {
@@ -25,6 +29,37 @@ const onDeploy = (deployItem: DeployItemInfo) => {
   // 部署到 GitHub Pages（内部会先同步主分支 CNAME 与设置的自定义域名一致）
   deployGhPages()
 }
+
+// 一键部署快捷组合键 Command/Ctrl + D，与一键部署按钮等价（部署进行中或按钮禁用时不触发）
+const onDeployShortcut = () => {
+  if (props.disabled || isDeploying.value) {
+    return
+  }
+
+  isDeploying.value = true
+  deployGhPages(() => {
+    isDeploying.value = false
+  })
+}
+
+const onKeydown = (e: KeyboardEvent) => {
+  const keyCode = e.keyCode || e.which || e.charCode
+  const ctrlKey = e.ctrlKey || e.metaKey
+
+  // 一键部署快捷组合键 Command + D
+  if (ctrlKey && keyCode === 68 && !e.repeat) {
+    e.preventDefault()
+    onDeployShortcut()
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('keydown', onKeydown)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', onKeydown)
+})
 </script>
 
 <template>
@@ -60,6 +95,7 @@ const onDeploy = (deployItem: DeployItemInfo) => {
       <div class="right-wrap">
         <el-button type="primary" :disabled="disabled" text @click="onDeploy(di)">
           {{ $t('settings_page.image_hosting_deploy.one_click_deploy') }}
+          <span class="shortcut-key">{{ shortcutKey }} D</span>
         </el-button>
       </div>
     </div>

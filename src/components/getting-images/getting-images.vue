@@ -2,10 +2,15 @@
 import type { ImageHandleResult } from '@/common/model'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useStore } from '@/stores'
-import { gettingFilesHandle, isImage } from '@/utils'
+import { gettingFilesHandle, isImage, isVideo } from '@/utils'
 
-defineProps({
+const props = defineProps({
   disabled: {
+    type: Boolean,
+    default: false,
+  },
+  // 是否允许选择视频文件（默认只允许图片）
+  videoEnabled: {
     type: Boolean,
     default: false,
   },
@@ -17,19 +22,16 @@ const store = useStore()
 
 const uploadAreaState = computed(() => store.getters.getUploadAreaState)
 
-const curShowImg = ref<{ uuid: string, base64: string }>({
-  uuid: '',
-  base64: '',
-})
+const acceptTypes = computed(() => (props.videoEnabled ? 'image/*,video/mp4' : 'image/*'))
+
+const curShowImg = ref<ImageHandleResult | null>(null)
 const imgList = ref<ImageHandleResult[]>([])
+
+const isVideoPreview = computed(() => (curShowImg.value ? isVideo(curShowImg.value.file.type) : false))
 
 const setCurImg = () => {
   const len = imgList.value.length
-  const tmpImg = len > 0 ? imgList.value[len - 1] : { uuid: '', base64: '' }
-  curShowImg.value = {
-    uuid: tmpImg.uuid,
-    base64: tmpImg.base64,
-  }
+  curShowImg.value = len > 0 ? imgList.value[len - 1] : null
 }
 
 const unifiedHandle = async (files: File[]) => {
@@ -40,7 +42,7 @@ const unifiedHandle = async (files: File[]) => {
   imgList.value = []
 
   for (const file of files) {
-    const res = await gettingFilesHandle(file)
+    const res = await gettingFilesHandle(file, props.videoEnabled)
     if (res) {
       imgList.value.push(res)
     }
@@ -75,8 +77,7 @@ const onPaste = async (e: any) => {
 
 const reset = () => {
   imgList.value = []
-  curShowImg.value.uuid = ''
-  curShowImg.value.base64 = ''
+  curShowImg.value = null
 }
 
 const remove = (uuid: string) => {
@@ -85,7 +86,7 @@ const remove = (uuid: string) => {
     imgList.value.splice(rmIdx, 1)
   }
 
-  if (uuid === curShowImg.value.uuid) {
+  if (curShowImg.value && uuid === curShowImg.value.uuid) {
     setCurImg()
   }
 }
@@ -104,14 +105,14 @@ defineExpose({ reset, remove })
 <template>
   <div
     class="getting-images-container"
-    :class="{ focus: uploadAreaState.isActive && curShowImg.base64, disabled }"
+    :class="{ focus: uploadAreaState.isActive && curShowImg, disabled }"
     @dragover.prevent
     @drop.stop.prevent="onDrop"
     @paste.stop="onPaste"
   >
     <label for="input-file-selector" />
-    <input id="input-file-selector" type="file" accept="image/*" multiple @change="onSelect">
-    <div v-if="!curShowImg.base64" class="upload-area-tips">
+    <input id="input-file-selector" type="file" :accept="acceptTypes" multiple @change="onSelect">
+    <div v-if="!curShowImg" class="upload-area-tips">
       <el-icon class="icon">
         <IEpUploadFilled />
       </el-icon>
@@ -119,7 +120,16 @@ defineExpose({ reset, remove })
         {{ $t('upload_page.upload_area_text') }}
       </div>
     </div>
-    <img v-if="curShowImg.base64" class="preview-img" :src="curShowImg.base64">
+    <video
+      v-else-if="isVideoPreview"
+      class="preview-video"
+      :src="curShowImg.base64"
+      controls
+      muted
+      loop
+      preload="metadata"
+    />
+    <img v-else class="preview-img" :src="curShowImg.base64">
   </div>
 </template>
 

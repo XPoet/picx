@@ -1,26 +1,31 @@
 <script lang="ts" setup>
 import type { UploadedImageModel } from '@/common/model'
 import type { DirObject } from '@/stores/modules/dir-image-list/types'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { getRepoPathContent } from '@/common/api'
 import { ContextmenuEnum } from '@/common/directive/types'
-import { DirModeEnum } from '@/common/model'
+import { DirModeEnum, ImageSortEnum } from '@/common/model'
+import { useImageUploadTime } from '@/composables/use-image-upload-time'
 import router from '@/router'
 import { useStore } from '@/stores'
 import FolderCard from '@/views/imgs-management/components/folder-card/folder-card.vue'
 import ImageCard from '@/views/imgs-management/components/image-card/image-card.vue'
 import ImageSelector from '@/views/imgs-management/components/image-selector/image-selector.vue'
+import MoveImageDialog from '@/views/imgs-management/components/move-image-dialog/move-image-dialog.vue'
 import ToolsBar from '@/views/imgs-management/components/tools-bar/tools-bar.vue'
 import {
   filterDirContent,
   getDirContent,
   shiftKeyHandle,
+  sortDirList,
+  sortImageList,
 } from '@/views/imgs-management/imgs-management.util'
 
 const store = useStore()
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const dirObject = computed(() => store.getters.getDirObject).value
+const sortMode = computed(() => store.getters.getUserSettings.management.sort)
 
 const renderKey = ref(Date.now()) // key for update image-selector component
 const loadingImageList = ref(false)
@@ -28,7 +33,13 @@ const loadingImageList = ref(false)
 const currentPathDirList = ref<DirObject[]>([])
 const currentPathImageList = ref<UploadedImageModel[]>([])
 
+// 排序仅作用于渲染顺序，Store 中目录树的真实顺序保持 GitHub API 返回顺序
+const sortedDirList = computed(() => sortDirList(currentPathDirList.value, sortMode.value))
+const sortedImageList = computed(() => sortImageList(currentPathImageList.value, sortMode.value))
+
 const isShowBatchTools = ref(false)
+
+const { backfillUploadTime, cancelBackfill } = useImageUploadTime()
 
 async function dirContentHandle(dir: string) {
   loadingImageList.value = true
@@ -36,7 +47,7 @@ async function dirContentHandle(dir: string) {
   const dirContent = getDirContent(dir, dirObject)
   if (dirContent) {
     const dirs = filterDirContent(dirContent, 'dir')
-    const images = filterDirContent(dirContent, 'image')
+    const images = filterDirContent(dirContent, 'file')
     if (!dirs.length && !images.length) {
       await getRepoPathContent(userConfigInfo, dir)
     }
@@ -110,7 +121,7 @@ watch(
     const dirContent = getDirContent(viewDir, nv)
     if (dirContent) {
       currentPathDirList.value = filterDirContent(dirContent, 'dir')
-      currentPathImageList.value = filterDirContent(dirContent, 'image')
+      currentPathImageList.value = filterDirContent(dirContent, 'file')
       store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
     }
   },
@@ -124,6 +135,20 @@ watch(
   },
   { deep: true },
 )
+
+// “最新上传优先”排序下，后台回填缺少上传时间的图片；其余排序模式取消回填
+watch([currentPathImageList, sortMode], ([images, mode]) => {
+  if (mode === ImageSortEnum.timeDesc && images.length) {
+    backfillUploadTime(images)
+  }
+  else {
+    cancelBackfill()
+  }
+})
+
+onBeforeUnmount(() => {
+  cancelBackfill()
+})
 
 watch(
   () => store.getters.getUploadAreaState.activeInfo,
@@ -162,14 +187,14 @@ watch(
         class="content-list-box border-box"
         :class="{ 'has-tools': isShowBatchTools }"
       >
-        <ul v-if="currentPathDirList.length" class="dir-card-list list-item border-box">
-          <li v-for="dir in currentPathDirList" :key="dir.dirPath" class="dir-card-item border-box">
+        <ul v-if="sortedDirList.length" class="dir-card-list list-item border-box">
+          <li v-for="dir in sortedDirList" :key="dir.dirPath" class="dir-card-item border-box">
             <FolderCard :class="`folder-card-${dir.dir}`" :folder-obj="dir" />
           </li>
         </ul>
-        <ul v-if="currentPathImageList.length" class="image-card-list list-item border-box">
+        <ul v-if="sortedImageList.length" class="image-card-list list-item border-box">
           <li
-            v-for="image in currentPathImageList"
+            v-for="image in sortedImageList"
             :key="image.uuid"
             class="image-card-item border-box"
           >
@@ -183,6 +208,7 @@ watch(
         </el-empty>
       </div>
     </div>
+    <MoveImageDialog />
   </div>
 </template>
 

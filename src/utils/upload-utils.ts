@@ -10,6 +10,7 @@ import {
 import { PICX_UPLOAD_IMG_DESC } from '@/common/constant'
 import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
+import { isVideo, purgeImageRuntimeCache } from '@/utils'
 
 /**
  * 图片上传成功之后的处理
@@ -38,7 +39,7 @@ const uploadedHandle = (
 
   const uploadedImg: UploadedImageModel = {
     checked: false,
-    type: 'image',
+    type: isVideo(img.filename.final) ? 'video' : 'image',
     uuid: img.uuid,
     dir,
     name: res.name,
@@ -47,6 +48,7 @@ const uploadedHandle = (
     deleting: false,
     size: res.size,
     deployed: true,
+    uploadTime: Date.now(),
   }
 
   img.uploadedImg = uploadedImg
@@ -56,6 +58,9 @@ const uploadedHandle = (
 
   // dirImageList 增加图片
   store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', uploadedImg)
+
+  // 同路径覆盖上传时清理运行时缓存里的旧图（新上传为空操作）
+  purgeImageRuntimeCache([res.path])
 }
 
 /**

@@ -12,6 +12,7 @@ import {
   getFileSize,
   getFileSuffix,
   getUuid,
+  isVideo,
 } from '@/utils'
 import { uploadImageToGitHub } from '@/utils/upload-utils'
 
@@ -47,6 +48,14 @@ export const onDeleteImage = (imgObj: UploadedImageModel) => {
     .catch(() => undefined)
 }
 
+// 移动图片到其他目录（打开移动弹窗）
+export const onMoveImage = (imgObj: UploadedImageModel) => {
+  store.commit('SET_UPLOAD_AREA_STATE', {
+    isShowMoveImageDialog: true,
+    moveImageInfo: imgObj,
+  })
+}
+
 // 重命名的逻辑是先上传一张新名称的图片，再删除旧图片
 export const doRenameImage = async (imgObj: UploadedImageModel, newName: string) => {
   const suffix = getFileSuffix(imgObj.name)
@@ -55,7 +64,11 @@ export const doRenameImage = async (imgObj: UploadedImageModel, newName: string)
 
   let base64
 
-  if (!suffix.includes('svg')) {
+  if (isVideo(imgObj.name)) {
+    // 视频无法通过 canvas 绘制转码，使用 blob 方式获取 Base64
+    base64 = await blobToBase64ByImageUrl(generateImageLink(imgObj) || '')
+  }
+  else if (!suffix.includes('svg')) {
     base64 = await getBase64ByImageUrl(generateImageLink(imgObj) || '', suffix)
   }
   else {

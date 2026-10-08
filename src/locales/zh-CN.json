@@ -18,6 +18,7 @@
   "uploaded": "已上传",
   "upload": "上传",
   "rename": "重命名",
+  "move": "移动到...",
   "copy_link": "复制图片链接",
   "paste_image": "粘贴图片",
   "copy_success_1": "图片链接已自动复制到系统剪贴板",
@@ -80,6 +81,8 @@
       "title": "图片名称设置",
       "hash_switch_name": "哈希化",
       "hash_switch_desc": "上传时给图片名称增加哈希值，确保图片名称唯一，强烈建议开启",
+      "timestamp_switch_name": "时间戳命名",
+      "timestamp_switch_desc": "上传时用时间戳替换原始图片名称，例如：1716843600000.jpg，开启后其他命名选项将自动关闭",
       "prefix_switch_name": "添加前缀",
       "prefix_switch_desc": "上传时给图片名称增加前缀，例如：abc-image.jpg，abc- 为前缀",
       "prefix_input_placeholder": "请输入前缀 ..."
@@ -167,7 +170,7 @@
     }
   },
   "upload_page": {
-    "upload_area_text": "拖拽 / 粘贴 / 点击此处选择图片",
+    "upload_area_text": "拖拽 / 粘贴 / 点击此处选择图片或视频",
     "message1": "请先完成图床配置",
     "message2": "请选择一个仓库",
     "message3": "目录不能为空",
@@ -181,12 +184,17 @@
     "add_hash": "哈希化",
     "add_prefix": "添加前缀",
     "uploading": "正在上传 ...",
-    "tip_9": "{name} 不是图片格式",
+    "tip_9": "{name} 不是图片或视频格式",
     "tip_10": "{name} 超过 {size} MB，跳过选择",
     "tip_11": "{name} 上传失败"
   },
   "management_page": {
     "reload": "重新加载",
+    "sort": "排序",
+    "sortDefault": "默认排序",
+    "sortNameAsc": "名称升序",
+    "sortNameDesc": "名称降序",
+    "sortTimeDesc": "最新上传优先",
     "loadingTxt1": "加载中 ...",
     "loadingTxt2": "正在重命名 ...",
     "loadingTxt3": "删除中 ...",
@@ -213,7 +221,18 @@
     "contextmenu_3": "根目录",
     "contextmenu_4": "跳转 GitHub 仓库",
     "text_1": "请输入新的图片名称",
-    "text_2": "立即上传"
+    "text_2": "立即上传",
+    "video_preview": "预览视频",
+    "renameDirTips": "请输入新的目录名称",
+    "dirNameInvalid": "目录名称不能包含空格或 / 等特殊字符",
+    "dirNameUnchanged": "目录名无改变",
+    "dirNameDuplicated": "同级目录下已存在同名目录",
+    "dirRenameFail": "重命名目录失败，请重试",
+    "delDirTips": "此操作将永久删除该目录及其下所有文件",
+    "moveTips": "请选择目标目录",
+    "loadingTxt4": "正在移动 ...",
+    "message8": "移动成功",
+    "message9": "移动失败，请重试"
   },
   "toolbox": {
     "tool_1": "图片压缩",
@@ -230,10 +249,8 @@
     "add_watermark": "添加水印"
   },
   "feedback": {
-    "text_1": "PicX 是一款基于 GitHub API 开发的图床工具，提供图片上传托管、生成图片链接和常用图片工具箱服务。",
-    "text_2": "建议将本站添加到浏览器收藏夹，方便下次使用。",
-    "text_3": "如果 PicX 对你有帮助，欢迎赞赏作者，支持开源。",
-    "text_4": "郑重声明：请勿使用 PicX 上传违反你当地法律的图片，所造成的一切后果与作者无关。"
+    "text_1": "一款基于 GitHub API 开发的图床工具，提供图片上传托管和生成图片链接。",
+    "text_2": "建议将本站添加到浏览器收藏夹，方便下次使用。"
   },
   "region": {
     "CN": "中国大陆",

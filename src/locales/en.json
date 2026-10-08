@@ -18,6 +18,7 @@
   "uploaded": "Uploaded",
   "upload": "Upload",
   "rename": "Rename",
+  "move": "Move to...",
   "copy_link": "Copy Image Link",
   "paste_image": "Paste images",
   "copy_success_1": "Image link has been automatically copied to the system clipboard",
@@ -80,6 +81,8 @@
       "title": "Image Name Settings",
       "hash_switch_name": "Hashing",
       "hash_switch_desc": "Add a hash value to the image name during upload to ensure uniqueness. Highly recommended to enable.",
+      "timestamp_switch_name": "Timestamp Naming",
+      "timestamp_switch_desc": "Replace the original image name with a timestamp during upload, e.g., 1716843600000.jpg. When enabled, other naming options will be turned off automatically.",
       "prefix_switch_name": "Add Prefix",
       "prefix_switch_desc": "Add a prefix to the image name during upload, for example: abc-image.jpg, where 'abc-' is the prefix.",
       "prefix_input_placeholder": "Enter prefix ..."
@@ -167,7 +170,7 @@
     }
   },
   "upload_page": {
-    "upload_area_text": "Drag / Paste / Click here to select images",
+    "upload_area_text": "Drag / Paste / Click here to select images or videos",
     "message1": "Please complete image hosting configuration first",
     "message2": "Please select a repository",
     "message3": "Directory cannot be empty",
@@ -181,12 +184,17 @@
     "add_hash": "Add Hash",
     "add_prefix": "Add Prefix",
     "uploading": "Uploading...",
-    "tip_9": "{name} is not an image format",
+    "tip_9": "{name} is not an image or video format",
     "tip_10": "{name} exceeds {size} MB, skip selection",
     "tip_11": "{name} upload failed"
   },
   "management_page": {
     "reload": "Reload",
+    "sort": "Sort",
+    "sortDefault": "Default",
+    "sortNameAsc": "Name ascending",
+    "sortNameDesc": "Name descending",
+    "sortTimeDesc": "Newest first",
     "loadingTxt1": "Loading...",
     "loadingTxt2": "Renaming...",
     "loadingTxt3": "Deleting...",
@@ -213,7 +221,18 @@
     "contextmenu_3": "Root Directory",
     "contextmenu_4": "Open GitHub Repository",
     "text_1": "Please enter a new image name",
-    "text_2": "Upload now"
+    "text_2": "Upload now",
+    "video_preview": "Preview video",
+    "renameDirTips": "Enter a new directory name",
+    "dirNameInvalid": "Directory name cannot contain spaces or special characters such as /",
+    "dirNameUnchanged": "Directory name is unchanged",
+    "dirNameDuplicated": "A directory with the same name already exists at the same level",
+    "dirRenameFail": "Failed to rename the directory, please try again",
+    "delDirTips": "This action will permanently delete the directory and all files in it",
+    "moveTips": "Select a target directory",
+    "loadingTxt4": "Moving...",
+    "message8": "Moved successfully",
+    "message9": "Failed to move, please try again"
   },
   "toolbox": {
     "tool_1": "Image Compression",
@@ -230,10 +249,8 @@
     "add_watermark": "Add Watermark"
   },
   "feedback": {
-    "text_1": "PicX is an image hosting tool developed based on the GitHub API, providing services for image upload hosting, generating image links, and common image tools.",
-    "text_2": "It is recommended to add this site to your browser bookmarks for convenient use in the future.",
-    "text_3": "If PicX is helpful to you, feel free to appreciate the author and support open source.",
-    "text_4": "Disclaimer: Do not use PicX to upload images that violate local laws. The author is not responsible for any consequences."
+    "text_1": "An image hosting tool built using the GitHub API that provides image upload and hosting services, as well as image link generation.",
+    "text_2": "It is recommended to add this site to your browser bookmarks for convenient use in the future."
   },
   "region": {
     "CN": "Mainland China",

@@ -6,6 +6,7 @@ import {
   isImage,
   isNeedCompress,
   isNeedWatermark,
+  isVideo,
 } from '@/utils/file-utils'
 
 describe('文件工具', () => {
@@ -21,6 +22,15 @@ describe('文件工具', () => {
     expect(isNeedCompress('image/gif')).toBe(false)
     expect(isNeedWatermark('image/webp')).toBe(true)
     expect(isNeedWatermark('image/gif')).toBe(false)
+  })
+
+  it('能够识别 MP4 视频类型', () => {
+    expect(isVideo('video/mp4')).toBe(true)
+    expect(isVideo('mp4')).toBe(true)
+    expect(isVideo('VIDEO/MP4')).toBe(true)
+    expect(isVideo('video/quicktime')).toBe(false)
+    expect(isVideo('image/png')).toBe(false)
+    expect(isVideo('')).toBe(false)
   })
 
   it('能够格式化文件大小', () => {

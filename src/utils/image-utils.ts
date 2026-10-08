@@ -3,6 +3,7 @@ import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo }
 import { DeleteStatusEnum } from '@/common/model'
 import { store } from '@/stores'
 import { getUuid } from '@/utils/common-utils'
+import { purgeImageRuntimeCache } from '@/utils/image-cache-utils'
 import request from '@/utils/request'
 
 /**
@@ -32,6 +33,7 @@ export const createUploadImageObject = (): UploadImageModel => {
       isAddHash: true,
       isRename: false,
       isAddPrefix: false,
+      timestamp: '',
     },
     beforeUploadStatus: {
       watermarking: false,
@@ -50,13 +52,18 @@ export const createUploadImageObject = (): UploadImageModel => {
 }
 
 /**
- * 生成一个图床管理中的图片对象
+ * 生成一个图床管理中的文件对象（图片或视频）
  * @param item
  * @param selectedDir
+ * @param type 文件类型，默认图片
  */
-export const createManagementImageObject = (item: any, selectedDir: string): UploadedImageModel => {
+export const createManagementImageObject = (
+  item: any,
+  selectedDir: string,
+  type: 'image' | 'video' = 'image',
+): UploadedImageModel => {
   return {
-    type: 'image',
+    type,
     uuid: getUuid(),
     dir: selectedDir,
     name: item.name,
@@ -89,6 +96,7 @@ export async function deleteImageFromGitHub(
       resolve(true)
       await store.dispatch('UPLOAD_IMG_LIST_REMOVE', imageObj.uuid)
       await store.dispatch('DIR_IMAGE_LIST_REMOVE', imageObj)
+      purgeImageRuntimeCache([path])
     }
     else {
       resolve(false)
@@ -155,6 +163,7 @@ export async function deleteImagesFromGitHub(
     store.dispatch('UPLOAD_IMG_LIST_REMOVE', imgObj.uuid)
     store.dispatch('DIR_IMAGE_LIST_REMOVE', imgObj)
   })
+  purgeImageRuntimeCache(imgObjs.map(x => x.path))
 }
 
 /**

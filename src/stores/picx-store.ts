@@ -25,6 +25,7 @@ import {
   DirModeEnum,
   ElementPlusSizeEnum,
   ImageLinkTypeEnum,
+  ImageSortEnum,
   LanguageEnum,
   ThemeModeEnum,
   WatermarkPositionEnum,
@@ -158,11 +159,15 @@ function createDefaultUserSettings(): UserSettingsModel {
   return {
     imageName: {
       enableHash: true,
+      enableTimestamp: false,
       addPrefix: { enable: false, prefix: '' },
     },
     compress: {
       enable: true,
       encoder: CompressEncoderEnum.webP,
+    },
+    management: {
+      sort: ImageSortEnum.default,
     },
     imageLinkType: {
       selected: ImageLinkTypeEnum.GitHub,
@@ -334,6 +339,8 @@ export const usePicxStore = defineStore('picx', {
       isPaste: false,
       pressShiftKey: false,
       activeInfo: null,
+      isShowMoveImageDialog: false,
+      moveImageInfo: null,
     },
     toolboxImageListModule: {
       toolboxImageList: [],
@@ -630,6 +637,150 @@ export const usePicxStore = defineStore('picx', {
       directory.imageList = []
       directory.childrenDirs = []
       this.DIR_IMAGE_LIST_PERSIST()
+    },
+
+    // 图床管理 - 重命名目录（同步更新子孙目录 dirPath、图片 dir/path 及用户配置里的目录引用）
+    DIR_IMAGE_LIST_RENAME_DIR({
+      oldDirPath,
+      newDirName,
+    }: { oldDirPath: string, newDirName: string }) {
+      if (oldDirPath === '/' || !newDirName) {
+        return
+      }
+
+      const rootDirectory = this.dirImageListModule.dirObject
+      const targetDirectory = getDirContent(oldDirPath, rootDirectory)
+
+      if (!targetDirectory) {
+        return
+      }
+
+      const parentPath = getUpOneLevelDir(oldDirPath).dirPath
+      const newDirPath = parentPath === '/' ? newDirName : `${parentPath}/${newDirName}`
+
+      const updateDirectoryPaths = (directory: DirObject, directoryPath: string): void => {
+        directory.dirPath = directoryPath
+        directory.imageList.forEach((image) => {
+          image.dir = directoryPath
+          image.path = `${directoryPath}/${image.name}`
+        })
+        directory.childrenDirs.forEach(childDirectory =>
+          updateDirectoryPaths(childDirectory, `${directoryPath}/${childDirectory.dir}`),
+        )
+      }
+
+      targetDirectory.dir = newDirName
+      updateDirectoryPaths(targetDirectory, newDirPath)
+
+      // dirList 只记录顶级目录
+      if (!oldDirPath.includes('/')) {
+        this.USER_CONFIG_INFO_REMOVE_DIR(oldDirPath)
+        this.USER_CONFIG_INFO_ADD_DIR(newDirName)
+      }
+
+      const replacePathPrefix = (path: string): string => {
+        if (path === oldDirPath) {
+          return newDirPath
+        }
+        if (path.startsWith(`${oldDirPath}/`)) {
+          return `${newDirPath}${path.slice(oldDirPath.length)}`
+        }
+        return path
+      }
+
+      const { viewDir, selectedDir } = this.userConfigInfoModule.userConfigInfo
+      const newViewDir = replacePathPrefix(viewDir)
+      const newSelectedDir = replacePathPrefix(selectedDir)
+
+      if (newViewDir !== viewDir || newSelectedDir !== selectedDir) {
+        this.SET_USER_CONFIG_INFO({
+          viewDir: newViewDir,
+          selectedDir: newSelectedDir,
+          selectedDirList:
+            newSelectedDir === '/' || newSelectedDir === '' ? [] : newSelectedDir.split('/'),
+        })
+      }
+
+      this.DIR_IMAGE_LIST_PERSIST()
+    },
+
+    // 图床管理 - 删除目录（含用户配置里的目录引用清理与视图目录回退）
+    DIR_IMAGE_LIST_REMOVE_DIR_TREE(directoryPath: string) {
+      if (directoryPath === '/') {
+        return
+      }
+
+      this.DIR_IMAGE_LIST_REMOVE_DIR(directoryPath)
+
+      if (!directoryPath.includes('/')) {
+        this.USER_CONFIG_INFO_REMOVE_DIR(directoryPath)
+      }
+
+      const isInsideDir = (path: string): boolean =>
+        path === directoryPath || path.startsWith(`${directoryPath}/`)
+
+      const { viewDir, selectedDir } = this.userConfigInfoModule.userConfigInfo
+
+      if (isInsideDir(viewDir) || isInsideDir(selectedDir)) {
+        const parentPath = getUpOneLevelDir(directoryPath).dirPath
+        const newViewDir = isInsideDir(viewDir) ? parentPath : viewDir
+        const newSelectedDir = isInsideDir(selectedDir) ? parentPath : selectedDir
+
+        this.SET_USER_CONFIG_INFO({
+          viewDir: newViewDir,
+          selectedDir: newSelectedDir,
+          selectedDirList:
+            newSelectedDir === '/' || newSelectedDir === '' ? [] : newSelectedDir.split('/'),
+        })
+      }
+    },
+
+    // 图床管理 - 移动图片到其他目录
+    DIR_IMAGE_LIST_MOVE_IMAGE({ img, newDir }: { img: UploadedImageModel, newDir: string }) {
+      if (!img || img.dir === newDir) {
+        return
+      }
+
+      const rootDirectory = this.dirImageListModule.dirObject
+      const oldDirectory = img.dir === '/' ? rootDirectory : getDirContent(img.dir, rootDirectory)
+
+      // 从原目录的图片列表中移除
+      if (oldDirectory) {
+        const removeIndex = oldDirectory.imageList.findIndex(item => item.uuid === img.uuid)
+        if (removeIndex !== -1) {
+          oldDirectory.imageList.splice(removeIndex, 1)
+        }
+      }
+
+      // 原目录被移空后删除该目录；若当前正浏览该目录则返回上一级
+      if (
+        oldDirectory
+        && img.dir !== '/'
+        && !oldDirectory.imageList.length
+        && !oldDirectory.childrenDirs.length
+      ) {
+        this.DIR_IMAGE_LIST_REMOVE_DIR(img.dir)
+
+        if (!img.dir.includes('/')) {
+          this.USER_CONFIG_INFO_REMOVE_DIR(img.dir)
+        }
+
+        const { viewDir } = this.userConfigInfoModule.userConfigInfo
+        if (viewDir === img.dir) {
+          const parentPath = getUpOneLevelDir(img.dir).dirPath
+          this.SET_USER_CONFIG_INFO({
+            viewDir: parentPath,
+            selectedDir: parentPath,
+            selectedDirList: parentPath === '/' ? [] : parentPath.split('/'),
+          })
+        }
+      }
+
+      // 加入目标目录
+      img.dir = newDir
+      img.path = newDir === '/' ? img.name : `${newDir}/${img.name}`
+      this.DIR_IMAGE_LIST_ADD_DIR(newDir)
+      this.DIR_IMAGE_LIST_ADD_IMAGE(img)
     },
 
     DIR_IMAGE_LIST_PERSIST() {
