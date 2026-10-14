@@ -1,3 +1,15 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { store } from '@/stores'
+
+const userSettings = computed(() => store.getters.getUserSettings).value
+const globalSettings = computed(() => store.getters.getGlobalSettings).value
+
+const persistUserSettings = () => {
+  store.dispatch('USER_SETTINGS_PERSIST')
+}
+</script>
+
 <template>
   <el-popover
     placement="bottom-end"
@@ -5,9 +17,9 @@
     trigger="click"
     :show-arrow="false"
     :popper-style="{
-      padding: '0',
+      'padding': '0',
       'border-radius': '10rem',
-      overflow: 'hidden'
+      'overflow': 'hidden',
     }"
   >
     <template #reference>
@@ -36,15 +48,3 @@
     </div>
   </el-popover>
 </template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { store } from '@/stores'
-
-const userSettings = computed(() => store.getters.getUserSettings).value
-const globalSettings = computed(() => store.getters.getGlobalSettings).value
-
-const persistUserSettings = () => {
-  store.dispatch('USER_SETTINGS_PERSIST')
-}
-</script>

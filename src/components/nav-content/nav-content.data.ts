@@ -8,7 +8,7 @@ export const navInfoList = shallowRef([
     icon: IEpEdit,
     isActive: false,
     path: '/config',
-    isShow: true
+    isShow: true,
   },
   {
     uuid: getUuid(),
@@ -16,7 +16,7 @@ export const navInfoList = shallowRef([
     icon: IEpUpload,
     isActive: false,
     path: '/upload',
-    isShow: true
+    isShow: true,
   },
   {
     uuid: getUuid(),
@@ -24,7 +24,7 @@ export const navInfoList = shallowRef([
     icon: IEpPicture,
     isActive: false,
     path: '/management',
-    isShow: true
+    isShow: true,
   },
   {
     uuid: getUuid(),
@@ -32,15 +32,7 @@ export const navInfoList = shallowRef([
     icon: IEpSetting,
     isActive: false,
     path: '/settings',
-    isShow: true
-  },
-  {
-    uuid: getUuid(),
-    name: 'nav.toolbox',
-    icon: IEpFiles,
-    isActive: false,
-    path: '/toolbox',
-    isShow: true
+    isShow: true,
   },
   {
     uuid: getUuid(),
@@ -48,6 +40,6 @@ export const navInfoList = shallowRef([
     icon: IEpChatDotRound,
     isActive: false,
     path: '/feedback',
-    isShow: true
-  }
+    isShow: true,
+  },
 ])

@@ -1,11 +1,11 @@
-import { Module } from 'vuex'
-import ToolboxImageListStateTypes from './types'
-import RootStateTypes from '@/stores/types'
-import { ImgProcessStateModel } from '@/common/model'
+import type { Module } from 'vuex'
+import type ToolboxImageListStateTypes from './types'
+import type { ImgProcessStateModel } from '@/common/model'
+import type RootStateTypes from '@/stores/types'
 
 const toolboxImageListModule: Module<ToolboxImageListStateTypes, RootStateTypes> = {
   state: {
-    toolboxImageList: []
+    toolboxImageList: [],
   },
 
   mutations: {},
@@ -29,12 +29,12 @@ const toolboxImageListModule: Module<ToolboxImageListStateTypes, RootStateTypes>
     // 工具箱图片列表 - 重置
     TOOLBOX_IMG_LIST_RESET({ state }) {
       state.toolboxImageList = []
-    }
+    },
   },
 
   getters: {
-    getToolboxImageList: (state: any) => state.toolboxImageList
-  }
+    getToolboxImageList: (state: any) => state.toolboxImageList,
+  },
 }
 
 export default toolboxImageListModule

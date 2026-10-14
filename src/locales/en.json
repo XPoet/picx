@@ -18,6 +18,7 @@
   "uploaded": "Uploaded",
   "upload": "Upload",
   "rename": "Rename",
+  "move": "Move to...",
   "copy_link": "Copy Image Link",
   "paste_image": "Paste images",
   "copy_success_1": "Image link has been automatically copied to the system clipboard",
@@ -80,6 +81,8 @@
       "title": "Image Name Settings",
       "hash_switch_name": "Hashing",
       "hash_switch_desc": "Add a hash value to the image name during upload to ensure uniqueness. Highly recommended to enable.",
+      "timestamp_switch_name": "Timestamp Naming",
+      "timestamp_switch_desc": "Replace the original image name with a timestamp during upload, e.g., 1716843600000.jpg. When enabled, other naming options will be turned off automatically.",
       "prefix_switch_name": "Add Prefix",
       "prefix_switch_desc": "Add a prefix to the image name during upload, for example: abc-image.jpg, where 'abc-' is the prefix.",
       "prefix_input_placeholder": "Enter prefix ..."
@@ -97,7 +100,10 @@
       "position_1": "Top Left",
       "position_2": "Bottom Left",
       "position_3": "Top Right",
-      "position_4": "Bottom Right"
+      "position_4": "Bottom Right",
+      "position_5": "Fullscreen",
+      "rotate": "Rotate",
+      "gap": "Spacing"
     },
     "img_compress": {
       "title": "Image Compression Settings",
@@ -109,7 +115,8 @@
       "radio_2": "MozJPEG",
       "radio_2_desc": "Resulting format is jpg, highest compatibility with all browsers",
       "radio_3": "AVIF",
-      "radio_3_desc": "Resulting format is avif, extremely high compression rates, supported by some modern browsers"
+      "radio_3_desc": "Resulting format is avif, extremely high compression rates, supported by some modern browsers",
+      "radio_4_desc": "Resulting format is png, lossless optimisation preserving transparency, ideal for screenshots and graphics; photos may become larger"
     },
     "link_rule": {
       "title": "Image Link Rules Configuration",
@@ -127,7 +134,8 @@
       "error_msg_2": "{action} failed. Image link rule must include {path}",
       "error_msg_3": "Image link rule is missing {rules}. Confirm {action}?",
       "add": "Add",
-      "edit": "Edit"
+      "edit": "Edit",
+      "gh_pages_not_deployed": "GitHub Pages has not been deployed in this repo yet, so this image link rule is unavailable. Deploy it now with one click?"
     },
     "link_format": {
       "title": "Image Link Format Settings",
@@ -144,25 +152,25 @@
       "fail": "Deployment failed",
       "fail2": "Deployment failed, please try again later",
       "deploying": "Deploying to GitHub Pages, this process takes about 1 minute, please be patient...",
-      "not_deployed": "Not deployed"
+      "not_deployed": "Not deployed",
+      "custom_domain_label": "Custom Domain",
+      "custom_domain_placeholder": "e.g. img.example.com",
+      "custom_domain_desc": "After saving, a CNAME file will be created in the repository root and deployed to GitHub Pages automatically. You also need to add a CNAME record pointing to {pagesDomain} at your DNS provider",
+      "custom_domain_save": "Save",
+      "custom_domain_invalid": "Invalid domain format, please enter a domain like img.example.com",
+      "custom_domain_synced": "CNAME file synced, the custom domain will take effect after GitHub Pages redeploys",
+      "custom_domain_deleted": "Custom domain cleared, CNAME file deleted",
+      "custom_domain_fail": "Failed to sync the CNAME file, please try again later"
     },
     "theme": {
       "title": "Theme Settings",
       "system": "System",
       "dark": "Dark",
       "light": "Light"
-    },
-    "cloud_settings": {
-      "tip_1": "Detected that your settings data is not saved to the cloud repository. Save now?",
-      "tip_2": "Detected that your cloud repository has settings files. Use them?",
-      "tip_3": "Detected changes in your settings data. Synchronize with the cloud repository?",
-      "tip_4": "Local and cloud repository settings data are consistent",
-      "success_msg_1": "Save successful",
-      "success_msg_2": "Update successful"
     }
   },
   "upload_page": {
-    "upload_area_text": "Drag / Paste / Click here to select images",
+    "upload_area_text": "Drag / Paste / Click here to select images or videos",
     "message1": "Please complete image hosting configuration first",
     "message2": "Please select a repository",
     "message3": "Directory cannot be empty",
@@ -176,12 +184,17 @@
     "add_hash": "Add Hash",
     "add_prefix": "Add Prefix",
     "uploading": "Uploading...",
-    "tip_9": "{name} is not an image format",
+    "tip_9": "{name} is not an image or video format",
     "tip_10": "{name} exceeds {size} MB, skip selection",
     "tip_11": "{name} upload failed"
   },
   "management_page": {
     "reload": "Reload",
+    "sort": "Sort",
+    "sortDefault": "Default",
+    "sortNameAsc": "Name ascending",
+    "sortNameDesc": "Name descending",
+    "sortTimeDesc": "Newest first",
     "loadingTxt1": "Loading...",
     "loadingTxt2": "Renaming...",
     "loadingTxt3": "Deleting...",
@@ -206,8 +219,20 @@
     "contextmenu_1": "Upload new images from the current location",
     "contextmenu_2": "Upload images to {dir}",
     "contextmenu_3": "Root Directory",
+    "contextmenu_4": "Open GitHub Repository",
     "text_1": "Please enter a new image name",
-    "text_2": "Upload now"
+    "text_2": "Upload now",
+    "video_preview": "Preview video",
+    "renameDirTips": "Enter a new directory name",
+    "dirNameInvalid": "Directory name cannot contain spaces or special characters such as /",
+    "dirNameUnchanged": "Directory name is unchanged",
+    "dirNameDuplicated": "A directory with the same name already exists at the same level",
+    "dirRenameFail": "Failed to rename the directory, please try again",
+    "delDirTips": "This action will permanently delete the directory and all files in it",
+    "moveTips": "Select a target directory",
+    "loadingTxt4": "Moving...",
+    "message8": "Moved successfully",
+    "message9": "Failed to move, please try again"
   },
   "toolbox": {
     "tool_1": "Image Compression",
@@ -224,10 +249,8 @@
     "add_watermark": "Add Watermark"
   },
   "feedback": {
-    "text_1": "PicX is an image hosting tool developed based on the GitHub API, providing services for image upload hosting, generating image links, and common image tools.",
-    "text_2": "It is recommended to add this site to your browser bookmarks for convenient use in the future.",
-    "text_3": "If PicX is helpful to you, feel free to appreciate the author and support open source.",
-    "text_4": "Disclaimer: Do not use PicX to upload images that violate local laws. The author is not responsible for any consequences."
+    "text_1": "An image hosting tool built using the GitHub API that provides image upload and hosting services, as well as image link generation.",
+    "text_2": "It is recommended to add this site to your browser bookmarks for convenient use in the future."
   },
   "region": {
     "CN": "Mainland China",

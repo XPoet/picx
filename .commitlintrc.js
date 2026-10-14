@@ -16,8 +16,8 @@ module.exports = {
         'revert',
         'ci',
         'ui',
-        'chore'
-      ]
-    ]
-  }
+        'chore',
+      ],
+    ],
+  },
 }

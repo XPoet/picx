@@ -1,9 +1,10 @@
-import { Module } from 'vuex'
-import { UserConfigInfoModel, DirModeEnum } from '@/common/model'
-import { deepAssignObject, cleanObject, formatDatetime } from '@/utils'
-import UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
-import RootStateTypes from '@/stores/types'
+import type { Module } from 'vuex'
+import type { UserConfigInfoModel } from '@/common/model'
+import type UserConfigInfoStateTypes from '@/stores/modules/user-config-info/types'
+import type RootStateTypes from '@/stores/types'
 import { LS_CONFIG, NEW_DIR_COUNT_MAX } from '@/common/constant'
+import { DirModeEnum } from '@/common/model'
+import { cleanObject, deepAssignObject, formatDatetime } from '@/utils'
 
 const initUserConfigInfo = (): UserConfigInfoModel => {
   const initConfig: UserConfigInfoModel = {
@@ -21,7 +22,7 @@ const initUserConfigInfo = (): UserConfigInfoModel => {
     logined: false,
     selectedDirList: [],
     viewDir: '',
-    repoPrivate: false
+    repoPrivate: false,
   }
 
   const LSConfig: string | null = localStorage.getItem(LS_CONFIG)
@@ -47,9 +48,9 @@ const convertSpecialCharacter = (state: UserConfigInfoStateTypes): void => {
     let count = 0
     let newStr = ''
     const specStrList = [' ', '.', '、', ',', '，', '!', '？', '?']
-    // eslint-disable-next-line no-plusplus
+
     for (let i = 0; i < strList.length; i++) {
-      if (specStrList.some((x) => x === strList[i])) {
+      if (specStrList.includes(strList[i])) {
         strList[i] = '-'
       }
       if (strList[i] === '/') {
@@ -67,7 +68,7 @@ const convertSpecialCharacter = (state: UserConfigInfoStateTypes): void => {
 
 const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
   state: {
-    userConfigInfo: initUserConfigInfo()
+    userConfigInfo: initUserConfigInfo(),
   },
 
   actions: {
@@ -78,10 +79,8 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
 
     // 设置用户配置信息
     SET_USER_CONFIG_INFO({ state, dispatch }, configInfo: UserConfigInfoModel) {
-      // eslint-disable-next-line no-restricted-syntax
       for (const key in configInfo) {
-        // eslint-disable-next-line no-prototype-builtins
-        if (state.userConfigInfo.hasOwnProperty(key)) {
+        if (Object.hasOwn(state.userConfigInfo, key)) {
           // @ts-ignore
           state.userConfigInfo[key] = configInfo[key]
         }
@@ -116,15 +115,15 @@ const userConfigInfoModule: Module<UserConfigInfoStateTypes, RootStateTypes> = {
     // 退出登录
     USER_CONFIG_INFO_LOGOUT({ state }) {
       cleanObject(state.userConfigInfo)
-    }
+    },
   },
 
   getters: {
     getUserLoginStatus: (state: UserConfigInfoStateTypes): boolean => state.userConfigInfo.logined,
     getUserConfigInfo: (state: UserConfigInfoStateTypes): UserConfigInfoModel =>
       state.userConfigInfo,
-    getUserViewDir: (state: UserConfigInfoStateTypes): string => state.userConfigInfo.viewDir
-  }
+    getUserViewDir: (state: UserConfigInfoStateTypes): string => state.userConfigInfo.viewDir,
+  },
 }
 
 export default userConfigInfoModule

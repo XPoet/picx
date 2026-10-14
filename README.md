@@ -2,15 +2,15 @@
 <img width="100" align="right" alt="PicX" src="https://picx-docs.xpoet.cn/images/logo.png">
 </a>
 
-# PicX
+# PicX · 图床
 
 [![Release](https://img.shields.io/github/release/XPoet/picx?style=flat&logo=github)](https://github.com/XPoet/picx/releases)
 [![License](https://img.shields.io/github/license/XPoet/picx?style=flat&logo=github)](https://github.com/XPoet/picx/blob/master/LICENSE)
 [![Stars](https://img.shields.io/github/stars/XPoet/picx?style=flat&logo=github&color=3366cc)](https://github.com/XPoet/picx)
 [![Issues](https://img.shields.io/github/issues/XPoet/picx?style=flat&logo=github)](https://github.com/XPoet/picx/issues)
-[![Deploy](https://github.com/XPoet/picx/workflows/deploy/badge.svg)](https://github.com/XPoet/picx/actions/workflows/deploy.yml)
+[![Release and Deploy](https://github.com/XPoet/picx/actions/workflows/deploy.yml/badge.svg)](https://github.com/XPoet/picx/actions/workflows/deploy.yml)
 
-**[PicX](https://picx.xpoet.cn)** 是一款基于 GitHub API 开发的图床工具，提供图片上传托管、生成图片链接和常用图片工具箱服务。
+一款基于 GitHub API 开发的图床工具，提供图片上传托管和生成图片链接。
 
 ---
 
@@ -24,17 +24,13 @@
 
 通过 [GitHub OAuth 授权](https://picx-docs.xpoet.cn/usage-guide/config.html#github-oauth-%E6%8E%88%E6%9D%83%E7%99%BB%E5%BD%95) 或 [填写 GitHub Token](https://picx-docs.xpoet.cn/usage-guide/config.html#%E5%A1%AB%E5%86%99-github-token-%E7%99%BB%E5%BD%95) 登录到 [PicX](https://picx.xpoet.cn)，完成 [图床配置](https://picx-docs.xpoet.cn/usage-guide/config.html#%E5%9B%BE%E5%BA%8A%E9%85%8D%E7%BD%AE) 后即可使用。
 
-**在线使用入口 https://picx.xpoet.cn**
-
-> **重要提示：**  
-> - 为进一步简化用户操作，PicX 自 `v3.0` 起，不再支持自由选择仓库和分支，统一使用内置的仓库和分支。  
-> - 如需继续使用自定义的仓库和分支，请使用 [PicX v2.0](https://v2.picx.xpoet.cn)。
+**在线使用入口 https://picx.xpoet.cn/images-hosting**
 
 ## 文档 | Documents
 
 **官方文档 https://picx-docs.xpoet.cn**
 
-通过阅读 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX。 
+通过阅读 **[快速开始](https://picx-docs.xpoet.cn/usage-guide/get-start.html)** 教程，可帮助你迅速上手 PicX。
 
 ## 功能 | Features
 
@@ -50,7 +46,6 @@
 - [x] 支持 **PWA**
 - [x] 支持 **[暗夜模式](https://picx-docs.xpoet.cn/usage-guide/settings.html#%E4%B8%BB%E9%A2%98%E8%AE%BE%E7%BD%AE)** (自动切换 / 自由切换)
 - [x] i18n（中文简体、中文繁体、英文）
-- [x] 工具箱（[图片压缩](https://picx-docs.xpoet.cn/usage-guide/toolbox.html#%E5%9B%BE%E7%89%87%E5%8E%8B%E7%BC%A9)、[图片转 Base64](https://picx-docs.xpoet.cn/usage-guide/toolbox.html#%E5%9B%BE%E7%89%87%E8%BD%AC-base64)、[图片水印](https://picx-docs.xpoet.cn/usage-guide/toolbox.html#%E5%9B%BE%E7%89%87%E6%B0%B4%E5%8D%B0)）
 
 ## 贡献 | Contribution
 
@@ -66,18 +61,18 @@
   <img src="https://contrib.rocks/image?repo=XPoet/picx" />
 </a>
 
-##  反馈 | Feedback
+## 反馈 | Feedback
 
 在使用过程中，如遇问题，请仔细阅读 **[官方文档](https://picx-docs.xpoet.cn)**，或在 GitHub 发起 **[Issue](https://github.com/XPoet/picx/issues)**。
 
 ## 赞赏 | Appreciation
 
-PicX 的更新迭代依靠作者工作之外的时间，维护不易，如果对你有帮助，可以赞赏作者，支持开源。
+PicX · 图床的更新迭代依靠作者工作之外的时间，维护不易，如果对你有帮助，可以赞赏作者，支持开源。
 
 <img width="320" src="https://xpoet.cn/images/admire-code-wechat.webp" />
 
 ## 许可 | License
 
-**[AGPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)** 
+**[AGPL-3.0](https://github.com/XPoet/picx/blob/master/LICENSE)**
 
 Copyright © 2020-Present XPoet

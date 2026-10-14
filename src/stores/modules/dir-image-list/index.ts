@@ -1,15 +1,16 @@
-import { Module } from 'vuex'
-import { UploadedImageModel } from '@/common/model'
+import type { Module } from 'vuex'
+import type RootStateTypes from '../../types'
+import type { DirObject } from './types'
+import type DirImageListStateTypes from './types'
+import type { UploadedImageModel } from '@/common/model'
 import { LS_MANAGEMENT } from '@/common/constant'
-import DirImageListStateTypes, { DirObject } from './types'
-import RootStateTypes from '../../types'
 import {
   createDirObject,
   getUpLevelDirList,
-  getUpOneLevelDir
+  getUpOneLevelDir,
 } from '@/stores/modules/dir-image-list/utils'
-import { getDirContent } from '@/views/imgs-management/imgs-management.util'
 import { setLocal } from '@/utils'
+import { getDirContent } from '@/views/imgs-management/imgs-management.util'
 
 const initDirObject = () => {
   const dirObj = localStorage.getItem(LS_MANAGEMENT)
@@ -19,7 +20,7 @@ const initDirObject = () => {
 const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
   state: {
     name: 'dirImageListModule',
-    dirObject: initDirObject()
+    dirObject: initDirObject(),
   },
 
   mutations: {},
@@ -46,7 +47,6 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
       let dirPathC = ''
       let tempDirObj: DirObject = state.dirObject
 
-      // eslint-disable-next-line no-plusplus
       for (let i = 0, len = dirList.length; i < len; i++) {
         const dirName = dirList[i]
         dirPathC += `${i > 0 ? '/' : ''}${dirName}`
@@ -103,7 +103,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
         dir: string,
         dirPath: string,
         Img: UploadedImageModel,
-        isAdd: boolean = false
+        isAdd: boolean = false,
       ) => {
         if (!dirObj) {
           return state.dirObject
@@ -116,7 +116,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
             dir,
             dirPath,
             childrenDirs: [],
-            imageList: []
+            imageList: [],
           }
 
           dirObj.childrenDirs.push(temp)
@@ -212,7 +212,7 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
               dispatch('SET_USER_CONFIG_INFO', {
                 viewDir,
                 selectedDir,
-                selectedDirList
+                selectedDirList,
               })
               dispatch('DIR_IMAGE_LIST_REMOVE_DIR', dp)
             }
@@ -268,12 +268,12 @@ const dirImageListModule: Module<DirImageListStateTypes, RootStateTypes> = {
     DIR_IMAGE_LOGOUT({ state, dispatch }) {
       state.dirObject = createDirObject('/', '/')
       dispatch('DIR_IMAGE_LIST_PERSIST')
-    }
+    },
   },
 
   getters: {
-    getDirObject: (state: any) => state.dirObject
-  }
+    getDirObject: (state: any) => state.dirObject,
+  },
 }
 
 export default dirImageListModule

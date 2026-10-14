@@ -1,8 +1,8 @@
-import { UserConfigInfoModel } from '@/common/model'
-import request from '@/utils/request'
-import axios from '@/utils/request/axios'
+import type { UserConfigInfoModel } from '@/common/model'
 import { GH_PAGES } from '@/common/constant'
 import i18n from '@/plugins/vue/i18n'
+import request from '@/utils/request'
+import axios from '@/utils/request/axios'
 
 /**
  * 获取分支信息
@@ -14,8 +14,29 @@ export const getBranchInfo = (owner: string, repo: string, branch: string) => {
   return request({
     url: `/repos/${owner}/${repo}/branches/${branch}`,
     method: 'GET',
-    noCache: true
+    noCache: true,
   })
+}
+
+/**
+ * 判断远端仓库是否存在指定分支（如 gh-pages）
+ * 分支不存在时 GitHub 返回 404，静默处理并视为不存在
+ * @param owner
+ * @param repo
+ * @param branch
+ */
+export const isBranchExist = async (
+  owner: string,
+  repo: string,
+  branch: string,
+): Promise<boolean> => {
+  const res = await request({
+    url: `/repos/${owner}/${repo}/branches/${branch}`,
+    method: 'GET',
+    noCache: true,
+    noShowErrMsg: true,
+  })
+  return !!res
 }
 
 /**
@@ -25,27 +46,28 @@ export const getBranchInfo = (owner: string, repo: string, branch: string) => {
  */
 export const getBranchInfoList = (
   owner: string,
-  repo: string
-): Promise<{ value: string; label: string }[]> => {
+  repo: string,
+): Promise<{ value: string, label: string }[]> => {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     const tmpList: any[] = await request({
       url: `/repos/${owner}/${repo}/branches`,
       method: 'GET',
-      noCache: true
+      noCache: true,
     })
 
     if (tmpList && tmpList.length) {
       resolve(
         tmpList
-          .filter((x) => !x.protected)
-          .map((v) => ({
+          .filter(x => !x.protected)
+          .map(v => ({
             value: v.name,
-            label: v.name
+            label: v.name,
           }))
-          .reverse()
+          .reverse(),
       )
-    } else {
+    }
+    else {
       resolve([])
     }
   })
@@ -61,11 +83,10 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
   const { owner, repo, branch } = userConfigInfo
 
   const initLoading = ElLoading.service({
-    text: i18n.global.t('settings_page.image_hosting_deploy.deploying')
+    text: i18n.global.t('settings_page.image_hosting_deploy.deploying'),
   })
 
   const cbHandler = (evt: boolean = false) => {
-    // eslint-disable-next-line no-unused-expressions
     cb && cb(evt)
     initLoading.close()
   }
@@ -73,7 +94,7 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
   try {
     // 1、判断 gh-pages 是否存在
     const branchsRes = await getBranchInfoList(owner, repo)
-    const hasGhPages = branchsRes.some((x) => x.value === GH_PAGES)
+    const hasGhPages = branchsRes.some(x => x.value === GH_PAGES)
 
     let allowCreate = true
 
@@ -83,7 +104,8 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
       const delRes = await axios.delete(`/repos/${owner}/${repo}/git/refs/heads/${GH_PAGES}`)
       if (delRes) {
         allowCreate = true
-      } else {
+      }
+      else {
         cbHandler(false)
         return
       }
@@ -95,7 +117,7 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
       let sha = ''
       const res1 = await request({
         url: `/repos/${owner}/${repo}/git/refs/heads/${branch}`,
-        method: 'GET'
+        method: 'GET',
       })
 
       if (res1) {
@@ -113,8 +135,8 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
         method: 'POST',
         data: {
           ref: `refs/heads/${GH_PAGES}`,
-          sha
-        }
+          sha,
+        },
       })
 
       // gh-pages 分支创建成功
@@ -123,11 +145,13 @@ export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel,
         setTimeout(() => {
           cbHandler(true)
         }, 50000)
-      } else {
+      }
+      else {
         cbHandler(false)
       }
     }
-  } catch (err) {
+  }
+  catch (err) {
     console.error(err)
     cbHandler(false)
   }

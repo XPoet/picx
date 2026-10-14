@@ -1,4 +1,5 @@
-import { UserSettingsModel, WatermarkPositionEnum } from '@/common/model'
+import type { UserSettingsModel } from '@/common/model'
+import { WatermarkPositionEnum } from '@/common/model'
 
 function loadImageFromFile(imageFile: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -18,20 +19,21 @@ function loadImageFromFile(imageFile: File): Promise<HTMLImageElement> {
 function hexToRgb(hex: string): string {
   if (hex) {
     hex = hex.replace('#', '')
-  } else {
+  }
+  else {
     return `255,255,255`
   }
-  const r = parseInt(hex.substring(0, 2), 16)
-  const g = parseInt(hex.substring(2, 4), 16)
-  const b = parseInt(hex.substring(4, 6), 16)
+  const r = Number.parseInt(hex.substring(0, 2), 16)
+  const g = Number.parseInt(hex.substring(2, 4), 16)
+  const b = Number.parseInt(hex.substring(4, 6), 16)
   return `${r}, ${g}, ${b}`
 }
 
 export async function addWatermarkToImage(
   imageFile: File,
-  watermarkConfig: UserSettingsModel['watermark']
+  watermarkConfig: UserSettingsModel['watermark'],
 ): Promise<File | null> {
-  const { text, fontSize, position, textColor, opacity } = watermarkConfig
+  const { text, fontSize, position, textColor, opacity, rotate, gap } = watermarkConfig
   const [r, g, b] = hexToRgb(textColor).split(',')
   const img = await loadImageFromFile(imageFile)
   const canvas = document.createElement('canvas')
@@ -47,7 +49,6 @@ export async function addWatermarkToImage(
   let x = 0
   let y = 0
 
-  // eslint-disable-next-line default-case
   switch (position) {
     case WatermarkPositionEnum.leftTop:
       x = 10
@@ -67,14 +68,33 @@ export async function addWatermarkToImage(
       break
   }
 
-  ctx.strokeText(text, x, y)
-  ctx.fillText(text, x, y)
+  if (position === WatermarkPositionEnum.fullScreen) {
+    const textWidth = ctx.measureText(text).width
+    const gapX = textWidth + gap
+    const gapY = fontSize + gap
+    const range = Math.sqrt(canvas.width ** 2 + canvas.height ** 2) / 2
+    ctx.save()
+    ctx.translate(canvas.width / 2, canvas.height / 2)
+    ctx.rotate((rotate * Math.PI) / 180)
+    for (let row = -range; row < range; row += gapY) {
+      for (let col = -range; col < range; col += gapX) {
+        ctx.strokeText(text, col, row)
+        ctx.fillText(text, col, row)
+      }
+    }
+    ctx.restore()
+  }
+  else {
+    ctx.strokeText(text, x, y)
+    ctx.fillText(text, x, y)
+  }
 
   return new Promise((resolve) => {
     canvas.toBlob((blob) => {
       if (!blob) {
         resolve(null)
-      } else {
+      }
+      else {
         const newFile = new File([blob], imageFile.name, { type: imageFile.type })
         resolve(newFile)
       }

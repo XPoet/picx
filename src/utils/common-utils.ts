@@ -5,7 +5,7 @@ import i18n from '@/plugins/vue/i18n'
  * @param data
  * @returns {string} array | string | number | boolean ...
  */
-export const getType = (data: string): string => {
+export const getType = (data: unknown): string => {
   const type = Object.prototype.toString.call(data).split(' ')[1]
   return type.substring(0, type.length - 1).toLowerCase()
 }
@@ -23,10 +23,9 @@ export const getUuid = () => {
  * @param txt
  * @param callback
  */
-export const copyText = (txt: string, callback: any) => {
+export const copyText = (txt: string, callback?: () => void) => {
   navigator.clipboard.writeText(txt).then(() => {
-    // eslint-disable-next-line no-unused-expressions
-    callback && callback()
+    callback?.()
   })
 }
 
@@ -34,29 +33,29 @@ export const copyText = (txt: string, callback: any) => {
  * 根据 object 每个 key 上值的数据类型，赋对应的初始值
  * @param object
  */
-export const cleanObject = (object: any) => {
-  // eslint-disable-next-line guard-for-in,no-restricted-syntax
-  for (const key in object) {
-    // eslint-disable-next-line default-case
-    switch (getType(object[key])) {
+export const cleanObject = (object: object) => {
+  for (const key of Object.keys(object)) {
+    const value = Reflect.get(object, key)
+
+    switch (getType(value)) {
       case 'object':
-        cleanObject(object[key])
+        cleanObject(value as object)
         break
 
       case 'string':
-        object[key] = ''
+        Reflect.set(object, key, '')
         break
 
       case 'array':
-        object[key] = []
+        Reflect.set(object, key, [])
         break
 
       case 'number':
-        object[key] = 0
+        Reflect.set(object, key, 0)
         break
 
       case 'boolean':
-        object[key] = false
+        Reflect.set(object, key, false)
         break
     }
   }
@@ -64,23 +63,21 @@ export const cleanObject = (object: any) => {
 
 /**
  * 将 obj2 对象的值深度赋值给 obj1 对象
- * @param obj1{Object}
- * @param obj2{Object}
+ * @param obj1 赋值目标。
+ * @param obj2 数据来源。
  */
 export const deepAssignObject = (obj1: object, obj2: object) => {
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in obj2) {
-    // @ts-ignore
-    if (getType(obj2[key]) !== 'object') {
-      // @ts-ignore
-      obj1[key] = obj2[key]
-    } else {
+  for (const key of Object.keys(obj2)) {
+    const sourceValue = Reflect.get(obj2, key)
+
+    if (getType(sourceValue) !== 'object') {
+      Reflect.set(obj1, key, sourceValue)
+    }
+    else {
       if (!Object.hasOwn(obj1, key)) {
-        // @ts-ignore
-        obj1[key] = {}
+        Reflect.set(obj1, key, {})
       }
-      // @ts-ignore
-      deepAssignObject(obj1[key], obj2[key])
+      deepAssignObject(Reflect.get(obj1, key) as object, sourceValue as object)
     }
   }
 }
@@ -92,15 +89,17 @@ export const deepAssignObject = (obj1: object, obj2: object) => {
  */
 export const formatDatetime = (
   fmt: string = 'yyyy-MM-dd hh:mm:ss',
-  timestamp: number = Date.now()
+  timestamp: number = Date.now(),
 ) => {
   function padLeftZero(str: string) {
     return `00${str}`.substr(str.length)
   }
   const date = new Date(timestamp)
 
-  if (/(y+)/.test(fmt)) {
-    fmt = fmt.replace(RegExp.$1, `${date.getFullYear()}`.substr(4 - RegExp.$1.length))
+  const yearMatch = /(y+)/.exec(fmt)
+  if (yearMatch) {
+    const token = yearMatch[1]
+    fmt = fmt.replace(token, `${date.getFullYear()}`.slice(4 - token.length))
   }
 
   const obj = {
@@ -108,15 +107,16 @@ export const formatDatetime = (
     'd+': date.getDate(),
     'h+': date.getHours(),
     'm+': date.getMinutes(),
-    's+': date.getSeconds()
+    's+': date.getSeconds(),
   }
 
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key in obj) {
-    if (new RegExp(`(${key})`).test(fmt)) {
-      // @ts-ignore
-      const str = `${obj[key]}`
-      fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? str : padLeftZero(str))
+  for (const [pattern, value] of Object.entries(obj)) {
+    const match = new RegExp(`(${pattern})`).exec(fmt)
+
+    if (match) {
+      const token = match[1]
+      const stringValue = `${value}`
+      fmt = fmt.replace(token, token.length === 1 ? stringValue : padLeftZero(stringValue))
     }
   }
   return fmt
@@ -127,12 +127,15 @@ export const formatDatetime = (
  * @param func
  * @param wait
  */
-// eslint-disable-next-line no-unused-vars
-export const throttle = <T extends (...args: any[]) => void>(func: T, wait: number = 500): T => {
-  let timer: ReturnType<typeof setTimeout> | undefined
-  let lastArgs: any[]
 
-  function throttled(...args: any[]) {
+export const throttle = <Args extends unknown[]>(
+  func: (...args: Args) => void,
+  wait: number = 500,
+): ((...args: Args) => void) => {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let lastArgs: Args
+
+  function throttled(...args: Args) {
     lastArgs = args
 
     if (!timer) {
@@ -143,7 +146,7 @@ export const throttle = <T extends (...args: any[]) => void>(func: T, wait: numb
     }
   }
 
-  return throttled as unknown as T
+  return throttled
 }
 
 /**
@@ -152,7 +155,7 @@ export const throttle = <T extends (...args: any[]) => void>(func: T, wait: numb
  */
 export const setWindowTitle = (title: string) => {
   if (title) {
-    ;(<any>window).document.title = `${i18n.global.t(title)} | PicX`
+    document.title = `${i18n.global.t(title)} | PicX`
   }
 }
 
@@ -164,23 +167,21 @@ export const setWindowTitle = (title: string) => {
  */
 export const deepObjectEqual = (obj1: object, obj2: object): boolean => {
   // 多维对象转换为一维对象
-  function flattenObject(obj: object) {
-    const result = {}
+  function flattenObject(obj: object): Record<string, unknown> {
+    const result: Record<string, unknown> = {}
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const [key, value] of Object.entries(obj)) {
       if (typeof value === 'object' && value !== null) {
         // 递归处理嵌套对象
         const nested = flattenObject(value)
 
         // 使用 Object.entries() 处理嵌套对象的键
-        // eslint-disable-next-line no-restricted-syntax
+
         for (const [nestedKey, nestedValue] of Object.entries(nested)) {
-          // @ts-ignore
           result[`${key}.${nestedKey}`] = nestedValue
         }
-      } else {
-        // @ts-ignore
+      }
+      else {
         result[key] = value
       }
     }
@@ -189,7 +190,7 @@ export const deepObjectEqual = (obj1: object, obj2: object): boolean => {
   }
 
   return (
-    Object.entries(flattenObject(obj1)).toString() ===
-    Object.entries(flattenObject(obj2)).toString()
+    Object.entries(flattenObject(obj1)).toString()
+    === Object.entries(flattenObject(obj2)).toString()
   )
 }

@@ -1,59 +1,13 @@
-<template>
-  <div class="page-container login-container">
-    <div class="left-box box-item">
-      <el-button
-        plain
-        type="primary"
-        @click="onGitHubAuthorizeLogin"
-        size="large"
-        :loading="authorizeLoading"
-      >
-        {{ $t('authorization.text_1') }}
-      </el-button>
-      <div class="tips-box">
-        <div class="tip-item">{{ $t('authorization.text_8') }}</div>
-        <div class="tip-item link" @click="goTargetUrl(UrlTypeEnum.oauthLoginDocs)">
-          <el-icon><IEpDocument /></el-icon>
-          {{ $t('authorization.text_10') }}
-        </div>
-        <div class="tip-item link" @click="goTargetUrl(UrlTypeEnum.installGitHubAppURL)">
-          <el-icon><IEpLink /></el-icon>
-          {{ $t('authorization.text_11') }}
-          <el-icon class="install-status" v-if="authorizationInfo.installed">
-            <IEpCircleCheckFilled />
-          </el-icon>
-        </div>
-      </div>
-    </div>
-    <div class="right-box box-item">
-      <el-button plain type="primary" size="large" @click="onUseTokenLogin">
-        {{ $t('authorization.text_2') }}
-      </el-button>
-      <div class="tips-box">
-        <div class="tip-item">{{ $t('authorization.text_9') }}</div>
-        <div class="tip-item link" @click="goTargetUrl(UrlTypeEnum.tokenLoginDocs)">
-          <el-icon><IEpDocument /></el-icon>
-          {{ $t('authorization.text_10') }}
-        </div>
-        <div class="tip-item link" @click="goTargetUrl(UrlTypeEnum.generateTokenURL)">
-          <el-icon><IEpLink /></el-icon>
-          {{ $t('authorization.text_12') }}
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { onMounted, computed, ref, watch } from 'vue'
-import {
-  githubAppAuthorize,
-  githubAppAuthorizeCallback,
-  isAuthorizeExpire
-} from '@/views/picx-login/picx-login.util'
+import { computed, onMounted, ref, watch } from 'vue'
 import router from '@/router'
 import { store } from '@/stores'
 import { UrlTypeEnum } from '@/views/picx-login/picx-login.model'
+import {
+  githubAppAuthorize,
+  githubAppAuthorizeCallback,
+  isAuthorizeExpire,
+} from '@/views/picx-login/picx-login.util'
 
 const authorizationInfo = computed(() => store.getters.getGitHubAuthorizationInfo).value
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
@@ -67,18 +21,19 @@ const onGitHubAuthorizeLogin = () => {
   authorizeLoading.value = true
 
   store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-    isAutoAuthorize: true
+    isAutoAuthorize: true,
   })
 
   const { authorized, installed, token } = authorizationInfo
 
   if (authorized && installed && token && !isAuthorizeExpire()) {
     store.dispatch('SET_USER_CONFIG_INFO', {
-      token
+      token,
     })
 
     router.push('/config')
-  } else {
+  }
+  else {
     githubAppAuthorize()
   }
 }
@@ -90,11 +45,11 @@ const onUseTokenLogin = () => {
   const { manualToken } = authorizationInfo
 
   store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-    isAutoAuthorize: false
+    isAutoAuthorize: false,
   })
 
   store.dispatch('SET_USER_CONFIG_INFO', {
-    token: manualToken
+    token: manualToken,
   })
 
   router.push({ path: '/config', query: { focus: '1' } })
@@ -136,7 +91,8 @@ const init = () => {
     if (token && name && owner && logined) {
       if (repo && branch && dir) {
         router.push('/upload')
-      } else {
+      }
+      else {
         router.push('/config')
       }
     }
@@ -153,13 +109,63 @@ watch(
   (nv) => {
     if (nv) {
       store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-        authorizing: false
+        authorizing: false,
       })
       onGitHubAuthorizeLogin()
     }
-  }
+  },
 )
 </script>
+
+<template>
+  <div class="page-container login-container">
+    <div class="left-box box-item">
+      <el-button
+        plain
+        type="primary"
+        size="large"
+        :loading="authorizeLoading"
+        @click="onGitHubAuthorizeLogin"
+      >
+        {{ $t('authorization.text_1') }}
+      </el-button>
+      <div class="tips-box">
+        <div class="tip-item">
+          {{ $t('authorization.text_8') }}
+        </div>
+        <div class="tip-item link" @click="goTargetUrl(UrlTypeEnum.oauthLoginDocs)">
+          <el-icon><IEpDocument /></el-icon>
+          {{ $t('authorization.text_10') }}
+        </div>
+        <div class="tip-item link" @click="goTargetUrl(UrlTypeEnum.installGitHubAppURL)">
+          <el-icon><IEpLink /></el-icon>
+          {{ $t('authorization.text_11') }}
+          <el-icon v-if="authorizationInfo.installed" class="install-status">
+            <IEpCircleCheckFilled />
+          </el-icon>
+        </div>
+      </div>
+    </div>
+    <div class="right-box box-item">
+      <el-button plain type="primary" size="large" @click="onUseTokenLogin">
+        {{ $t('authorization.text_2') }}
+      </el-button>
+      <div class="tips-box">
+        <div class="tip-item">
+          {{ $t('authorization.text_9') }}
+        </div>
+        <div class="tip-item link" @click="goTargetUrl(UrlTypeEnum.tokenLoginDocs)">
+          <el-icon><IEpDocument /></el-icon>
+          {{ $t('authorization.text_10') }}
+        </div>
+        <div class="tip-item link" @click="goTargetUrl(UrlTypeEnum.generateTokenURL)">
+          <el-icon><IEpLink /></el-icon>
+          {{ $t('authorization.text_12') }}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 
 <style scoped lang="stylus">
 @import "./picx-login.styl"

@@ -1,46 +1,51 @@
-import { CompressEncoderEnum, ImageLinkFormatModel, ImageLinkRuleModel } from '@/common/model'
+import type {
+  CompressEncoderEnum,
+  ImageLinkFormatModel,
+  ImageLinkRuleModel,
+  ImageSortEnum,
+} from '@/common/model'
 
 export enum ElementPlusSizeEnum {
-  // eslint-disable-next-line no-unused-vars
   large = 'large',
-  // eslint-disable-next-line no-unused-vars
+
   default = 'default',
-  // eslint-disable-next-line no-unused-vars
-  small = 'small'
+
+  small = 'small',
 }
 
 export enum WatermarkPositionEnum {
-  // eslint-disable-next-line no-unused-vars
   leftTop = 'leftTop',
-  // eslint-disable-next-line no-unused-vars
+
   leftBottom = 'leftBottom',
-  // eslint-disable-next-line no-unused-vars
+
   rightTop = 'rightTop',
-  // eslint-disable-next-line no-unused-vars
-  rightBottom = 'rightBottom'
+
+  rightBottom = 'rightBottom',
+
+  fullScreen = 'fullScreen',
 }
 
 export enum ThemeModeEnum {
-  // eslint-disable-next-line no-unused-vars
   system = 'system',
-  // eslint-disable-next-line no-unused-vars
+
   light = 'light',
-  // eslint-disable-next-line no-unused-vars
-  dark = 'dark'
+
+  dark = 'dark',
 }
 
 export enum LanguageEnum {
-  // eslint-disable-next-line no-unused-vars
   zhCN = 'zh-CN',
-  // eslint-disable-next-line no-unused-vars
+
   zhTW = 'zh-TW',
-  // eslint-disable-next-line no-unused-vars
-  en = 'en'
+
+  en = 'en',
 }
 
 export interface UserSettingsModel {
   imageName: {
     enableHash: boolean
+    /** 时间戳命名，开启时与其他命名选项互斥 */
+    enableTimestamp: boolean
     addPrefix: {
       enable: boolean
       prefix: string
@@ -49,6 +54,10 @@ export interface UserSettingsModel {
   compress: {
     enable: boolean
     encoder: CompressEncoderEnum
+  }
+  management: {
+    /** 图床管理页排序模式 */
+    sort: ImageSortEnum
   }
   imageLinkType: {
     selected: string
@@ -61,6 +70,10 @@ export interface UserSettingsModel {
     selected: string
     presetList: Array<ImageLinkFormatModel>
   }
+  deploy: {
+    /** GitHub Pages 自定义域名（CNAME），空字符串表示未配置 */
+    customDomain: string
+  }
   starred?: boolean
   watermark: {
     enable: boolean
@@ -69,6 +82,10 @@ export interface UserSettingsModel {
     position: WatermarkPositionEnum
     textColor: string
     opacity: number
+    /** 全屏水印旋转角度（度），仅在 position 为 fullScreen 时生效 */
+    rotate: number
+    /** 全屏水印平铺间距（px），仅在 position 为 fullScreen 时生效 */
+    gap: number
   }
   showAnnouncement?: boolean
 }

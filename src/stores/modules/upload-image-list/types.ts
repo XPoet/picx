@@ -1,4 +1,4 @@
-import { UploadImageModel } from '@/common/model'
+import type { UploadImageModel } from '@/common/model'
 
 export default interface UploadImageListStateTypes {
   uploadImageList: UploadImageModel[]

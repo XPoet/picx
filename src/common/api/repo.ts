@@ -1,5 +1,5 @@
-import { UserConfigInfoModel } from '@/common/model'
-import { INIT_REPO_DESC, INIT_REPO_NAME, PICX_INIT_REPO_MSG } from '@/common/constant'
+import type { DirModel, UserConfigInfoModel } from '@/common/model'
+import { INIT_REPO_DESC, PICX_INIT_REPO_MSG } from '@/common/constant'
 import request from '@/utils/request'
 
 /**
@@ -7,34 +7,35 @@ import request from '@/utils/request'
  * @param owner
  * @param page
  */
-export const getRepoList = (owner: string, page = 1) => {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    const tmpList: any[] = await request({
-      url: `users/${owner}/repos`,
-      method: 'GET',
-      params: {
-        type: 'owner', // all | owner | member
-        sort: 'created', // created | updated | pushed | full_name
-        direction: 'desc', // asc | desc
-        per_page: 100,
-        page
-      }
-    })
+interface GitHubRepositorySummary {
+  fork: boolean
+  private: boolean
+  name: string
+}
 
-    if (tmpList && tmpList.length) {
-      resolve(
-        tmpList
-          .filter((v: any) => !v.fork && !v.private)
-          .map((x: any) => ({
-            value: x.name,
-            label: x.name
-          }))
-      )
-    } else {
-      resolve(null)
-    }
+export const getRepoList = async (owner: string, page = 1): Promise<DirModel[] | null> => {
+  const repositories = await request({
+    url: `users/${owner}/repos`,
+    method: 'GET',
+    params: {
+      type: 'owner', // all | owner | member
+      sort: 'created', // created | updated | pushed | full_name
+      direction: 'desc', // asc | desc
+      per_page: 100,
+      page,
+    },
   })
+
+  if (!Array.isArray(repositories)) {
+    return null
+  }
+
+  return (repositories as GitHubRepositorySummary[])
+    .filter(repository => !repository.fork && !repository.private)
+    .map(repository => ({
+      value: repository.name,
+      label: repository.name,
+    }))
 }
 
 /**
@@ -42,17 +43,16 @@ export const getRepoList = (owner: string, page = 1) => {
  * @param owner
  */
 export const getAllRepoList = async (owner: string) => {
-  const tmpList = []
-  // eslint-disable-next-line no-plusplus
+  const repositoryList: DirModel[] = []
+
   for (let i = 1; i <= 3; i++) {
-    const res = await getRepoList(owner, i)
-    if (res) {
-      // @ts-ignore
-      tmpList.push(...res)
+    const repositories = await getRepoList(owner, i)
+    if (repositories) {
+      repositoryList.push(...repositories)
     }
   }
 
-  return Promise.resolve(tmpList.length ? tmpList : null)
+  return repositoryList.length ? repositoryList : null
 }
 
 /**
@@ -79,28 +79,29 @@ If you like it, please give it a star on [GitHub](https://github.com/XPoet/picx)
     data: {
       message: PICX_INIT_REPO_MSG,
       branch,
-      content: window.btoa(README)
+      content: window.btoa(README),
     },
-    noShowErrMsg: true
+    noShowErrMsg: true,
   })
 }
 
 /**
  * 创建仓库
  * @param token
+ * @param repoName
  */
-export const createRepo = (token: string) => {
+export const createRepo = (token: string, repoName: string) => {
   return request({
     url: '/user/repos',
     method: 'POST',
     data: {
-      name: INIT_REPO_NAME,
+      name: repoName,
       description: INIT_REPO_DESC,
-      private: false
+      private: false,
     },
     headers: { Authorization: `Bearer ${token}` },
     success422: true,
-    noShowErrMsg: true
+    noShowErrMsg: true,
   })
 }
 
@@ -115,6 +116,6 @@ export const getRepoInfo = (owner: string, repo: string) => {
     method: 'GET',
     noCache: true,
     success422: true,
-    noShowErrMsg: true
+    noShowErrMsg: true,
   })
 }

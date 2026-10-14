@@ -1,9 +1,9 @@
-import { computed } from 'vue'
 import axios from 'axios'
-import { store } from '@/stores'
+import { computed } from 'vue'
 import { GITHUB_AUTHORIZE_EXPIRE } from '@/common/constant'
-import router from '@/router'
 import i18n from '@/plugins/vue/i18n'
+import router from '@/router'
+import { store } from '@/stores'
 
 const redirect_uri = import.meta!.env.VITE_REDIRECT_URI
 const authorize_api = 'https://apis.xpoet.cn/api/github-authorize'
@@ -38,14 +38,14 @@ export const githubAppAuthorizeCallback = async () => {
   if (setup_action === 'install' && installation_id && !code) {
     await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
       installed: true,
-      installationId: installation_id
+      installationId: installation_id,
     })
 
     ElMessageBox.confirm(i18n.global.t('authorization.msg_3'), i18n.global.t('tip'), {
       confirmButtonText: i18n.global.t('confirm'),
       cancelButtonText: i18n.global.t('cancel'),
       type: 'success',
-      draggable: true
+      draggable: true,
     })
       .then(() => {
         githubAppAuthorize()
@@ -59,7 +59,7 @@ export const githubAppAuthorizeCallback = async () => {
   if (code) {
     const loading = ElLoading.service({
       lock: true,
-      text: i18n.global.t('authorization.loading_1')
+      text: i18n.global.t('authorization.loading_1'),
     })
 
     try {
@@ -68,7 +68,7 @@ export const githubAppAuthorizeCallback = async () => {
         authorized: true,
         code,
         codeCreateTime: Date.now(),
-        isAutoAuthorize: true
+        isAutoAuthorize: true,
       })
 
       const { token } = computed(() => store.getters.getGitHubAuthorizationInfo).value
@@ -84,19 +84,21 @@ export const githubAppAuthorizeCallback = async () => {
           // 存储授权 Token 信息
           await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
             token: newToken,
-            tokenCreateTime: Date.now()
+            tokenCreateTime: Date.now(),
           })
-        } else {
+        }
+        else {
           ElMessage.error({ message: res.data.msg, duration: 6000 })
         }
-      } else {
+      }
+      else {
         newToken = token
       }
 
       if (newToken) {
         // 存储 Token
         await store.dispatch('SET_USER_CONFIG_INFO', {
-          token: newToken
+          token: newToken,
         })
 
         loading.close()
@@ -107,7 +109,8 @@ export const githubAppAuthorizeCallback = async () => {
       }
 
       loading.close()
-    } catch (e: any) {
+    }
+    catch {
       loading.close()
       ElMessage.error({ message: i18n.global.t('authorization.msg_4'), duration: 6000 })
     }
@@ -119,12 +122,11 @@ export const githubAppAuthorizeCallback = async () => {
  */
 export const initGithubAuthorize = async () => {
   const { authorized, installed, token, isAutoAuthorize } = computed(
-    () => store.getters.getGitHubAuthorizationInfo
+    () => store.getters.getGitHubAuthorizationInfo,
   ).value
 
   const goLoginPage = async (cb?: any) => {
     router.push({ path: '/login', query: { jump: '0' } }).then(() => {
-      // eslint-disable-next-line no-unused-expressions
       cb && cb()
     })
   }
@@ -144,7 +146,7 @@ export const initGithubAuthorize = async () => {
         dangerouslyUseHTMLString: true,
         onClose: () => {
           goLoginPage()
-        }
+        },
       })
 
       document
@@ -153,7 +155,7 @@ export const initGithubAuthorize = async () => {
           msgInstance.close()
           goLoginPage(() => {
             store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-              authorizing: true
+              authorizing: true,
             })
           })
         })

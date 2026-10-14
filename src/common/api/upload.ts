@@ -9,7 +9,7 @@ export const uploadSingleImage = (url: string, data: any) => {
   return request({
     url,
     method: 'PUT',
-    data
+    data,
   })
 }
 
@@ -27,7 +27,7 @@ export const getFileBlob = (base64String: string, owner: string, repo: string) =
       owner,
       repo,
       content: base64String,
-      encoding: 'base64'
-    }
+      encoding: 'base64',
+    },
   })
 }

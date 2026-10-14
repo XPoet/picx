@@ -18,6 +18,7 @@
   "uploaded": "已上傳",
   "upload": "上傳",
   "rename": "重新命名",
+  "move": "移動到...",
   "copy_link": "複製圖片連結",
   "paste_image": "貼上圖片",
   "copy_success_1": "圖片連結已自動複製到系統剪貼簿",
@@ -80,6 +81,8 @@
       "title": "圖片名稱設定",
       "hash_switch_name": "哈希化",
       "hash_switch_desc": "上傳時為圖片名稱增加雜湊值，確保圖片名稱唯一，強烈建議開啟",
+      "timestamp_switch_name": "時間戳命名",
+      "timestamp_switch_desc": "上傳時以時間戳取代原始圖片名稱，例如：1716843600000.jpg，開啟後其他命名選項將自動關閉",
       "prefix_switch_name": "加上前綴",
       "prefix_switch_desc": "上傳時為圖片名稱增加前綴，例如：abc-image.jpg，abc- 為前綴",
       "prefix_input_placeholder": "請輸入字首 ..."
@@ -97,7 +100,10 @@
       "position_1": "左上角",
       "position_2": "左下角",
       "position_3": "右上角",
-      "position_4": "右下角"
+      "position_4": "右下角",
+      "position_5": "全螢幕",
+      "rotate": "旋轉角度",
+      "gap": "平鋪間距"
     },
     "img_compress": {
       "title": "圖片壓縮設定",
@@ -109,7 +115,8 @@
       "radio_2": "mozJPEG",
       "radio_2_desc": "壓縮後圖片格式為 jpg，相容性最好，所有瀏覽器支援",
       "radio_3": "avif",
-      "radio_3_desc": "壓縮後圖片格式為 avif，壓縮率極高，部分現代瀏覽器支援"
+      "radio_3_desc": "壓縮後圖片格式為 avif，壓縮率極高，部分現代瀏覽器支援",
+      "radio_4_desc": "壓縮後圖片格式為 png，無損最佳化並保留透明通道，適合截圖和圖形類圖片，照片類圖片體積可能增大"
     },
     "link_rule": {
       "title": "圖片連結規則配置",
@@ -127,7 +134,8 @@
       "error_msg_2": "{action}失敗，圖片連結規則必須包含 {path}",
       "error_msg_3": "圖片連結規則缺少 {rules}，是否確認{action}？",
       "add": "新增",
-      "edit": "編輯"
+      "edit": "編輯",
+      "gh_pages_not_deployed": "圖床儲存庫尚未部署 GitHub Pages，暫不能選擇此圖片連結規則，是否立即一鍵部署？"
     },
     "link_format": {
       "title": "圖片連結格式設定",
@@ -144,25 +152,25 @@
       "fail": "部署失敗",
       "fail2": "部署失敗，請稍後再試",
       "deploying": "正在部署到 GitHub Pages，該過程持續 1 分鐘左右，請耐心等待 ...",
-      "not_deployed": "未部署"
+      "not_deployed": "未部署",
+      "custom_domain_label": "自訂網域",
+      "custom_domain_placeholder": "例如 img.example.com",
+      "custom_domain_desc": "儲存後會在儲存庫根目錄建立 CNAME 檔案並自動部署到 GitHub Pages，還需在 DNS 服務商處新增 CNAME 記錄指向 {pagesDomain}",
+      "custom_domain_save": "儲存",
+      "custom_domain_invalid": "網域格式不正確，請輸入如 img.example.com 的網域",
+      "custom_domain_synced": "CNAME 檔案已同步，自訂網域將在 GitHub Pages 重新部署後生效",
+      "custom_domain_deleted": "已清除自訂網域，CNAME 檔案已刪除",
+      "custom_domain_fail": "CNAME 檔案同步失敗，請稍後再試"
     },
     "theme": {
       "title": "主題設定",
       "system": "跟隨系統",
       "dark": "黑夜",
       "light": "白晝"
-    },
-    "cloud_settings": {
-      "tip_1": "偵測到你的設定資料未儲存到雲端倉庫，是否儲存？",
-      "tip_2": "偵測到你的雲端倉庫存在設定文件，是否使用？",
-      "tip_3": "偵測到你的設定資料有變化，是否同步到雲端倉庫？",
-      "tip_4": "本地設定資料與雲端倉庫設定資料一致",
-      "success_msg_1": "保存成功",
-      "success_msg_2": "更新成功"
     }
   },
   "upload_page": {
-    "upload_area_text": "拖曳 / 貼上 / 點擊此處選擇圖片",
+    "upload_area_text": "拖曳 / 貼上 / 點擊此處選擇圖片或影片",
     "message1": "請先完成圖床配置",
     "message2": "請選擇一個倉庫",
     "message3": "目錄不能為空",
@@ -176,12 +184,17 @@
     "add_hash": "哈希化",
     "add_prefix": "新增前綴",
     "uploading": "正在上傳 ...",
-    "tip_9": "{name} 不是圖片格式",
+    "tip_9": "{name} 不是圖片或影片格式",
     "tip_10": "{name} 超過 {size} MB，跳過選擇",
     "tip_11": "{name} 上傳失敗"
   },
   "management_page": {
     "reload": "重新載入",
+    "sort": "排序",
+    "sortDefault": "預設排序",
+    "sortNameAsc": "名稱升序",
+    "sortNameDesc": "名稱降序",
+    "sortTimeDesc": "最新上傳優先",
     "loadingTxt1": "載入中 ...",
     "loadingTxt2": "正在重新命名 ...",
     "loadingTxt3": "刪除中 ...",
@@ -206,8 +219,20 @@
     "contextmenu_1": "從目前位置上傳新圖片",
     "contextmenu_2": "上傳圖片到 {dir}",
     "contextmenu_3": "根目錄",
+    "contextmenu_4": "跳轉 GitHub 倉庫",
     "text_1": "請輸入新的圖片名稱",
-    "text_2": "立即上傳"
+    "text_2": "立即上傳",
+    "video_preview": "預覽影片",
+    "renameDirTips": "請輸入新的目錄名稱",
+    "dirNameInvalid": "目錄名稱不能包含空格或 / 等特殊字元",
+    "dirNameUnchanged": "目錄名無改變",
+    "dirNameDuplicated": "同層目錄下已存在同名目錄",
+    "dirRenameFail": "重新命名目錄失敗，請重試",
+    "delDirTips": "此操作將永久刪除該目錄及其下所有檔案",
+    "moveTips": "請選擇目標目錄",
+    "loadingTxt4": "正在移動 ...",
+    "message8": "移動成功",
+    "message9": "移動失敗，請重試"
   },
   "toolbox": {
     "tool_1": "圖片壓縮",
@@ -224,10 +249,8 @@
     "add_watermark": "新增浮水印"
   },
   "feedback": {
-    "text_1": "PicX 是一款基於 GitHub API 開發的圖床工具，提供圖片上傳託管、產生圖片連結和常用圖片工具箱服務。",
-    "text_2": "建議將本站新增至瀏覽器收藏夾，方便下次使用。",
-    "text_3": "如果 PicX 對你有幫助，歡迎讚賞作者，支持開源。",
-    "text_4": "鄭重聲明：請勿使用 PicX 上傳違反你當地法律的圖片，所造成的一切後果與作者無關。"
+    "text_1": "一款基於 GitHub API 開發的圖床工具，提供圖片上傳託管和產生圖片連結。",
+    "text_2": "建議將本站新增至瀏覽器收藏夾，方便下次使用。"
   },
   "region": {
     "CN": "中國大陸",

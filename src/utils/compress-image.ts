@@ -1,11 +1,5 @@
-import Compress from '@yireen/squoosh-browser'
-import {
-  defaultPreprocessorState,
-  defaultProcessorState,
-  encoderMap,
-  EncoderState
-} from '@yireen/squoosh-browser/dist/client/lazy-app/feature-meta'
-import { CompressEncoderEnum } from '@/common/model'
+import type { CompressEncoderEnum } from '@/common/model'
+import { encodeImage } from '@/services/image-codec'
 import { isNeedCompress } from '@/utils/file-utils'
 
 /**
@@ -15,15 +9,7 @@ import { isNeedCompress } from '@/utils/file-utils'
  */
 export const compressImage = async (file: File, encoder: CompressEncoderEnum) => {
   if (isNeedCompress(file.type)) {
-    const compress = new Compress(file, {
-      encoderState: {
-        type: encoder,
-        options: encoderMap[encoder].meta.defaultOptions
-      } as EncoderState,
-      processorState: defaultProcessorState,
-      preprocessorState: defaultPreprocessorState
-    })
-    return compress.process()
+    return encodeImage(file, encoder)
   }
 
   return file

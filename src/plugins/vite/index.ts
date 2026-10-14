@@ -1,12 +1,13 @@
 import type { Plugin } from 'vite'
+import type { ViteEnv } from '@/common/model'
+import { webUpdateNotice } from '@plugin-web-update-notification/vite'
 import vue from '@vitejs/plugin-vue'
+import { codeInspectorPlugin } from 'code-inspector-plugin'
 import AutoImport from 'unplugin-auto-import/vite'
-import Components from 'unplugin-vue-components/vite'
-import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 import IconsResolver from 'unplugin-icons/resolver'
 import Icons from 'unplugin-icons/vite'
-import { webUpdateNotice } from '@plugin-web-update-notification/vite'
-import { ViteEnv } from '@/common/model'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+import Components from 'unplugin-vue-components/vite'
 import configPWAPlugin from './pwa'
 
 export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
@@ -19,10 +20,10 @@ export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
         ElementPlusResolver(),
         // 自动导入 Element Plus 图标组件
         IconsResolver({
-          enabledCollections: ['ep']
-        })
+          enabledCollections: ['ep'],
+        }),
       ],
-      dts: 'src/auto-imports.d.ts'
+      dts: 'src/auto-imports.d.ts',
     }),
 
     Components({
@@ -31,20 +32,24 @@ export default function createVitePlugins(viteEnv: ViteEnv, isBuild: boolean) {
         ElementPlusResolver(),
         // 自动注册 Element Plus 图标组件
         IconsResolver({
-          enabledCollections: ['ep']
-        })
+          enabledCollections: ['ep'],
+        }),
       ],
-      dts: 'src/components.d.ts'
+      dts: 'src/components.d.ts',
     }),
 
     Icons({
-      autoInstall: true
+      autoInstall: true,
+    }),
+
+    codeInspectorPlugin({
+      bundler: 'vite',
     }),
 
     // 更新通知插件
     webUpdateNotice({
-      logVersion: true
-    })
+      logVersion: true,
+    }),
   )
 
   // production env

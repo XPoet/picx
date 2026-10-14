@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2022", "WebWorker"],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@jsquash/avif": ["./src/types/jsquash-codecs.d.ts"],
+      "@jsquash/jpeg": ["./src/types/jsquash-codecs.d.ts"],
+      "@jsquash/webp": ["./src/types/jsquash-codecs.d.ts"]
+    },
+    "types": []
+  },
+  "include": ["src/workers/**/*.ts", "src/common/model/**/*.ts", "src/types/jsquash-codecs.d.ts"]
+}

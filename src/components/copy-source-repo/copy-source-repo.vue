@@ -1,3 +1,112 @@
+<script setup lang="ts">
+import { reactive, ref, watch } from 'vue'
+import i18n from '@/plugins/vue/i18n'
+import {
+  getSourceRepoImgContent,
+  refreshManagementPage,
+  uploadSourceRepoImages,
+} from './copy-source-repo.util'
+
+defineProps({
+  position: {
+    type: String as () => 'config' | 'management',
+    default: 'config',
+  },
+})
+
+const dialogVisible = ref(false)
+const formRef = ref()
+const sourceRepoRef = ref()
+const sourceRepoBranchRef = ref()
+const loading = ref(false)
+const copyResult = reactive({
+  status: false,
+  text: '',
+})
+
+const formObj = reactive({
+  repo: '',
+  branch: '',
+})
+
+const onFocus = () => {
+  if (!formObj.repo) {
+    sourceRepoRef.value?.focus()
+  }
+  else if (!formObj.branch) {
+    sourceRepoBranchRef.value?.focus()
+  }
+  else {
+    sourceRepoRef.value?.focus()
+  }
+}
+
+const onConfirm = async () => {
+  formRef.value.validate(async (valid: boolean) => {
+    if (valid) {
+      loading.value = true
+      await getSourceRepoImgContent(
+        formObj.repo,
+        formObj.branch,
+        '',
+        async ({ status, imgList }: any) => {
+          if (status) {
+            const copyRes = await uploadSourceRepoImages(imgList, formObj.repo)
+            loading.value = false
+            if (copyRes) {
+              copyResult.status = true
+              copyResult.text = i18n.global.t('copy_repo_img.text_6', { repo: formObj.repo })
+              // 刷新 图床管理 页面
+              await refreshManagementPage()
+            }
+            else {
+              copyResult.status = false
+              copyResult.text = i18n.global.t('copy_repo_img.text_7', { repo: formObj.repo })
+            }
+          }
+          else {
+            loading.value = false
+            copyResult.status = false
+            copyResult.text = i18n.global.t('copy_repo_img.text_4')
+            onFocus()
+          }
+        },
+      )
+    }
+    else {
+      onFocus()
+    }
+  })
+}
+
+const closeDialog = () => {
+  copyResult.status = false
+  copyResult.text = ''
+  formRef.value?.clearValidate()
+}
+
+watch(
+  () => formObj,
+  () => {
+    copyResult.status = false
+    copyResult.text = ''
+  },
+  { deep: true },
+)
+
+watch(
+  () => dialogVisible.value,
+  (nv) => {
+    if (nv) {
+      setTimeout(() => {
+        onFocus()
+      }, 100)
+    }
+  },
+  { immediate: true },
+)
+</script>
+
 <template>
   <el-tooltip
     placement="top"
@@ -22,8 +131,8 @@
   >
     <div class="copy-source-repo border-box">
       <el-alert
-        class="copy-result-tip"
         v-if="copyResult.text"
+        class="copy-result-tip"
         :title="copyResult.text"
         :type="copyResult.status ? 'success' : 'error'"
         show-icon
@@ -65,117 +174,15 @@
       </el-form>
     </div>
     <template #footer>
-      <el-button @click="dialogVisible = false" v-if="!loading">{{ $t('cancel') }}</el-button>
-      <el-button type="primary" @click="onConfirm" :loading="loading" :disabled="copyResult.status">
+      <el-button v-if="!loading" @click="dialogVisible = false">
+        {{ $t('cancel') }}
+      </el-button>
+      <el-button type="primary" :loading="loading" :disabled="copyResult.status" @click="onConfirm">
         {{ loading ? $t('copy_repo_img.loading_1') : $t('confirm') }}
       </el-button>
     </template>
   </el-dialog>
 </template>
-
-<script setup lang="ts">
-import { reactive, ref, watch } from 'vue'
-import {
-  getSourceRepoImgContent,
-  refreshManagementPage,
-  uploadSourceRepoImages
-} from './copy-source-repo.util'
-import i18n from '@/plugins/vue/i18n'
-
-defineProps({
-  position: {
-    type: String as () => 'config' | 'management',
-    default: 'config'
-  }
-})
-
-const dialogVisible = ref(false)
-const formRef = ref()
-const sourceRepoRef = ref()
-const sourceRepoBranchRef = ref()
-const loading = ref(false)
-const copyResult = reactive({
-  status: false,
-  text: ''
-})
-
-const formObj = reactive({
-  repo: '',
-  branch: ''
-})
-
-const onFocus = () => {
-  if (!formObj.repo) {
-    sourceRepoRef.value?.focus()
-  } else if (!formObj.branch) {
-    sourceRepoBranchRef.value?.focus()
-  } else {
-    sourceRepoRef.value?.focus()
-  }
-}
-
-const onConfirm = async () => {
-  formRef.value.validate(async (valid: boolean) => {
-    if (valid) {
-      loading.value = true
-      await getSourceRepoImgContent(
-        formObj.repo,
-        formObj.branch,
-        '',
-        async ({ status, imgList }: any) => {
-          if (status) {
-            const copyRes = await uploadSourceRepoImages(imgList, formObj.repo)
-            loading.value = false
-            if (copyRes) {
-              copyResult.status = true
-              copyResult.text = i18n.global.t('copy_repo_img.text_6', { repo: formObj.repo })
-              // 刷新 图床管理 页面
-              await refreshManagementPage()
-            } else {
-              copyResult.status = false
-              copyResult.text = i18n.global.t('copy_repo_img.text_7', { repo: formObj.repo })
-            }
-          } else {
-            loading.value = false
-            copyResult.status = false
-            copyResult.text = i18n.global.t('copy_repo_img.text_4')
-            onFocus()
-          }
-        }
-      )
-    } else {
-      onFocus()
-    }
-  })
-}
-
-const closeDialog = () => {
-  copyResult.status = false
-  copyResult.text = ''
-  formRef.value?.clearValidate()
-}
-
-watch(
-  () => formObj,
-  () => {
-    copyResult.status = false
-    copyResult.text = ''
-  },
-  { deep: true }
-)
-
-watch(
-  () => dialogVisible.value,
-  (nv) => {
-    if (nv) {
-      setTimeout(() => {
-        onFocus()
-      }, 100)
-    }
-  },
-  { immediate: true }
-)
-</script>
 
 <style scoped lang="stylus">
 @import "copy-source-repo.styl"

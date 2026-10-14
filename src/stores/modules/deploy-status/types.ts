@@ -1,4 +1,4 @@
-import { DeployServerEnum } from '@/components/deploy-status-bar/deploy-status-bar.model'
+import type { DeployServerEnum } from '@/components/deploy-status-bar/deploy-status-bar.model'
 
 export interface DeployItemInfo {
   uuid: string

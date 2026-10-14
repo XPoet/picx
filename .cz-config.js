@@ -14,12 +14,12 @@ module.exports = {
     ['revert', '回滚 Commit', '⏪'],
     ['WIP', '正在进行的工作', '🚧'],
     ['ui', '修改界面 UI', '💄'],
-    ['release', '发布版本或标签', '🚀']
+    ['release', '发布版本或标签', '🚀'],
   ].map(([value, desc, icon]) => {
     return {
       value,
-      name: `${(value + ': ').padEnd(10)}${icon} ${desc}`
-    };
+      name: `${(value + ': ').padEnd(10)}${icon} ${desc}`,
+    }
   }),
 
   // Scopes 类型列表
@@ -31,12 +31,12 @@ module.exports = {
     ['styles', '样式相关'],
     ['deps', '项目依赖'],
     ['auth', '对 auth 修改'],
-    ['other', '其他修改']
+    ['other', '其他修改'],
   ].map(([value, desc]) => {
     return {
       value,
-      name: `${value.padEnd(20)}（${desc}）`
-    };
+      name: `${value.padEnd(20)}（${desc}）`,
+    }
   }),
 
   /*
@@ -61,12 +61,11 @@ module.exports = {
     scope: '\n请选择或输入修改范围 Scope：（上下键选择，按 Enter 键确定）',
     customScope: '请输入自定义的 Scope：', // 需设置 allowCustomScopes: true
     subject: '填写简短精炼的变更描述：（必填）\n',
-    body: '填写更加详细的变更描述：（使用 \'|\' 换行。非必填，可按 Enter 键跳过）\n',
+    body: "填写更加详细的变更描述：（使用 '|' 换行。非必填，可按 Enter 键跳过）\n",
     breaking: '列举非兼容性重大的变更：（非必填，可按 Enter 键跳过）\n',
     footer: '列举出所有变更的 ISSUES CLOSED：（例如：#31、#34。非必填，可按 Enter 键跳过）\n',
-    confirmCommit: '确认使用以上信息提交？（y/n/e）'
+    confirmCommit: '确认使用以上信息提交？（y/n/e）',
   },
-
 
   allowTicketNumber: false,
   isTicketNumberRequired: false,
@@ -77,7 +76,7 @@ module.exports = {
   // skipQuestions: ['body', 'footer'], // 跳过问题
   skipEmptyScopes: false,
 
-  subjectLimit: 100 // subject 长度限制
+  subjectLimit: 100, // subject 长度限制
   // breaklineChar: '|', // 设置换行符
   // footerPrefix : 'ISSUES CLOSED:'
   // askForBreakingChangeFirst : true, // default is false

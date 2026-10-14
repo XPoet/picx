@@ -44,7 +44,8 @@ export const getRegionByIP = async (): Promise<'CN' | 'HK' | 'TW' | 'SG' | 'US'>
     const res2 = await axios.get(`https://ipapi.co/${res.data.ip}/country/`)
 
     return Promise.resolve(res2.data)
-  } catch (error) {
+  }
+  catch {
     return Promise.resolve('CN')
   }
 }

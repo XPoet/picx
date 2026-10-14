@@ -1,9 +1,10 @@
-import { UploadedImageModel } from '@/common/model'
+import type { UploadedImageModel } from '@/common/model'
 
 export interface DirObject {
   type: 'dir'
   dir: string
   dirPath: string
+  active?: boolean
   childrenDirs: DirObject[]
   imageList: UploadedImageModel[]
 }

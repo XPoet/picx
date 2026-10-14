@@ -1,31 +1,83 @@
-name: deploy
+name: Release and Deploy
 
 on:
   push:
     branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: release-and-deploy-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
-  deploy:
+  release-and-deploy:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup Node.js v14.x
-        uses: actions/setup-node@v1
+      - name: Checkout code
+        uses: actions/checkout@v7
         with:
-          node-version: "14.x"
+          fetch-depth: 0
 
-      - name: Install
-        run: npm install
+      - name: Check deployment token
+        env:
+          GH_PAGES_DEPLOY: ${{ secrets.GH_PAGES_DEPLOY }}
+        run: |
+          if [ -z "$GH_PAGES_DEPLOY" ]; then
+            echo "::error::GH_PAGES_DEPLOY must be a PAT with Contents write access to XPoet/picx-sites."
+            exit 1
+          fi
 
-      - name: Build
-        run: npm run build
-
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
         with:
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify (lint / style / typecheck / test / build)
+        run: pnpm verify
+
+      - name: Release (version bump / changelog / tag / GitHub Release)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: pnpm exec semantic-release
+
+      - name: Resolve release version
+        id: release_version
+        run: node -p '"version=" + require("./package.json").version' >> "$GITHUB_OUTPUT"
+
+      - name: Refresh dependency state after release
+        # The release changes package.json; refresh pnpm's workspace state before building.
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: Build with release version
+        run: pnpm build
+
+      - name: Deploy to XPoet/picx-sites (main/images-hosting)
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          personal_token: ${{ secrets.GH_PAGES_DEPLOY }}
+          external_repository: XPoet/picx-sites
+          publish_branch: main
           publish_dir: ./dist
-          github_token: ${{ secrets.GH_PAGES_DEPLOY }}
+          destination_dir: images-hosting
+          # Preserve existing files and leave the target repository's root configuration unchanged
+          keep_files: true
+          disable_nojekyll: true
           user_name: ${{ secrets.MY_USER_NAME }}
           user_email: ${{ secrets.MY_USER_EMAIL }}
-          commit_message: Update PicX
+          commit_message: Deploy PicX Images Hosting v${{ steps.release_version.outputs.version }}
