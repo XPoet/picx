@@ -11,12 +11,12 @@ export default function createReleaseNotesPreset() {
       { type: 'ui', section: '💄 UI Improvements' },
       { type: 'revert', section: '⏪ Reverts' },
       { type: 'refactor', section: '🔨 Code Refactoring' },
-      { type: 'docs', section: '📝 Documentation', hidden: true },
-      { type: 'style', section: '🎨 Styles', hidden: true },
-      { type: 'test', section: '✅ Tests', hidden: true },
-      { type: 'build', section: '🛠️ Build System', hidden: true },
+      { type: 'style', section: '🎨 Styles' },
+      { type: 'build', section: '🛠️ Build System' },
+      { type: 'chore', section: '📦 Chores' },
       { type: 'ci', section: '🔧 Continuous Integration', hidden: true },
-      { type: 'chore', section: '📦 Chores', hidden: true },
+      { type: 'docs', section: '📝 Documentation', hidden: true },
+      { type: 'test', section: '✅ Tests', hidden: true },
     ],
   })
 
