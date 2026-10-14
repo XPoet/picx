@@ -11,26 +11,36 @@ concurrency:
 
 permissions:
   contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   release-and-deploy:
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
-          # Full history and tags are required to analyze commits since the last release
           fetch-depth: 0
 
+      - name: Check deployment token
+        env:
+          GH_PAGES_DEPLOY: ${{ secrets.GH_PAGES_DEPLOY }}
+        run: |
+          if [ -z "$GH_PAGES_DEPLOY" ]; then
+            echo "::error::GH_PAGES_DEPLOY must be a PAT with Contents write access to XPoet/picx-sites."
+            exit 1
+          fi
+
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
-          version: 11.18.0
           run_install: false
 
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: pnpm
@@ -48,13 +58,22 @@ jobs:
 
       - name: Resolve release version
         id: release_version
-        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+        run: node -p '"version=" + require("./package.json").version' >> "$GITHUB_OUTPUT"
 
-      - name: Deploy to GitHub Pages
+      - name: Build with release version
+        run: pnpm build
+
+      - name: Deploy to XPoet/picx-sites (main/images-hosting)
         uses: peaceiris/actions-gh-pages@v4
         with:
+          personal_token: ${{ secrets.GH_PAGES_DEPLOY }}
+          external_repository: XPoet/picx-sites
+          publish_branch: main
           publish_dir: ./dist
-          github_token: ${{ secrets.GH_PAGES_DEPLOY }}
+          destination_dir: images-hosting
+          # Preserve existing files and leave the target repository's root configuration unchanged
+          keep_files: true
+          disable_nojekyll: true
           user_name: ${{ secrets.MY_USER_NAME }}
           user_email: ${{ secrets.MY_USER_EMAIL }}
-          commit_message: Deploy PicX v${{ steps.release_version.outputs.version }}
+          commit_message: Deploy PicX Images Hosting v${{ steps.release_version.outputs.version }}

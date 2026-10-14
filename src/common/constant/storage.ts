@@ -1,4 +1,4 @@
-const PREFIX = 'PICX_'
+const PREFIX = 'PICX_IH_'
 
 /**
  * LocalStorage Key
