@@ -126,7 +126,6 @@ onMounted(() => {
       <el-icon v-else class="fold-icon" @click="onFoldNav">
         <IEpDArrowLeft />
       </el-icon>
-      <site-count class="site-count" :show-p-v="true" :show-u-v="true" />
     </div>
   </aside>
 </template>
