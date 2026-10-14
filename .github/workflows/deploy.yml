@@ -60,6 +60,10 @@ jobs:
         id: release_version
         run: node -p '"version=" + require("./package.json").version' >> "$GITHUB_OUTPUT"
 
+      - name: Refresh dependency state after release
+        # The release changes package.json; refresh pnpm's workspace state before building.
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
       - name: Build with release version
         run: pnpm build
 
