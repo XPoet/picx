@@ -2,6 +2,14 @@
 
 All notable changes of PicX are documented in this file.
 
+## [3.1.2](https://github.com/XPoet/picx/compare/v3.1.1...v3.1.2) (2026-10-14)
+
+### 📦 Chores
+
+* **ci:** update release configuration ([f28078e](https://github.com/XPoet/picx/commit/f28078ed4d753033308d9cfde9d54a2d7f07a952))
+* **i18n:** update locales ([567bfe1](https://github.com/XPoet/picx/commit/567bfe138808dde93571186198453b44a3015fa4))
+* update GitHub APP Redirect URI ([6e97ef8](https://github.com/XPoet/picx/commit/6e97ef8656d8ed7b9e085eeb1bfb7690525c2194))
+
 ## [3.1.1](https://github.com/XPoet/picx/compare/v3.1.0...v3.1.1) (2026-10-14)
 
 ## [3.1.0](https://github.com/XPoet/picx/compare/v3.0.2...v3.1.0) (2026-10-14)
