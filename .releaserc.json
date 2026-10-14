@@ -31,12 +31,7 @@
         "changelogTitle": "# Changelog\n\nAll notable changes of PicX are documented in this file."
       }
     ],
-    [
-      "@semantic-release/npm",
-      {
-        "npmPublish": false
-      }
-    ],
+    "./release-version-sync.mjs",
     [
       "@semantic-release/git",
       {
