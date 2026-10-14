@@ -2,6 +2,8 @@
 
 All notable changes of PicX are documented in this file.
 
+## [3.1.1](https://github.com/XPoet/picx/compare/v3.1.0...v3.1.1) (2026-10-14)
+
 ## [3.1.0](https://github.com/XPoet/picx/compare/v3.0.2...v3.1.0) (2026-10-14)
 
 ### ✨ Features
