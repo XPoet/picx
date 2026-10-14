@@ -49,17 +49,17 @@ onMounted(() => {
     @close="onClose"
   >
     <div class="announcement-item">
-      {{ $t('header.announcement.text_2') }}
-    </div>
-    <div class="announcement-item">
-      {{ $t('header.announcement.text_3') }}
-      <el-link type="primary" target="_blank" href="https://v2.picx.xpoet.cn">
-        PicX v2.0
+      <el-link
+        type="primary"
+        target="_blank"
+        href="https://picx.xpoet.cn"
+      >
+        {{ $t('header.announcement.text_2') }}
       </el-link>
     </div>
     <template #footer>
       <el-button @click="notRemindAgain">
-        {{ $t('header.announcement.text_4') }}
+        {{ $t('header.announcement.text_3') }}
       </el-button>
     </template>
   </el-dialog>
