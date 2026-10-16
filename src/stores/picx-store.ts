@@ -120,6 +120,14 @@ function createAuthorizationInfo(): GitHubAuthorizationInfo {
     deepAssignObject(authorizationInfo, storedAuthorizationInfo)
   }
 
+  if (authorizationInfo.code || authorizationInfo.codeCreateTime) {
+    authorizationInfo.code = ''
+    authorizationInfo.codeCreateTime = 0
+    try {
+      setLocal(LS_AUTHORIZATION, authorizationInfo)
+    }
+    catch {}
+  }
   return authorizationInfo
 }
 
@@ -409,11 +417,16 @@ export const usePicxStore = defineStore('picx', {
           ? { authorized: true, installed: true, token, tokenCreateTime: Date.now() }
           : { authorized: false, installed: null, token: '', tokenCreateTime: 0, manualToken: token }),
       }
+      const changedRepository = Boolean(previous.owner) && (previous.owner !== result.repository.owner || previous.repo !== result.repository.repo || previous.branch !== result.repository.branch)
+      const emptyTree = changedRepository ? createDirObject('/', '/') : null
+      const oldManagement = changedRepository ? localStorage.getItem(LS_MANAGEMENT) : null
       const oldConfig = localStorage.getItem(LS_CONFIG)
       const oldAuthorization = localStorage.getItem(LS_AUTHORIZATION)
       try {
         localStorage.setItem(LS_CONFIG, JSON.stringify(config))
         localStorage.setItem(LS_AUTHORIZATION, JSON.stringify(authorization))
+        if (emptyTree)
+          localStorage.setItem(LS_MANAGEMENT, JSON.stringify(emptyTree))
       }
       catch {
         // 尽力恢复原快照；即使存储完全不可用也不发布候选内存状态。
@@ -424,10 +437,21 @@ export const usePicxStore = defineStore('picx', {
           if (oldAuthorization === null)
             localStorage.removeItem(LS_AUTHORIZATION)
           else localStorage.setItem(LS_AUTHORIZATION, oldAuthorization)
+          if (changedRepository) {
+            if (oldManagement === null)
+              localStorage.removeItem(LS_MANAGEMENT)
+            else localStorage.setItem(LS_MANAGEMENT, oldManagement)
+          }
         }
         catch {}
         this.connection = { phase: 'failed', attemptId, error: { kind: 'storage-unavailable', retryable: true } }
         return false
+      }
+      if (emptyTree) {
+        this.dirImageListModule.dirObject = emptyTree
+        this.imageCardModule.imgCardArr = []
+        this.UPLOAD_IMG_LIST_RESET()
+        this.UPLOAD_AREA_ACTIVE_LOGOUT()
       }
       Object.assign(previous, config)
       Object.assign(this.githubAuthorizeModule.authorizationInfo, authorization)

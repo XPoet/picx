@@ -18,8 +18,11 @@ interface OpenPageOptions {
   language?: 'zh-CN' | 'zh-TW' | 'en'
   theme?: 'light' | 'dark' | 'system'
   processingDisabled?: boolean
-  connectionScenario?: 'ready' | 'app-missing'
+  connectionScenario?: 'ready' | 'app-missing' | 'initialize'
   savedOAuth?: boolean
+  savedCredential?: boolean
+  partialConfiguration?: boolean
+  missingDirectory?: boolean
 }
 
 interface PicxFixture {
@@ -38,6 +41,8 @@ export const test = base.extend<{ picx: PicxFixture }>({
     let contents = createDirectoryContentsFixture()
     let settings = createSettingsFixture()
     let connectionScenario: OpenPageOptions['connectionScenario']
+    let repositoryCreated = true
+    let branchInitialized = true
     const contentPrefix = `/repos/${fixtureRepository.owner}/${fixtureRepository.repo}/contents/`
 
     await page.route('**/*', async (route) => {
@@ -60,6 +65,23 @@ export const test = base.extend<{ picx: PicxFixture }>({
         return
       }
 
+      if (connectionScenario && url.origin === 'https://apis.xpoet.cn' && url.pathname === '/api/github-authorize' && method === 'GET' && url.searchParams.get('code') === 'fixture-callback') {
+        await route.fulfill({ json: { data: 'fixture-invalid-credential' } })
+        return
+      }
+      const simulatedRepository = { name: fixtureRepository.repo, private: false, default_branch: fixtureRepository.branch, owner: { login: fixtureRepository.owner }, permissions: { push: true } }
+      if (connectionScenario === 'initialize' && url.origin === 'https://api.github.com') {
+        if (method === 'POST' && url.pathname === '/user/repos' && !repositoryCreated) {
+          repositoryCreated = true
+          await route.fulfill({ status: 201, json: simulatedRepository })
+          return
+        }
+        if (method === 'PUT' && url.pathname === `${contentPrefix}README.md` && repositoryCreated && !branchInitialized) {
+          branchInitialized = true
+          await route.fulfill({ status: 201, json: { commit: { sha: 'fixture-init-commit' } } })
+          return
+        }
+      }
       if (connectionScenario && url.origin === 'https://api.github.com' && method === 'GET') {
         if (url.pathname === '/user') {
           await route.fulfill({ json: { id: 42, login: fixtureRepository.owner, name: 'Fixture User', email: null, avatar_url: '' } })
@@ -70,11 +92,19 @@ export const test = base.extend<{ picx: PicxFixture }>({
           return
         }
         if (url.pathname === `/repos/${fixtureRepository.owner}/${fixtureRepository.repo}`) {
-          await route.fulfill({ json: { name: fixtureRepository.repo, private: false, default_branch: fixtureRepository.branch, owner: { login: fixtureRepository.owner }, permissions: { push: true } } })
+          if (repositoryCreated)
+            await route.fulfill({ json: simulatedRepository })
+          else await route.fulfill(createFailureFixture('not-found'))
+          return
+        }
+        if (url.pathname === `/repos/${fixtureRepository.owner}/${fixtureRepository.repo}/branches`) {
+          await route.fulfill({ json: branchInitialized ? [{ name: fixtureRepository.branch }] : [] })
           return
         }
         if (url.pathname === `/repos/${fixtureRepository.owner}/${fixtureRepository.repo}/branches/${fixtureRepository.branch}`) {
-          await route.fulfill({ json: { name: fixtureRepository.branch } })
+          if (branchInitialized)
+            await route.fulfill({ json: { name: fixtureRepository.branch } })
+          else await route.fulfill(createFailureFixture('not-found'))
           return
         }
       }
@@ -110,12 +140,21 @@ export const test = base.extend<{ picx: PicxFixture }>({
     await use({
       open: async (path, options = {}) => {
         connectionScenario = options.connectionScenario
+        repositoryCreated = options.connectionScenario !== 'initialize'
+        branchInitialized = options.connectionScenario !== 'initialize'
         contents = createDirectoryContentsFixture(options.directoryScenario)
         settings = createSettingsFixture()
         if (options.processingDisabled) {
           settings.compress.enable = false
           settings.watermark.enable = false
         }
+        const savedConfig = options.savedRepository || options.savedCredential || options.partialConfiguration ? createRepositoryFixture() : null
+        if (savedConfig && options.savedCredential)
+          savedConfig.token = 'fixture-invalid-credential'
+        if (savedConfig && options.partialConfiguration)
+          Object.assign(savedConfig, { token: 'fixture-invalid-credential', repo: '', branch: '', selectedDir: '' })
+        if (savedConfig && options.missingDirectory)
+          Object.assign(savedConfig, { selectedDir: '', selectedDirList: [], dirMode: 'repoDir' })
         await page.evaluate(() => {
           window.name = ''
         })
@@ -139,7 +178,7 @@ export const test = base.extend<{ picx: PicxFixture }>({
             localStorage.setItem('PICX_IH_CONFIG', JSON.stringify(config))
           }
         }, {
-          config: options.savedRepository ? createRepositoryFixture() : null,
+          config: savedConfig,
           settings,
           language: options.language ?? 'zh-CN',
           theme: options.theme ?? 'light',

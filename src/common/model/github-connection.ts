@@ -7,7 +7,7 @@ export interface RepositoryIdentity {
 }
 
 export type ConnectionFailure = ApiFailure | {
-  kind: 'app-not-installed' | 'initialization-failed' | 'storage-unavailable'
+  kind: 'app-not-installed' | 'initialization-failed' | 'storage-unavailable' | 'oauth-cancelled'
   retryable: boolean
 }
 

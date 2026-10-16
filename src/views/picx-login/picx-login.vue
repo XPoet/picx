@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, useTemplateRef } from 'vue'
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { useGithubConnection } from '@/composables/use-github-connection'
 import router from '@/router'
 import { store } from '@/stores'
+import { cleanConnectionQuery, connectionReturnTo, readAuthorizationCallback } from '@/utils/login-navigation'
 import { githubAppAuthorize, githubAppAuthorizeCallback, isAuthorizeExpire } from './picx-login.util'
 
 const { connection, busy, connect, restore } = useGithubConnection()
@@ -11,6 +12,7 @@ const tokenDraft = ref('')
 const tokenVisible = ref(false)
 const tokenRequired = ref(false)
 const oauthStarting = ref(false)
+const installationReady = ref(false)
 const activeMethod = ref<'token' | 'oauth' | null>(null)
 const tokenInput = useTemplateRef<HTMLInputElement>('tokenInput')
 const pending = computed(() => busy.value || oauthStarting.value)
@@ -20,7 +22,7 @@ const errorKey = computed(() => {
   if (connection.value.phase !== 'failed' || !activeMethod.value)
     return ''
   const kind = connection.value.error.kind
-  return ['app-not-installed', 'initialization-failed', 'storage-unavailable'].includes(kind)
+  return ['app-not-installed', 'initialization-failed', 'storage-unavailable', 'oauth-cancelled'].includes(kind)
     ? `connection.${kind}`
     : `request_error.${kind}`
 })
@@ -43,7 +45,7 @@ async function submitToken() {
   if (await connect(tokenDraft.value.trim())) {
     tokenDraft.value = ''
     tokenVisible.value = false
-    await router.push('/upload')
+    await router.replace(connectionReturnTo(router.currentRoute.value.query.returnTo))
   }
 }
 
@@ -55,28 +57,56 @@ async function submitOAuth() {
   const saved = store.getters.getGitHubAuthorizationInfo
   if (saved.token && !isAuthorizeExpire()) {
     if (await connect(saved.token, 'oauth'))
-      await router.push('/upload')
+      await router.replace(connectionReturnTo(router.currentRoute.value.query.returnTo))
   }
   else {
     oauthStarting.value = true
-    githubAppAuthorize()
+    githubAppAuthorize(router.currentRoute.value.query.returnTo)
   }
 }
 
-onMounted(async () => {
-  await githubAppAuthorizeCallback()
-  const config = store.getters.getUserConfigInfo
-  if (router.currentRoute.value.query.focus === '1')
+let entryGeneration = 0
+async function initializeConnectionPage() {
+  const generation = ++entryGeneration
+  oauthStarting.value = true
+  activeMethod.value = 'oauth'
+  const callback = await githubAppAuthorizeCallback()
+  if (generation !== entryGeneration)
+    return
+  oauthStarting.value = false
+  if (callback.handled) {
+    installationReady.value = Boolean(callback.installationReady)
+    if (callback.connected)
+      await router.replace(callback.returnTo)
+    return
+  }
+  activeMethod.value = null
+  const query = router.currentRoute.value.query
+  const target = connectionReturnTo(query.returnTo)
+  if (query.focus === '1') {
+    await router.replace({ path: '/', query: cleanConnectionQuery(query) })
+    await nextTick()
     tokenInput.value?.focus()
-  if (router.currentRoute.value.query.jump !== '0' && config.token && config.logined) {
-    if (config.repo && config.branch && config.selectedDir) {
-      await router.replace('/upload')
-    }
-    else {
-      activeMethod.value = store.getters.getGitHubAuthorizationInfo.isAutoAuthorize ? 'oauth' : 'token'
-      if (await restore())
-        await router.replace('/upload')
-    }
+    return
+  }
+  if (query.auto === '1') {
+    await router.replace({ path: '/', query: cleanConnectionQuery(query) })
+    activeMethod.value = store.getters.getGitHubAuthorizationInfo.isAutoAuthorize ? 'oauth' : 'token'
+    if (await restore())
+      await router.replace(target)
+    return
+  }
+  const config = store.getters.getUserConfigInfo
+  if (query.jump !== '0' && config.token && config.logined && config.owner && config.repo && config.branch) {
+    await router.replace({ path: '/upload', query: config.selectedDir ? {} : { directory: '1' } })
+  }
+}
+
+onMounted(initializeConnectionPage)
+watch(() => router.currentRoute.value.fullPath, () => {
+  const route = router.currentRoute.value
+  if (route.path === '/' && (readAuthorizationCallback(new URL(window.location.href)) || route.query.focus === '1' || route.query.auto === '1')) {
+    initializeConnectionPage()
   }
 })
 </script>
@@ -167,6 +197,9 @@ onMounted(async () => {
         </div>
       </form>
     </div>
+    <p v-if="installationReady" class="connection-progress" role="status">
+      {{ $t('connection.installation_ready') }}
+    </p>
     <p v-if="pending" class="connection-progress" role="status">
       {{ $t(oauthStarting ? 'connection.redirecting' : progressKey) }}
     </p>

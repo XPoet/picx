@@ -1,6 +1,8 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHashHistory } from 'vue-router'
+import { store } from '@/stores'
 import { setWindowTitle } from '@/utils'
+import { connectionLocation, legacyConfigLocation, readAuthorizationCallback } from '@/utils/login-navigation'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -14,10 +16,16 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/config',
     name: 'config',
-    component: () => import('@/views/picx-config/picx-config.vue'),
-    meta: {
-      title: 'nav.config',
+    redirect: (to) => {
+      if (readAuthorizationCallback(new URL(window.location.href)))
+        return { path: '/', query: to.query }
+      const config = store.getters.getUserConfigInfo
+      return legacyConfigLocation(to.query, { complete: Boolean(config.token && config.logined && config.owner && config.repo && config.branch), hasDirectory: Boolean(config.selectedDir) })
     },
+  },
+  {
+    path: '/login',
+    redirect: to => ({ path: '/', query: to.query }),
   },
   {
     path: '/upload',
@@ -58,11 +66,19 @@ const routes: Array<RouteRecordRaw> = [
 ]
 
 const router = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHashHistory(import.meta.env.BASE_URL),
   routes,
 })
 
 router.beforeEach((to) => {
+  if (to.path !== '/' && readAuthorizationCallback(new URL(window.location.href))) {
+    return { path: '/', query: to.query }
+  }
+  if (['/management', '/settings'].includes(to.path)) {
+    const config = store.getters.getUserConfigInfo
+    if (!config.logined || !config.owner || !config.repo || !config.branch)
+      return connectionLocation(to.path)
+  }
   if (to.meta.title) {
     setWindowTitle(to.meta.title as string)
   }

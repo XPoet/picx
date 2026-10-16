@@ -363,7 +363,10 @@
     "redirecting": "Opening GitHub authorization…",
     "app-not-installed": "Install the PicX GitHub App and grant repository access, then try again.",
     "initialization-failed": "The repository is not ready. Try connecting again.",
-    "storage-unavailable": "The browser could not save your connection. Check storage permissions and try again."
+    "storage-unavailable": "The browser could not save your connection. Check storage permissions and try again.",
+    "oauth-cancelled": "GitHub authorization was not completed. Authorize again to continue.",
+    "installation_ready": "App installation received. Continue with GitHub to verify the connection.",
+    "recheck_required": "Verify your GitHub connection again. Continue authorization or connect with a Token."
   },
   "repository_context": {
     "label": "Current repository and connection",

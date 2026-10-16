@@ -50,10 +50,12 @@ export function useGithubConnection() {
 
   function restore() {
     const config = store.getUserConfigInfo
-    if (!config.token) {
+    const authorization = store.getGitHubAuthorizationInfo
+    const token = config.token || (authorization.isAutoAuthorize ? authorization.token : authorization.manualToken)
+    if (!token) {
       return Promise.resolve(false)
     }
-    return connect(config.token, store.getGitHubAuthorizationInfo.isAutoAuthorize ? 'oauth' : 'token')
+    return connect(token, authorization.isAutoAuthorize ? 'oauth' : 'token')
   }
 
   return { connection, busy, connect, restore }

@@ -34,6 +34,13 @@ function prepare(config: CustomAxiosRequestConfig): CustomAxiosRequestConfig {
     : config
 }
 
+export function apiFailureFromError(error: unknown): ApiFailure {
+  if (isAxiosError(error) && error.response) {
+    return failureFromStatus(error.response.status, error.response.headers)
+  }
+  return { kind: navigator.onLine === false ? 'offline' : 'network', retryable: true }
+}
+
 async function perform(config: CustomAxiosRequestConfig): Promise<ApiResult<unknown>> {
   try {
     const response = await axios.request<unknown>(prepare(config))
@@ -49,10 +56,7 @@ async function perform(config: CustomAxiosRequestConfig): Promise<ApiResult<unkn
       }
       return { ok: false, error: failureFromStatus(error.response.status, error.response.headers) }
     }
-    return {
-      ok: false,
-      error: { kind: navigator.onLine === false ? 'offline' : 'network', retryable: true },
-    }
+    return { ok: false, error: apiFailureFromError(error) }
   }
 }
 

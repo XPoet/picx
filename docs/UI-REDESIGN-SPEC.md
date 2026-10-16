@@ -926,3 +926,11 @@ T017 路径规范化补充：新草稿只修剪整段输入首尾空白、移除
 T018 查询状态补充：`DirectoryQueryState` 的 loading / failed 分支可携带只读 `items`（上次成功条目），用于刷新与失败时保留列表；loaded 空数组仍明确表示没有子目录。查询 composable 以会话、请求 ID 和仓库身份三重核对响应。受控选择器本体不导入 Store / API；迁移期旧路径隔离到 `legacy-repo-dir-cascader.vue`，由 `controlled=false` 显式调用。受控实例只发出草稿与加载事件，不触发旧持久化。
 
 T018 事件命名遵守现有 Vue lint：TypeScript emit 名为 `requestChildren`，模板监听使用 `@request-children`；两者由 Vue 正常映射，参数与副作用边界不变。
+
+T015 路由与 OAuth 收口：`/` 为唯一连接页，`/login` 兼容转入；`/config` 按配置完整度和 auto / focus 参数动态转入。`returnTo` 白名单收口为 `/upload`、`/management`、`/settings`，历史 `/config` 映射到 `/upload`，其他值回退到 `/upload`；不持久化返回目标。OAuth 请求以 state 传递该白名单内的返回路径，回调只将其作为路由提示，不能将 state、installed 或本地 Token 当作连接验证成功的证据；授权交换继续使用现有服务及 redirect_uri 协议。
+
+OAuth code 只在回调局部内存存在，交换前先清理外层与 Hash 中的 code、state、error、error_description、error_uri、setup_action、installation_id 及意外 token 参数；路由中的 auto / focus 在执行前通过 replace 消费，失败后用按钮显式重试。旧授权存储中已失效的 code 字段清空，不新增凭据键或临时凭据副本。授权被取消使用可重试的 `ConnectionFailure.kind = 'oauth-cancelled'`，展示本地文案；交换失败只返回安全 API 错误。登出或新尝试令交换与连接旧响应失效。
+
+T015 Hash history 显式使用 Vite `BASE_URL`，避免初始化时将浏览器外层 OAuth query 固定进 history base，并在后续 replace 时重新带回 code。
+
+T015 连接到不同 owner / repo / branch 时，同步清空旧仓库的管理缓存与本地上传选择；相同身份的重连保留队列和目录。缓存候选与原认证 / 配置在同一提交边界写入，失败不发布新内存状态。Hash 仅变更而复用登录组件时，监听一次性入口参数并重新消费，不能只依赖 onMounted。

@@ -9,7 +9,8 @@ import router from '@/router'
 import { pinia, store } from '@/stores'
 import { usePicxStore } from '@/stores/picx-store'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
-import { directoryDraft, resolveUploadTarget, validateDirectoryDraft } from '@/utils/directory-utils'
+import { directoryDraft, displayDirectory, resolveUploadTarget, validateDirectoryDraft } from '@/utils/directory-utils'
+import { connectionLocation } from '@/utils/login-navigation'
 import { uploadImagesToGitHub, uploadImageToGitHub } from '@/utils/upload-utils'
 import UploadDirectoryDialog from './components/upload-directory-dialog.vue'
 import UploadDirectorySummary from './components/upload-directory-summary.vue'
@@ -18,7 +19,7 @@ import { generateUploadImageObject } from './upload-image.util'
 
 const instance = getCurrentInstance()
 const picxStore = usePicxStore(pinia)
-const { connection, restore } = useGithubConnection()
+const { connection, busy: connectionBusy, restore } = useGithubConnection()
 
 const gettingImagesRef: Ref = ref<null | HTMLElement>(null)
 
@@ -26,7 +27,7 @@ const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const repository = computed(() => userConfigInfo.owner && userConfigInfo.repo && userConfigInfo.branch
   ? { owner: userConfigInfo.owner, repo: userConfigInfo.repo, branch: userConfigInfo.branch }
   : null)
-const uploadPath = computed(() => userConfigInfo.selectedDir && userConfigInfo.selectedDir !== '/' ? `/${userConfigInfo.selectedDir}` : '/')
+const uploadPath = computed(() => userConfigInfo.selectedDir ? displayDirectory(userConfigInfo.selectedDir) : String(instance?.proxy?.$t('upload_directory.incomplete') ?? ''))
 const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 
 const uploadImageList = ref<UploadImageModel[]>([])
@@ -96,23 +97,18 @@ const afterUploadSuccess = async (uploadedImg: UploadedImageModel[], isBatch: bo
 const uploadImage = async () => {
   if (uploading.value || picxStore.uploadTargetBusy)
     return
-  const { token, repo, selectedDir } = userConfigInfo
-
-  if (!token) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message1') })
-    await router.push('/config')
+  if (connectionBusy.value)
+    return
+  const { token, repo, branch, owner, selectedDir } = userConfigInfo
+  const current = connection.value
+  if (!token || !repo || !branch || !owner || current.phase !== 'connected'
+    || current.repository.owner !== owner || current.repository.repo !== repo || current.repository.branch !== branch) {
+    ElMessage.warning({ message: instance?.proxy?.$t('repository_context.unverified') })
+    await router.push(connectionLocation('/upload'))
     return
   }
-
-  if (!repo) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message2') })
-    await router.push('/config')
-    return
-  }
-
   if (!selectedDir) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message3') })
-    await router.push('/config')
+    openDirectory()
     return
   }
 
@@ -217,10 +213,26 @@ function onKeydown(event: KeyboardEvent) {
   }
 }
 
+watch(() => router.currentRoute.value.query.directory, async (flag) => {
+  if (flag !== '1')
+    return
+  if (!repository.value) {
+    await router.replace(connectionLocation('/upload'))
+    return
+  }
+  const query = { ...router.currentRoute.value.query }
+  delete query.directory
+  await router.replace({ path: '/upload', query })
+  await nextTick()
+  openDirectory()
+}, { immediate: true })
+
 onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 
 onMounted(() => {
   document.addEventListener('keydown', onKeydown)
+  if (repository.value && !userConfigInfo.selectedDir && !directoryVisible.value)
+    openDirectory()
   if (userConfigInfo.token && connection.value.phase === 'disconnected')
     restore()
 })
@@ -233,7 +245,7 @@ onMounted(() => {
     :connection="connection"
     :disabled="uploading"
     @configure="openDirectory"
-    @reconnect="router.push({ path: '/', query: { jump: '0', returnTo: '/upload' } })"
+    @reconnect="router.push(connectionLocation('/upload'))"
   />
   <div class="upload-page-container">
     <!-- 左侧 / 上传图片列表 -->
@@ -280,7 +292,7 @@ onMounted(() => {
       <!-- 部署 -->
       <div v-if="userConfigInfo.logined" class="row-item">
         <div class="content-box">
-          <deploy-status-bar :disabled="!isCanDeploy || uploading || directoryVisible" />
+          <deploy-status-bar :disabled="!isCanDeploy || uploading || directoryVisible || connection.phase !== 'connected'" />
         </div>
       </div>
 

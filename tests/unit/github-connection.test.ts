@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import * as api from '@/common/api/connection'
-import { INIT_REPO_NAME, LS_CONFIG } from '@/common/constant'
+import { INIT_REPO_NAME, LS_CONFIG, LS_MANAGEMENT } from '@/common/constant'
 import { DirModeEnum } from '@/common/model'
 import { useGithubConnection } from '@/composables/use-github-connection'
 import { connectGitHub } from '@/services/github-connection'
@@ -40,6 +40,15 @@ beforeEach(() => {
 })
 
 describe('可重入的 GitHub 连接与初始化', () => {
+  it('旧 auto 入口可从原授权键恢复凭据并重新验证', async () => {
+    const store = usePicxStore(pinia)
+    Object.assign(store.getGitHubAuthorizationInfo, { isAutoAuthorize: true, token: input.token })
+    expect(await useGithubConnection().restore()).toBe(true)
+    expect(api.verifyGitHubAccount).toHaveBeenCalledTimes(1)
+    expect(api.getConnectionInstallations).toHaveBeenCalledTimes(1)
+    expect(store.connection.phase).toBe('connected')
+  })
+
   it('首次初始化仅在确认 404 后创建，并验证真实默认分支', async () => {
     vi.mocked(api.getConnectionRepository).mockResolvedValueOnce(missing)
     vi.mocked(api.verifyConnectionBranch).mockResolvedValueOnce(missing)
@@ -64,6 +73,32 @@ describe('可重入的 GitHub 连接与初始化', () => {
     expect(api.verifyConnectionBranch).toHaveBeenCalledWith(input.token, account.login, INIT_REPO_NAME, 'custom-branch')
     expect(store.getUserConfigInfo).toMatchObject({ selectedDir: 'albums/旧目录', selectedDirList: ['albums', '旧目录'], viewDir: 'other', branch: 'custom-branch' })
     expect(store.connection).toMatchObject({ phase: 'connected', visibility: 'public' })
+  })
+
+  it('切换账户后不保留旧媒体缓存，保存失败仍保持旧身份', async () => {
+    const store = usePicxStore(pinia)
+    Object.assign(store.getUserConfigInfo, createRepositoryFixture())
+    store.DIR_IMAGE_LIST_ADD_DIR('old-account-only')
+    const oldTree = JSON.stringify(store.getDirObject)
+    vi.mocked(api.verifyGitHubAccount).mockResolvedValue({ ok: true, data: { ...account, id: 99, login: 'new-fixture-owner' } })
+    vi.mocked(api.getConnectionRepository).mockResolvedValue({ ok: true, data: { ...repository, owner: { login: 'new-fixture-owner' } } })
+    const originalWrite = Storage.prototype.setItem
+    let rejectManagement = true
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key: string, value: string) {
+      if (key === LS_MANAGEMENT && rejectManagement) {
+        rejectManagement = false
+        throw new Error('fixture storage unavailable')
+      }
+      originalWrite.call(this, key, value)
+    })
+    expect(await useGithubConnection().connect(input.token)).toBe(false)
+    expect(store.getUserConfigInfo.owner).toBe('fixture-owner')
+    expect(JSON.stringify(store.getDirObject)).toBe(oldTree)
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(originalWrite)
+    expect(await useGithubConnection().connect(input.token)).toBe(true)
+    expect(store.getUserConfigInfo.owner).toBe('new-fixture-owner')
+    expect(store.getDirObject.childrenDirs).toEqual([])
+    expect(JSON.parse(localStorage.getItem(LS_MANAGEMENT) ?? '{}').childrenDirs).toEqual([])
   })
 
   it('已指定的仓库 / 分支不可访问时不创建或替换', async () => {

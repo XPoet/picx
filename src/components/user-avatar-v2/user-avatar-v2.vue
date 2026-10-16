@@ -5,6 +5,7 @@ import HeaderMenu from '@/components/header-menu/header-menu.vue'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { useStore } from '@/stores'
 import { getGitHubOwnerURL } from '@/utils'
+import { connectionLocation } from '@/utils/login-navigation'
 
 withDefaults(defineProps<{ canInstall?: boolean, installing?: boolean }>(), { canInstall: false, installing: false })
 const emit = defineEmits<{ install: [] }>()
@@ -12,19 +13,13 @@ const router = useRouter()
 const route = useRoute()
 const store = useStore()
 const user = computed(() => store.getters.getUserConfigInfo)
-const loginTarget = computed(() => ({
-  path: '/',
-  query: {
-    jump: '0',
-    returnTo: ['/upload', '/management', '/settings', '/config'].includes(route.path) ? route.path : '/upload',
-  },
-}))
+const loginTarget = computed(() => connectionLocation(route.path))
 
 const onLogout = async () => {
   const target = loginTarget.value
   await store.dispatch('LOGOUT')
   await router.replace(target)
-  // 旧授权模块仍可能持有内存凭据，沿用现有完整重载的清理边界。
+  // 保留完整重载边界，终止现有页面与后台同步任务。
   window.location.reload()
 }
 </script>

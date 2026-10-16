@@ -363,7 +363,10 @@
     "redirecting": "正在前往 GitHub 授权…",
     "app-not-installed": "尚未安装 PicX GitHub App。请先安装并授予仓库权限，再重试。",
     "initialization-failed": "仓库尚未就绪，请重试连接。",
-    "storage-unavailable": "浏览器无法保存连接信息，请检查存储权限后重试。"
+    "storage-unavailable": "浏览器无法保存连接信息，请检查存储权限后重试。",
+    "oauth-cancelled": "GitHub 授权未完成，请重新授权。",
+    "installation_ready": "App 安装信息已接收，请点击授权登录以完成连接验证。",
+    "recheck_required": "需要重新验证 GitHub 连接，请继续授权或使用 Token 连接。"
   },
   "repository_context": {
     "label": "当前仓库与连接状态",

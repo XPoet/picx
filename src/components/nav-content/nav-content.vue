@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import i18n from '@/plugins/vue/i18n'
 import { useStore } from '@/stores'
+import { connectionLocation } from '@/utils/login-navigation'
 import { navInfoList } from './nav-content.data'
 
 const route = useRoute()
@@ -34,11 +35,11 @@ const toggleMenu = async () => {
 
 const onNavClick = (event: MouseEvent, path: string) => {
   if (path === '/management') {
-    const { repo, selectedDir } = store.getters.getUserConfigInfo
-    if (!repo || !selectedDir) {
+    const { repo, branch } = store.getters.getUserConfigInfo
+    if (!repo || !branch) {
       event.preventDefault()
-      ElMessage.warning(i18n.global.t(!repo ? 'upload_page.message2' : 'upload_page.message3'))
-      router.push('/config')
+      ElMessage.warning(i18n.global.t('connection.initialization-failed'))
+      router.push(connectionLocation('/management'))
     }
   }
   closeMenu(true)
