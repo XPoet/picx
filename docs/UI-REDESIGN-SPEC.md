@@ -625,6 +625,8 @@ type DirectorySaveResult =
 
 ### 10.7 队列运行态与批次目标（T002）
 
+T020 输入契约：`getting-images` 的 `mode` 为 `preview | workspace`（默认 preview），`getImgList` 只传本次接收的 `ImageHandleResult[]`；工作区负责追加。`disabled` 同时阻止选择、拖放、粘贴及异步结果发布；`selectFiles / reset / remove` 为公开实例方法。输入框 ID 按实例唯一，选择后立即清空值，重选同一文件仍触发。粘贴仅接收图片，在文本编辑、弹窗与媒体预览中保留原行为。
+
 文件仍由现有 `UploadImageModel` 持有，运行态按 uuid 关联，不复制 File / Base64 到另一个持久化模型。以下定义归上传领域模型，运行态由上传工作区调度、Pinia 共享；处理算法不依赖 View。
 
 ```ts

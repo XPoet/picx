@@ -421,5 +421,12 @@
     "path_backslash": "路徑不能包含反斜線，請使用 / 分隔。",
     "path_depth": "目錄最多支援 {max} 層，請縮短路徑。",
     "path_control": "路徑不能包含換行或控制字元。"
+  },
+  "upload_workspace": {
+    "drop": "拖曳圖片或 MP4 到這裡，或直接貼上圖片",
+    "choose": "選擇圖片或 MP4",
+    "choose_more": "繼續選擇圖片或 MP4",
+    "choose_images": "選擇圖片",
+    "accept": "支援圖片與 MP4 · 每個檔案最大 30 MB · 可多選"
   }
 }

@@ -421,5 +421,12 @@
     "path_backslash": "Use / to separate directories, without backslashes.",
     "path_depth": "Use no more than {max} directory levels.",
     "path_control": "Paths cannot contain newlines or control characters."
+  },
+  "upload_workspace": {
+    "drop": "Drop images or MP4 here, or paste an image",
+    "choose": "Choose images or MP4",
+    "choose_more": "Add more images or MP4",
+    "choose_images": "Choose images",
+    "accept": "Images and MP4 · Up to 30 MB per file · Multiple files supported"
   }
 }

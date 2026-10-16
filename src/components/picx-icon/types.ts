@@ -6,3 +6,7 @@ export type PicxIconName
     | 'github' | 'key-round' | 'shield-check' | 'eye' | 'eye-off'
     | 'git-branch' | 'folder-open' | 'circle-check'
     | 'folder-root' | 'calendar-days' | 'folder-tree' | 'folder-plus'
+    | 'arrow-right' | 'folder-git-2' | 'folder' | 'image-up' | 'folder-cog'
+    | 'rotate-ccw' | 'circle-dashed' | 'rocket' | 'clock-3' | 'plus'
+    | 'arrow-up-right' | 'copy' | 'ellipsis' | 'trash-2' | 'triangle-alert'
+    | 'loader-circle' | 'maximize-2'

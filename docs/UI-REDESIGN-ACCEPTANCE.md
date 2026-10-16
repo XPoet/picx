@@ -370,3 +370,15 @@ Chrome / 简中 / 1440×1080 最终截图已查看：[无配置导航的登录�
 | T018 受控目录选择器 | `9070836` |
 | T019 四模式目录弹窗 | `669f405` |
 | T015 回调与路由合并 | 本节所属提交，标题见上 |
+
+## P3 上传工作区
+
+### T020 实现持续接收文件的上传入口
+
+**实施提交**：`feat(upload): add persistent file intake and local design icons`（本节所属提交）。
+
+工作区模式持续接收文件，typed 事件只传本次结果并追加到原队列；默认图片工具保留末项预览。选择值立即清空，输入 ID 按实例唯一；选择、拖放、图片粘贴共用校验，禁用 / 失效结果不发布；文本、contenteditable、弹窗和预览保留原粘贴。明确图片与 MP4 范围。按用户要求只读核对三个上传画板并从官方 0.468.0 下载缺少的 Lucide SVG，统一封装为本地 sprite / PicxIcon，来源、映射与 SHA-256 见 assets/icons/SOURCE.md。未修改设计稿。
+
+**验证**：Node 24.21.0、临时 Corepack pnpm 11.18.0；`pnpm verify` 通过（lint、stylelint、typecheck、92 单测、build）；preview E2E Desktop / Pixel 5 共 2 项通过。截图已查看：[1440](UI/evidence/p3/t020-intake-1440.png)、[375](UI/evidence/p3/t020-intake-375.png)。覆盖多次追加、同名、MP4、粘贴、错误类型、禁用态与文本保护；实际文件大小由 T022 收口，旧卡片外观由 T025 收口。日志 `/private/tmp/picx-p3-t020-verify.log`、`/private/tmp/picx-p3-t020-e2e.log`。首次 Chrome 被沙箱阻止启动，获工具授权后以独立临时配置复验通过。pnpm 使用 `--config.verifyDepsBeforeRun=false` 避免既有全局虚拟存储配置检查，不改依赖与锁文件。
+
+**回滚**：回滚本项入口、资源、翻译、测试与文档提交；无存储格式变化或远端写入。

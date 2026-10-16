@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { Ref } from 'vue'
-import type { UploadedImageModel, UploadImageModel, UserConfigInfoModel } from '@/common/model'
+import type { ImageHandleResult, UploadedImageModel, UploadImageModel, UserConfigInfoModel } from '@/common/model'
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { DirModeEnum, UploadStatusEnum } from '@/common/model'
+import GettingImages from '@/components/getting-images/getting-images.vue'
 import RepositoryContextBar from '@/components/repository-context-bar/repository-context-bar.vue'
 import { useGithubConnection } from '@/composables/use-github-connection'
 import router from '@/router'
@@ -21,7 +21,7 @@ const instance = getCurrentInstance()
 const picxStore = usePicxStore(pinia)
 const { connection, busy: connectionBusy, restore } = useGithubConnection()
 
-const gettingImagesRef: Ref = ref<null | HTMLElement>(null)
+const gettingImagesRef = ref<InstanceType<typeof GettingImages> | null>(null)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 const repository = computed(() => userConfigInfo.owner && userConfigInfo.repo && userConfigInfo.branch
@@ -47,7 +47,7 @@ const shortcutKey = computed(() => (getOSName() === 'mac' ? '⌘' : 'Ctrl'))
 
 const isCanDeploy = ref(false)
 
-const setImgList = (imgList: any[]) => {
+const setImgList = (imgList: ImageHandleResult[]) => {
   imgList.forEach((v) => {
     store.dispatch('UPLOAD_IMG_LIST_ADD', generateUploadImageObject(v))
   })
@@ -266,9 +266,11 @@ onMounted(() => {
       <!-- 选择图片区域 -->
       <div class="row-item">
         <div class="content-box">
-          <getting-images
+          <GettingImages
             ref="gettingImagesRef"
             :disabled="uploading"
+            mode="workspace"
+            :has-files="uploadImageList.length > 0"
             video-enabled
             @get-img-list="setImgList"
           />

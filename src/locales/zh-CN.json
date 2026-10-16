@@ -421,5 +421,12 @@
     "path_backslash": "路径不能包含反斜杠，请使用 / 分隔。",
     "path_depth": "目录最多支持 {max} 层，请缩短路径。",
     "path_control": "路径不能包含换行或控制字符。"
+  },
+  "upload_workspace": {
+    "drop": "拖拽图片或 MP4 到这里，或直接粘贴图片",
+    "choose": "选择图片或 MP4",
+    "choose_more": "继续选择图片或 MP4",
+    "choose_images": "选择图片",
+    "accept": "支持图片与 MP4 · 每个文件最大 30 MB · 可多选"
   }
 }

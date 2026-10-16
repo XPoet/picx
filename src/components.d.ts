@@ -69,7 +69,6 @@ declare module 'vue' {
     IEpSelect: typeof import('~icons/ep/select')['default']
     IEpSort: typeof import('~icons/ep/sort')['default']
     IEpUpload: typeof import('~icons/ep/upload')['default']
-    IEpUploadFilled: typeof import('~icons/ep/upload-filled')['default']
     IEpVideoPlay: typeof import('~icons/ep/video-play')['default']
     ImageLinkRuleConfig: typeof import('./components/image-link-rule-config/image-link-rule-config.vue')['default']
     ImgProcessStateCard: typeof import('./components/tools/img-process-state-card/img-process-state-card.vue')['default']
