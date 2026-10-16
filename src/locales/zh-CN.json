@@ -432,5 +432,16 @@
     "retry_processing": "重试处理",
     "processing_skipped": "此格式跳过水印与压缩，使用原文件。",
     "read_failed": "无法读取 {name}，请重新选择文件。"
+  },
+  "clipboard": {
+    "title": "复制未完成",
+    "description": "浏览器拒绝访问剪贴板。上传结果已保留，可选择下方文本手动复制，或重试。",
+    "text": "待复制文本",
+    "select": "选择全部文本",
+    "retry": "重试复制",
+    "close": "关闭",
+    "preview": "格式预览",
+    "example_name": "示例图片.png",
+    "no_preview": "连接仓库并选择有效链接规则后可预览。"
   }
 }

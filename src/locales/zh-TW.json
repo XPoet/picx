@@ -432,5 +432,16 @@
     "retry_processing": "重試處理",
     "processing_skipped": "此格式略過浮水印與壓縮，使用原始檔案。",
     "read_failed": "無法讀取 {name}，請重新選擇檔案。"
+  },
+  "clipboard": {
+    "title": "複製未完成",
+    "description": "瀏覽器拒絕存取剪貼簿。上傳結果已保留，可選取下方文字手動複製，或重試。",
+    "text": "待複製文字",
+    "select": "選取全部文字",
+    "retry": "重試複製",
+    "close": "關閉",
+    "preview": "格式預覽",
+    "example_name": "範例圖片.png",
+    "no_preview": "連接儲存庫並選擇有效連結規則後可預覽。"
   }
 }

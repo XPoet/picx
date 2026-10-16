@@ -6,6 +6,7 @@ import zhTW from 'element-plus/es/locale/lang/zh-tw'
 import { computed, h, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
+import CopyFallbackDialog from '@/components/copy-fallback-dialog/copy-fallback-dialog.vue'
 import { useCloudSettingsSync } from '@/composables/use-cloud-settings-sync'
 import router from '@/router'
 import { useStore } from '@/stores'
@@ -95,5 +96,6 @@ onUnmounted(() => window.removeEventListener('resize', onResize))
 <template>
   <ElConfigProvider :size="globalSettings.elementPlusSize" :z-index="3000" :locale="elementPlusLocale">
     <MainContainer />
+    <CopyFallbackDialog />
   </ElConfigProvider>
 </template>

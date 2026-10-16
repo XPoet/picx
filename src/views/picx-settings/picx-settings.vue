@@ -5,6 +5,7 @@ import { isBranchExist, isValidCustomDomain, normalizeCustomDomain } from '@/com
 import { GH_PAGES } from '@/common/constant'
 import { ImageLinkTypeEnum, ThemeModeEnum } from '@/common/model'
 import { deployGhPages } from '@/components/deploy-status-bar/deploy-status-bar.util'
+import ImageLinkPreview from '@/components/image-link-preview/image-link-preview.vue'
 import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
 
@@ -277,6 +278,9 @@ const saveCustomDomain = () => {
                 <span class="right">{{ item.format }}</span>
               </el-option>
             </el-select>
+          </li>
+          <li class="setting-item">
+            <ImageLinkPreview :target="{ owner: userConfigInfo.owner, repo: userConfigInfo.repo, branch: userConfigInfo.branch }" :directory="userConfigInfo.selectedDir || '/'" :settings="userSettings" />
           </li>
         </ul>
       </el-collapse-item>

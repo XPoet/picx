@@ -432,5 +432,16 @@
     "retry_processing": "Retry processing",
     "processing_skipped": "Watermark and compression are skipped for this format; the original file is used.",
     "read_failed": "Could not read {name}. Choose the file again."
+  },
+  "clipboard": {
+    "title": "Copy did not complete",
+    "description": "The browser could not access the clipboard. Upload results are preserved. Select the text below to copy manually, or retry.",
+    "text": "Text to copy",
+    "select": "Select all text",
+    "retry": "Retry copy",
+    "close": "Close",
+    "preview": "Format preview",
+    "example_name": "example.png",
+    "no_preview": "Connect a repository and select a valid link rule to preview."
   }
 }

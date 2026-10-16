@@ -940,3 +940,7 @@ OAuth code 只在回调局部内存存在，交换前先清理外层与 Hash 中
 T015 Hash history 显式使用 Vite `BASE_URL`，避免初始化时将浏览器外层 OAuth query 固定进 history base，并在后续 replace 时重新带回 code。
 
 T015 连接到不同 owner / repo / branch 时，同步清空旧仓库的管理缓存与本地上传选择；相同身份的重连保留队列和目录。缓存候选与原认证 / 配置在同一提交边界写入，失败不发布新内存状态。Hash 仅变更而复用登录组件时，监听一次性入口参数并重新消费，不能只依赖 onMounted。
+
+### P3 链接与剪贴板契约补充（T023）
+
+共享纯函数接收仓库身份、路径、规则和格式，路径按 URL 分段编码，普通文本预览与复制使用同一结果。上传成功项的链接使用成功记录中的 target，不能受后续目录或仓库设置影响。旧 generateImageLink / copyImageLink / batchCopyImageLinks 保持调用兼容，空或非法规则不输出 null 字面值。copyText 返回显式成功 / denied / unavailable 结果；拒绝时只在内存保留待复制文本，由 AppWrap 内唯一的安全文本弹窗提供选择、重试与关闭。复制失败不改变上传状态，不将模板作为 HTML 执行。
