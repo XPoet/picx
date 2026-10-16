@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue'
 import type { UploadedImageModel, UploadImageModel, UserConfigInfoModel } from '@/common/model'
-import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
+import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { DirModeEnum, UploadStatusEnum } from '@/common/model'
 import RepositoryContextBar from '@/components/repository-context-bar/repository-context-bar.vue'
 import { useGithubConnection } from '@/composables/use-github-connection'
@@ -11,7 +11,8 @@ import { usePicxStore } from '@/stores/picx-store'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
 import { directoryDraft, resolveUploadTarget, validateDirectoryDraft } from '@/utils/directory-utils'
 import { uploadImagesToGitHub, uploadImageToGitHub } from '@/utils/upload-utils'
-import SelectedInfoBar from '@/views/upload-image/components/dir-info-bar/dir-info-bar.vue'
+import UploadDirectoryDialog from './components/upload-directory-dialog.vue'
+import UploadDirectorySummary from './components/upload-directory-summary.vue'
 import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
 import { generateUploadImageObject } from './upload-image.util'
 
@@ -30,6 +31,17 @@ const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 
 const uploadImageList = ref<UploadImageModel[]>([])
 const uploading = ref(false)
+const directoryVisible = ref(false)
+let directoryTrigger: HTMLElement | null = null
+function openDirectory() {
+  directoryTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null
+  directoryVisible.value = true
+}
+async function returnDirectoryFocus() {
+  await nextTick()
+  if (directoryTrigger?.isConnected)
+    directoryTrigger.focus({ preventScroll: true })
+}
 const shortcutKey = computed(() => (getOSName() === 'mac' ? '⌘' : 'Ctrl'))
 
 const isCanDeploy = ref(false)
@@ -190,31 +202,25 @@ watch(
   },
 )
 
-const registerShortcuts = () => {
-  document.addEventListener('keydown', (e) => {
-    const keyCode = e.keyCode || e.which || e.charCode
-    const ctrlKey = e.ctrlKey || e.metaKey
-
-    // 重置操作快捷组合键 Command + A
-    if (ctrlKey && keyCode === 65) {
-      if (uploadImageList.value.length) {
-        resetUploadInfo()
-        e.preventDefault()
-      }
-    }
-
-    // 上传操作快捷组合键 Command + S
-    if (ctrlKey && keyCode === 83) {
-      if (!uploading.value) {
-        uploadImage()
-        e.preventDefault()
-      }
-    }
-  })
+function onKeydown(event: KeyboardEvent) {
+  if (directoryVisible.value || (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')))
+    return
+  if (!(event.ctrlKey || event.metaKey) || event.repeat)
+    return
+  if (event.key.toLowerCase() === 'a' && uploadImageList.value.length && !uploading.value) {
+    resetUploadInfo()
+    event.preventDefault()
+  }
+  if (event.key.toLowerCase() === 's' && !uploading.value) {
+    uploadImage()
+    event.preventDefault()
+  }
 }
 
+onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
+
 onMounted(() => {
-  registerShortcuts()
+  document.addEventListener('keydown', onKeydown)
   if (userConfigInfo.token && connection.value.phase === 'disconnected')
     restore()
 })
@@ -226,7 +232,7 @@ onMounted(() => {
     :upload-path="uploadPath"
     :connection="connection"
     :disabled="uploading"
-    @configure="router.push('/config')"
+    @configure="openDirectory"
     @reconnect="router.push({ path: '/', query: { jump: '0', returnTo: '/upload' } })"
   />
   <div class="upload-page-container">
@@ -260,7 +266,7 @@ onMounted(() => {
       <!-- 状态信息区域 -->
       <div class="row-item">
         <div class="content-box upload-area-status">
-          <SelectedInfoBar />
+          <UploadDirectorySummary v-if="repository" :path="uploadPath" :disabled="uploading" @change="openDirectory" />
           <span v-if="uploadImageList.length" class="upload-count">
             {{ $t('uploaded') }}：{{
               uploadImageList.filter((x) => x.uploadStatus.progress === 100).length
@@ -274,7 +280,7 @@ onMounted(() => {
       <!-- 部署 -->
       <div v-if="userConfigInfo.logined" class="row-item">
         <div class="content-box">
-          <deploy-status-bar :disabled="!isCanDeploy" />
+          <deploy-status-bar :disabled="!isCanDeploy || uploading || directoryVisible" />
         </div>
       </div>
 
@@ -291,6 +297,7 @@ onMounted(() => {
       </div>
     </div>
   </div>
+  <UploadDirectoryDialog v-model="directoryVisible" @closed="returnDirectoryFocus" />
 </template>
 
 <style lang="stylus">

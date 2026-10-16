@@ -394,5 +394,29 @@
     "empty": "此目錄沒有子目錄，可選擇上層目錄或新增目錄。",
     "expand": "展開目錄 {name}",
     "hint": "按目錄名稱選擇，按箭頭展開下層；最多 {max} 層。"
+  },
+  "upload_directory": {
+    "title": "設定上傳目錄",
+    "mode": "目錄模式",
+    "target": "儲存後的目錄",
+    "root_help": "檔案將上傳至儲存庫根目錄。",
+    "date_help": "每批上傳開始時使用當天日期，整批保持相同目錄。",
+    "new_path": "新目錄路徑",
+    "placeholder": "例如：images/2026",
+    "new_help": "支援相對路徑，最多 {max} 層。新目錄將於首次上傳時建立。",
+    "preview": "新的上傳目錄",
+    "incomplete": "請先選擇或填寫有效路徑",
+    "save": "儲存目錄",
+    "saved": "上傳目錄已儲存，僅影響後續上傳。",
+    "current": "上傳目錄",
+    "change": "變更上傳目錄",
+    "storage-unavailable": "目錄儲存失敗，請檢查瀏覽器儲存權限後重試。草稿已保留。",
+    "upload-busy": "上傳進行中，完成後可儲存目錄。",
+    "path_empty": "請選擇或輸入目錄。",
+    "path_empty-segment": "路徑不能包含空分段或連續斜線。",
+    "path_dot-segment": "路徑不能包含 . 或 .. 分段。",
+    "path_backslash": "路徑不能包含反斜線，請使用 / 分隔。",
+    "path_depth": "目錄最多支援 {max} 層，請縮短路徑。",
+    "path_control": "路徑不能包含換行或控制字元。"
   }
 }

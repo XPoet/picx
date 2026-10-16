@@ -394,5 +394,29 @@
     "empty": "No subdirectories. Select the parent directory or create a new one.",
     "expand": "Expand directory {name}",
     "hint": "Select a directory by name; use its arrow to browse children. Maximum {max} levels."
+  },
+  "upload_directory": {
+    "title": "Configure upload directory",
+    "mode": "Directory mode",
+    "target": "Saved directory",
+    "root_help": "Files will be uploaded to the repository root.",
+    "date_help": "Each batch uses the current local date and keeps one directory throughout.",
+    "new_path": "New directory path",
+    "placeholder": "For example: images/2026",
+    "new_help": "Use a relative path with up to {max} levels. The directory is created on the first upload.",
+    "preview": "New upload directory",
+    "incomplete": "Select or enter a valid path",
+    "save": "Save directory",
+    "saved": "Upload directory saved. Applies to future uploads.",
+    "current": "Upload directory",
+    "change": "Change upload directory",
+    "storage-unavailable": "Could not save the directory. Check browser storage permissions and try again. Your draft is kept.",
+    "upload-busy": "An upload is in progress. Save the directory after it finishes.",
+    "path_empty": "Select or enter a directory.",
+    "path_empty-segment": "Paths cannot contain empty segments or consecutive slashes.",
+    "path_dot-segment": "Paths cannot contain . or .. segments.",
+    "path_backslash": "Use / to separate directories, without backslashes.",
+    "path_depth": "Use no more than {max} directory levels.",
+    "path_control": "Paths cannot contain newlines or control characters."
   }
 }

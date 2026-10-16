@@ -43,6 +43,8 @@ const onDeployShortcut = () => {
 }
 
 const onKeydown = (e: KeyboardEvent) => {
+  if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]'))
+    return
   const keyCode = e.keyCode || e.which || e.charCode
   const ctrlKey = e.ctrlKey || e.metaKey
 

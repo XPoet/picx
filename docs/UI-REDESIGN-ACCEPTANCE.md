@@ -316,3 +316,15 @@ Chrome、无 SW 独立上下文、无凭据 fixture：[1440 简中暗色账户](
 另通过 `tests/fixtures/directory-selector.html` 在 Vite dev（4174）和独立临时 Chrome 检查实际组件：[1440 桌面级联](UI/evidence/p2/t018-selector-desktop.png)、[375 单层列表](UI/evidence/p2/t018-selector-375.png)。键盘 Enter 可选择与返回根层，展开不改变选择，空目录不伪装请求失败；375 无横向溢出，localStorage 写入数为零，外域请求数为零。该 fixture 不进入生产路由，完整弹窗 preview E2E 归 T019。Pencil 的 `Bi2Sk` / `SLz4l` 已只读核对，未修改画稿。
 
 **回滚**：回滚本任务可恢复原选择器；旧配置调用方式、字段与文件保留。
+
+### T019 完成四模式目录弹窗及双入口联动
+
+**实施提交**：`feat(upload): integrate transactional directory dialog and shared entries`（本节所属提交）。
+
+新增四模式目录弹窗和操作区目录摘要，上下文图标 / 更改按钮共享唯一弹窗状态。根、日期、仓库与新建模式共用草稿、预览、保存与取消；选择器受控，不写入空文件。取消、关闭、Esc、遮罩均丢弃草稿，保存失败保留弹窗与草稿，成功后两处同步，上传锁禁用保存。弹窗开启保留入口焦点，关闭后显式恢复；上传快捷键按作用域注册 / 卸载，输入与弹窗不触发上传、重置或部署；粘贴不被上传区接管。四模式使用官方本地 Lucide 对应图标。
+
+**验证**：最终 `pnpm verify` 退出 0，lint、stylelint、typecheck、69 单测、build 通过；目录弹窗 preview E2E 12 项全部通过（桌面 / Pixel 5 各 6），覆盖四模式、双入口、五六层边界、取消路径与焦点、保存失败恢复、刷新失败保留、空目录、键盘输入与 Enter 保存。初次用例把 EP 的 dialog overlay 当成 760px 内容，已纠正；遮罩关闭后的焦点问题已修复并完整复验。日志 `/private/tmp/picx-p2-t019-final-verify.log`、`/private/tmp/picx-p2-t019-final-e2e.log`。
+
+Chrome、简中亮色：[1440 / 760px 弹窗](UI/evidence/p2/t019-directory-1440.png)、[375×480 低高度](UI/evidence/p2/t019-directory-375-low.png)；[375 英文暗色](UI/evidence/p2/t019-directory-375-en-dark.png)。已查看截图，正文可滚动，底部按钮保持可见，手机输入 16px，页面无横向溢出。低高度测试模拟软键盘压缩可视区域；真实手机软键盘与 Safari 设备验收仍归 P6，不宣称本机模拟覆盖真实设备。所有 GitHub 请求为 fixture，未知写入被阻断。
+
+**回滚**：回滚弹窗与入口提交恢复原目录显示 / 配置入口，旧页面与选择器文件未删除；原字段和存储格式保持兼容。此时目录配置能力已就绪，下一项 T015 取消独立配置导航与旧页面渲染。

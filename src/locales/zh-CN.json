@@ -394,5 +394,29 @@
     "empty": "此目录没有子目录，可选择上级目录或新建目录。",
     "expand": "展开目录 {name}",
     "hint": "单击目录名称选择，点击箭头展开下级；最多 {max} 层。"
+  },
+  "upload_directory": {
+    "title": "配置上传目录",
+    "mode": "目录模式",
+    "target": "保存后的目录",
+    "root_help": "文件将上传到仓库根目录。",
+    "date_help": "每批上传开始时使用当天日期，整批保持同一目录。",
+    "new_path": "新目录路径",
+    "placeholder": "例如：images/2026",
+    "new_help": "支持相对路径，最多 {max} 层。新目录将在首次上传时创建。",
+    "preview": "新的上传目录",
+    "incomplete": "请先选择或填写有效路径",
+    "save": "保存目录",
+    "saved": "上传目录已保存，仅影响后续上传。",
+    "current": "上传目录",
+    "change": "更改上传目录",
+    "storage-unavailable": "目录保存失败，请检查浏览器存储权限后重试。草稿已保留。",
+    "upload-busy": "上传进行中，完成后可保存目录。",
+    "path_empty": "请选择或输入目录。",
+    "path_empty-segment": "路径不能包含空分段或连续斜杠。",
+    "path_dot-segment": "路径不能包含 . 或 .. 分段。",
+    "path_backslash": "路径不能包含反斜杠，请使用 / 分隔。",
+    "path_depth": "目录最多支持 {max} 层，请缩短路径。",
+    "path_control": "路径不能包含换行或控制字符。"
   }
 }

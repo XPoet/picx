@@ -5,3 +5,4 @@ export type PicxIconName
     | 'external-link' | 'book-open' | 'info'
     | 'github' | 'key-round' | 'shield-check' | 'eye' | 'eye-off'
     | 'git-branch' | 'folder-open' | 'circle-check'
+    | 'folder-root' | 'calendar-days' | 'folder-tree' | 'folder-plus'
