@@ -229,6 +229,25 @@ OAuth 回调同时涉及浏览器外层查询参数与 Hash 路由查询参数�
 5. 图床 `.settings` 只同步用户偏好，不同步认证信息、Token 草稿或目录弹窗草稿。
 6. UI 调整不新增凭据存储副本、不扩大请求携带凭据的范围；重连和登出复用并核验现有清理链路。
 
+### 5.3 认证调用链与源码安全审计（T003）
+
+以下结论只依据源码，不读取真实浏览器存储、凭据文件或环境变量值；“现存行为”不表示已经达到目标安全契约。
+
+| 链路 | 现存行为与缺口 | 必须落实的边界 / 任务 |
+| --- | --- | --- |
+| Token 登录 | 登录按钮把 `manualToken` 写回配置；配置表单 `v-model` 绑定 `userConfigInfo.token`，验证后再保存 `manualToken`。表单输入虽无独立逐字保存事件，但共享对象可被其他持久化动作带入存储 | T013–T014：输入为组件草稿；显式传当前草稿校验；成功才更新既有认证与配置路径，失败不覆盖已验证凭据 |
+| 请求鉴权 | `api/user.ts` 显式传 Bearer，但 `request/axios.ts` 又读取 `PICX_IH_CONFIG.token` 并覆盖 Authorization；当前以 `baseURL.includes` 判断目标 | T012–T013：显式鉴权优先，不被旧 Token 覆盖；解析最终 URL，只有 GitHub API 的精确可信 origin 可由拦截器注入凭据；第三方 URL、图片、IP 查询、更新请求不继承 Token |
+| OAuth 回调 | `picx-login.util.ts` 从外层 search 读 code，先经认证 action 持久化，再调用已有授权服务；成功通过整页跳转移除 search，失败路径仍可能留下参数与授权草稿 | T013–T015：回调局部内存消费 code，成功 / 失败收尾均清理外层与 Hash 中的 OAuth 临时参数；兼容旧字段读取但不新建副本，旧 code 消费或失效后置空；不记录完整回调 URL |
+| 授权服务 | 既有 OAuth 交换通过独立 Axios 请求已有授权服务，不走 GitHub 客户端 | 保留服务目标和既有协议；不将 GitHub Token 添加到 code 交换 URL、路由查询或第三方请求；本期不新增授权服务 |
+| 重连 / 失效 | `GITHUB_AUTHORIZE_EXPIRE` 为客户端 5 天检查窗口；失效提示转 `/login?jump=0`，该路径未注册；初始化会重设分支和根目录 | T013–T016：显示验证状态、保留原仓库与目录、统一真实登录路由；校验失败保留已有配置用于恢复，阻止依赖无效授权的远端操作 |
+| 登出 | `picx-store.ts.LOGOUT` 重置配置、设置和队列并 clear 两类 storage，但未重置内存 `githubAuthorizeModule.authorizationInfo`；已有请求和同步任务也未统一失效 | T013、T021、T028、T037–T039：先作废任务代次 / 计时器，再重置内存授权、连接、队列 / 预览和共享运行态；复用既有登出存储清理范围，不把登出扩大成远端撤权或删除仓库 |
+| 错误输出 | request catch、初始化 catch、云同步 catch 输出原始错误对象；Axios response 仍可含带 Authorization 的 config；授权 / IP 提示有 HTML 字符串通知 | T012–T014、T037：只返回 §10.5 的安全错误字段；用户可控 / 远端文本普通文本展示，迁移所触达通知为结构化内容；不把原错误塞入 Pinia 或测试附件 |
+| 偏好云同步 | 壳层单实例监听用户设置；`saveCloudSettings` 仅序列化 `userSettings`，未直接序列化配置 / 认证；拉取异常或损坏却可被当作播种条件 | T037：保留单实例与偏好格式；写入前按 `UserSettingsModel` 允许字段投影，读取做结构校验；仅确认 404 可播种，权限、网络、损坏均保留本地并提示失败 |
+
+`logined`、`authorized`、`installed` 和本地 Token 存在均不能单独证明当前授权有效。客户端 5 天检查不是 GitHub 服务端实际有效期，手动 Token 没有本项目定义的自动过期时间；API 的未认证 / 无权限结果必须进入恢复路径。
+
+登录输入验证、重连和 OAuth 服务可在服务边界短暂持有凭据，但仓库上下文、目录 selector、队列结果、错误对象与部署展示模型不得接收整个含凭据配置。旧 API 签名兼容期只在可信业务服务内读取所需字段，不把配置对象继续向展示组件或日志传递。
+
 ## 6. 上传工作区与目录配置合并
 
 ### 6.1 上传页结构
@@ -733,6 +752,35 @@ type SettingsSyncState =
 | 已生成 gh-pages，但 Pages 仍构建或不可查询 | `waiting` 或查询失败，保留原链接来源，不能显示已可用 | T038 |
 | 云端 `.settings` 损坏或查询 403 | 保留本地有效偏好并报云失败，不播种覆盖 | T037 |
 | 新设置写入后旧修订云推送才成功 | 新修订仍需同步，旧完成不覆盖新状态 | T037 |
+
+### 10.11 存储允许字段、期限与清理时机（T003）
+
+保持既有键和设置结构，不新增 IndexedDB、Cookie、SessionStorage 或云端凭据副本。现有认证在 `CONFIG` 与 `AUTHORIZATION` 中已有重复字段，本次不再复制到第三处，也不借 UI 改造扩大长期保存范围。
+
+| 存储 / 运行位置 | 允许数据 | 禁止新增的数据 | 期限与清理 |
+| --- | --- | --- | --- |
+| 登录组件内存 | 未提交 Token 草稿、字段可见性、表单错误类别 | 原始 AxiosError、完整回调 URL、复制到全局状态的草稿 | 取消 / 离开登录、验证成功、登出时清空；失败可在当前表单保留用于修正，隐藏离开后不恢复草稿 |
+| 连接服务局部内存 | 本次验证凭据、OAuth code 交换输入 | 日志、通知、路由参数、测试附件中的凭据 | 完成 / 失败 / 新尝试取代后释放引用；code 一次消费，不新增长期保存 |
+| LocalStorage `PICX_IH_CONFIG` | 既有 `UserConfigInfoModel`：验证后 Token、用户 / 仓库 / 分支、目录三字段、`viewDir`、目录列表、历史布尔字段 | 未验证 Token、目录草稿、运行态、处理文件、错误 / 请求对象 | 保持既有长期本地存储语义；验证成功提交，目录显式保存，登出沿既有链路清理 |
+| LocalStorage `PICX_IH_AUTHORIZATION` | 既有 OAuth / 手动凭据字段及状态、创建时间、安装 ID；仅通过既有认证 action 保存 | 新增凭据副本、表单输入中间值、额外 code 历史 | 继续兼容旧字段与现有客户端检查窗口；消费后的 code / 临时授权状态清空；登出同时清理存储与内存授权 |
+| LocalStorage `PICX_IH_SETTINGS` | `imageName`、`compress`、`management`、`imageLinkType`、`imageLinkFormat`、`deploy.customDomain`、`watermark`、既有可选 `starred / showAnnouncement` | 认证、Token / code、仓库配置、目录草稿、文件内容、运行态、未知扩展键 | 既有有效值保存语义；缺失字段补默认值；登出保持现有重置策略 |
+| 仓库 `.settings` | 与上行同一份允许偏好；用户自定义规则、域名、水印文字本来就是云同步内容 | Token / code / Authorization、账号配置、目录草稿 / 缓存、全局会话设置、File / Base64 / 对象 URL、同步状态 | 保持既有用户仓库文件，无新增保留期限或格式版本；登出不删除云文件；损坏或读取失败不自动覆盖 |
+| LocalStorage `PICX_IH_MANAGEMENT` | 既有目录树、媒体路径 / SHA / 名称 / 大小及缓存模型字段 | Token、完整鉴权 URL、请求对象、上传原文件 | 沿用既有缓存；成功远端操作后更新，登出清理；失败不伪造空目录 |
+| SessionStorage `PICX_IH_GLOBAL_SETTINGS` | 语言、主题、折叠状态、组件尺寸、语言提示、公告偏好 | 认证、目录草稿、全局长期副本 | 维持当前会话范围，登出沿既有链路清理，不迁移到 LocalStorage |
+| 队列、目录、连接、部署、同步运行内存 | uuid、无凭据目标、代次、已处理文件与结果、安全错误类别 | 凭据副本、原始错误对象、持久化草稿 | 移除 / 重置 / 登出时清理；关闭目录弹窗废弃草稿；异步旧代次无效，拥有的对象 URL 释放 |
+| Service Worker / Cache Storage | 现有应用资源、编码 WASM、预设图片域名中匹配的图片资源 | 鉴权 API 响应、Token 表单、`.settings`、code 交换结果、任意外域鉴权请求 | 保持既有图片 / WASM 缓存策略；登出不等于浏览器公共图片缓存全清，不对用户作相反承诺 |
+
+设置中的自由文本可能包含用户主动填写的域名、水印和自定义链接；UI 需准确说明它们会随偏好同步到用户仓库。允许字段列表不是“所有文本无敏感性”的保证，不能把认证输入复用为这些字段或将它们输出到调试记录。
+
+**脱敏与证据规则**：
+
+- 错误只携带类别、数值 HTTP 状态、是否可重试与等待时间；本地化消息由可信 key 映射。不输出错误的 `config / request / response / headers / data` 或完整对象，不在 console 中保留凭据前后缀。
+- URL 清理保留合法 Hash 路由、`jump / focus / auto` 等无凭据兼容参数；消费后去除 `code / installation_id / setup_action` 和意外传入的凭据参数。记录路由时只记路径与允许参数，不能记 `location.href`。失败同样执行收尾。
+- 截图、trace、HAR、视频与请求日志默认只用于隔离浏览器上下文和脱敏 fixture。真实认证验证先关闭敏感请求的录制并检查附件，不能把真实 Token / OAuth code 填进可录制的自动化步骤。自动测试用空凭据，不从系统或用户浏览器复制授权状态。
+- `.settings` 写入与运行态日志分别投影允许字段；目录取消 / 刷新不触发 `USER_CONFIG_INFO_PERSIST`，不影响偏好云同步。Token 验证失败不触发用户配置或认证持久化。
+- 兼容旧浏览器数据不表示继续信任未知字段；读取认证只留在可信边界，读取设置做结构校验，旧合法偏好缺省值仍可回显。不运行清空用户浏览器存储来完成迁移或测试。
+
+**源码核对证据**：`src/views/picx-login/picx-login.vue` / `.util.ts`、`src/views/picx-config/picx-config.vue` / `.util.ts`、`src/common/api/user.ts` / `settings.ts`、`src/utils/request/axios.ts` / `index.ts`、`src/stores/picx-store.ts`、`src/common/constant/storage.ts` / `settings.ts`、`src/composables/use-cloud-settings-sync.ts`、两处头像和 `src/utils/storage.ts`。P0 只记录约束；T012–T015 和 T037 的实现验收必须用脱敏 fixture 验证显式凭据不被旧 Token 覆盖、失败不保存、回调收尾、登出内存清理、未知设置字段不进入云文件。
 
 ## 11. 响应式、多语言与可访问性
 
