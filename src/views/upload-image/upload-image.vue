@@ -3,6 +3,7 @@ import type { ImageHandleResult, UploadedImageModel, UploadImageModel, UserConfi
 import { computed, getCurrentInstance, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { DirModeEnum, UploadStatusEnum } from '@/common/model'
 import GettingImages from '@/components/getting-images/getting-images.vue'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import RepositoryContextBar from '@/components/repository-context-bar/repository-context-bar.vue'
 import { useGithubConnection } from '@/composables/use-github-connection'
 import { useUploadWorkspace } from '@/composables/use-upload-workspace'
@@ -32,11 +33,7 @@ const repository = computed(() => userConfigInfo.owner && userConfigInfo.repo &&
 const uploadPath = computed(() => userConfigInfo.selectedDir ? displayDirectory(userConfigInfo.selectedDir) : String(instance?.proxy?.$t('upload_directory.incomplete') ?? ''))
 const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 
-const { queue: uploadImageList, runtime, processing, retryProcessing } = useUploadWorkspace()
-const skippedProcessing = (uuid: string) => {
-  const state = runtime.value[uuid]
-  return state?.phase === 'ready' && state.skippedProcessing
-}
+const { queue: uploadImageList, runtime, processing, retryProcessing, updateName } = useUploadWorkspace()
 const uploading = ref(false)
 const directoryVisible = ref(false)
 let directoryTrigger: HTMLElement | null = null
@@ -193,6 +190,15 @@ const resetUploadInfo = () => {
   resetGettingImages()
 }
 
+function copyItem(uuid: string) {
+  const state = runtime.value[uuid]
+  const image = uploadImageList.value.find(item => item.uuid === uuid)?.uploadedImg
+  if (state?.phase === 'uploaded')
+    copyImageLink(state.result.image, false, state.result.target)
+  else if (image)
+    copyImageLink(image)
+}
+
 // 删除
 const remove = (uuid: string) => {
   store.dispatch('UPLOAD_IMG_LIST_REMOVE', uuid)
@@ -263,18 +269,15 @@ onMounted(() => {
     <div class="upload-page-main">
       <div class="upload-stage" :class="{ 'has-queue': uploadImageList.length }">
         <section v-if="uploadImageList.length" class="upload-page-left" :aria-label="$t('upload_page.queue_label')" tabindex="0">
-          <div v-for="item in uploadImageList" :key="item.uuid" class="uploaded-item">
-            <UploadImageCard :img-obj="item" @remove="remove($event)" />
-            <div v-if="runtime[item.uuid]?.phase === 'failed'" role="alert">
-              <p>{{ $t('upload_workspace.processing_failed') }}</p>
-              <el-button @click="retryProcessing(item.uuid)">
-                {{ $t('upload_workspace.retry_processing') }}
-              </el-button>
-            </div>
-            <p v-if="skippedProcessing(item.uuid)">
-              {{ $t('upload_workspace.processing_skipped') }}
-            </p>
+          <div class="queue-heading">
+            <h2>{{ $t('upload_workspace.queue') }}</h2><span>{{ uploaded.length }} / {{ uploadImageList.length }}</span>
           </div>
+          <div v-for="item in uploadImageList" :key="item.uuid" class="uploaded-item">
+            <UploadImageCard :img-obj="item" :runtime="runtime[item.uuid]" :naming="settings.imageName" :disabled="uploading" @remove="remove" @retry="retryProcessing" @edit-name="updateName" @copy="copyItem" />
+          </div>
+          <el-button class="queue-add" :disabled="uploading" @click="gettingImagesRef?.selectFiles()">
+            <PicxIcon name="plus" :size="18" />{{ $t('upload_workspace.add_more') }}
+          </el-button>
         </section>
         <GettingImages ref="gettingImagesRef" :disabled="uploading" mode="workspace" :has-files="uploadImageList.length > 0" video-enabled @get-img-list="setImgList" />
       </div>

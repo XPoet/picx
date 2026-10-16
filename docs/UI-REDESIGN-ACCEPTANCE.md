@@ -422,3 +422,13 @@ Chrome / 简中 / 1440×1080 最终截图已查看：[无配置导航的登录�
 **验证**：`pnpm verify` 通过，15 文件 / 122 单测；最后无障碍名称修正后重新 lint / build。2 项组件测试检查事件、旧格式关闭、禁用与体积。目录弹窗 12 项回归通过；共享偏好 Desktop / Pixel 5 两项最终通过，使用键盘 Space 操作真实开关，验证两页双向一致、raw 映射及目录入口。首次用例发现 aria-labelledby 只落到包装节点，已修为 input 的 aria-label；隐藏原生 input 使用键盘验证，无强制点击。已查看截图：[1440 / 320px 面板](UI/evidence/p3/t024-settings-1440.png)、[375](UI/evidence/p3/t024-settings-375.png)，另断言 768 与 375 无溢出、手机 select 16px。日志 `/private/tmp/picx-p3-t024-verify.log`、`/private/tmp/picx-p3-t024-build.log`、`/private/tmp/picx-p3-t024-settings-e2e.log`；目录回归结果见 `/private/tmp/picx-p3-t024-e2e.log`（新设置用例的首次失败另已修复并复验）。
 
 **回滚**：回滚面板与页面布局提交，原设置字段、目录事务和部署服务均兼容，无远端写入。
+
+### T025 改造轻量队列与媒体项展示
+
+**实施提交**：`feat(upload): render lightweight media queue with explicit details`（本节所属提交）。
+
+队列使用稳定 uuid，显示最终名、实际大小、原始 → 最终体积、处理 / 待上传 / 上传 / 失败 / 成功状态。采用真实压缩产物才标记已压缩。详情、移除、成功复制与处理重试常驻且目标 44px；详情承接图片 / MP4 预览及重命名、哈希、前缀，表单仅编辑本地草稿，通过 typed events 更新队列，校验空名和路径分隔符。卡片不再挂载调度或直接修改 Props。
+
+**验证**：阶段 `pnpm verify` 通过（122 单测、静态检查、typecheck、build）；新增运行态动作组件测试 2 项单独通过，验证处理重试事件、不修改原 File、处理中操作与权限错误本地化，合计现有 124 项。Desktop / Pixel 5 队列与入口 E2E 4 项通过；队列最终独立复验 2 项通过，24 项文件覆盖长名、同名、视频、键盘重命名、移除和持续追加。已查看 [1440](UI/evidence/p3/t025-queue-1440.png) 与 [375](UI/evidence/p3/t025-queue-375.png)，无页面横向溢出，图片 fixture 为透明 PNG，视频 fixture 仅验证 MP4 输入和控制入口，不宣称验证真实视频播放。日志 `/private/tmp/picx-p3-t025-verify.log`、`/private/tmp/picx-p3-t025-card-test.log`、`/private/tmp/picx-p3-t025-e2e.log`、`/private/tmp/picx-p3-t025-queue-e2e.log`。上传失败与成功结果完整页面由 T026–T027 验收。
+
+**回滚**：回滚本任务恢复原卡片；旧 util 文件保留，原文件、设置与远端不受影响。

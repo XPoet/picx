@@ -1,3 +1,4 @@
+import type { UploadImageModel } from '@/common/model'
 import type { ProcessingSnapshot } from '@/common/model/upload'
 import { computed, onScopeDispose, watch } from 'vue'
 import { ImageProcessingError, processImage } from '@/services/image-processing'
@@ -104,7 +105,14 @@ export function useUploadWorkspace(process = processImage) {
         Object.assign(item.beforeUploadStatus, { watermarking: false, compressing: false })
     }
   })
+  function updateName(uuid: string, override: NonNullable<UploadImageModel['namingOverrides']>) {
+    const item = queue.value.find(item => item.uuid === uuid)
+    if (!item || item.uploadStatus.progress === 100 || store.uploadTargetBusy)
+      return
+    item.namingOverrides = { ...item.namingOverrides, ...override }
+    applyUploadNaming(item, settings.value.imageName)
+  }
   const processing = computed(() => queue.value.some(item => runtime.value[item.uuid]?.phase === 'processing'))
   const ready = computed(() => queue.value.filter(item => item.uploadStatus.progress === 0 && runtime.value[item.uuid]?.phase === 'ready'))
-  return { queue, runtime, processing, ready, retryProcessing }
+  return { queue, runtime, processing, ready, retryProcessing, updateName }
 }
