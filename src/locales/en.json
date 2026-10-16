@@ -266,7 +266,8 @@
   },
   "feedback": {
     "text_1": "An image hosting tool built using the GitHub API that provides image upload and hosting services, as well as image link generation.",
-    "text_2": "It is recommended to add this site to your browser bookmarks for convenient use in the future."
+    "text_2": "It is recommended to add this site to your browser bookmarks for convenient use in the future.",
+    "open_issue": "Report an issue on GitHub"
   },
   "region": {
     "CN": "Mainland China",
@@ -314,5 +315,11 @@
     "text_7": "{repo} repository images copy failed, try again later",
     "text_8": "Copy other repository images",
     "loading_1": "Copying"
+  },
+  "footer": {
+    "description": "PicX image hosting · Images stay in your GitHub repository",
+    "links": "Help and feedback",
+    "help": "Help center",
+    "feedback": "Feedback"
   }
 }

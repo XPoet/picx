@@ -88,6 +88,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SiteAnnouncement: typeof import('./components/site-announcement/site-announcement.vue')['default']
     SiteCount: typeof import('./components/site-count/site-count.vue')['default']
+    SiteFooter: typeof import('./components/site-footer/site-footer.vue')['default']
     UserAvatar: typeof import('./components/user-avatar/user-avatar.vue')['default']
     UserAvatarV2: typeof import('./components/user-avatar-v2/user-avatar-v2.vue')['default']
     WatermarkConfigBox: typeof import('./components/watermark-config-box/watermark-config-box.vue')['default']

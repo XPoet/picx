@@ -1,34 +1,74 @@
 .feedback-page-container {
+  h1 {
+    margin 0 0 24px
+    font-weight 700
+    font-size var(--picx-font-title)
+    line-height 1.4
+  }
 
   .help-info-item {
     display flex
+    flex-wrap wrap
     align-items center
-    margin-bottom 10rem
-    padding 6rem
-    font-size 16rem
+    gap var(--picx-space-2)
+    margin 0 0 16px
+    font-size var(--picx-font-body)
+    line-height 1.8
+    overflow-wrap anywhere
 
-    code {
-      box-sizing border-box
-      padding 3rem 6rem
-      font-weight bold
-      background var(--background-color-2)
-      border-radius 6rem
-      box-shadow 2rem 2rem 5rem var(--shadow-color)
+    span {
+      min-width 0
     }
 
-    &:last-child {
-      margin-bottom 0
+    a {
+      display inline-flex
+      align-items center
+      min-height var(--picx-control-height)
+      color var(--picx-color-primary)
+      text-decoration underline
+      text-underline-offset 4px
     }
   }
 
   .description {
-    font-weight bold
-    line-height 28rem
+    align-items flex-start
+    font-size 16px
   }
 
-  .red-text {
-    margin-top 6rem
-    color var(--el-color-danger)
-    font-size 22rem
+  p.help-info-item {
+    flex-wrap nowrap
+    align-items flex-start
+
+    > span {
+      flex 1
+    }
+  }
+
+  kbd {
+    display inline-block
+    padding 4px 8px
+    color var(--picx-color-text)
+    font-family inherit
+    background var(--picx-color-bg)
+    border 1px solid var(--picx-color-border)
+    border-radius 8px
+  }
+
+  .issue-link {
+    display inline-flex
+    align-items center
+    justify-content center
+    gap var(--picx-space-2)
+    box-sizing border-box
+    min-height var(--picx-control-height)
+    margin-top 8px
+    padding 8px 16px
+    color var(--picx-color-on-primary)
+    background var(--picx-color-primary)
+    border-radius var(--picx-radius-control)
+
+    &:hover {
+      background var(--picx-color-primary-hover)
+    }
   }
 }

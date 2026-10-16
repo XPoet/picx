@@ -5,6 +5,7 @@ import {
   setCloudDeployInfo,
 } from '@/components/deploy-status-bar/deploy-status-bar.util'
 import HeaderContent from '@/components/header-content/header-content.vue'
+import SiteFooter from '@/components/site-footer/site-footer.vue'
 
 const initDeployStatus = async () => {
   const res = await getCloudDeployInfo()
@@ -24,6 +25,7 @@ onMounted(() => {
     <main class="main-content border-box">
       <router-view />
     </main>
+    <SiteFooter />
   </div>
 </template>
 

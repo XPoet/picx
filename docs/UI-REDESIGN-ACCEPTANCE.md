@@ -220,3 +220,13 @@ AppWrap 单次初始化主题，跟随系统变化，监听随作用域释放；
 Chrome、无 SW 独立上下文、无凭据 fixture：[1440 简中暗色账户](UI/evidence/p1/t009-account-dark-1440.png)、[1440 英文账户](UI/evidence/p1/t009-account-en-1440.png)、[375 繁中工具](UI/evidence/p1/t009-tools-tw-375.png)。没有未知请求或远端写入；长英文导航允许换行，临时配置项由 T015 移除。fixture 修正为重载不重新播种账户，地区查询仅返回合成 IP / 国家。
 
 **回滚**：回滚本任务公共工具、初始化和类型补充提交，恢复原工具入口；不新增凭据副本或偏好存储键。
+
+### T010 实现页脚与帮助反馈入口
+
+**实施提交**：`feat(ui): add responsive footer and reachable feedback links`（本节所属提交）。
+
+新增 SiteFooter，提供原稿 `DZzo7` 的品牌说明、真实帮助文档与 `/feedback`。没有隐私 / 条款占位链接。反馈页沿用原内容与目标，移除结构性 Emoji，使用统一图标、标题与可换行链接；补充 package.json 现有 issues 目标作为反馈操作，不创建无关页面。三语同步，链接目标至少 44px，外链带 noopener noreferrer。
+
+**验证**：lint、stylelint、build、diff 检查通过；E2E 34 项通过，新增页脚键盘 Tab / Enter、真实 URL、反馈标题与 issues 链接断言。通过网页读取确认已有 [帮助文档](https://picx-docs.xpoet.cn/) 与 [Issues](https://github.com/XPoet/picx/issues) 目标可达；未提交反馈或外部写入。Chrome、亮色英文：[1440](UI/evidence/p1/t010-feedback-1440.png)、[375](UI/evidence/p1/t010-feedback-375.png)，无页面横向溢出。页脚处于正常布局，不覆盖内容；当前长内容仍使用旧内部滚动，T011 统一页面滚动。
+
+**回滚**：回滚页脚、反馈样式与翻译提交，保留原 `/feedback` 页面和业务能力。
