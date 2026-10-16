@@ -182,3 +182,13 @@ Chrome、简体中文、1440×1080 / 375×812 检查了配置输入、按钮、�
 WCAG 对比度计算：亮 / 暗正文 13.03 / 12.13，辅助文本对页面背景 5.47 / 9.04，主按钮 5.38 / 7.13，Hover 6.51 / 9.19，错误 5.59 / 6.85，控件边界 3.25 / 4.84，焦点 4.31 / 8.40。旧业务细节的逐页视觉验收仍归 P2–P6。
 
 **回滚**：回滚本任务样式与记录提交即可恢复旧主题；不改用户配置或业务数据。
+
+### T007 接入品牌、字体回退和统一图标资源
+
+**实施提交**：`feat(ui): add original brand vectors and local Lucide icons`（本节所属提交）。
+
+从画稿 `IGX9S` / `D4Rf6` / `trNzM` 提取精确矢量，保留柔环渐变与 Manrope Bold 转曲字标；新增 BrandLogo 与类型化 PicxIcon。20 个本地 Lucide symbol 共 4060 字节，统一 24px viewBox、2px 描边、currentColor；默认装饰语义，独立含义图标可通过 label 获得可访问名称。公告先使用本地 bell，其他公共入口在 T008–T010 接入。资源来源与许可见 `src/assets/brand/SOURCE.md`、`src/assets/icons/SOURCE.md`，保留 Lucide ISC / Feather MIT 与 Manrope OFL 声明。无新增依赖或字体文件。
+
+**验证**：lint、stylelint、typecheck、build、diff 检查通过。独立 Chrome 上下文禁用 Service Worker，1440×1080 简体中文、亮暗主题与 200% 缩放检查原稿字标：[亮色](UI/evidence/p1/t007-brand-light.png)、[暗色](UI/evidence/p1/t007-brand-dark.png)、[缩放](UI/evidence/p1/t007-brand-zoom.png)。实际网络无外域 / 字体请求；SVG 使用 no-inline 本地 URL，避免 data URL 外部 use 无法渲染。未读取字体或依赖安装目录，系统回退以浏览器实际 font-family 列表为准。
+
+**回滚**：回滚本任务提交恢复原品牌入口与字体；不改变登录、存储或业务路由。新增公共组件后由构建插件自动更新 components.d.ts。

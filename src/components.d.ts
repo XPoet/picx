@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AuthorizationStatusBar: typeof import('./components/authorization-status-bar/authorization-status-bar.vue')['default']
     Base64Tool: typeof import('./components/tools/base64-tool/base64-tool.vue')['default']
+    BrandLogo: typeof import('./components/brand-logo/brand-logo.vue')['default']
     CompressConfigBox: typeof import('./components/compress-config-box/compress-config-box.vue')['default']
     CompressTool: typeof import('./components/tools/compress-tool/compress-tool.vue')['default']
     CopySourceRepo: typeof import('./components/copy-source-repo/copy-source-repo.vue')['default']
@@ -57,7 +58,6 @@ declare module 'vue' {
     GettingImages: typeof import('./components/getting-images/getting-images.vue')['default']
     HeaderContent: typeof import('./components/header-content/header-content.vue')['default']
     IEpArrowLeftBold: typeof import('~icons/ep/arrow-left-bold')['default']
-    IEpBell: typeof import('~icons/ep/bell')['default']
     IEpCaretBottom: typeof import('~icons/ep/caret-bottom')['default']
     IEpCaretLeft: typeof import('~icons/ep/caret-left')['default']
     IEpCheck: typeof import('~icons/ep/check')['default']
@@ -84,6 +84,7 @@ declare module 'vue' {
     ImageLinkRuleConfig: typeof import('./components/image-link-rule-config/image-link-rule-config.vue')['default']
     ImgProcessStateCard: typeof import('./components/tools/img-process-state-card/img-process-state-card.vue')['default']
     NavContent: typeof import('./components/nav-content/nav-content.vue')['default']
+    PicxIcon: typeof import('./components/picx-icon/picx-icon.vue')['default']
     QuickActions: typeof import('./components/quick-actions/quick-actions.vue')['default']
     RepoDirCascader: typeof import('./components/repo-dir-cascader/repo-dir-cascader.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { store } from '@/stores'
 
 const dialogVisible = ref(false)
@@ -38,9 +39,7 @@ onMounted(() => {
     text
     @click="dialogVisible = true"
   >
-    <el-icon :size="22">
-      <IEpBell />
-    </el-icon>
+    <PicxIcon name="bell" />
   </el-button>
   <el-dialog
     v-model="dialogVisible"
