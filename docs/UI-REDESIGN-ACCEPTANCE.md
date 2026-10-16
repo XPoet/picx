@@ -206,3 +206,17 @@ HeaderContent 组合品牌、NavContent 和原账户工具；MainContainer 移�
 Chrome、独立无 SW 上下文、亮色英文：[1440×1080](UI/evidence/p1/t008-header-1440-en.png)、[375×812 展开](UI/evidence/p1/t008-menu-375-en.png)。顶栏实测 x=32、y=24、宽 1376、高 72px；手机无页面横向溢出。暂留配置导航导致菜单比最终稿多一项，T015 在能力迁移后取消。
 
 **回滚**：回滚本任务布局 / 导航 / 测试提交即可恢复侧栏，不改变业务存储或路由协议。
+
+### T009 整合账户、语言、主题、通知和安装工具
+
+**实施提交**：`feat(ui): integrate account preferences announcements and install tools`（本节所属提交）。
+
+HeaderTools 使用现有全局设置与公告，匿名展示开始使用，已登录使用账户实际 owner / avatar；无样例身份、无假连接标记。HeaderMenu 提供语义菜单、方向键、Home / End、Esc、外部点击和焦点返回。重连 / 登出进入真实 `/` 登录页；先在方案 §3.1 定义 returnTo 站内白名单，再实现恢复目标保留。完整连接后的消费归 T015。
+
+AppWrap 单次初始化主题，跟随系统变化，监听随作用域释放；移除 MainContainer 的重复初始化。语言同步 i18n、HTML lang、Element Plus、页面标题和更新通知；界面偏好只写现有 session 设置。地区提示改用 Vue 文本节点与按钮，不再拼接 HTML；本地 Element Plus 类型声明补齐真实支持的 VNode。公告使用可聚焦模态弹窗。安装只在 beforeinstallprompt 到达后提供，处理完成 / 取消 / 失败并清理监听；没有修改 SW、manifest 或缓存策略。
+
+**验证**：lint、stylelint、typecheck、build、diff 检查通过；构建后 E2E 32 项通过（桌面 / 手机各 16）。覆盖三语切换后的 Element Plus 关闭名称、标题与真实更新插件 setLocale；亮 / 暗 / 系统模式与系统变化；账户菜单键盘、重连、登出后的存储清理 / 匿名入口 / 首次公告；模拟可安装事件。源码确认 setThemeMode 只有一个初始化入口，安装监听各注册 / 清理一次。安装测试不代表真实系统安装或完整 PWA 验收，后者归 T047。
+
+Chrome、无 SW 独立上下文、无凭据 fixture：[1440 简中暗色账户](UI/evidence/p1/t009-account-dark-1440.png)、[1440 英文账户](UI/evidence/p1/t009-account-en-1440.png)、[375 繁中工具](UI/evidence/p1/t009-tools-tw-375.png)。没有未知请求或远端写入；长英文导航允许换行，临时配置项由 T015 移除。fixture 修正为重载不重新播种账户，地区查询仅返回合成 IP / 国家。
+
+**回滚**：回滚本任务公共工具、初始化和类型补充提交，恢复原工具入口；不新增凭据副本或偏好存储键。

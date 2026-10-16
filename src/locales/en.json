@@ -35,7 +35,14 @@
       "text_2": "PicX has been upgraded into a one-stop online image processing platform. It features tools such as compression, cropping, watermarking, image slicing, annotation, and stitching—we invite you to give it a try.",
       "text_3": "Don't remind again"
     },
-    "product": "GitHub hosting"
+    "product": "GitHub hosting",
+    "choose_language": "Choose language",
+    "get_started": "Get started",
+    "account_for": "{account} account menu",
+    "github_profile": "GitHub profile",
+    "reconnect": "Reconnect GitHub",
+    "install": "Install PicX",
+    "install_failed": "Installation did not finish. Try again from your browser menu."
   },
   "nav": {
     "label": "Main navigation",

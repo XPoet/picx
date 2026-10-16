@@ -1,4 +1,4 @@
-import type { Component, Directive } from 'vue'
+import type { Component, Directive, VNode } from 'vue'
 
 export interface FormInstance {
   validate: (callback: (valid: boolean) => void) => Promise<boolean> | void
@@ -10,7 +10,7 @@ interface MessageHandler {
 
 interface MessageOptions {
   type?: 'success' | 'warning' | 'info' | 'error'
-  message?: string
+  message?: string | VNode
   duration?: number
   offset?: number
   customClass?: string

@@ -45,8 +45,7 @@ onMounted(() => {
     v-model="dialogVisible"
     :title="$t('header.announcement.text_1')"
     width="min(500px, calc(100vw - 32px))"
-    :modal="false"
-    draggable
+    append-to-body
     @close="onClose"
   >
     <div class="announcement-item">
@@ -54,6 +53,7 @@ onMounted(() => {
         type="primary"
         target="_blank"
         href="https://picx.xpoet.cn"
+        rel="noopener noreferrer"
       >
         {{ $t('header.announcement.text_2') }}
       </el-link>

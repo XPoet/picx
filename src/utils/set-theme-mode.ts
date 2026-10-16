@@ -1,41 +1,24 @@
-import { nextTick, watch } from 'vue'
+import { onScopeDispose, watch } from 'vue'
 import { ThemeModeEnum } from '@/common/model'
 import { useStore } from '@/stores'
-import { isDarkModeOfSystem } from '@/utils/system'
 
+/** 在 AppWrap 的 setup 中初始化一次，系统监听随作用域释放。 */
 const setThemeMode = () => {
   const store = useStore()
-
-  const setHtmlClassName = async (theme: ThemeModeEnum) => {
-    await nextTick(() => {
-      const body = document.getElementsByTagName('html')[0]
-      if (theme === ThemeModeEnum.dark) {
-        body.classList.remove('light')
-        body.classList.add('dark')
-      }
-      if (theme === ThemeModeEnum.light) {
-        body.classList.remove('dark')
-        body.classList.add('light')
-      }
-    })
+  const media = window.matchMedia('(prefers-color-scheme: dark)')
+  const apply = () => {
+    const mode = store.getters.getGlobalSettings.theme
+    const dark = mode === ThemeModeEnum.dark || (mode === ThemeModeEnum.system && media.matches)
+    document.documentElement.classList.toggle('dark', dark)
+    document.documentElement.classList.toggle('light', !dark)
   }
 
-  const setThemeByConfig = async (mode: ThemeModeEnum) => {
-    if (mode === ThemeModeEnum.system) {
-      await setHtmlClassName(isDarkModeOfSystem() ? ThemeModeEnum.dark : ThemeModeEnum.light)
-    }
-    else {
-      await setHtmlClassName(mode)
-    }
-  }
-
-  watch(
-    () => store.getters.getGlobalSettings.theme,
-    async (newValue) => {
-      await setThemeByConfig(newValue)
-    },
-    { deep: true, immediate: true },
-  )
+  const stop = watch(() => store.getters.getGlobalSettings.theme, apply, { immediate: true })
+  media.addEventListener('change', apply)
+  onScopeDispose(() => {
+    stop()
+    media.removeEventListener('change', apply)
+  })
 }
 
 export default setThemeMode

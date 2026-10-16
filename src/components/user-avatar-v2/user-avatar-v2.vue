@@ -1,125 +1,71 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { LanguageEnum, ThemeModeEnum } from '@/common/model'
+import { useRoute, useRouter } from 'vue-router'
+import HeaderMenu from '@/components/header-menu/header-menu.vue'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { useStore } from '@/stores'
 import { getGitHubOwnerURL } from '@/utils'
 
+withDefaults(defineProps<{ canInstall?: boolean, installing?: boolean }>(), { canInstall: false, installing: false })
+const emit = defineEmits<{ install: [] }>()
 const router = useRouter()
+const route = useRoute()
 const store = useStore()
+const user = computed(() => store.getters.getUserConfigInfo)
+const loginTarget = computed(() => ({
+  path: '/',
+  query: {
+    jump: '0',
+    returnTo: ['/upload', '/management', '/settings', '/config'].includes(route.path) ? route.path : '/upload',
+  },
+}))
 
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const globalSettings = computed(() => store.getters.getGlobalSettings).value
-
-const onLogin = () => {
-  router.push('/login')
-  document.body.click()
-}
-
-// 退出登录
-const onLogout = () => {
-  store.dispatch('LOGOUT')
-  router.push('/login')
-  document.body.click()
-  setTimeout(() => {
-    window.location.reload()
-  })
-}
-
-const persistGlobalSettings = () => {
-  store.dispatch('USER_GLOBAL_PERSIST')
+const onLogout = async () => {
+  const target = loginTarget.value
+  await store.dispatch('LOGOUT')
+  await router.replace(target)
+  // 旧授权模块仍可能持有内存凭据，沿用现有完整重载的清理边界。
+  window.location.reload()
 }
 </script>
 
 <template>
-  <el-popover
-    placement="top-start"
-    trigger="click"
-    width="240rem"
-    :show-arrow="false"
-    :popper-style="{
-      'padding': '0',
-      'border-radius': '10rem',
-      'overflow': 'hidden',
-    }"
-  >
-    <template #reference>
-      <button
-        type="button"
-        :aria-label="$t('header.account')"
-        :title="$t('header.account')"
-        class="user-avatar-v2 border-box"
-        :class="{ folded: store.getters.getGlobalSettings.folded }"
-      >
-        <span class="avatar flex-center">
-          <img
-            v-if="userConfigInfo?.avatarUrl"
-            :src="userConfigInfo?.avatarUrl"
-            :alt="userConfigInfo?.owner"
-          >
-          <el-icon v-else class="user-filled-icon">
-            <IEpUserFilled />
-          </el-icon>
-        </span>
+  <template v-if="!user.logined">
+    <RouterLink class="start-link" :to="loginTarget">
+      {{ $t('header.get_started') }}
+    </RouterLink>
+    <button v-if="canInstall" type="button" class="picx-icon-button" :disabled="installing" :aria-label="$t('header.install')" @click="emit('install')">
+      <PicxIcon name="download" />
+    </button>
+  </template>
+  <HeaderMenu v-else :label="$t('header.account_for', { account: user.owner })" wide>
+    <template #trigger>
+      <span class="avatar">
+        <img v-if="user.avatarUrl" :src="user.avatarUrl" alt="" referrerpolicy="no-referrer">
+        <PicxIcon v-else name="user-round" :size="20" />
+      </span>
+      <span class="account-name">{{ user.owner }}</span>
+      <PicxIcon name="chevron-down" :size="16" />
+    </template>
+    <template #default="{ close }">
+      <a :href="getGitHubOwnerURL(user)" role="menuitem" target="_blank" rel="noopener noreferrer" @click="close">
+        <PicxIcon name="external-link" />
+        {{ $t('header.github_profile') }}
+      </a>
+      <RouterLink role="menuitem" :to="loginTarget" @click="close">
+        <PicxIcon name="refresh-cw" />
+        {{ $t('header.reconnect') }}
+      </RouterLink>
+      <button v-if="canInstall" type="button" role="menuitem" :disabled="installing" @click="emit('install'); close()">
+        <PicxIcon name="download" />
+        {{ $t('header.install') }}
+      </button>
+      <button type="button" role="menuitem" @click="onLogout">
+        <PicxIcon name="log-out" />
+        {{ $t('logout') }}
       </button>
     </template>
-    <ul class="personal-center-popover border-box">
-      <li v-if="userConfigInfo.logined" class="user-info border-box">
-        <div v-if="userConfigInfo.owner" class="info-item owner">
-          <el-link
-            style="font-size: 16rem"
-            :underline="false"
-            :href="getGitHubOwnerURL(userConfigInfo)"
-            target="_blank"
-          >
-            {{ userConfigInfo.owner }}
-          </el-link>
-        </div>
-        <div v-if="userConfigInfo.email" class="info-item name">
-          {{ userConfigInfo.email }}
-        </div>
-      </li>
-      <el-divider v-if="userConfigInfo.logined" />
-      <li class="content-item border-box">
-        <span class="flex-center">{{ $t('language') }}</span>
-        <el-select
-          v-model="globalSettings.language"
-          size="small"
-          style="width: 100rem"
-          @change="persistGlobalSettings"
-        >
-          <el-option label="中文简体" :value="LanguageEnum.zhCN" />
-          <el-option label="中文繁體" :value="LanguageEnum.zhTW" />
-          <el-option label="English" :value="LanguageEnum.en" />
-        </el-select>
-      </li>
-      <el-divider />
-      <li class="content-item border-box">
-        <span class="flex-center">{{ $t('header.theme') }}</span>
-        <el-select
-          v-model="globalSettings.theme"
-          size="small"
-          style="width: 100rem"
-          @change="persistGlobalSettings"
-        >
-          <el-option :label="$t('settings_page.theme.system')" :value="ThemeModeEnum.system" />
-          <el-option :label="$t('settings_page.theme.light')" :value="ThemeModeEnum.light" />
-          <el-option :label="$t('settings_page.theme.dark')" :value="ThemeModeEnum.dark" />
-        </el-select>
-      </li>
-      <el-divider />
-      <li
-        v-if="userConfigInfo.name || userConfigInfo.owner"
-        class="content-item border-box"
-        @click="onLogout"
-      >
-        {{ $t('logout') }}
-      </li>
-      <li v-else class="content-item border-box" @click="onLogin">
-        {{ $t('login') }}
-      </li>
-    </ul>
-  </el-popover>
+  </HeaderMenu>
 </template>
 
 <style scoped lang="stylus">

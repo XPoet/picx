@@ -5,7 +5,6 @@ import {
   setCloudDeployInfo,
 } from '@/components/deploy-status-bar/deploy-status-bar.util'
 import HeaderContent from '@/components/header-content/header-content.vue'
-import themeModeHandle from '@/utils/set-theme-mode'
 
 const initDeployStatus = async () => {
   const res = await getCloudDeployInfo()
@@ -15,7 +14,6 @@ const initDeployStatus = async () => {
 }
 
 onMounted(() => {
-  themeModeHandle()
   initDeployStatus()
 })
 </script>

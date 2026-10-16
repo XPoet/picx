@@ -15,6 +15,8 @@ import {
 interface OpenPageOptions {
   savedRepository?: boolean
   directoryScenario?: DirectoryScenario
+  language?: 'zh-CN' | 'zh-TW' | 'en'
+  theme?: 'light' | 'dark' | 'system'
 }
 
 interface PicxFixture {
@@ -40,6 +42,16 @@ export const test = base.extend<{ picx: PicxFixture }>({
 
       if (url.origin === origin && (method === 'GET' || method === 'HEAD')) {
         await route.continue()
+        return
+      }
+
+      // 登出后默认语言引导会查询地区；返回文档保留地址，绝不访问真实 IP 服务。
+      if (method === 'GET' && url.origin === 'https://api.ipify.org' && url.pathname === '/') {
+        await route.fulfill({ json: { ip: '203.0.113.1' } })
+        return
+      }
+      if (method === 'GET' && url.origin === 'https://ipapi.co' && url.pathname === '/203.0.113.1/country/') {
+        await route.fulfill({ contentType: 'text/plain', body: 'CN' })
         return
       }
 
@@ -74,11 +86,19 @@ export const test = base.extend<{ picx: PicxFixture }>({
     await use({
       open: async (path, options = {}) => {
         contents = createDirectoryContentsFixture(options.directoryScenario)
-        await page.addInitScript(({ config, settings }) => {
+        await page.evaluate(() => {
+          window.name = ''
+        })
+        await page.addInitScript(({ config, settings, language, theme }) => {
+          // 重载必须保留应用实际写入 / 登出结果，不能重新注入登录态。
+          if (window.name === 'picx-ui-fixture-seeded') {
+            return
+          }
+          window.name = 'picx-ui-fixture-seeded'
           sessionStorage.setItem('PICX_IH_GLOBAL_SETTINGS', JSON.stringify({
-            language: 'zh-CN',
+            language,
             languageToggleTip: false,
-            theme: 'light',
+            theme,
             showAnnouncement: false,
           }))
           localStorage.setItem('PICX_IH_SETTINGS', JSON.stringify(settings))
@@ -88,6 +108,8 @@ export const test = base.extend<{ picx: PicxFixture }>({
         }, {
           config: options.savedRepository ? createRepositoryFixture() : null,
           settings: createSettingsFixture(),
+          language: options.language ?? 'zh-CN',
+          theme: options.theme ?? 'light',
         })
         await page.goto(`/images-hosting/#${path}`)
       },

@@ -35,7 +35,14 @@
       "text_2": "PicX 已升级改造为一站式在线图片处理平台。包含：压缩、裁剪、水印、切图、标记、拼接等图片工具，欢迎体验。",
       "text_3": "不再提示"
     },
-    "product": "GitHub 图床"
+    "product": "GitHub 图床",
+    "choose_language": "选择语言",
+    "get_started": "开始使用",
+    "account_for": "{account} 账户菜单",
+    "github_profile": "GitHub 主页",
+    "reconnect": "重新连接 GitHub",
+    "install": "安装 PicX",
+    "install_failed": "安装未完成，请稍后通过浏览器菜单重试。"
   },
   "nav": {
     "label": "主导航",

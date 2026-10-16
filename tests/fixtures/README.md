@@ -20,3 +20,5 @@ flowchart LR
 - 现阶段 smoke 断言旧 UI 的实际角色与可见内容。P1 / P2 改入口时同步迁移断言，不用 catch-all 页面存在替代目标页验证；不预写尚未实现的新弹窗、搜索和上传结果断言。
 
 运行：先 `pnpm build`，再 `pnpm test:e2e`；单测 `pnpm test`。本机 pnpm 预检 / Chrome 沙箱差异及单次兼容方式见 [P0 验收记录](../../docs/UI-REDESIGN-ACCEPTANCE.md)。这些 fixture 不提供真实认证、远端写入或 Pages 可用性的验收证据。
+
+P1 的 open 参数支持三种语言与三种主题。fixture 使用仅包含固定标记的 window.name 避免刷新重新注入账户，因此登出 / 重载可以验证应用实际清理结果；不会把 Token 或账户写入此标记。登出后默认地区引导的两个精确 GET 目标返回文档保留 IP `203.0.113.1` / `CN`，不发出真实地区查询。安装测试只派发带模拟 prompt 的事件，不执行系统安装。
