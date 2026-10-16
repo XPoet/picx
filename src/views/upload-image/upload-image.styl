@@ -21,11 +21,51 @@
       grid-template-columns 220px minmax(0, 1fr)
       border 1px solid var(--picx-color-border)
 
-      > .getting-images-container {
+      > .upload-intake {
         border 0
         border-radius 0 var(--picx-radius-control) var(--picx-radius-control) 0
       }
     }
+  }
+
+  .upload-intake {
+    display flex
+    flex-direction column
+    min-width 0
+
+    .getting-images-container {
+      flex 1
+    }
+  }
+
+  .has-queue .upload-intake .getting-images-container {
+    border 0
+  }
+
+  .upload-stage.has-successes {
+    grid-template-columns 352px minmax(0, 1fr)
+  }
+
+  .workspace-notice {
+    display flex
+    flex-wrap wrap
+    align-items center
+    gap 12px
+    margin-bottom 16px
+    padding 16px
+    color var(--picx-color-text)
+    background var(--picx-color-primary-soft)
+    border-radius var(--picx-radius-control)
+    font-size 14px
+    line-height 1.6
+  }
+
+  .retained-note {
+    margin 0
+    padding 16px 24px
+    color var(--picx-color-text-muted)
+    font-size 14px
+    line-height 1.6
   }
 
   .upload-page-left {
@@ -66,15 +106,20 @@
     .upload-stage {
       min-height 480px
     }
+
+    .upload-stage.has-successes {
+      grid-template-columns 260px minmax(0, 1fr)
+    }
   }
 
   @media (max-width 767px) {
     gap 16px
 
-    .upload-stage.has-queue {
+    .upload-stage.has-queue
+    .upload-stage.has-successes {
       grid-template-columns minmax(0, 1fr)
 
-      > .getting-images-container {
+      > .upload-intake {
         order -1
         border-bottom 1px solid var(--picx-color-border)
         border-radius var(--picx-radius-control) var(--picx-radius-control) 0 0

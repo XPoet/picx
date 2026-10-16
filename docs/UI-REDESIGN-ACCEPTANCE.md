@@ -442,3 +442,15 @@ Chrome / 简中 / 1440×1080 最终截图已查看：[无配置导航的登录�
 **验证**：最终 `pnpm verify` 全通过，18 文件 / 141 单测，类型、lint、stylelint、build 通过。新增 17 项上传执行与 API 测试覆盖单图、全部 / 部分 blob 成功、四个提交阶段失败、空 tree 防护、同路径冲突、防重、已成功项排除、文件名 / 目标快照、跨午夜、ref 未确认恢复、contents SHA 核验、权限失败、真实大小与旧管理适配、缓存失败、任务失效，以及 ref / contents / head 响应结构。断言成功 / 失败集合不相交且覆盖全部 attemptedUuids，ref 前无成功缓存。日志 `/private/tmp/picx-p3-t026-verify.log`、`/private/tmp/picx-p3-t026-upload-tests.log`。本项所有 API 为 mock，不进行真实远端写入；新结果横幅、重试按钮和端到端主流程由 T027 接入验收。
 
 **回滚**：回滚类型化 API、结果执行器、模型与测试提交；旧布尔入口和目录格式保留，不撤销已发生的远端提交。
+
+### T027 组装上传结果区与继续上传流程
+
+**实施提交**：`feat(upload): retain batch results and support recovery workflows`（本节所属提交）。
+
+工作区 composable 负责追加、处理、上传、共享偏好与运行态，View 只编排组件和路由。结果区按本批真实成功 / 失败数展示完成、部分和全部失败；离线阻止上传，权限失败提供恢复入口。成功项、实际目标和批次记录在 Pinia 内存保留；自动复制仅本批成功项，复制全部按每个成功项自己的 target 生成链接。继续添加只提交新项 / 上传失败项；重置只清内存。查看管理显式写 viewDir，后续目录设置不会改旧结果。同身份重连返回保留队列。进度只显示实际完成数量，不造字节进度。
+
+**验证**：`pnpm verify` 通过，18 文件 / 141 单测，lint、stylelint、typecheck、build 通过；最后引导文本适配后重新 lint / build。新增 preview E2E Desktop / Pixel 5 各 6，共 12 项全部通过：上传 → 自动 / 手动复制 → 目录变化 → 管理 → 返回追加 → 重置，部分 blob 失败重试、权限与离线恢复、ref 未确认后查询并恢复、复制拒绝不影响成功、同身份重连保留文件。Mock 严格限定 fixture 仓库与端点，不访问真实 GitHub。额外实际执行浏览器水印 + mozJPEG Worker，PNG 881.48 KB → JPEG 120.47 KB，核对 JPEG 文件头、后缀、真实远端模拟字节数和已压缩标记。
+
+已查看 [成功 / 1440](UI/evidence/p3/t027-success-1440.png)、[成功 / 375](UI/evidence/p3/t027-success-375.png)、[部分成功 / 1440](UI/evidence/p3/t027-partial-1440.png)、[实际压缩 / 1440](UI/evidence/p3/t027-compressed-1440.png)、[实际压缩 / 375](UI/evidence/p3/t027-compressed-375.png)。375 无横向溢出；成功与失败行均保留明确操作。日志 `/private/tmp/picx-p3-t027-verify.log`、`/private/tmp/picx-p3-t027-build.log`、`/private/tmp/picx-p3-t027-e2e.log`。真实远端环境仍归 P6，当前结果不作为真实仓库上传证据。
+
+**回滚**：回滚工作区编排、结果区和内存批次记录，旧配置与设置格式兼容；不撤销用户已经完成的远端上传。

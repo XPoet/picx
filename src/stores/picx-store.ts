@@ -7,7 +7,7 @@ import type {
   UserSettingsModel,
 } from '@/common/model'
 import type { ConnectedRepository, ConnectionState } from '@/common/model/github-connection'
-import type { QueueItemRuntime } from '@/common/model/upload'
+import type { QueueItemRuntime, UploadBatchResult } from '@/common/model/upload'
 import type DeployStatusInfo from '@/stores/modules/deploy-status/types'
 import type { DirObject } from '@/stores/modules/dir-image-list/types'
 import type { GitHubAuthorizationInfo } from '@/stores/modules/github-authorize/types'
@@ -59,6 +59,7 @@ interface PicxState {
   connectionAttemptId: number
   uploadTargetBusy: boolean
   uploadRuntime: Record<string, QueueItemRuntime>
+  uploadBatches: UploadBatchResult[]
   rootName: string
   githubAuthorizeModule: {
     authorizationInfo: GitHubAuthorizationInfo
@@ -307,6 +308,7 @@ export const usePicxStore = defineStore('picx', {
     connectionAttemptId: 0,
     uploadTargetBusy: false,
     uploadRuntime: {},
+    uploadBatches: [],
     githubAuthorizeModule: {
       authorizationInfo: createAuthorizationInfo(),
     },
@@ -936,6 +938,7 @@ export const usePicxStore = defineStore('picx', {
     UPLOAD_IMG_LIST_RESET() {
       this.uploadImageListModule.uploadImageList = []
       this.uploadRuntime = {}
+      this.uploadBatches = []
     },
 
     SET_DEPLOY_STATUS_INFO(statusInfo: DeployStatusInfo) {

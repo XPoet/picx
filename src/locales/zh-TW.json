@@ -459,7 +459,18 @@
     "invalid_name": "檔名不可空白，名稱和前綴不可包含路徑分隔符號。",
     "timestamp_exclusive": "時間戳模式不疊加重新命名、雜湊或前綴，請在圖床設定中切換命名規則。",
     "queue": "圖片佇列",
-    "add_more": "繼續加入"
+    "add_more": "繼續加入",
+    "result": "上傳結果",
+    "batch_complete": "本批上傳完成",
+    "batch_partial": "部分檔案未上傳",
+    "batch_failed": "本批上傳未完成",
+    "batch_counts": "成功 {success} 個，失敗 {failed} 個",
+    "actual_target": "實際上傳目錄",
+    "cache_failed": "遠端檔案已儲存，本機目錄快取更新失敗。請重新整理圖片管理。",
+    "view_management": "檢視圖片管理",
+    "upload_progress": "已完成 {completed} / {total} 個檔案，請等待提交結果。",
+    "successes_retained": "已保留 {count} 個成功檔案，可繼續加入。",
+    "connect_to_upload": "連接 GitHub 後上傳"
   },
   "clipboard": {
     "title": "複製未完成",

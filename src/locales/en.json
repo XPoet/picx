@@ -459,7 +459,18 @@
     "invalid_name": "The name cannot be empty. Names and prefixes cannot contain path separators.",
     "timestamp_exclusive": "Timestamp naming excludes rename, hash and prefix. Change the naming rule in hosting settings.",
     "queue": "File queue",
-    "add_more": "Add more"
+    "add_more": "Add more",
+    "result": "Upload results",
+    "batch_complete": "Batch uploaded",
+    "batch_partial": "Some files were not uploaded",
+    "batch_failed": "Batch upload failed",
+    "batch_counts": "{success} succeeded, {failed} failed",
+    "actual_target": "Actual upload directory",
+    "cache_failed": "Files are saved remotely, but the local directory cache could not update. Refresh image management.",
+    "view_management": "View image management",
+    "upload_progress": "Completed {completed} / {total} files. Waiting for the commit result.",
+    "successes_retained": "{count} uploaded files are retained. You can add more.",
+    "connect_to_upload": "Connect GitHub to upload"
   },
   "clipboard": {
     "title": "Copy did not complete",
