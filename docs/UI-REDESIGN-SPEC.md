@@ -6,7 +6,7 @@
 | 编写日期 | 2026-10-16 |
 | 设计依据 | [新版 UI 设计稿](UI/picx-ih.pen) |
 | 适用项目 | PicX · GitHub 图床，当前 `picx-ih` 仓库 |
-| 当前状态 | P0 执行中；状态、类型与结果契约已固化，实施证据见 [验收记录](UI-REDESIGN-ACCEPTANCE.md) |
+| 当前状态 | P0 基线与契约已完成；P1–P6 未开始，实施证据见 [验收记录](UI-REDESIGN-ACCEPTANCE.md) |
 
 ## 1. 改造目标与范围
 
@@ -839,9 +839,9 @@ pnpm build
 pnpm test:e2e
 ```
 
-`pnpm verify` 已包含前五项，不包含 E2E；E2E 当前使用 Chrome 桌面和 Pixel 5 配置，并通过 `pnpm preview` 启动服务，执行前需要构建。现有 smoke 测试仍测试未注册的 `/toolbox` 路由，P0 应修正为当前图床入口并增强真实页面断言，不能只判断 `#app` 存在。
+`pnpm verify` 已包含前五项，不包含 E2E；E2E 当前使用 Chrome 桌面和 Pixel 5 配置，并通过 `pnpm preview` 启动服务，执行前需要构建。P0 的 T005 已将旧 `/toolbox` 有效页断言改为真实登录、上传、管理与设置入口，并单独校验未知路由回退；同时断言目标 URL、页面角色与可见内容，不能只判断 `#app` 存在。测试 fixture 阻断真实远端写入，不能替代真实 GitHub 验收。
 
-P0 的 T004 已执行上述应用检查并记录基线：在 Node 24.21.0、pnpm 11.18.0 和本机兼容参数下 `verify` 通过；旧 smoke 的登录断言通过，两个 `/toolbox` 断言失败，交 T005 修复。详细命令、环境差异、退出结果和页面证据见验收记录。构建只用于验证和既有 preview，不读取或分析 `node_modules`、`dist` 等禁止目录；不自动执行会修复文件的 `pnpm format`。
+P0 的 T004 记录了旧 smoke 的两个 `/toolbox` 失败；T005 修复后，在 Node 24.21.0、pnpm 11.18.0 和本机兼容参数下完整 `verify` 通过（3 文件 / 15 单测），构建后的 E2E 14 项通过。详细命令、环境差异、退出结果和页面证据见验收记录。构建只用于验证和既有 preview，不读取或分析 `node_modules`、`dist` 等禁止目录；不自动执行会修复文件的 `pnpm format`。
 
 ### 13.2 必须覆盖的行为用例
 

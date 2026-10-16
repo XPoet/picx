@@ -42,9 +42,9 @@
 | 压缩与编码器选择 | 设置页 / `compress-config-box.vue` → `compress-image.ts` → `services/image-codec.ts` → Worker | 设置页保留高级编码器；上传快捷开关共享偏好，T021、T024、T035 |
 | 水印四角 / 平铺、角度、间距 | `watermark-config-box.vue` → `add-watermark.ts` → 文件处理 | 设置页完整配置、上传快捷开关；保留水印后压缩顺序，T021、T024、T035 |
 | 文件夹进入、返回上级、排序、刷新 | `/management` → `imgs-management.vue` / `tools-bar.vue` → 目录 API / 缓存 / `use-image-upload-time` | 面包屑、当前目录过滤、分区、保留原排序，T029–T031 |
-| 图片 / MP4 预览、属性、复制、重命名、移动、删除 | 管理卡片 / selector / 右键指令 → `image-card.util.ts` / `repo-content-utils.ts` → GitHub API → 缓存 | 卡片常驻动作与更多菜单；右键作为附加入口，T032–T033 |
-| 目录重命名、递归删除、媒体移动 | `folder-card.util.ts` / 移动弹窗 → `repo-content-utils.ts` → tree / commit / ref → Store | 文件夹更多菜单与明确确认；保留递归影响说明，T030、T033 |
-| 原名 / 哈希 / 时间戳 / 前缀 | `/settings` → `UserSettingsModel.imageName` → 上传对象生成 | 三种命名选项映射旧字段；原名兼容、时间戳互斥，T024、T035 |
+| 图片 / MP4 预览、属性、复制、重命名、移动、删除 | 管理卡片 / selector / 右键指令 → `image-card.util.ts` / `repo-content-utils.ts` → GitHub API → 缓存 | 卡片常驻动作与更多菜单；右键作为附加入口，T031–T033 |
+| 目录重命名、递归删除、媒体移动 | `folder-card.util.ts` / 移动弹窗 → `repo-content-utils.ts` → tree / commit / ref → Store | 文件夹更多菜单与明确确认；保留递归影响说明，T029、T033 |
+| 原名 / 哈希 / 时间戳 / 前缀 | `/settings` → `UserSettingsModel.imageName` → 上传对象生成 | 三种命名选项映射旧字段；原名兼容、时间戳互斥，T022、T035 |
 | 来源、预设 / 自定义规则、裸 URL / Markdown / HTML / BBCode | 设置页 / `image-link-rule-config.vue` → `image-link-utils.ts` → 本地与云设置 | 设置页“链接与分享”；上传页格式同步，T023–T024、T036 |
 | Pages、域名、`.deploy` / CNAME | 部署条 / 设置页 → `deploy-status-bar.util.ts` → `api/branch.ts` / `api/deploy.ts` | 两页共用部署阶段；CNAME 与重建分支显式操作，T038–T040 |
 | `.settings` 偏好同步 | `app-wrap.vue` → 单实例 `use-cloud-settings-sync.ts` → `api/settings.ts` | 保留单实例与旧云文件；增加同步反馈，T037 |
@@ -100,7 +100,7 @@
 
 ### T004 执行并记录当前工程与页面基线
 
-**实施提交**：`docs(ui): record engineering and page baselines`（本节所属提交，可按标题定位）。应用源码基于 `15450d4`，P0 前三项只有文档变化。
+**实施提交**：`8b0a925`，`docs(ui): record engineering and page baselines`。应用源码基于 `15450d4`，P0 前三项只有文档变化。
 
 **环境与约束**：macOS 14.5 / arm64，Node `v24.21.0`；仓库要求 Node `>=24 <25`，`.node-version` / `.nvmrc` 均为 24。初始 PATH 中 pnpm 为 `11.17.0`，随后以 `COREPACK_HOME=/private/tmp/picx-ui-p0-corepack corepack pnpm --version` 获取并确认仓库声明的 `11.18.0`，最终基线使用该版本。未重装项目依赖或改锁文件。
 
@@ -137,3 +137,30 @@ E2E 原配置为 Desktop Chrome 和 Pixel 5，`channel: chrome`，preview 地址
 旧链路复现：`#/toolbox → #/`，`#/login?jump=0 → #/?jump=0`（依赖 catch-all），Token 登录按钮 → `#/config?focus=1`。前者是失效 smoke 的直接原因；后两者留待 T015 的完整迁移。
 
 **遗留与回滚**：阻塞 smoke 的旧断言由 T005 修复；pnpm 预检和 Chrome 沙箱问题已有明确本机隔离命令，不改项目或用户设置。回滚本项只影响任务 / 基线文档与新增证据，不改应用代码、配置、存储或远端资源。
+
+### T005 修正失效 smoke 并建立 UI 验证 fixture
+
+**实施提交**：`test(ui): replace stale smoke and add isolated redesign fixtures`（本节所属提交，可按标题定位）。
+
+**产出**：[数据与模块边界说明](../tests/fixtures/README.md)、[数据工厂](../tests/fixtures/ui-redesign.ts)、[隔离浏览器 / 请求 fixture](../tests/e2e/fixtures.ts)、[smoke](../tests/e2e/smoke.spec.ts)、[设置兼容单测](../tests/unit/settings-compat.test.ts)。不新增依赖、不改应用源码、存储格式、运行时功能或设计稿。
+
+smoke 每个平台 7 项：两种登录操作与未连接导航；Token 转当前配置页并聚焦空掩码输入；上传导航、文件选择与 MP4 accept；管理导航、目录与直属媒体；空目录上传恢复；设置导航与可展开命名偏好；失效工具箱地址按未知路由回到可操作登录页。每项检查真实 URL 和对应页面角色 / 操作，上传断言不能由登录回退页满足。
+
+fixture 覆盖合成仓库、空 / 仅文件夹 / 混合目录、图片与 MP4、HTTP 401 / 403 / 404 / 409 / 429 / 503、blob 部分失败、ref 成功 / 失败，以及缺少新字段的旧偏好。失败和部分成功数据为 T012 / T026 准备，不提前实现新结果模型，也不把当前已知整体布尔值行为当作正确契约。
+
+所有 E2E 使用独立临时上下文，Token 为空、不填 OAuth code、不加载认证存储；禁用 Service Worker，网络只放行本地 preview 读请求和明确路径的模拟响应。外域写入与未知请求会被中止并在 teardown 断言失败。根目录明确兼容旧 API 的 `contents//`；不放宽为任意路径。`.settings` 返回已有的模拟偏好，避免启动自动播种；图片来自内置 1px PNG，不下载远程媒体。
+
+新增 4 个单测验证旧本地偏好的缺省补齐与无损保存、含中文水印的旧云文件解析、损坏文件返回 null，以及云保存只序列化偏好、没有仓库 / 凭据字段。最后一项 mock 请求，不产生真实远端 PUT。这些检查不代表新安全契约、完整结构校验或新版云同步逻辑已经实现。
+
+| 最终检查 | 实际结果 |
+| --- | --- |
+| `PATH=/private/tmp/picx-ui-p0-bin:$PATH pnpm verify` | 退出 0；lint、stylelint、app / Worker 类型检查、3 文件 / 15 单测、build 通过 |
+| 构建后相同 PATH 的 `pnpm test:e2e --workers=2` | 退出 0；Desktop Chrome 7 项、Pixel 5 7 项，共 14 项通过；无未知 / 真实写入请求 |
+| 原 `/toolbox` smoke 失败 | 已消除；由真实图床页面断言与明确的未知路由回退检查替代 |
+| 文档相对文件链接、5/48 状态、`git diff --check` | 通过；没有将后续任务提前勾选 |
+
+最终运行沿用 T004 的 Node 24.21.0、Corepack pnpm 11.18.0、单次 `verifyDepsBeforeRun=false` 参数；Chrome 在获准沙箱外启动临时上下文。verify 的原始日志保存在 `/private/tmp/picx-ui-p0-final-verify.log`，本表保留持久摘要。没有执行真实认证、创建仓库、上传、删除、部署、CNAME、推送或远端 CI。
+
+**P0 准出结论**：T001–T005 的盘点、类型 / 状态 / 安全契约与可复现检查基线已交付；旧 smoke 阻塞已修复，本机执行限制已有隔离办法。目录草稿、逐项结果、部署真实性、认证清理和云同步缺口仍按 T012–T040 逐项实现，不能将 P0 完成解释为 UI / 业务改造已完成。P1–P6 保持未开始。
+
+**回滚**：本项提交只涉及测试、fixture 和文档；回滚不会改用户配置、凭据或远端文件。P0 各提交可独立回滚，实际删除新增文件仍须遵守仓库的删除授权规则。

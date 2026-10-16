@@ -7,7 +7,7 @@
 | 设计依据 | [新版 UI 设计稿](UI/picx-ih.pen) |
 | 方案依据 | [UI 升级改造方案](UI-REDESIGN-SPEC.md) |
 | 拆分方式 | 保留方案 U01–U24 父项，拆成 T001–T048 共 48 个执行任务 |
-| 当前进度 | 4 / 48；P0 执行中，证据见 [验收记录](UI-REDESIGN-ACCEPTANCE.md) |
+| 当前进度 | 5 / 48；P0 已完成，P1–P6 未开始，证据见 [验收记录](UI-REDESIGN-ACCEPTANCE.md) |
 
 ## 1. 执行约定
 
@@ -121,7 +121,7 @@ flowchart LR
 
 ### T005 修正失效 smoke 并建立 UI 验证 fixture
 
-- [ ] 完成
+- [x] 完成
 
 **父项**：U03；**依赖**：T002、T003、T004；**依据**：方案 §13.1–13.2。
 
