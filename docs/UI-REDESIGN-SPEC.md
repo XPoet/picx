@@ -900,3 +900,21 @@ P0 的 T004 记录了旧 smoke 的两个 `/toolbox` 失败；T005 修复后，�
 | 代码已升级，但仓库规则中的部分工程事实滞后 | 使用本次源码与锁文件事实；实施前重新核对状态和版本 |
 
 后续实施以本文件和设计稿共同验收：画稿决定已定义的视觉形态，本文决定合并页面后的流程、兼容、状态和工程边界。新增持久化格式、远程能力、依赖或超出范围的页面时，应先修订方案，保持每一阶段可单独理解、验证和回滚。
+
+### P2 实施补充（2026-10-16）
+
+实现顺序为 T012 → T013 → T014 → T016 → T017 → T018 → T019 → T015。每项独立提交，最后切换路由。沿用 §10.5–10.6 契约：`requestResult(config, guard)` 只返回经过端点守卫的数据；旧 `request` 继续返回 data / null，并兼容显式 `success422`，所有错误反馈只使用本地翻译。目录 API 返回条目，管理目录的 Store 写入由 `services/repository-content.ts` 编排。没有新增认证或目录存储键。
+
+```mermaid
+flowchart TD
+  Login[登录页：凭据草稿] --> Connection[useGithubConnection：内存状态与防重]
+  Connection --> Service[github-connection：验证与可重入初始化]
+  Upload[上传页：上下文与两个目录入口] --> Draft[useUploadDirectory：草稿与查询]
+  Draft --> Selector[受控目录选择器：Props / Events]
+  Draft --> Save[Store：一次持久化并发布目录]
+  Service --> API[GitHub API：守卫与类型化结果]
+  Draft --> API
+  Management[已有管理调用方] --> Content[repository-content：结果写入 Store]
+  Content --> API
+  API --> Request[唯一 Axios 客户端：可信 origin 与脱敏错误]
+```

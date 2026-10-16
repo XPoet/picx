@@ -1,47 +1,82 @@
-import type { CustomAxiosRequestConfig } from './types'
+import type { AxiosResponse } from 'axios'
+import type { ApiFailure, ApiResult, CustomAxiosRequestConfig } from './types'
+import { isAxiosError } from 'axios'
+import i18n from '@/plugins/vue/i18n'
 import axios from './axios'
 
-export default function request(requestConfig: CustomAxiosRequestConfig): Promise<any> {
-  const { success422, noShowErrMsg, noCache } = requestConfig
-
-  // 接口数据不缓存处理
-  if (noCache) {
-    requestConfig.cache = {
-      maxAge: 0, // 设置缓存的最大寿命为 0，禁用缓存
-    }
-    requestConfig.params = requestConfig.params ? requestConfig.params : {}
-    requestConfig.params.timestamp = Date.now() // 添加时间戳参数，防止获取缓存的数据
-    // requestConfig.params['no-cache'] = Date.now()
-    delete requestConfig.noCache
+function failureFromStatus(status: number, headers?: AxiosResponse['headers']): ApiFailure {
+  const retryAfter = headers?.['retry-after']
+  const remaining = headers?.['x-ratelimit-remaining']
+  const limited = status === 429 || (status === 403 && (String(remaining) === '0' || retryAfter !== undefined))
+  const kind = limited
+    ? 'rate-limited'
+    : status === 401
+      ? 'unauthenticated'
+      : status === 403
+        ? 'forbidden'
+        : status === 404
+          ? 'not-found'
+          : status === 409 ? 'conflict' : 'service'
+  const seconds = Number(retryAfter)
+  const dateMs = typeof retryAfter === 'string' ? Date.parse(retryAfter) - Date.now() : NaN
+  const retryAfterMs = Number.isFinite(seconds) ? Math.max(0, seconds * 1000) : Math.max(0, dateMs)
+  return {
+    kind,
+    status,
+    retryable: limited || status >= 500 || status === 408 || status === 409,
+    ...(Number.isFinite(retryAfterMs) ? { retryAfterMs } : {}),
   }
+}
 
-  return new Promise((resolve) => {
-    axios
-      .request(requestConfig)
-      .then((res) => {
-        const { status, data } = res
-        if (res && (status === 200 || status === 201 || status === 204)) {
-          resolve(data || 'SUCCESS')
-        }
-        else {
-          resolve(null)
-        }
-      })
-      .catch((err) => {
-        if (success422 && err?.status === 422) {
-          resolve(err?.data || 'SUCCESS')
-        }
-        else {
-          const code = err?.status
-          const msg = err?.data?.message
-          if (!noShowErrMsg) {
-            console.error('PicX Error // ', err)
-            if (code !== undefined && msg !== undefined) {
-              ElMessage.error({ duration: 6000, message: `Code: ${code}, Message: ${msg}` })
-            }
-          }
-          resolve(null)
-        }
-      })
-  })
+function prepare(config: CustomAxiosRequestConfig): CustomAxiosRequestConfig {
+  return config.noCache
+    ? { ...config, params: { ...config.params, timestamp: Date.now() }, cache: { maxAge: 0 } }
+    : config
+}
+
+async function perform(config: CustomAxiosRequestConfig): Promise<ApiResult<unknown>> {
+  try {
+    const response = await axios.request<unknown>(prepare(config))
+    if (response.status >= 200 && response.status < 300) {
+      return { ok: true, data: response.data }
+    }
+    return { ok: false, error: failureFromStatus(response.status, response.headers) }
+  }
+  catch (error: unknown) {
+    if (isAxiosError(error) && error.response) {
+      if (config.success422 && error.response.status === 422) {
+        return { ok: true, data: error.response.data || 'SUCCESS' }
+      }
+      return { ok: false, error: failureFromStatus(error.response.status, error.response.headers) }
+    }
+    return {
+      ok: false,
+      error: { kind: navigator.onLine === false ? 'offline' : 'network', retryable: true },
+    }
+  }
+}
+
+export async function requestResult<T>(
+  config: CustomAxiosRequestConfig,
+  guard: (value: unknown) => value is T,
+): Promise<ApiResult<T>> {
+  const result = await perform({ ...config, success422: false })
+  if (!result.ok) {
+    return result
+  }
+  return guard(result.data)
+    ? { ok: true, data: result.data }
+    : { ok: false, error: { kind: 'invalid-response', retryable: true } }
+}
+
+// 旧调用方保留 data / null 与 204、success422 语义。
+export default async function request(requestConfig: CustomAxiosRequestConfig): Promise<any> {
+  const result = await perform(requestConfig)
+  if (result.ok) {
+    return result.data || 'SUCCESS'
+  }
+  if (!requestConfig.noShowErrMsg) {
+    ElMessage.error({ duration: 6000, message: i18n.global.t(`request_error.${result.error.kind}`) })
+  }
+  return null
 }

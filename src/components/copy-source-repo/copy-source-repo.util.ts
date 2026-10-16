@@ -5,9 +5,9 @@ import {
   createTree,
   getBranchInfo,
   getFileBlob,
-  getRepoPathContent,
 } from '@/common/api'
 import i18n from '@/plugins/vue/i18n'
+import { loadRepositoryContent } from '@/services/repository-content'
 import { store } from '@/stores'
 import { getBase64ByImageUrl, getFileSuffix, isImage } from '@/utils'
 import request from '@/utils/request'
@@ -152,5 +152,5 @@ export const refreshManagementPage = async () => {
     viewDir,
   })
   await store.dispatch('DIR_IMAGE_LIST_INIT_DIR', viewDir)
-  await getRepoPathContent(userConfigInfo, viewDir)
+  await loadRepositoryContent(userConfigInfo, viewDir)
 }

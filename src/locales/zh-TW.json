@@ -322,5 +322,16 @@
     "links": "說明與回饋",
     "help": "說明中心",
     "feedback": "意見回饋"
+  },
+  "request_error": {
+    "unauthenticated": "憑證無效，請重新連線。",
+    "forbidden": "沒有存取權限，請檢查儲存庫授權。",
+    "not-found": "資源不存在，請檢查儲存庫、分支或路徑。",
+    "offline": "目前離線，請連網後重試。",
+    "network": "網路請求失敗，請重試。",
+    "rate-limited": "請求受限，請稍後重試。",
+    "conflict": "資源已變更，請重新整理後重試。",
+    "invalid-response": "服務傳回無法辨識的資料，請重試。",
+    "service": "服務暫時無法使用，請稍後重試。"
   }
 }

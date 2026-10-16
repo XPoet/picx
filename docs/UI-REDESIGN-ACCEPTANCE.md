@@ -248,3 +248,17 @@ Chrome、无 SW 独立上下文、无凭据 fixture：[1440 简中暗色账户](
 **P1 准出结论**：T006–T011 全部完成，每项独立提交，现有登录、上传、管理、设置、公告和反馈可在新公共布局内使用。总体 11 / 48；P2–P6 保持未开始。原配置导航、完整重连恢复、业务页视觉重构、真实 GitHub 写入、跨浏览器和完整 PWA 验收继续由对应后续任务收口，不以 fixture 替代。
 
 **回滚**：回滚本任务布局与样式提交可恢复上一任务布局；整个 P1 按六个任务提交回滚，不改用户配置、凭据或远端文件。未修改设计稿、删除源文件、推送或执行真实上传 / 部署。
+
+## P2 登录与配置合并
+
+2026-10-16 开始，起点 `d1a20a2`，分支 `develop`，工作区干净；相对远端领先 14 个提交。本阶段按方案末尾 P2 模块图实施，不改画稿、不删除文件、不推送。真实认证与仓库写入由脱敏 mock 替代，不代表 P6 远端验收通过。
+
+### T012 提供类型化请求结果与目录查询
+
+**实施提交**：`feat(api): add typed safe request results and directory queries`（本节所属提交）。
+
+`requestResult` 复用唯一 GitHub Axios 客户端并以端点守卫验证 unknown；空数组、非法结构、401 / 403 / 404 / 409 / 429 / 5xx、限流头、离线与普通网络失败分别处理。旧 request 保留 data / null、204 与显式 422 兼容，通知使用本地翻译，取消原始错误日志。最终 URL 只允许精确 GitHub API origin 注入存储凭据，显式鉴权优先，外域移除鉴权。目录 API 不再写 Store，旧管理页与复制仓库后的刷新经 repository-content 服务完成。
+
+**验证**：`pnpm verify` 退出 0：lint、stylelint、typecheck、4 文件 / 27 单测、build 通过。新增 12 项请求测试使用内存 Axios adapter，无网络请求，验证新旧兼容、目录空 / 失败、鉴权优先与外域隔离。命令沿用 `/private/tmp/picx-ui-p1-bin/pnpm` 的 pnpm 11.18.0、Node 24.21.0 与单次 `verifyDepsBeforeRun=false`；日志 `/private/tmp/picx-p2-t012-verify.log`。`git diff --check` 通过。未改用户界面布局，无新增截图要求。
+
+**回滚**：回滚本任务提交可恢复旧请求与管理刷新调用；存储格式、API 远端协议未变。

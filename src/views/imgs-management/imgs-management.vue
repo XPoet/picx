@@ -2,11 +2,11 @@
 import type { UploadedImageModel } from '@/common/model'
 import type { DirObject } from '@/stores/modules/dir-image-list/types'
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { getRepoPathContent } from '@/common/api'
 import { ContextmenuEnum } from '@/common/directive/types'
 import { DirModeEnum, ImageSortEnum } from '@/common/model'
 import { useImageUploadTime } from '@/composables/use-image-upload-time'
 import router from '@/router'
+import { loadRepositoryContent } from '@/services/repository-content'
 import { useStore } from '@/stores'
 import FolderCard from '@/views/imgs-management/components/folder-card/folder-card.vue'
 import ImageCard from '@/views/imgs-management/components/image-card/image-card.vue'
@@ -49,7 +49,7 @@ async function dirContentHandle(dir: string) {
     const dirs = filterDirContent(dirContent, 'dir')
     const images = filterDirContent(dirContent, 'file')
     if (!dirs.length && !images.length) {
-      await getRepoPathContent(userConfigInfo, dir)
+      await loadRepositoryContent(userConfigInfo, dir)
     }
     else {
       currentPathDirList.value = dirs
@@ -58,7 +58,7 @@ async function dirContentHandle(dir: string) {
     }
   }
   else {
-    await getRepoPathContent(userConfigInfo, dir)
+    await loadRepositoryContent(userConfigInfo, dir)
   }
   loadingImageList.value = false
 }
@@ -84,7 +84,7 @@ async function initDirImageList() {
   }
 
   if (!dirObject.imageList.length && !dirObject.childrenDirs.length) {
-    await getRepoPathContent(userConfigInfo, userConfigInfo.viewDir)
+    await loadRepositoryContent(userConfigInfo, userConfigInfo.viewDir)
     return
   }
 
@@ -96,7 +96,7 @@ async function reloadCurrentDirContent() {
   const { viewDir } = userConfigInfo
   await store.dispatch('DIR_IMAGE_LIST_INIT_DIR', viewDir)
   loadingImageList.value = true
-  await getRepoPathContent(userConfigInfo, viewDir)
+  await loadRepositoryContent(userConfigInfo, viewDir)
   loadingImageList.value = false
 }
 

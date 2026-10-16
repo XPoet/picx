@@ -322,5 +322,16 @@
     "links": "帮助与反馈",
     "help": "帮助中心",
     "feedback": "意见反馈"
+  },
+  "request_error": {
+    "unauthenticated": "凭据无效，请重新连接。",
+    "forbidden": "没有访问权限，请检查仓库授权。",
+    "not-found": "资源不存在，请检查仓库、分支或路径。",
+    "offline": "当前离线，请联网后重试。",
+    "network": "网络请求失败，请重试。",
+    "rate-limited": "请求受限，请稍后重试。",
+    "conflict": "资源已变化，请刷新后重试。",
+    "invalid-response": "服务返回了无法识别的数据，请重试。",
+    "service": "服务暂时不可用，请稍后重试。"
   }
 }

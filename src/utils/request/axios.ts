@@ -2,43 +2,30 @@ import Axios from 'axios'
 import { AXIOS_BASE_URL, AXIOS_TIMEOUT, LS_CONFIG } from '@/common/constant'
 import { getLocal } from '@/utils/storage'
 
-const baseURL = AXIOS_BASE_URL
-
 const axios = Axios.create({
-  baseURL,
+  baseURL: AXIOS_BASE_URL,
   timeout: AXIOS_TIMEOUT,
 })
 
 axios.defaults.headers['Content-Type'] = 'application/json'
 
-// 发起请求之前的拦截器（前置拦截）
-axios.interceptors.request.use(
-  (config) => {
-    const userConfig = getLocal(LS_CONFIG)
-    if (userConfig) {
-      const { token } = userConfig
-      if (config.baseURL?.includes(baseURL) && token) {
-        config.headers.Authorization = `Bearer ${token}`
-      }
-    }
+axios.interceptors.request.use((config) => {
+  const target = new URL(config.url ?? '', config.baseURL || AXIOS_BASE_URL)
+  const trusted = target.origin === new URL(AXIOS_BASE_URL).origin
+    && !target.username && !target.password
+  if (!trusted) {
+    config.headers.delete('Authorization')
     return config
-  },
-  (error) => {
-    return Promise.reject(error)
-  },
-)
-
-// 响应拦截器
-axios.interceptors.response.use(
-  (response) => {
-    return response
-  },
-  (error) => {
-    if (!error?.response) {
-      ElMessage.error({ duration: 6000, message: `${error}` })
+  }
+  // 显式凭据用于本次验证，不能被旧存储覆盖。
+  if (!config.headers.has('Authorization')) {
+    const saved: unknown = getLocal(LS_CONFIG)
+    if (saved && typeof saved === 'object' && 'token' in saved && typeof saved.token === 'string' && saved.token) {
+      config.headers.set('Authorization', `Bearer ${saved.token}`)
     }
-    return Promise.reject(error.response)
-  },
-)
+  }
+  return config
+})
 
+// 保留 AxiosError 到统一转换边界；此处不显示或记录原始错误。
 export default axios

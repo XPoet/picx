@@ -322,5 +322,16 @@
     "links": "Help and feedback",
     "help": "Help center",
     "feedback": "Feedback"
+  },
+  "request_error": {
+    "unauthenticated": "Credentials are invalid. Reconnect to continue.",
+    "forbidden": "Access denied. Check repository permissions.",
+    "not-found": "Resource not found. Check the repository, branch or path.",
+    "offline": "You are offline. Connect and try again.",
+    "network": "Network request failed. Try again.",
+    "rate-limited": "Rate limit reached. Try again later.",
+    "conflict": "The resource changed. Refresh and try again.",
+    "invalid-response": "The service returned unrecognized data. Try again.",
+    "service": "The service is unavailable. Try again later."
   }
 }
