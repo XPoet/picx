@@ -182,6 +182,7 @@ const saveCustomDomain = () => {
             <el-switch
               v-model="userSettings.compress.enable"
               :active-text="$t('settings_page.img_compress.switch_name')"
+              :aria-label="$t('settings_page.img_compress.switch_name')"
               @change="persistUserSettings"
             />
             <span class="desc">{{ $t('settings_page.img_compress.switch_desc') }}</span>

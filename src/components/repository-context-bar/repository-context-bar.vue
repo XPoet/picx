@@ -41,11 +41,11 @@ const repositoryURL = computed(() => props.repository
     <div class="repository-context-row">
       <div v-if="repository" class="repository-identity">
         <a :href="repositoryURL" target="_blank" rel="noopener noreferrer" class="repository-name">
-          <PicxIcon name="github" :size="18" /><span>{{ repository.owner }}/{{ repository.repo }}</span>
+          <PicxIcon name="folder-git-2" :size="18" /><span>{{ repository.owner }}/{{ repository.repo }}</span>
         </a>
         <span class="repository-branch" :title="repository.branch"><PicxIcon name="git-branch" :size="18" /><span>{{ repository.branch }}</span></span>
         <div class="repository-directory">
-          <PicxIcon name="folder-open" :size="18" />
+          <PicxIcon name="folder" :size="18" />
           <details class="repository-path">
             <summary :aria-label="$t('repository_context.show_path', { path: uploadPath || '/' })" :title="uploadPath || '/'">
               {{ uploadPath || '/' }}
@@ -53,7 +53,7 @@ const repositoryURL = computed(() => props.repository
             <p>{{ uploadPath || '/' }}</p>
           </details>
           <button class="picx-icon-button" type="button" :aria-label="$t('repository_context.configure')" :disabled="disabled" @click="emit('configure')">
-            <PicxIcon name="settings" :size="18" />
+            <PicxIcon name="folder-cog" :size="18" />
           </button>
         </div>
       </div>

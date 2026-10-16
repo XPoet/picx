@@ -431,7 +431,16 @@
     "processing_failed": "處理失敗，請重試或調整壓縮、浮水印設定。",
     "retry_processing": "重試處理",
     "processing_skipped": "此格式略過浮水印與壓縮，使用原始檔案。",
-    "read_failed": "無法讀取 {name}，請重新選擇檔案。"
+    "read_failed": "無法讀取 {name}，請重新選擇檔案。",
+    "settings": "設定",
+    "link_format": "連結格式",
+    "raw_url": "原始 URL",
+    "pending": "待上傳 {count} 個檔案",
+    "processing": "正在處理圖片，完成後可上傳。",
+    "upload_count": "上傳 {count} 個檔案",
+    "copy_all": "複製全部連結",
+    "auto_compress": "自動壓縮",
+    "add_watermark": "加入浮水印"
   },
   "clipboard": {
     "title": "複製未完成",

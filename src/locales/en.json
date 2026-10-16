@@ -431,7 +431,16 @@
     "processing_failed": "Processing failed. Retry or adjust compression and watermark settings.",
     "retry_processing": "Retry processing",
     "processing_skipped": "Watermark and compression are skipped for this format; the original file is used.",
-    "read_failed": "Could not read {name}. Choose the file again."
+    "read_failed": "Could not read {name}. Choose the file again.",
+    "settings": "Settings",
+    "link_format": "Link format",
+    "raw_url": "Raw URL",
+    "pending": "{count} files pending",
+    "processing": "Processing images. Upload will be available when ready.",
+    "upload_count": "Upload {count} files",
+    "copy_all": "Copy all links",
+    "auto_compress": "Auto compress",
+    "add_watermark": "Add watermark"
   },
   "clipboard": {
     "title": "Copy did not complete",

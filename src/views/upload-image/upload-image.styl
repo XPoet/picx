@@ -1,119 +1,70 @@
 .upload-page-container {
-  display flex
-  align-items flex-start
-  gap var(--picx-space-4)
-  justify-content space-between
-  width 100%
-  height auto
+  display grid
+  grid-template-columns minmax(0, 1fr) 320px
+  align-items start
+  gap 24px
   min-width 0
+  width 100%
+
+  .upload-page-main {
+    min-width 0
+  }
+
+  .upload-stage {
+    display grid
+    min-width 0
+    min-height 600px
+    background var(--picx-color-surface)
+    border-radius var(--picx-radius-control)
+
+    &.has-queue {
+      grid-template-columns 220px minmax(0, 1fr)
+      border 1px solid var(--picx-color-border)
+
+      > .getting-images-container {
+        border 0
+        border-radius 0 var(--picx-radius-control) var(--picx-radius-control) 0
+      }
+    }
+  }
 
   .upload-page-left {
-    flex-shrink 0
-    box-sizing border-box
-    width 244px
-    max-height unquote('min(720px, 70dvh)')
-    overflow-y auto
-
-    .uploaded-item {
-      width 100%
-      margin-bottom 20rem
-
-      &:last-child {
-        margin-bottom 0
-      }
-    }
-  }
-
-
-  .upload-page-right {
     box-sizing border-box
     min-width 0
-    width 100%
-    height auto
+    max-height 660px
+    padding 16px
+    overflow-y auto
+    border-right 1px solid var(--picx-color-border)
 
-    &.has-left {
-      border-radius var(--picx-radius-card)
-    }
-
-    .row-item {
-      display flex
-      justify-content center
-      box-sizing border-box
-      width 100%
-      margin-bottom 16rem
-
-      &:last-child {
-        margin-bottom 0
-      }
-
-      .content-box {
-        box-sizing border-box
-        width 100%
-        max-width $content-max-width
-        margin 0 auto
-
-        &.upload-area-status {
-          display flex
-          align-items center
-          justify-content space-between
-          margin-bottom 10rem
-          font-size 14rem
-        }
-
-
-        &.operation-btn {
-          display flex
-          justify-content flex-end
-        }
-
-
-        .shortcut-key {
-          margin-left 5rem
-          padding 4rem 5rem
-          font-size 12rem
-          letter-spacing 1rem
-          border-radius 4rem
-          box-shadow 1rem 2rem 3rem var(--shadow-color)
-
-          +picx-tablet() {
-            display none
-          }
-        }
-      }
-    }
-
-    .upload-tools {
-      width 100%
-
-      .repos-dir-info {
-        margin-bottom 20rem
-        font-size 12rem
-
-        .repos-dir-info-item {
-          margin-right 10rem
-
-          &:last-child {
-            margin-right 0
-          }
-        }
-      }
+    .uploaded-item + .uploaded-item {
+      margin-top 12px
     }
   }
 
-  @media (max-width $picx-mobile-breakpoint) {
-    flex-direction column
+  @media (max-width 1279px) {
+    grid-template-columns minmax(0, 1fr)
 
-    .upload-page-left {
-      width 100%
-      max-height 50dvh
+    .upload-stage {
+      min-height 480px
+    }
+  }
+
+  @media (max-width 767px) {
+    gap 16px
+
+    .upload-stage.has-queue {
+      grid-template-columns minmax(0, 1fr)
+
+      > .getting-images-container {
+        order -1
+        border-bottom 1px solid var(--picx-color-border)
+        border-radius var(--picx-radius-control) var(--picx-radius-control) 0 0
+      }
     }
 
-    .upload-page-right .row-item .content-box {
-      &.upload-area-status
-      &.operation-btn {
-        flex-wrap wrap
-        gap var(--picx-space-2)
-      }
+    .upload-page-left {
+      max-height 460px
+      border-right 0
     }
   }
 }

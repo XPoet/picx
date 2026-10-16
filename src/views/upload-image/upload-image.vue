@@ -12,10 +12,11 @@ import { usePicxStore } from '@/stores/picx-store'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
 import { directoryDraft, displayDirectory, resolveUploadTarget, validateDirectoryDraft } from '@/utils/directory-utils'
 import { connectionLocation } from '@/utils/login-navigation'
+import { finalUploadFile } from '@/utils/upload-naming'
 import { uploadImagesToGitHub, uploadImageToGitHub } from '@/utils/upload-utils'
 import UploadDirectoryDialog from './components/upload-directory-dialog.vue'
-import UploadDirectorySummary from './components/upload-directory-summary.vue'
 import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
+import UploadSettingsPanel from './components/upload-settings-panel.vue'
 import { generateUploadImageObject } from './upload-image.util'
 
 const instance = getCurrentInstance()
@@ -51,6 +52,20 @@ async function returnDirectoryFocus() {
 const shortcutKey = computed(() => (getOSName() === 'mac' ? '⌘' : 'Ctrl'))
 
 const isCanDeploy = ref(false)
+const settings = computed(() => picxStore.getUserSettings)
+const pending = computed(() => uploadImageList.value.filter(item => item.uploadStatus.progress === 0))
+const uploaded = computed(() => uploadImageList.value.flatMap(item => item.uploadedImg ? [item.uploadedImg] : []))
+const pendingBytes = computed(() => processing.value ? null : pending.value.reduce((total, item) => total + (finalUploadFile(item)?.size ?? 0), 0))
+const canUpload = computed(() => !uploading.value && !processing.value && pending.value.some(item => runtime.value[item.uuid]?.phase === 'ready'))
+function setCompress(enable: boolean) {
+  picxStore.SET_USER_SETTINGS({ compress: { ...settings.value.compress, enable } })
+}
+function setWatermark(enable: boolean) {
+  picxStore.SET_USER_SETTINGS({ watermark: { ...settings.value.watermark, enable } })
+}
+function setFormat(value: string) {
+  picxStore.SET_USER_SETTINGS({ imageLinkFormat: { ...settings.value.imageLinkFormat, enable: value !== 'raw', selected: value === 'raw' ? settings.value.imageLinkFormat.selected : value } })
+}
 
 const setImgList = (imgList: ImageHandleResult[]) => {
   imgList.forEach((v) => {
@@ -245,77 +260,50 @@ onMounted(() => {
     @reconnect="router.push(connectionLocation('/upload'))"
   />
   <div class="upload-page-container">
-    <!-- 左侧 / 上传图片列表 -->
-    <div
-      v-if="uploadImageList.length"
-      class="upload-page-left page-container"
-      role="region"
-      tabindex="0"
-      :aria-label="$t('upload_page.queue_label')"
+    <div class="upload-page-main">
+      <div class="upload-stage" :class="{ 'has-queue': uploadImageList.length }">
+        <section v-if="uploadImageList.length" class="upload-page-left" :aria-label="$t('upload_page.queue_label')" tabindex="0">
+          <div v-for="item in uploadImageList" :key="item.uuid" class="uploaded-item">
+            <UploadImageCard :img-obj="item" @remove="remove($event)" />
+            <div v-if="runtime[item.uuid]?.phase === 'failed'" role="alert">
+              <p>{{ $t('upload_workspace.processing_failed') }}</p>
+              <el-button @click="retryProcessing(item.uuid)">
+                {{ $t('upload_workspace.retry_processing') }}
+              </el-button>
+            </div>
+            <p v-if="skippedProcessing(item.uuid)">
+              {{ $t('upload_workspace.processing_skipped') }}
+            </p>
+          </div>
+        </section>
+        <GettingImages ref="gettingImagesRef" :disabled="uploading" mode="workspace" :has-files="uploadImageList.length > 0" video-enabled @get-img-list="setImgList" />
+      </div>
+    </div>
+    <UploadSettingsPanel
+      :settings="settings"
+      :target="repository"
+      :directory="userConfigInfo.selectedDir || '/'"
+      :display-path="uploadPath"
+      :pending-count="pending.length"
+      :pending-bytes="pendingBytes"
+      :uploaded-count="uploaded.length"
+      :has-items="uploadImageList.length > 0"
+      :busy="uploading"
+      :processing="processing"
+      :can-upload="canUpload"
+      :shortcut="shortcutKey"
+      @compress="setCompress"
+      @watermark="setWatermark"
+      @format="setFormat"
+      @directory="openDirectory"
+      @reset="resetUploadInfo"
+      @upload="uploadImage"
+      @copy-all="batchCopyImageLinks(uploaded)"
     >
-      <div v-for="item in uploadImageList" :key="item.uuid" class="uploaded-item">
-        <UploadImageCard :img-obj="item" @remove="remove($event)" />
-        <div v-if="runtime[item.uuid]?.phase === 'failed'" role="alert">
-          <p>{{ $t('upload_workspace.processing_failed') }}</p>
-          <el-button @click="retryProcessing(item.uuid)">
-            {{ $t('upload_workspace.retry_processing') }}
-          </el-button>
-        </div>
-        <p v-if="skippedProcessing(item.uuid)">
-          {{ $t('upload_workspace.processing_skipped') }}
-        </p>
-      </div>
-    </div>
-
-    <!-- 右侧 / 上传操作 -->
-    <div class="upload-page-right page-container" :class="{ 'has-left': uploadImageList.length }">
-      <!-- 选择图片区域 -->
-      <div class="row-item">
-        <div class="content-box">
-          <GettingImages
-            ref="gettingImagesRef"
-            :disabled="uploading"
-            mode="workspace"
-            :has-files="uploadImageList.length > 0"
-            video-enabled
-            @get-img-list="setImgList"
-          />
-        </div>
-      </div>
-
-      <!-- 状态信息区域 -->
-      <div class="row-item">
-        <div class="content-box upload-area-status">
-          <UploadDirectorySummary v-if="repository" :path="uploadPath" :disabled="uploading" @change="openDirectory" />
-          <span v-if="uploadImageList.length" class="upload-count">
-            {{ $t('uploaded') }}：{{
-              uploadImageList.filter((x) => x.uploadStatus.progress === 100).length
-            }}
-            /
-            {{ uploadImageList.length }}
-          </span>
-        </div>
-      </div>
-
-      <!-- 部署 -->
-      <div v-if="userConfigInfo.logined" class="row-item">
-        <div class="content-box">
-          <deploy-status-bar :disabled="!isCanDeploy || uploading || directoryVisible || connection.phase !== 'connected'" />
-        </div>
-      </div>
-
-      <!-- 重置 & 上传   -->
-      <div v-if="uploadImageList.length" class="row-item">
-        <div class="content-box operation-btn">
-          <el-button :disabled="uploading" plain type="warning" @click="resetUploadInfo">
-            {{ $t('reset') }} <span class="shortcut-key">{{ shortcutKey }} A</span>
-          </el-button>
-          <el-button :disabled="uploading || processing" plain type="primary" @click="uploadImage">
-            {{ $t('upload') }} <span class="shortcut-key">{{ shortcutKey }} S</span>
-          </el-button>
-        </div>
-      </div>
-    </div>
+      <template #deployment>
+        <deploy-status-bar v-if="userConfigInfo.logined" :disabled="!isCanDeploy || uploading || directoryVisible || connection.phase !== 'connected'" />
+      </template>
+    </UploadSettingsPanel>
   </div>
   <UploadDirectoryDialog v-model="directoryVisible" @closed="returnDirectoryFocus" />
 </template>

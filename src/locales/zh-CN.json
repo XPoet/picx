@@ -431,7 +431,16 @@
     "processing_failed": "处理失败，请重试或调整压缩、水印设置。",
     "retry_processing": "重试处理",
     "processing_skipped": "此格式跳过水印与压缩，使用原文件。",
-    "read_failed": "无法读取 {name}，请重新选择文件。"
+    "read_failed": "无法读取 {name}，请重新选择文件。",
+    "settings": "设置",
+    "link_format": "链接格式",
+    "raw_url": "原始 URL",
+    "pending": "待上传 {count} 个文件",
+    "processing": "正在处理图片，完成后可上传。",
+    "upload_count": "上传 {count} 个文件",
+    "copy_all": "复制全部链接",
+    "auto_compress": "自动压缩",
+    "add_watermark": "添加水印"
   },
   "clipboard": {
     "title": "复制未完成",

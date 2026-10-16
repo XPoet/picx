@@ -412,3 +412,13 @@ Chrome / 简中 / 1440×1080 最终截图已查看：[无配置导航的登录�
 **验证**：`pnpm verify` 全通过，14 文件 / 120 单测；新增 11 项覆盖四类来源、重复 / 非法变量、三种格式与原始 URL、多点名称、空集合、剪贴板拒绝 / 无 API / 重试。preview E2E Desktop / Pixel 5 共 2 项通过；拒绝后未生成 HTML 元素，重试成功关闭弹窗。已查看等待打开完成后的截图：[1280](UI/evidence/p3/t023-copy-1280.png)、[375](UI/evidence/p3/t023-copy-375.png)，375 无横向溢出且恢复操作在视口内。日志 `/private/tmp/picx-p3-t023-verify.log`、`/private/tmp/picx-p3-t023-e2e.log`，diff 检查通过。
 
 **回滚**：回滚链接纯函数、复制反馈和调用适配；设置存储字段不变，无远端写入。
+
+### T024 实现右侧快捷设置与共享偏好
+
+**实施提交**：`feat(upload): add shared quick settings and responsive workspace`（本节所属提交）。
+
+新增 Props Down / Events Up 的 320px 快捷面板，复用同一压缩、水印、复制格式偏好；原始 URL 映射转换关闭，选择预设则启用。目录摘要与上下文共用既有弹窗、真实保存值；统计取实际 File，处理中不伪造体积。空队列上传禁用，上传锁禁用设置与重置。部署复用原组件，最终共享阶段由 T039 完成。响应式为桌面右侧、平板下方、手机纵排；上下文图标改用已核对的 folder-git-2 / folder / folder-cog，旧 quick-actions 也复用 PicxIcon。
+
+**验证**：`pnpm verify` 通过，15 文件 / 122 单测；最后无障碍名称修正后重新 lint / build。2 项组件测试检查事件、旧格式关闭、禁用与体积。目录弹窗 12 项回归通过；共享偏好 Desktop / Pixel 5 两项最终通过，使用键盘 Space 操作真实开关，验证两页双向一致、raw 映射及目录入口。首次用例发现 aria-labelledby 只落到包装节点，已修为 input 的 aria-label；隐藏原生 input 使用键盘验证，无强制点击。已查看截图：[1440 / 320px 面板](UI/evidence/p3/t024-settings-1440.png)、[375](UI/evidence/p3/t024-settings-375.png)，另断言 768 与 375 无溢出、手机 select 16px。日志 `/private/tmp/picx-p3-t024-verify.log`、`/private/tmp/picx-p3-t024-build.log`、`/private/tmp/picx-p3-t024-settings-e2e.log`；目录回归结果见 `/private/tmp/picx-p3-t024-e2e.log`（新设置用例的首次失败另已修复并复验）。
+
+**回滚**：回滚面板与页面布局提交，原设置字段、目录事务和部署服务均兼容，无远端写入。

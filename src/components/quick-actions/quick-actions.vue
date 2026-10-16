@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { store } from '@/stores'
 
 const userSettings = computed(() => store.getters.getUserSettings).value
@@ -24,9 +25,7 @@ const persistUserSettings = () => {
   >
     <template #reference>
       <el-button class="quick-actions-btn" circle text :aria-label="$t('nav.actions')" :title="$t('nav.actions')">
-        <el-icon :size="22">
-          <IEpOperation />
-        </el-icon>
+        <PicxIcon name="settings" :size="22" />
       </el-button>
     </template>
     <div class="quick-actions-popover">
