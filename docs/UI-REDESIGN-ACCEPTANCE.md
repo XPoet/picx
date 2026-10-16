@@ -272,3 +272,15 @@ Chrome、无 SW 独立上下文、无凭据 fixture：[1440 简中暗色账户](
 **验证**：`pnpm verify` 退出 0：lint、stylelint、typecheck、5 文件 / 35 单测、build 通过；日志 `/private/tmp/picx-p2-t013-verify.log`。新增 8 项服务测试覆盖首次初始化、已有仓库 / 分支 / 目录、部分失败重试、创建冲突、App 未安装、权限错误、重复触发、登出失效、验证与存储失败；API 均为 mock，无真实仓库创建或初始化。`git diff --check` 通过。
 
 **回滚**：回滚本任务提交恢复旧配置页编排；沿用原字段与存储键，旧页面文件完整保留。登录页呈现与路由切换分别由 T014、T015 完成。
+
+### T014 实现 OAuth 与 Token 双卡片登录
+
+**实施提交**：`feat(ui): add OAuth and Token connection cards`（本节所属提交）。
+
+按 `DZzo7` 实现连接引导、真实三步流程、等宽双卡片、安装 / 授权教程 / Token 创建与教程入口。Token 为局部草稿，默认掩码，显式可见性按钮支持键盘；Enter 与提交按钮调用同一连接方法，验证失败不保存、不清空草稿，加载时两方式防重，错误就地展示并支持重试。凭据保存提醒准确描述当前浏览器存储。手机纵排，输入 16px；本地 Lucide 增补图标保留官方来源和许可证。
+
+**验证**：`pnpm verify` 退出 0，lint、stylelint、typecheck、35 单测、build 通过。Chrome E2E 首次运行 46 / 48 通过；2 项视觉测试因同 URL 重开未触发 fixture 重注入失败，改用真实语言 / 主题菜单切换后，两项单独复验通过（日志 `/private/tmp/picx-p2-t014-e2e.log`、`/private/tmp/picx-p2-t014-visual.log`）。新增流程覆盖 Token 输入不持久化、401 后重试、Enter / 按钮、网络恢复、防重复、App 未安装及可恢复入口。所有请求由 fixture 拦截，测试凭据为不可用于认证的占位字符串；截图表单为空，没有真实 OAuth 或写入。
+
+视觉已读取画稿并检查 Chrome、简中、亮色 [1440×1080](UI/evidence/p2/t014-login-1440.png)、[375×812](UI/evidence/p2/t014-login-375.png)，以及 [375 英文暗色](UI/evidence/p2/t014-login-375-en-dark.png)。桌面卡片各 520px、间距 24px；375px 无页面横向溢出，图标按钮 / 链接触摸目标至少 44px。`components.d.ts` 由构建插件移除不再使用的声明。
+
+**回滚**：回滚本任务界面、翻译、图标与测试提交；连接服务仍可由旧配置页使用。旧回调与路由兼容将在目录弹窗具备功能后由 T015 统一收口。

@@ -7,8 +7,8 @@ test('登录页提供真实登录操作和未连接导航', async ({ page, picx 
   await expect(page).toHaveTitle(/PicX/)
   const main = page.getByRole('main')
   await expect(main).toHaveCount(1)
-  await expect(main.getByRole('button', { name: 'GitHub OAuth 授权登录', exact: true })).toBeVisible()
-  await expect(main.getByRole('button', { name: '填写 GitHub Token 登录', exact: true })).toBeVisible()
+  await expect(main.getByRole('button', { name: '通过 GitHub 授权登录', exact: true })).toBeVisible()
+  await expect(main.getByRole('button', { name: '验证并连接', exact: true })).toBeVisible()
   await openNavigation(page)
   const nav = page.getByRole('navigation', { name: '主导航', includeHidden: true })
   await expect(nav.getByRole('link', { name: '上传图片', exact: true, includeHidden: true })).toBeVisible()
@@ -16,17 +16,16 @@ test('登录页提供真实登录操作和未连接导航', async ({ page, picx 
   await expect(nav.getByRole('link', { name: '图床设置', exact: true })).toBeHidden()
 })
 
-test('Token 登录仍能进入当前配置表单并聚焦输入', async ({ page, picx }) => {
+test('Token 表单在登录页直接输入且默认掩码', async ({ page, picx }) => {
   await picx.open('/?jump=0')
-  await page.getByRole('main').getByRole('button', { name: '填写 GitHub Token 登录', exact: true }).click()
-
-  await expect(page).toHaveURL(/#\/config\?focus=1$/)
   const main = page.getByRole('main')
-  const tokenInput = main.getByPlaceholder('请输入 GitHub Token ...', { exact: true })
+  const tokenInput = main.getByLabel('GitHub Token', { exact: true })
   await expect(tokenInput).toHaveAttribute('type', 'password')
   await expect(tokenInput).toHaveValue('')
+  await main.getByRole('button', { name: '验证并连接', exact: true }).click()
   await expect(tokenInput).toBeFocused()
-  await expect(main.getByRole('button', { name: '一键配置', exact: true })).toBeVisible()
+  await expect(main.getByRole('alert')).toHaveText('请输入 GitHub Token。')
+  await expect(page).toHaveURL(/#\/\?jump=0$/)
 })
 
 test('上传导航进入真实文件选择页', async ({ page, picx }) => {
@@ -41,7 +40,7 @@ test('上传导航进入真实文件选择页', async ({ page, picx }) => {
   const main = page.getByRole('main')
   await expect(main.getByText('拖拽 / 粘贴 / 点击此处选择图片或视频', { exact: true })).toBeVisible()
   await expect(main.locator('input[type="file"]')).toHaveAttribute('accept', 'image/*,video/mp4')
-  await expect(main.getByRole('button', { name: 'GitHub OAuth 授权登录', exact: true })).toHaveCount(0)
+  await expect(main.getByRole('button', { name: '通过 GitHub 授权登录', exact: true })).toHaveCount(0)
 })
 
 test('已保存仓库的管理入口呈现目录和直属媒体', async ({ page, picx }) => {
@@ -93,6 +92,6 @@ test('失效工具箱地址按未知路由回到可操作的登录页', async ({
   await picx.open('/toolbox')
 
   await expect(page).toHaveURL(/\/images-hosting\/#\/$/)
-  await expect(page.getByRole('main').getByRole('button', { name: '填写 GitHub Token 登录', exact: true })).toBeVisible()
+  await expect(page.getByRole('main').getByRole('button', { name: '验证并连接', exact: true })).toBeVisible()
   await expect(page.getByRole('main').locator('input[type="file"]')).toHaveCount(0)
 })

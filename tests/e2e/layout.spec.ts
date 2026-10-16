@@ -8,7 +8,7 @@ test('顶部导航按实际路由激活，品牌返回连接引导并支持浏�
   await expect(nav.getByRole('link', { name: '图床设置', exact: true, includeHidden: true })).toHaveAttribute('aria-current', 'page')
   await nav.getByRole('link', { name: '首页', exact: true }).click()
   await expect(page).toHaveURL(/#\/\?jump=0$/)
-  await expect(page.getByRole('main').getByRole('button', { name: '填写 GitHub Token 登录', exact: true })).toBeVisible()
+  await expect(page.getByRole('main').getByRole('button', { name: '验证并连接', exact: true })).toBeVisible()
   await page.goBack()
   await expect(page).toHaveURL(/#\/settings$/)
   await page.getByRole('link', { name: 'PicX 图床首页' }).click()

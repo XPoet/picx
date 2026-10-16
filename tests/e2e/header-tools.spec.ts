@@ -70,7 +70,7 @@ test('账户互斥显示真实身份，重连进入登录并保留站内恢复�
   await expect(reconnect).toBeFocused()
   await reconnect.press('Enter')
   await expect(page).toHaveURL(/#\/\?jump=0&returnTo=(?:%2F|\/)settings$/)
-  await expect(page.getByRole('main').getByRole('button', { name: '填写 GitHub Token 登录', exact: true })).toBeVisible()
+  await expect(page.getByRole('main').getByRole('button', { name: '验证并连接', exact: true })).toBeVisible()
 })
 
 test('登出清理 fixture 并进入实际登录入口', async ({ page, picx }) => {
@@ -79,7 +79,7 @@ test('登出清理 fixture 并进入实际登录入口', async ({ page, picx }) 
   await page.getByRole('button', { name: 'fixture-owner 账户菜单', exact: true }).click()
   await page.getByRole('menuitem', { name: '退出登录', exact: true }).click()
   await expect(page).toHaveURL(/#\/\?jump=0&returnTo=(?:%2F|\/)settings$/)
-  await expect(page.getByRole('main').getByRole('button', { name: '填写 GitHub Token 登录', exact: true })).toBeVisible()
+  await expect(page.getByRole('main').getByRole('button', { name: '验证并连接', exact: true })).toBeVisible()
   expect(await page.evaluate(() => localStorage.getItem('PICX_IH_CONFIG'))).toBeNull()
   await expect(page.getByRole('dialog', { name: '网站公告' })).toBeVisible()
   await page.keyboard.press('Escape')

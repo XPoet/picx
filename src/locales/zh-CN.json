@@ -333,5 +333,36 @@
     "conflict": "资源已变化，请刷新后重试。",
     "invalid-response": "服务返回了无法识别的数据，请重试。",
     "service": "服务暂时不可用，请稍后重试。"
+  },
+  "connection": {
+    "title": "连接 GitHub，开启你的图床。",
+    "description": "连接你的 GitHub 仓库，上传图片，随时获取可分享的链接。",
+    "steps_label": "首次使用步骤",
+    "steps": {
+      "connect": "连接 GitHub",
+      "configure": "配置仓库",
+      "share": "上传并分享"
+    },
+    "recommended": "推荐",
+    "oauth_description": "无需配置 Token，安装 PicX GitHub App 即可一键授权登录。",
+    "revoke": "可随时在 GitHub 撤销授权",
+    "oauth_continue": "通过 GitHub 授权登录",
+    "oauth_help": "授权教程",
+    "token_help": "使用教程",
+    "token_description": "已有访问令牌，填入具备仓库读写权限的 Token 即可连接。",
+    "token_label": "GitHub Token",
+    "token_continue": "验证并连接",
+    "token_required": "请输入 GitHub Token。",
+    "show_token": "显示 Token",
+    "hide_token": "隐藏 Token",
+    "credentials_notice": "授权凭据会保存在当前浏览器，请勿在共享设备上保持登录。",
+    "validating": "正在验证连接…",
+    "step_user": "正在验证 GitHub 账户…",
+    "step_repository": "正在检查并准备仓库…",
+    "step_branch": "正在验证上传分支…",
+    "redirecting": "正在前往 GitHub 授权…",
+    "app-not-installed": "尚未安装 PicX GitHub App。请先安装并授予仓库权限，再重试。",
+    "initialization-failed": "仓库尚未就绪，请重试连接。",
+    "storage-unavailable": "浏览器无法保存连接信息，请检查存储权限后重试。"
   }
 }

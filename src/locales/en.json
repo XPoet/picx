@@ -333,5 +333,36 @@
     "conflict": "The resource changed. Refresh and try again.",
     "invalid-response": "The service returned unrecognized data. Try again.",
     "service": "The service is unavailable. Try again later."
+  },
+  "connection": {
+    "title": "Connect GitHub. Start your image hosting.",
+    "description": "Connect your GitHub repository, upload images and get links to share.",
+    "steps_label": "Getting started",
+    "steps": {
+      "connect": "Connect GitHub",
+      "configure": "Set up repository",
+      "share": "Upload and share"
+    },
+    "recommended": "Recommended",
+    "oauth_description": "Install the PicX GitHub App and authorize your account without creating a Token.",
+    "revoke": "You can revoke access on GitHub at any time",
+    "oauth_continue": "Continue with GitHub",
+    "oauth_help": "Authorization guide",
+    "token_help": "Token guide",
+    "token_description": "Enter an access Token with read and write permissions for your repository.",
+    "token_label": "GitHub Token",
+    "token_continue": "Verify and connect",
+    "token_required": "Enter your GitHub Token.",
+    "show_token": "Show Token",
+    "hide_token": "Hide Token",
+    "credentials_notice": "Credentials are saved in this browser. Sign out when using a shared device.",
+    "validating": "Verifying connection…",
+    "step_user": "Verifying your GitHub account…",
+    "step_repository": "Checking and preparing your repository…",
+    "step_branch": "Verifying the upload branch…",
+    "redirecting": "Opening GitHub authorization…",
+    "app-not-installed": "Install the PicX GitHub App and grant repository access, then try again.",
+    "initialization-failed": "The repository is not ready. Try connecting again.",
+    "storage-unavailable": "The browser could not save your connection. Check storage permissions and try again."
   }
 }

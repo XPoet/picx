@@ -18,6 +18,8 @@ interface OpenPageOptions {
   language?: 'zh-CN' | 'zh-TW' | 'en'
   theme?: 'light' | 'dark' | 'system'
   processingDisabled?: boolean
+  connectionScenario?: 'ready' | 'app-missing'
+  savedOAuth?: boolean
 }
 
 interface PicxFixture {
@@ -35,6 +37,7 @@ export const test = base.extend<{ picx: PicxFixture }>({
     const unexpectedRequests: string[] = []
     let contents = createDirectoryContentsFixture()
     let settings = createSettingsFixture()
+    let connectionScenario: OpenPageOptions['connectionScenario']
     const contentPrefix = `/repos/${fixtureRepository.owner}/${fixtureRepository.repo}/contents/`
 
     await page.route('**/*', async (route) => {
@@ -55,6 +58,25 @@ export const test = base.extend<{ picx: PicxFixture }>({
       if (method === 'GET' && url.origin === 'https://ipapi.co' && url.pathname === '/203.0.113.1/country/') {
         await route.fulfill({ contentType: 'text/plain', body: 'CN' })
         return
+      }
+
+      if (connectionScenario && url.origin === 'https://api.github.com' && method === 'GET') {
+        if (url.pathname === '/user') {
+          await route.fulfill({ json: { id: 42, login: fixtureRepository.owner, name: 'Fixture User', email: null, avatar_url: '' } })
+          return
+        }
+        if (url.pathname === '/user/installations') {
+          await route.fulfill({ json: { installations: connectionScenario === 'app-missing' ? [] : [{ id: 7 }] } })
+          return
+        }
+        if (url.pathname === `/repos/${fixtureRepository.owner}/${fixtureRepository.repo}`) {
+          await route.fulfill({ json: { name: fixtureRepository.repo, private: false, default_branch: fixtureRepository.branch, owner: { login: fixtureRepository.owner }, permissions: { push: true } } })
+          return
+        }
+        if (url.pathname === `/repos/${fixtureRepository.owner}/${fixtureRepository.repo}/branches/${fixtureRepository.branch}`) {
+          await route.fulfill({ json: { name: fixtureRepository.branch } })
+          return
+        }
       }
 
       if (url.origin === 'https://api.github.com' && method === 'GET' && url.pathname.startsWith(contentPrefix)) {
@@ -87,6 +109,7 @@ export const test = base.extend<{ picx: PicxFixture }>({
 
     await use({
       open: async (path, options = {}) => {
+        connectionScenario = options.connectionScenario
         contents = createDirectoryContentsFixture(options.directoryScenario)
         settings = createSettingsFixture()
         if (options.processingDisabled) {
@@ -96,7 +119,7 @@ export const test = base.extend<{ picx: PicxFixture }>({
         await page.evaluate(() => {
           window.name = ''
         })
-        await page.addInitScript(({ config, settings, language, theme }) => {
+        await page.addInitScript(({ config, settings, language, theme, savedOAuth }) => {
           // 重载必须保留应用实际写入 / 登出结果，不能重新注入登录态。
           if (window.name === 'picx-ui-fixture-seeded') {
             return
@@ -109,6 +132,9 @@ export const test = base.extend<{ picx: PicxFixture }>({
             showAnnouncement: false,
           }))
           localStorage.setItem('PICX_IH_SETTINGS', JSON.stringify(settings))
+          if (savedOAuth) {
+            localStorage.setItem('PICX_IH_AUTHORIZATION', JSON.stringify({ token: 'fixture-invalid-credential', tokenCreateTime: Date.now(), authorized: true, installed: null, isAutoAuthorize: true }))
+          }
           if (config) {
             localStorage.setItem('PICX_IH_CONFIG', JSON.stringify(config))
           }
@@ -117,6 +143,7 @@ export const test = base.extend<{ picx: PicxFixture }>({
           settings,
           language: options.language ?? 'zh-CN',
           theme: options.theme ?? 'light',
+          savedOAuth: Boolean(options.savedOAuth),
         })
         await page.goto(`/images-hosting/#${path}`)
       },

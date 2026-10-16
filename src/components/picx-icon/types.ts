@@ -3,3 +3,4 @@ export type PicxIconName
     | 'chevron-down' | 'menu' | 'x' | 'upload' | 'image' | 'settings'
     | 'house' | 'log-in' | 'log-out' | 'refresh-cw' | 'download'
     | 'external-link' | 'book-open' | 'info'
+    | 'github' | 'key-round' | 'shield-check' | 'eye' | 'eye-off'

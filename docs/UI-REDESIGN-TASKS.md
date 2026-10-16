@@ -7,7 +7,7 @@
 | 设计依据 | [新版 UI 设计稿](UI/picx-ih.pen) |
 | 方案依据 | [UI 升级改造方案](UI-REDESIGN-SPEC.md) |
 | 拆分方式 | 保留方案 U01–U24 父项，拆成 T001–T048 共 48 个执行任务 |
-| 当前进度 | 13 / 48；P0、P1 已完成，P2 执行中，P3–P6 未开始，证据见 [验收记录](UI-REDESIGN-ACCEPTANCE.md) |
+| 当前进度 | 14 / 48；P0、P1 已完成，P2 执行中，P3–P6 未开始，证据见 [验收记录](UI-REDESIGN-ACCEPTANCE.md) |
 
 ## 1. 执行约定
 
@@ -237,7 +237,7 @@ flowchart LR
 
 ### T014 实现 OAuth 与 Token 双卡片登录
 
-- [ ] 完成
+- [x] 完成
 
 **父项**：U07；**依赖**：T013；**依据**：方案 §5，画板 `DZzo7`。
 

@@ -333,5 +333,36 @@
     "conflict": "資源已變更，請重新整理後重試。",
     "invalid-response": "服務傳回無法辨識的資料，請重試。",
     "service": "服務暫時無法使用，請稍後重試。"
+  },
+  "connection": {
+    "title": "連接 GitHub，開啟你的圖床。",
+    "description": "連接你的 GitHub 儲存庫，上傳圖片，隨時取得可分享的連結。",
+    "steps_label": "首次使用步驟",
+    "steps": {
+      "connect": "連接 GitHub",
+      "configure": "設定儲存庫",
+      "share": "上傳並分享"
+    },
+    "recommended": "推薦",
+    "oauth_description": "無需設定 Token，安裝 PicX GitHub App 即可一鍵授權登入。",
+    "revoke": "可隨時在 GitHub 撤銷授權",
+    "oauth_continue": "透過 GitHub 授權登入",
+    "oauth_help": "授權教學",
+    "token_help": "使用教學",
+    "token_description": "已有存取權杖，填入具備儲存庫讀寫權限的 Token 即可連接。",
+    "token_label": "GitHub Token",
+    "token_continue": "驗證並連接",
+    "token_required": "請輸入 GitHub Token。",
+    "show_token": "顯示 Token",
+    "hide_token": "隱藏 Token",
+    "credentials_notice": "授權憑證會儲存在目前瀏覽器，請勿在共用裝置上保持登入。",
+    "validating": "正在驗證連線…",
+    "step_user": "正在驗證 GitHub 帳戶…",
+    "step_repository": "正在檢查並準備儲存庫…",
+    "step_branch": "正在驗證上傳分支…",
+    "redirecting": "正在前往 GitHub 授權…",
+    "app-not-installed": "尚未安裝 PicX GitHub App。請先安裝並授予儲存庫權限，再重試。",
+    "initialization-failed": "儲存庫尚未就緒，請重試連接。",
+    "storage-unavailable": "瀏覽器無法儲存連線資訊，請檢查儲存權限後重試。"
   }
 }
