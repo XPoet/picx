@@ -1,5 +1,5 @@
 :deep(.el-collapse-item__header) {
-  font-size 16rem
+  font-size unquote('max(14px, 16rem)')
 }
 
 
@@ -32,16 +32,18 @@
 
     &.has-desc {
       display flex
+      flex-wrap wrap
       align-items center
       color var(--text-color-4)
-      font-size 12rem
+      font-size var(--picx-font-body)
       user-select none
 
       .desc {
         margin-left 10rem
 
         +picx-mobile() {
-          display none
+          width 100%
+          margin-left 0
         }
       }
     }
@@ -117,7 +119,70 @@
 .custom-domain-desc {
   margin-top 8rem
   color var(--text-color-4)
-  font-size 12rem
+  font-size var(--picx-font-body)
   line-height 1.6
   user-select none
+}
+
+@media (max-width 1023px) {
+  .custom-domain-row {
+    flex-wrap wrap
+    gap var(--picx-space-2)
+
+    .label {
+      width 100%
+      white-space normal
+    }
+
+    .el-button {
+      margin-left 0
+    }
+  }
+}
+
+@media (max-width $picx-mobile-breakpoint) {
+  .setting-list .setting-item.select-row {
+    flex-wrap wrap
+    gap var(--picx-space-2)
+
+    .label {
+      width 100%
+      white-space normal
+    }
+  }
+
+  :deep(.el-card__body) {
+    padding var(--picx-space-3)
+  }
+
+  :deep(.el-form-item) {
+    flex-direction column
+    align-items stretch
+  }
+
+  :deep(.el-form-item__label) {
+    justify-content flex-start
+    height auto
+    min-height 28px
+    width auto !important
+    line-height 1.6
+  }
+
+  :deep(.el-form-item__content) {
+    min-width 0
+    margin-left 0 !important
+  }
+
+  :deep(.el-radio-group) {
+    display flex
+    flex-wrap wrap
+  }
+
+  :deep(.el-radio) {
+    margin-right 12px
+  }
+
+  :deep(.el-table) {
+    overflow-x auto
+  }
 }

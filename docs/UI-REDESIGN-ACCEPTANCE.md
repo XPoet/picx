@@ -230,3 +230,21 @@ Chrome、无 SW 独立上下文、无凭据 fixture：[1440 简中暗色账户](
 **验证**：lint、stylelint、build、diff 检查通过；E2E 34 项通过，新增页脚键盘 Tab / Enter、真实 URL、反馈标题与 issues 链接断言。通过网页读取确认已有 [帮助文档](https://picx-docs.xpoet.cn/) 与 [Issues](https://github.com/XPoet/picx/issues) 目标可达；未提交反馈或外部写入。Chrome、亮色英文：[1440](UI/evidence/p1/t010-feedback-1440.png)、[375](UI/evidence/p1/t010-feedback-375.png)，无页面横向溢出。页脚处于正常布局，不覆盖内容；当前长内容仍使用旧内部滚动，T011 统一页面滚动。
 
 **回滚**：回滚页脚、反馈样式与翻译提交，保留原 `/feedback` 页面和业务能力。
+
+### T011 调整主容器、滚动与公共响应式
+
+**实施提交**：`feat(ui): unify document scrolling and responsive shell layouts`（本节所属提交）。
+
+根容器采用 min-height 与文档主滚动，移除页面、管理列表和上传操作区的固定高度 / 多层滚动；主内容居中，最大 1264px，桌面 / 平板 / 手机分别使用 32 / 24 / 16px 基础边距。根字号换算保持原样；App 字体继承品牌回退表。上传队列在手机正常显示，保留自身限高滚动与键盘焦点，使用稳定 uuid；目录和操作区可换行。设置长文本、单列表单和压缩选项说明不再被裁切；手机选择控件实测至少 44px。弹窗采用视口内限高、正文滚动和固定可见头尾；原请求、处理算法和存储契约保持不变。
+
+**工程检查**：同一临时 pnpm 包装环境执行 `pnpm verify` 退出 0，ESLint、Stylelint、app / Worker 类型检查、3 文件 / 15 单测、生产 build 均通过。构建后的 `pnpm test:e2e --workers=2` 退出 0，40 项通过（桌面 / 手机各 20）。PWA 构建生成成功，只代表生成检查。`git diff --check`、三语 key 和任务复选框计数通过。
+
+新增验证覆盖全部设置展开后五档宽度与 1024×400 的页尾可达、375px 八文件队列与键盘滚动、低高度公告弹窗、图片预览覆盖顶栏、控件最小高度与压缩长说明。首次队列断言在浏览器滚动更新前读取 scrollTop，改用 expect.poll 等待实际完成后通过；没有增加产品定时器或改变滚动行为。截图进一步发现的旧长说明裁切与小选择控件已修复并完整复验。
+
+**视觉证据**：Chrome 155.0.8059.82，英文亮色，默认偏好与合成仓库，无凭据、SW 禁用；[375](UI/evidence/p1/t011-settings-375.png)、[768](UI/evidence/p1/t011-settings-768.png)、[1024](UI/evidence/p1/t011-settings-1024.png)、[1280](UI/evidence/p1/t011-settings-1280.png)、[1440](UI/evidence/p1/t011-settings-1440.png)。1440px 内容实测 1264px；五档均无页面横向溢出、设置内层活动滚动区为 0、选择控件最小高度 44px。高度 400px 的 [375 页尾](UI/evidence/p1/t011-low-height-375.png)、[1440 页尾](UI/evidence/p1/t011-low-height-1440.png) 可到达。原始测量摘要见 [layout-metrics.json](UI/evidence/p1/layout-metrics.json)。
+
+375px 简中暗色：[手机队列](UI/evidence/p1/t011-queue-375.png)、[排序浮层](UI/evidence/p1/t011-popper-375.png)、[复制表单弹窗](UI/evidence/p1/t011-dialog-375.png)、[图片预览](UI/evidence/p1/t011-preview-375.png)。排序浮层实测 z-index 3005，主题 surface 正确；弹窗 x=16、宽 343、高 260px，输入、取消与确认可见。预览由 E2E 检查遮住顶栏与 Esc 关闭。旧 ElPopover 只留在未挂载的旧头像 / 快捷工具，当前账户使用 HeaderMenu；保留代码而不为验收重新引入旧入口。
+
+**P1 准出结论**：T006–T011 全部完成，每项独立提交，现有登录、上传、管理、设置、公告和反馈可在新公共布局内使用。总体 11 / 48；P2–P6 保持未开始。原配置导航、完整重连恢复、业务页视觉重构、真实 GitHub 写入、跨浏览器和完整 PWA 验收继续由对应后续任务收口，不以 fixture 替代。
+
+**回滚**：回滚本任务布局与样式提交可恢复上一任务布局；整个 P1 按六个任务提交回滚，不改用户配置、凭据或远端文件。未修改设计稿、删除源文件、推送或执行真实上传 / 部署。

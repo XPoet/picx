@@ -58,13 +58,15 @@
   --el-button-hover-border-color var(--picx-color-primary-hover)
 }
 
-.el-input__wrapper
-.el-select__wrapper {
+:root .el-input .el-input__wrapper
+:root .el-select .el-select__wrapper {
   min-height var(--picx-control-height)
 }
 
-.el-input__inner
-.el-textarea__inner {
+:root .el-input .el-input__inner
+:root .el-textarea .el-textarea__inner
+:root .el-radio .el-radio__label
+:root .el-checkbox .el-checkbox__label {
   font-size var(--picx-font-body)
 }
 
@@ -72,6 +74,54 @@
 .el-message-box {
   --el-dialog-border-radius var(--picx-radius-dialog)
   --el-messagebox-border-radius var(--picx-radius-dialog)
+}
+
+.el-overlay .el-dialog {
+  display flex
+  flex-direction column
+  max-width calc(100vw - 32px)
+  max-height calc(100dvh - 32px)
+  margin 16px auto
+
+  .el-dialog__header
+  .el-dialog__footer {
+    flex-shrink 0
+  }
+
+  .el-dialog__body {
+    min-height 0
+    overflow-y auto
+    overflow-wrap anywhere
+  }
+}
+
+.el-message-box {
+  max-width calc(100vw - 32px)
+}
+
+:root .el-radio
+:root .el-checkbox
+:root .el-switch
+:root .el-color-picker {
+  min-height var(--picx-control-height)
+}
+
+:root .el-color-picker {
+  min-width var(--picx-control-height)
+}
+
+.el-form-item__label
+.el-collapse-item__header
+.el-descriptions__label
+.el-descriptions__content {
+  font-size var(--picx-font-body)
+}
+
+.el-collapse-item__header {
+  min-height var(--picx-control-height)
+  height auto
+  padding 8px 0
+  line-height 1.6
 }
 
 .el-message__icon {
@@ -85,9 +135,9 @@
 }
 
 @media (max-width $picx-mobile-breakpoint) {
-  .el-input__inner
-  .el-textarea__inner
-  .el-select__input {
+  :root .el-input .el-input__inner
+  :root .el-textarea .el-textarea__inner
+  :root .el-select .el-select__input {
     font-size var(--picx-font-input-mobile)
   }
 }

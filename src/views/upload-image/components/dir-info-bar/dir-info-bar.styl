@@ -1,5 +1,6 @@
 .dir-info-bar {
   display flex
+  flex-wrap wrap
   align-items center
   justify-content flex-start
 
@@ -8,7 +9,8 @@
     align-items center
     justify-content flex-start
     margin-right 6rem
-    white-space nowrap
+    min-width 0
+    overflow-wrap anywhere
     cursor pointer
 
     .el-icon {

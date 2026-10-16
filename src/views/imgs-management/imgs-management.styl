@@ -13,7 +13,8 @@ $grid-gap = 20rem
     align-items center
     justify-content space-between
     width 100%
-    height $top-box-height
+    min-height var(--picx-control-height)
+    height auto
 
 
     .right {
@@ -29,18 +30,18 @@ $grid-gap = 20rem
 
   .bottom-box {
     width 100%
-    height 'calc(100% - %s)' % $top-box-height
+    height auto
     border 1rem solid var(--border-color)
     border-bottom none
 
     .content-list-box {
       width 100%
-      height 100%
+      height auto
       padding $grid-gap
-      overflow-y auto
+      overflow visible
 
       &.has-tools {
-        height calc(100% - 50rem)
+        height auto
       }
 
 
@@ -100,6 +101,12 @@ $grid-gap = 20rem
           grid-auto-rows 120rem
           grid-gap $grid-gap* 0.9
           grid-template-columns repeat(4, 1fr)
+        }
+      }
+
+      @media (max-width 479px) {
+        .image-card-list {
+          grid-template-columns repeat(2, minmax(0, 1fr))
         }
       }
     }

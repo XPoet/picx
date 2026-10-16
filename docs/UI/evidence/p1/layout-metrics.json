@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-16",
+  "browser": "Chrome 155.0.8059.82",
+  "language": "en",
+  "theme": "light",
+  "fixture": "Synthetic repository, empty credential, default preferences, all settings sections expanded, Service Worker blocked",
+  "viewportHeight": 900,
+  "scrollOwner": "document",
+  "measurements": [
+    {
+      "viewportWidth": 375,
+      "documentScrollWidth": 369,
+      "documentScrollHeight": 4432,
+      "pageWidth": 337,
+      "minimumSelectHeight": 44,
+      "activeInnerVerticalScrolls": 0
+    },
+    {
+      "viewportWidth": 768,
+      "documentScrollWidth": 761,
+      "documentScrollHeight": 3220,
+      "pageWidth": 713,
+      "minimumSelectHeight": 44,
+      "activeInnerVerticalScrolls": 0
+    },
+    {
+      "viewportWidth": 1024,
+      "documentScrollWidth": 1016,
+      "documentScrollHeight": 3013,
+      "pageWidth": 968,
+      "minimumSelectHeight": 44,
+      "activeInnerVerticalScrolls": 0
+    },
+    {
+      "viewportWidth": 1280,
+      "documentScrollWidth": 1272,
+      "documentScrollHeight": 2961,
+      "pageWidth": 1208,
+      "minimumSelectHeight": 44,
+      "activeInnerVerticalScrolls": 0
+    },
+    {
+      "viewportWidth": 1440,
+      "documentScrollWidth": 1432,
+      "documentScrollHeight": 2961,
+      "pageWidth": 1264,
+      "minimumSelectHeight": 44,
+      "activeInnerVerticalScrolls": 0
+    }
+  ],
+  "lowHeightScreenshots": [
+    {
+      "width": 375,
+      "height": 400
+    },
+    {
+      "width": 1440,
+      "height": 400
+    }
+  ],
+  "overlayCheck": {
+    "viewportWidth": 375,
+    "viewportHeight": 600,
+    "theme": "dark",
+    "sortPopperZIndex": 3005,
+    "sortPopperBackground": "rgb(27, 44, 55)",
+    "dialogX": 16,
+    "dialogWidth": 343,
+    "dialogHeight": 260
+  },
+  "unexpectedRequests": [],
+  "notes": [
+    "Document scrollbar space is included in the available width.",
+    "Mock/local checks do not prove remote authentication, uploads, deployment or full PWA behavior."
+  ]
+}

@@ -17,6 +17,7 @@ interface OpenPageOptions {
   directoryScenario?: DirectoryScenario
   language?: 'zh-CN' | 'zh-TW' | 'en'
   theme?: 'light' | 'dark' | 'system'
+  processingDisabled?: boolean
 }
 
 interface PicxFixture {
@@ -33,6 +34,7 @@ export const test = base.extend<{ picx: PicxFixture }>({
     const origin = new URL(baseURL).origin
     const unexpectedRequests: string[] = []
     let contents = createDirectoryContentsFixture()
+    let settings = createSettingsFixture()
     const contentPrefix = `/repos/${fixtureRepository.owner}/${fixtureRepository.repo}/contents/`
 
     await page.route('**/*', async (route) => {
@@ -60,7 +62,7 @@ export const test = base.extend<{ picx: PicxFixture }>({
         // 现有目录 API 将根目录 / 拼成 contents//，兼容这一明确的根路径。
         const path = requestedPath === '/' ? '' : requestedPath
         if (path === '.settings') {
-          await route.fulfill({ json: createCloudSettingsFixture() })
+          await route.fulfill({ json: createCloudSettingsFixture(settings) })
           return
         }
         if (path === '.deploy') {
@@ -86,6 +88,11 @@ export const test = base.extend<{ picx: PicxFixture }>({
     await use({
       open: async (path, options = {}) => {
         contents = createDirectoryContentsFixture(options.directoryScenario)
+        settings = createSettingsFixture()
+        if (options.processingDisabled) {
+          settings.compress.enable = false
+          settings.watermark.enable = false
+        }
         await page.evaluate(() => {
           window.name = ''
         })
@@ -107,7 +114,7 @@ export const test = base.extend<{ picx: PicxFixture }>({
           }
         }, {
           config: options.savedRepository ? createRepositoryFixture() : null,
-          settings: createSettingsFixture(),
+          settings,
           language: options.language ?? 'zh-CN',
           theme: options.theme ?? 'light',
         })

@@ -2,7 +2,7 @@
 import type { Ref } from 'vue'
 import type { UploadedImageModel, UploadImageModel } from '@/common/model'
 import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
-import { ElementPlusSizeEnum, UploadStatusEnum } from '@/common/model'
+import { UploadStatusEnum } from '@/common/model'
 import router from '@/router'
 import { store } from '@/stores'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
@@ -16,7 +16,6 @@ const instance = getCurrentInstance()
 const gettingImagesRef: Ref = ref<null | HTMLElement>(null)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const globalSettings = computed(() => store.getters.getGlobalSettings).value
 const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 
 const uploadImageList = ref<UploadImageModel[]>([])
@@ -193,10 +192,13 @@ onMounted(() => {
   <div class="upload-page-container">
     <!-- 左侧 / 上传图片列表 -->
     <div
-      v-if="uploadImageList.length && globalSettings!.elementPlusSize !== ElementPlusSizeEnum.small"
+      v-if="uploadImageList.length"
       class="upload-page-left page-container"
+      role="region"
+      tabindex="0"
+      :aria-label="$t('upload_page.queue_label')"
     >
-      <div v-for="(item, index) in uploadImageList" :key="index + item.uuid" class="uploaded-item">
+      <div v-for="item in uploadImageList" :key="item.uuid" class="uploaded-item">
         <UploadImageCard :img-obj="item" @remove="remove($event)" />
       </div>
     </div>

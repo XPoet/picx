@@ -202,7 +202,8 @@
     "uploading": "正在上传 ...",
     "tip_9": "{name} 不是图片或视频格式",
     "tip_10": "{name} 超过 {size} MB，跳过选择",
-    "tip_11": "{name} 上传失败"
+    "tip_11": "{name} 上传失败",
+    "queue_label": "已选文件队列"
   },
   "management_page": {
     "reload": "重新加载",
