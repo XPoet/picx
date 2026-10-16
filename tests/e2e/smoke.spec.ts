@@ -1,4 +1,4 @@
-import { expect, test } from './fixtures'
+import { expect, openNavigation, test } from './fixtures'
 
 test('登录页提供真实登录操作和未连接导航', async ({ page, picx }) => {
   await picx.open('/?jump=0')
@@ -9,8 +9,9 @@ test('登录页提供真实登录操作和未连接导航', async ({ page, picx 
   await expect(main).toHaveCount(1)
   await expect(main.getByRole('button', { name: 'GitHub OAuth 授权登录', exact: true })).toBeVisible()
   await expect(main.getByRole('button', { name: '填写 GitHub Token 登录', exact: true })).toBeVisible()
-  const nav = page.getByRole('navigation', { name: '主导航' })
-  await expect(nav.getByRole('link', { name: '上传图片', exact: true })).toBeVisible()
+  await openNavigation(page)
+  const nav = page.getByRole('navigation', { name: '主导航', includeHidden: true })
+  await expect(nav.getByRole('link', { name: '上传图片', exact: true, includeHidden: true })).toBeVisible()
   await expect(nav.getByRole('link', { name: '图床管理', exact: true })).toBeHidden()
   await expect(nav.getByRole('link', { name: '图床设置', exact: true })).toBeHidden()
 })
@@ -30,8 +31,9 @@ test('Token 登录仍能进入当前配置表单并聚焦输入', async ({ page,
 
 test('上传导航进入真实文件选择页', async ({ page, picx }) => {
   await picx.open('/?jump=0')
-  const nav = page.getByRole('navigation', { name: '主导航' })
-  const upload = nav.getByRole('link', { name: '上传图片', exact: true })
+  await openNavigation(page)
+  const nav = page.getByRole('navigation', { name: '主导航', includeHidden: true })
+  const upload = nav.getByRole('link', { name: '上传图片', exact: true, includeHidden: true })
   await upload.click()
 
   await expect(page).toHaveURL(/#\/upload$/)
@@ -44,7 +46,8 @@ test('上传导航进入真实文件选择页', async ({ page, picx }) => {
 
 test('已保存仓库的管理入口呈现目录和直属媒体', async ({ page, picx }) => {
   await picx.open('/upload', { savedRepository: true })
-  const management = page.getByRole('navigation', { name: '主导航' }).getByRole('link', { name: '图床管理', exact: true })
+  await openNavigation(page)
+  const management = page.getByRole('navigation', { name: '主导航', includeHidden: true }).getByRole('link', { name: '图床管理', exact: true, includeHidden: true })
   await management.click()
 
   await expect(page).toHaveURL(/#\/management$/)
@@ -69,7 +72,8 @@ test('管理空目录保持上传恢复入口', async ({ page, picx }) => {
 
 test('设置导航进入现有偏好并能打开命名设置', async ({ page, picx }) => {
   await picx.open('/upload', { savedRepository: true })
-  const settings = page.getByRole('navigation', { name: '主导航' }).getByRole('link', { name: '图床设置', exact: true })
+  await openNavigation(page)
+  const settings = page.getByRole('navigation', { name: '主导航', includeHidden: true }).getByRole('link', { name: '图床设置', exact: true, includeHidden: true })
   await settings.click()
 
   await expect(page).toHaveURL(/#\/settings$/)

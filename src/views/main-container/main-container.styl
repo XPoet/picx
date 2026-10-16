@@ -1,43 +1,31 @@
 .main-container {
   display flex
+  flex-direction column
   box-sizing border-box
   width 100%
-  height 100%
   height 100dvh
   overflow hidden
-  background var(--background-color-2)
-
-  .sidebar {
-    display flex
-    flex 0 0 $left-side-width
-    flex-direction column
-    min-height 0
-    padding-top 12rem
-  }
+  color var(--picx-color-text)
+  background var(--picx-color-bg)
 
   .main-content {
     flex 1
-    min-width 0
-    height 100%
-    padding 16rem 16rem 16rem 0
-    overflow hidden
+    box-sizing border-box
+    min-height 0
+    width 100%
+    max-width calc(var(--picx-content-max-width) + 64px)
+    margin 0 auto
+    padding 32px
+    overflow auto
 
     :deep(.page-container) {
-      border-radius $box-border-radius
+      border-radius var(--picx-radius-card)
     }
   }
 
-  &.folded .sidebar {
-    flex-basis 72px
-  }
-
-  +picx-mobile() {
-    .sidebar {
-      flex-basis 200px
-    }
-
+  @media (max-width $picx-mobile-breakpoint) {
     .main-content {
-      padding 8px 8px 8px 0
+      padding 24px 16px
 
       :deep(.page-container) {
         padding 16px

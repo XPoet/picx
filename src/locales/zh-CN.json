@@ -47,7 +47,10 @@
     "settings": "图床设置",
     "toolbox": "工具箱",
     "feedback": "帮助反馈",
-    "actions": "快捷操作"
+    "actions": "快捷操作",
+    "home": "首页",
+    "open_menu": "打开导航菜单",
+    "close_menu": "关闭导航菜单"
   },
   "actions": {
     "watermark": "图片水印",

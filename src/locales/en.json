@@ -47,7 +47,10 @@
     "settings": "Image Hosting Settings",
     "toolbox": "Toolbox",
     "feedback": "Feedback",
-    "actions": "Quick Actions"
+    "actions": "Quick Actions",
+    "home": "Home",
+    "open_menu": "Open navigation menu",
+    "close_menu": "Close navigation menu"
   },
   "actions": {
     "watermark": "Image watermark",

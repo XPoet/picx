@@ -192,3 +192,17 @@ WCAG 对比度计算：亮 / 暗正文 13.03 / 12.13，辅助文本对页面背�
 **验证**：lint、stylelint、typecheck、build、diff 检查通过。独立 Chrome 上下文禁用 Service Worker，1440×1080 简体中文、亮暗主题与 200% 缩放检查原稿字标：[亮色](UI/evidence/p1/t007-brand-light.png)、[暗色](UI/evidence/p1/t007-brand-dark.png)、[缩放](UI/evidence/p1/t007-brand-zoom.png)。实际网络无外域 / 字体请求；SVG 使用 no-inline 本地 URL，避免 data URL 外部 use 无法渲染。未读取字体或依赖安装目录，系统回退以浏览器实际 font-family 列表为准。
 
 **回滚**：回滚本任务提交恢复原品牌入口与字体；不改变登录、存储或业务路由。新增公共组件后由构建插件自动更新 components.d.ts。
+
+### T008 实现胶囊顶栏与导航
+
+**实施提交**：`feat(ui): introduce capsule header and keyboard accessible navigation`（本节所属提交）。
+
+HeaderContent 组合品牌、NavContent 和原账户工具；MainContainer 移出侧栏。真实 RouterLink 使用路径激活态与 aria-current，品牌 / 首页进入 `/?jump=0`，旧 `/config` 入口与管理校验保留至 T015。未连接时管理 / 设置沿用原有可见性规则；不声称 P2 的无连接业务页面已完成。
+
+窄于 1280px 使用展开导航，支持 Tab / Enter、首链接聚焦、Esc、外部点击、导航后关闭和焦点返回；媒体查询与文档事件均清理。菜单包含现有工具，语言 / 主题 / 账户在 T009 整合。修正历史上传区选择层高于新菜单的问题，顶栏层级 2000、菜单 2100、模态层 3000。
+
+**验证**：lint、stylelint、typecheck、build、diff 检查通过；构建后 `pnpm test:e2e --workers=2` 18 项通过（桌面 9、手机 9）。新增测试覆盖品牌引导、浏览器返回、真实激活态和 375px 键盘菜单；原业务 smoke 适配展开菜单，不绕过点击。初次失败已修复：动态按钮名称导致测试定位失效、上传透明 label 拦截指针。
+
+Chrome、独立无 SW 上下文、亮色英文：[1440×1080](UI/evidence/p1/t008-header-1440-en.png)、[375×812 展开](UI/evidence/p1/t008-menu-375-en.png)。顶栏实测 x=32、y=24、宽 1376、高 72px；手机无页面横向溢出。暂留配置导航导致菜单比最终稿多一项，T015 在能力迁移后取消。
+
+**回滚**：回滚本任务布局 / 导航 / 测试提交即可恢复侧栏，不改变业务存储或路由协议。

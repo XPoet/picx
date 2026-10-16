@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test'
 import type { DirectoryScenario } from '../fixtures/ui-redesign'
 import { Buffer } from 'node:buffer'
 import { test as base, expect } from '@playwright/test'
@@ -97,3 +98,11 @@ export const test = base.extend<{ picx: PicxFixture }>({
 })
 
 export { expect } from '@playwright/test'
+
+export async function openNavigation(page: Page) {
+  await expect(page.getByRole('main')).toBeVisible()
+  const toggle = page.locator('button[aria-controls="picx-primary-navigation"]')
+  if (await toggle.isVisible() && await toggle.getAttribute('aria-expanded') === 'false') {
+    await toggle.click()
+  }
+}

@@ -47,7 +47,10 @@
     "settings": "圖床設定",
     "toolbox": "工具箱",
     "feedback": "幫助回饋",
-    "actions": "快速操作"
+    "actions": "快速操作",
+    "home": "首頁",
+    "open_menu": "開啟導覽選單",
+    "close_menu": "關閉導覽選單"
   },
   "actions": {
     "watermark": "圖片浮水印",

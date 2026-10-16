@@ -64,8 +64,6 @@ declare module 'vue' {
     IEpCircleCheckFilled: typeof import('~icons/ep/circle-check-filled')['default']
     IEpConnection: typeof import('~icons/ep/connection')['default']
     IEpCopyDocument: typeof import('~icons/ep/copy-document')['default']
-    IEpDArrowLeft: typeof import('~icons/ep/d-arrow-left')['default']
-    IEpDArrowRight: typeof import('~icons/ep/d-arrow-right')['default']
     IEpDelete: typeof import('~icons/ep/delete')['default']
     IEpDocument: typeof import('~icons/ep/document')['default']
     IEpDocumentCopy: typeof import('~icons/ep/document-copy')['default']

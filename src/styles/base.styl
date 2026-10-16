@@ -62,6 +62,27 @@ textarea {
   outline-offset 3px
 }
 
+.picx-icon-button {
+  display inline-flex
+  flex-shrink 0
+  align-items center
+  justify-content center
+  box-sizing border-box
+  width var(--picx-control-height)
+  height var(--picx-control-height)
+  padding 0
+  color var(--picx-color-text-muted)
+  background transparent
+  border 0
+  border-radius 50%
+  cursor pointer
+
+  &:hover {
+    color var(--picx-color-primary)
+    background var(--picx-color-primary-soft)
+  }
+}
+
 @media (prefers-reduced-motion reduce) {
   *
   *::before
