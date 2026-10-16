@@ -364,5 +364,23 @@
     "app-not-installed": "Install the PicX GitHub App and grant repository access, then try again.",
     "initialization-failed": "The repository is not ready. Try connecting again.",
     "storage-unavailable": "The browser could not save your connection. Check storage permissions and try again."
+  },
+  "repository_context": {
+    "label": "Current repository and connection",
+    "no_repository": "No GitHub repository connected",
+    "configure": "Configure upload directory",
+    "show_path": "View full upload path {path}",
+    "reconnect": "Reconnect",
+    "connected": "GitHub connected",
+    "connecting": "Connecting to GitHub",
+    "disconnected": "Not connected",
+    "unverified": "Connection not verified",
+    "unauthenticated": "Credentials expired",
+    "forbidden": "Repository access denied",
+    "offline": "You are offline",
+    "failed": "Connection check failed",
+    "visibility_public": "This repository is verified as public. Uploaded files can be publicly accessed.",
+    "visibility_private": "This repository is private. File access depends on repository permissions and link source.",
+    "visibility_unknown": "Repository visibility is unknown. Verify your connection first."
   }
 }

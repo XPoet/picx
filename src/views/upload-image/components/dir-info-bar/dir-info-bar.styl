@@ -1,8 +1,22 @@
 .dir-info-bar {
+  min-width 0
+  max-width 100%
   display flex
   flex-wrap wrap
   align-items center
   justify-content flex-start
+
+  :deep(.el-tag) {
+    max-width 100%
+    height auto
+    min-height 44px
+    white-space normal
+
+    .el-tag__content {
+      min-width 0
+      overflow-wrap anywhere
+    }
+  }
 
   .dir-name {
     display flex

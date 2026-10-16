@@ -284,3 +284,13 @@ Chrome、无 SW 独立上下文、无凭据 fixture：[1440 简中暗色账户](
 视觉已读取画稿并检查 Chrome、简中、亮色 [1440×1080](UI/evidence/p2/t014-login-1440.png)、[375×812](UI/evidence/p2/t014-login-375.png)，以及 [375 英文暗色](UI/evidence/p2/t014-login-375-en-dark.png)。桌面卡片各 520px、间距 24px；375px 无页面横向溢出，图标按钮 / 链接触摸目标至少 44px。`components.d.ts` 由构建插件移除不再使用的声明。
 
 **回滚**：回滚本任务界面、翻译、图标与测试提交；连接服务仍可由旧配置页使用。旧回调与路由兼容将在目录弹窗具备功能后由 T015 统一收口。
+
+### T016 实现仓库上下文与连接状态
+
+**实施提交**：`feat(ui): show verified repository context and recovery states`（本节所属提交）。
+
+新增只接收无凭据 repository、uploadPath、connection 与禁用状态的上下文组件，上传页负责连接恢复、配置与重连事件。实际仓库链接、分支和已保存路径回显，长路径可展开并键盘操作；仅与当前仓库身份匹配的验证结果显示公开 / 私有提示。待验证、连接中、失效、无权限、离线和其他失败分别展示。上下文配置入口暂时沿用旧配置页，T019 接入同一目录弹窗。新增官方同源本地图标；修复原目录标签在长路径时撑宽手机布局。
+
+**验证**：`pnpm verify` 退出 0，lint、stylelint、typecheck、6 文件 / 42 单测、build 通过；Vitest 增加已安装 Vue 插件以执行真实组件测试，无新依赖。新增 7 项组件测试验证错误分支、可见性证据、仓库匹配与事件。构建后连接 / 上下文 E2E 9 / 10 通过，长路径旧标签修复后 stylelint、build 与上下文两项复验通过；日志 `/private/tmp/picx-p2-t016-verify.log`、`/private/tmp/picx-p2-t016-context-recheck.log`。Chrome、简中亮色：[1440](UI/evidence/p2/t016-context-1440.png)、[375 长路径](UI/evidence/p2/t016-context-long-375.png)，无页面溢出；fixture Token 为空，显示待验证，无虚构连接或公开提示。`components.d.ts` 由构建生成，diff 检查通过。
+
+**回滚**：回滚组件、上传页接入、图标、翻译与测试提交，不改变仓库或目录存储。

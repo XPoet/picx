@@ -364,5 +364,23 @@
     "app-not-installed": "尚未安装 PicX GitHub App。请先安装并授予仓库权限，再重试。",
     "initialization-failed": "仓库尚未就绪，请重试连接。",
     "storage-unavailable": "浏览器无法保存连接信息，请检查存储权限后重试。"
+  },
+  "repository_context": {
+    "label": "当前仓库与连接状态",
+    "no_repository": "尚未连接 GitHub 仓库",
+    "configure": "配置上传目录",
+    "show_path": "查看完整上传路径 {path}",
+    "reconnect": "重新连接",
+    "connected": "GitHub 已连接",
+    "connecting": "正在连接 GitHub",
+    "disconnected": "尚未连接",
+    "unverified": "连接待验证",
+    "unauthenticated": "凭据已失效",
+    "forbidden": "仓库访问权限不足",
+    "offline": "当前离线",
+    "failed": "连接检查失败",
+    "visibility_public": "此仓库已确认为公开仓库，上传的文件可被公开访问。",
+    "visibility_private": "此仓库为私有仓库，文件访问取决于仓库权限与链接来源。",
+    "visibility_unknown": "尚未确认仓库可见性，请先验证连接。"
   }
 }

@@ -1,0 +1,27 @@
+import { expect, test } from './fixtures'
+
+test('已保存上下文回显且未验证不显示公开，长路径可展开', async ({ page, picx }, info) => {
+  await page.setViewportSize({ width: 1440, height: 1080 })
+  await picx.open('/upload', { savedRepository: true })
+  const context = page.getByRole('region', { name: '当前仓库与连接状态' })
+  await expect(context.getByText('fixture-owner/picx-images-hosting', { exact: true })).toBeVisible()
+  await expect(context.getByText('master', { exact: true })).toBeVisible()
+  await expect(context.getByRole('status')).toContainText('连接待验证')
+  await expect(context).toContainText('尚未确认仓库可见性')
+  if (info.project.name === 'desktop-chrome')
+    await page.screenshot({ path: 'docs/UI/evidence/p2/t016-context-1440.png', fullPage: true })
+  await page.evaluate(() => {
+    const config = JSON.parse(localStorage.getItem('PICX_IH_CONFIG') ?? '{}')
+    config.selectedDir = 'albums/很长的目录名称'.repeat(8)
+    localStorage.setItem('PICX_IH_CONFIG', JSON.stringify(config))
+  })
+  await page.setViewportSize({ width: 375, height: 812 })
+  await page.reload()
+  await context.locator('summary').focus()
+  await page.keyboard.press('Enter')
+  await expect(context.locator('details')).toHaveAttribute('open', '')
+  await expect(context.locator('details p')).toBeVisible()
+  expect(await page.evaluate(() => [...document.querySelectorAll('main *')].filter(element => element.getBoundingClientRect().right > innerWidth + 1).map(element => ({ tag: element.tagName, class: element.className, right: element.getBoundingClientRect().right })))).toEqual([])
+  if (info.project.name === 'desktop-chrome')
+    await page.screenshot({ path: 'docs/UI/evidence/p2/t016-context-long-375.png', fullPage: true })
+})

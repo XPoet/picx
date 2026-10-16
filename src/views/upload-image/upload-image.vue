@@ -3,6 +3,8 @@ import type { Ref } from 'vue'
 import type { UploadedImageModel, UploadImageModel } from '@/common/model'
 import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
 import { UploadStatusEnum } from '@/common/model'
+import RepositoryContextBar from '@/components/repository-context-bar/repository-context-bar.vue'
+import { useGithubConnection } from '@/composables/use-github-connection'
 import router from '@/router'
 import { store } from '@/stores'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
@@ -12,10 +14,15 @@ import UploadImageCard from './components/upload-image-card/upload-image-card.vu
 import { generateUploadImageObject } from './upload-image.util'
 
 const instance = getCurrentInstance()
+const { connection, restore } = useGithubConnection()
 
 const gettingImagesRef: Ref = ref<null | HTMLElement>(null)
 
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+const repository = computed(() => userConfigInfo.owner && userConfigInfo.repo && userConfigInfo.branch
+  ? { owner: userConfigInfo.owner, repo: userConfigInfo.repo, branch: userConfigInfo.branch }
+  : null)
+const uploadPath = computed(() => userConfigInfo.selectedDir && userConfigInfo.selectedDir !== '/' ? `/${userConfigInfo.selectedDir}` : '/')
 const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 
 const uploadImageList = ref<UploadImageModel[]>([])
@@ -185,10 +192,20 @@ const registerShortcuts = () => {
 
 onMounted(() => {
   registerShortcuts()
+  if (userConfigInfo.token && connection.value.phase === 'disconnected')
+    restore()
 })
 </script>
 
 <template>
+  <RepositoryContextBar
+    :repository="repository"
+    :upload-path="uploadPath"
+    :connection="connection"
+    :disabled="uploading"
+    @configure="router.push('/config')"
+    @reconnect="router.push({ path: '/', query: { jump: '0', returnTo: '/upload' } })"
+  />
   <div class="upload-page-container">
     <!-- 左侧 / 上传图片列表 -->
     <div

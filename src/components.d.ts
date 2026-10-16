@@ -81,6 +81,7 @@ declare module 'vue' {
     PicxIcon: typeof import('./components/picx-icon/picx-icon.vue')['default']
     QuickActions: typeof import('./components/quick-actions/quick-actions.vue')['default']
     RepoDirCascader: typeof import('./components/repo-dir-cascader/repo-dir-cascader.vue')['default']
+    RepositoryContextBar: typeof import('./components/repository-context-bar/repository-context-bar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SiteAnnouncement: typeof import('./components/site-announcement/site-announcement.vue')['default']

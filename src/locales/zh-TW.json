@@ -364,5 +364,23 @@
     "app-not-installed": "尚未安裝 PicX GitHub App。請先安裝並授予儲存庫權限，再重試。",
     "initialization-failed": "儲存庫尚未就緒，請重試連接。",
     "storage-unavailable": "瀏覽器無法儲存連線資訊，請檢查儲存權限後重試。"
+  },
+  "repository_context": {
+    "label": "目前儲存庫與連線狀態",
+    "no_repository": "尚未連接 GitHub 儲存庫",
+    "configure": "設定上傳目錄",
+    "show_path": "查看完整上傳路徑 {path}",
+    "reconnect": "重新連接",
+    "connected": "GitHub 已連接",
+    "connecting": "正在連接 GitHub",
+    "disconnected": "尚未連接",
+    "unverified": "連線待驗證",
+    "unauthenticated": "憑證已失效",
+    "forbidden": "儲存庫存取權限不足",
+    "offline": "目前離線",
+    "failed": "連線檢查失敗",
+    "visibility_public": "此儲存庫已確認為公開儲存庫，上傳的檔案可被公開存取。",
+    "visibility_private": "此儲存庫為私人儲存庫，檔案存取取決於儲存庫權限與連結來源。",
+    "visibility_unknown": "尚未確認儲存庫可見性，請先驗證連線。"
   }
 }
