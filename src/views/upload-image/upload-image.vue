@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { UploadTargetSnapshot } from '@/common/model/upload'
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import GettingImages from '@/components/getting-images/getting-images.vue'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
@@ -22,15 +22,16 @@ import UploadSettingsPanel from './components/upload-settings-panel.vue'
 const { t } = useI18n()
 const store = usePicxStore(pinia)
 const { connection, restore } = useGithubConnection()
-const { queue, settings, runtime, processing, pending, pendingBytes, successes, connected, uploading, online, actionError, lastBatch, attemptedTotal, completed, canUpload, addFiles, remove, reset, upload, copyAll, setCompress, setWatermark, setFormat, retryProcessing, updateName } = useUploadWorkspace()
+const directoryVisible = ref(false)
+const receiving = ref(false)
+const gettingImages = useTemplateRef<InstanceType<typeof GettingImages>>('gettingImages')
+const { queue, settings, runtime, processing, pending, pendingBytes, successes, connected, uploading, online, actionError, lastBatch, attemptedTotal, completed, canUpload, addFiles, remove, reset, upload, copyAll, setCompress, setWatermark, setFormat, retryProcessing, updateName } = useUploadWorkspace(undefined, { shortcutBlocked: () => directoryVisible.value, inputBusy: () => receiving.value, onReset: () => gettingImages.value?.reset() })
 const userConfig = computed(() => store.getUserConfigInfo)
 const repository = computed(() => {
   const { owner, repo, branch } = userConfig.value
   return owner && repo && branch ? { owner, repo, branch } : null
 })
 const uploadPath = computed(() => userConfig.value.selectedDir ? displayDirectory(userConfig.value.selectedDir) : t('upload_directory.incomplete'))
-const directoryVisible = ref(false)
-const gettingImages = useTemplateRef<InstanceType<typeof GettingImages>>('gettingImages')
 const shortcut = computed(() => getOSName() === 'mac' ? '⌘' : 'Ctrl')
 let directoryTrigger: HTMLElement | null = null
 function openDirectory() {
@@ -43,12 +44,6 @@ async function returnDirectoryFocus() {
   await nextTick()
   if (directoryTrigger?.isConnected)
     directoryTrigger.focus({ preventScroll: true })
-}
-function resetWorkspace() {
-  if (uploading.value)
-    return
-  reset()
-  gettingImages.value?.reset()
 }
 function copyItem(uuid: string) {
   const result = successes.value.find(result => result.uuid === uuid)
@@ -68,20 +63,6 @@ async function viewManagement(target: UploadTargetSnapshot) {
     ElMessage.error(t('connection.storage-unavailable'))
   }
 }
-function onKeydown(event: KeyboardEvent) {
-  if (directoryVisible.value || (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')))
-    return
-  if (!(event.ctrlKey || event.metaKey) || event.repeat)
-    return
-  if (event.key.toLowerCase() === 'a' && queue.value.length && !uploading.value) {
-    resetWorkspace()
-    event.preventDefault()
-  }
-  if (event.key.toLowerCase() === 's' && canUpload.value) {
-    void upload()
-    event.preventDefault()
-  }
-}
 watch(() => router.currentRoute.value.query.directory, async (flag) => {
   if (flag !== '1')
     return
@@ -96,13 +77,11 @@ watch(() => router.currentRoute.value.query.directory, async (flag) => {
   openDirectory()
 }, { immediate: true })
 onMounted(() => {
-  document.addEventListener('keydown', onKeydown)
   if (repository.value && !userConfig.value.selectedDir && !directoryVisible.value)
     openDirectory()
   if (userConfig.value.token && connection.value.phase === 'disconnected')
     void restore()
 })
-onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
@@ -119,6 +98,9 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
       </div>
       <div v-if="actionError" class="workspace-notice" role="alert">
         {{ $t(`connection.${actionError}`) }}
+      </div>
+      <div v-if="receiving" class="workspace-notice" role="status">
+        {{ $t('upload_workspace.receiving') }}
       </div>
       <div v-if="uploading" class="workspace-notice" role="status">
         {{ $t('upload_workspace.upload_progress', { completed, total: attemptedTotal }) }}
@@ -137,14 +119,14 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown))
           </el-button>
         </section>
         <div class="upload-intake">
-          <GettingImages ref="gettingImages" :disabled="uploading" mode="workspace" :has-files="queue.length > 0" video-enabled @get-img-list="addFiles" />
+          <GettingImages ref="gettingImages" :disabled="uploading" mode="workspace" :has-files="queue.length > 0" video-enabled @get-img-list="addFiles" @receiving="receiving = $event" />
           <p v-if="successes.length" class="retained-note">
             {{ $t('upload_workspace.successes_retained', { count: successes.length }) }}
           </p>
         </div>
       </div>
     </div>
-    <UploadSettingsPanel :settings="settings" :target="repository" :directory="userConfig.selectedDir || '/'" :display-path="uploadPath" :pending-count="pending.length" :pending-bytes="pendingBytes" :uploaded-count="successes.length" :has-items="queue.length > 0" :busy="uploading" :processing="processing" :can-upload="canUpload" :shortcut="shortcut" @compress="setCompress" @watermark="setWatermark" @format="setFormat" @directory="openDirectory" @reset="resetWorkspace" @upload="upload" @copy-all="copyAll">
+    <UploadSettingsPanel :settings="settings" :target="repository" :directory="userConfig.selectedDir || '/'" :display-path="uploadPath" :pending-count="pending.length" :pending-bytes="pendingBytes" :uploaded-count="successes.length" :has-items="queue.length > 0 || receiving" :busy="uploading" :processing="processing || receiving" :can-upload="canUpload" :shortcut="shortcut" @compress="setCompress" @watermark="setWatermark" @format="setFormat" @directory="openDirectory" @reset="reset" @upload="upload" @copy-all="copyAll">
       <template #deployment>
         <deploy-status-bar v-if="userConfig.logined" :disabled="!successes.length || uploading || !online || directoryVisible || !connected" />
       </template>

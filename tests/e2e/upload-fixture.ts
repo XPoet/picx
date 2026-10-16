@@ -31,7 +31,12 @@ export async function mockUploadRequests(page: Page, options: { failBlob?: numbe
     }
     if (method === 'GET' && url.pathname.startsWith(`${prefix}/contents/`) && path !== '.settings' && path !== '.deploy') {
       const directory = path.replace(/^\//, '').replace(/\/$/, '')
-      const existing = createDirectoryContentsFixture()[directory] ?? []
+      const initial = createDirectoryContentsFixture()
+      if (!Object.hasOwn(initial, directory) && ![...files.values()].some(file => file.path.startsWith(`${directory}/`))) {
+        await route.fallback()
+        return
+      }
+      const existing = initial[directory] ?? []
       const additions = [...files.values()].filter(file => file.path.slice(0, file.path.lastIndexOf('/') + 1).replace(/\/$/, '') === directory).map(file => ({ ...file, type: 'file' }))
       await route.fulfill({ json: [...existing, ...additions] })
       return
@@ -89,7 +94,7 @@ export async function mockUploadRequests(page: Page, options: { failBlob?: numbe
       await route.fulfill(state.refFailure ? { status: 503, json: { message: 'fixture ref uncertain' } } : { json: { object: { sha: data.sha } } })
       return
     }
-    if (method === 'PUT' && url.pathname === `${prefix}/contents/.settings` && data.branch === fixtureRepository.branch && typeof data.content === 'string') {
+    if (method === 'PUT' && url.pathname === `${prefix}/contents/.settings` && (data.branch === fixtureRepository.branch || (data.branch === undefined && data.sha === 'fixture-settings-sha')) && typeof data.content === 'string') {
       const settings: unknown = JSON.parse(Buffer.from(data.content, 'base64').toString('utf8'))
       if (!isRecord(settings) || 'token' in settings || 'authorization' in settings) {
         await route.abort('blockedbyclient')

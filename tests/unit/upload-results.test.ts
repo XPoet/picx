@@ -72,7 +72,7 @@ describe('逐项结果与分支提交边界', () => {
     assertPartition(result)
     expect(result.successes.map(item => item.uuid)).toEqual([files[1].uuid])
     expect(result.failures[0]).toMatchObject({ uuid: files[0].uuid, stage: 'blob' })
-    expect(api.uploadTreeResult).toHaveBeenCalledWith(expect.any(Object), [{ path: 'b.png', sha: 'b-blob' }], expect.any(Object))
+    expect(api.uploadTreeResult).toHaveBeenCalledWith(expect.any(Object), [{ path: 'b.png', sha: 'b-blob' }], expect.any(Object), undefined)
     vi.mocked(api.uploadBlobResult).mockResolvedValueOnce(failure).mockResolvedValueOnce(ok({ sha: 'b' }))
     expect(await uploadImagesToGitHub(config(), [image('c.png'), image('d.png')])).toBe(false)
   })
@@ -182,5 +182,23 @@ describe('逐项结果与分支提交边界', () => {
     expect(files[1].uploadedImg).toBe(saved)
     expect(first.successes[0].image).toBe(saved)
     expect(api.uploadBlobResult).toHaveBeenCalledTimes(2)
+  })
+  it('离开后迟到的真实成功不污染队列，返回后核验恢复且不重复提交', async () => {
+    const files = [image('late-a.png'), image('late-b.png')]
+    let current = true
+    let finish: ((value: Awaited<ReturnType<typeof api.uploadRefResult>>) => void) | undefined
+    vi.mocked(api.uploadRefResult).mockImplementationOnce(() => new Promise(resolve => finish = resolve))
+    const task = uploadFilesToGitHub(config(), files, { isCurrent: () => current })
+    await vi.waitFor(() => expect(finish).toBeTypeOf('function'))
+    current = false
+    finish?.(ok({ object: { sha: 'commit-sha' } }))
+    const late = await task
+    expect(late.successes).toHaveLength(2)
+    expect(files.every(item => item.uploadStatus.progress === 0)).toBe(true)
+    vi.mocked(api.uploadContentResult).mockImplementation(async (_target, path) => ok({ name: path, path, size: 7, sha: 'blob-sha' }))
+    const recovered = await uploadFilesToGitHub(config(), files)
+    expect(recovered.successes.every(item => item.recovered)).toBe(true)
+    expect(api.uploadBlobResult).toHaveBeenCalledTimes(2)
+    expect(api.uploadRefResult).toHaveBeenCalledTimes(1)
   })
 })

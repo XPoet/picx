@@ -435,9 +435,9 @@
     "settings": "Settings",
     "link_format": "Link format",
     "raw_url": "Raw URL",
-    "pending": "{count} files pending",
+    "pending": "{count} files pending | {count} file pending | {count} files pending",
     "processing": "Processing images. Upload will be available when ready.",
-    "upload_count": "Upload {count} files",
+    "upload_count": "Upload {count} files | Upload {count} file | Upload {count} files",
     "copy_all": "Copy all links",
     "auto_compress": "Auto compress",
     "add_watermark": "Add watermark",
@@ -469,8 +469,9 @@
     "cache_failed": "Files are saved remotely, but the local directory cache could not update. Refresh image management.",
     "view_management": "View image management",
     "upload_progress": "Completed {completed} / {total} files. Waiting for the commit result.",
-    "successes_retained": "{count} uploaded files are retained. You can add more.",
-    "connect_to_upload": "Connect GitHub to upload"
+    "successes_retained": "Uploaded files retained: {count}. You can add more.",
+    "connect_to_upload": "Connect GitHub to upload",
+    "receiving": "Reading selected files. Upload will be available when they enter the queue."
   },
   "clipboard": {
     "title": "Copy did not complete",

@@ -470,7 +470,8 @@
     "view_management": "查看图片管理",
     "upload_progress": "已完成 {completed} / {total} 个文件，请等待提交结果。",
     "successes_retained": "已保留 {count} 个成功文件，可继续添加。",
-    "connect_to_upload": "连接 GitHub 后上传"
+    "connect_to_upload": "连接 GitHub 后上传",
+    "receiving": "正在读取所选文件，请等待文件入队后上传。"
   },
   "clipboard": {
     "title": "复制未完成",

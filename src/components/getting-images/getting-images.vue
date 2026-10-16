@@ -12,7 +12,7 @@ const props = withDefaults(defineProps<{
   mode?: 'preview' | 'workspace'
   hasFiles?: boolean
 }>(), { disabled: false, videoEnabled: false, mode: 'preview', hasFiles: false })
-const emit = defineEmits<{ getImgList: [files: ImageHandleResult[]] }>()
+const emit = defineEmits<{ getImgList: [files: ImageHandleResult[]], receiving: [active: boolean] }>()
 const store = useStore()
 const inputId = useId()
 const input = useTemplateRef<HTMLInputElement>('input')
@@ -22,30 +22,43 @@ const curShowImg = ref<ImageHandleResult | null>(null)
 const imgList = ref<ImageHandleResult[]>([])
 const dragging = ref(false)
 let generation = 0
+let disposed = false
+const activeReads = new Set<symbol>()
 const isVideoPreview = computed(() => curShowImg.value && isVideo(curShowImg.value.file.type))
 const setCurImg = () => curShowImg.value = imgList.value.at(-1) ?? null
 
 async function unifiedHandle(files: File[]) {
-  if (props.disabled || !files.length)
+  if (props.disabled || disposed || !files.length)
     return
   const current = generation
-  const received: ImageHandleResult[] = []
-  for (const file of files) {
-    const result = await gettingFilesHandle(file, props.videoEnabled)
-    if (props.disabled || current !== generation)
+  const read = Symbol('file-intake')
+  activeReads.add(read)
+  emit('receiving', true)
+  try {
+    const received: ImageHandleResult[] = []
+    for (const file of files) {
+      const result = await gettingFilesHandle(file, props.videoEnabled)
+      if (props.disabled || current !== generation || disposed)
+        return
+      if (result)
+        received.push(result)
+    }
+    if (!received.length)
       return
-    if (result)
-      received.push(result)
+    if (props.mode === 'preview') {
+      imgList.value = received
+      setCurImg()
+      store.commit('SET_UPLOAD_AREA_STATE', { isActive: true })
+    }
+    emit('getImgList', received)
   }
-  if (!received.length)
-    return
-  if (props.mode === 'preview') {
-    imgList.value = received
-    setCurImg()
-    store.commit('SET_UPLOAD_AREA_STATE', { isActive: true })
+  finally {
+    activeReads.delete(read)
+    if (!disposed)
+      emit('receiving', activeReads.size > 0)
   }
-  emit('getImgList', received)
 }
+
 function selectFiles() {
   if (!props.disabled)
     input.value?.click()
@@ -75,6 +88,8 @@ function onPaste(event: ClipboardEvent) {
 }
 function reset() {
   generation++
+  activeReads.clear()
+  emit('receiving', false)
   imgList.value = []
   curShowImg.value = null
 }
@@ -84,6 +99,8 @@ function remove(uuid: string) {
 }
 onMounted(() => window.addEventListener('paste', onPaste))
 onUnmounted(() => {
+  disposed = true
+  activeReads.clear()
   generation++
   window.removeEventListener('paste', onPaste)
 })

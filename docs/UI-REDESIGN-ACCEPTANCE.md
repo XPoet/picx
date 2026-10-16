@@ -454,3 +454,33 @@ Chrome / 简中 / 1440×1080 最终截图已查看：[无配置导航的登录�
 已查看 [成功 / 1440](UI/evidence/p3/t027-success-1440.png)、[成功 / 375](UI/evidence/p3/t027-success-375.png)、[部分成功 / 1440](UI/evidence/p3/t027-partial-1440.png)、[实际压缩 / 1440](UI/evidence/p3/t027-compressed-1440.png)、[实际压缩 / 375](UI/evidence/p3/t027-compressed-375.png)。375 无横向溢出；成功与失败行均保留明确操作。日志 `/private/tmp/picx-p3-t027-verify.log`、`/private/tmp/picx-p3-t027-build.log`、`/private/tmp/picx-p3-t027-e2e.log`。真实远端环境仍归 P6，当前结果不作为真实仓库上传证据。
 
 **回滚**：回滚工作区编排、结果区和内存批次记录，旧配置与设置格式兼容；不撤销用户已经完成的远端上传。
+
+### T028 统一上传快捷键与页面生命周期
+
+**实施提交**：`fix(upload): scope shortcuts and cancel stale workspace tasks`（本节所属提交）。
+
+A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条件。文本、contenteditable、可见弹窗、预览、重复按键、组合输入、Alt / Shift 与失焦窗口均不接管；退出按相同引用移除键盘、在线和粘贴监听。原部署 D 监听保留在原组件，只复用同一输入保护，不额外注册；其状态与操作图标改为设计稿对应的本地 PicxIcon。
+
+移除 / 重置立即取消所属 Worker，旧 generation 不发布；离开时 AbortSignal 取消等待请求并作废旧编排。晚到的已提交响应不写旧页面 / 新账户，保留无凭据核验信息，返回后查询实际内容再恢复成功，不重复提交；上传标志收尾被新工作区观察，避免永久阻塞。已经成功的项不因页面离开丢失。预览沿用同一模型 data URL，没有新增对象 URL；重置 / 移除释放队列和运行态引用，Worker ImageBitmap 在 finally 关闭。复核时另修正输入竞态：typed receiving 状态在文件读取完成前阻止启动上传，重置可取消尚未入队的选择。
+
+**最终工程验证**：Node 24.21.0、临时 Corepack pnpm 11.18.0，`pnpm verify` 退出 0：lint、stylelint、app / Worker typecheck、19 文件 / 148 单测与 build 全通过。新增作用域 / 快捷键 / 读取任务测试，覆盖按键过滤、上传防重、监听同引用清理、Worker 立即取消、scope 请求取消、迟到提交核验和 intake 读取 / 重置。英文数量文案与最终截图修正后 build 和 lint 再次通过。日志 `/private/tmp/picx-p3-t028-verify.log`、`/private/tmp/picx-p3-t028-lifecycle-unit.log`、`/private/tmp/picx-p3-final-build.log`、`/private/tmp/picx-p3-final-lint.log`。
+
+**完整浏览器验证**：构建后 `pnpm test:e2e --workers=2` 退出 0，Desktop Chrome 56 + Pixel 5 56，共 112 项通过，含 P0–P2 原流程与 P3 全流程。首次完整回归只有旧 smoke 提示文案两项失败，已改为新版语义标题和真实输入断言，整套复验通过。最后收紧 fixture 的未知目录访问并稳定去除临时 toast 的截图后，使用该 fixture 的结果 / 生命周期 24 项再次全部通过；英文与繁体 375px 暗色独立 4 项也通过。日志 `/private/tmp/picx-p3-final-e2e.log`、`/private/tmp/picx-p3-final-upload-e2e.log`、`/private/tmp/picx-p3-final-visual.log`。生命周期用例明确等待路由组件渲染后才模拟迟到 ref，登出后按既有产品流程关闭公告，避免把测试时序或公告遮挡误判为清理故障。
+
+已查看最终截图：[1440 简中 / 实际压缩成功](UI/evidence/p3/t028-upload-1440.png)、[375 简中](UI/evidence/p3/t028-upload-375.png)、[375 英文暗色](UI/evidence/p3/t028-en-dark-375.png)、[375 繁体暗色](UI/evidence/p3/t028-zh-tw-dark-375.png)。无横向溢出、移动关键输入 16px、图标按钮 44px；49 个 typed 图标均有本地 SVG symbol，三语 P3 key 集合一致。历史任务截图保持所属版本，最终截图单独保存。diff 检查通过，无文件删除，不读取凭据或禁止的构建目录。
+
+**回滚**：回滚本任务可恢复前一版事件与取消方式；不更改持久化格式、不撤销远端已提交文件。
+
+**P3 准出结论**：T020–T028 共 9 项全部完成并分别提交。空态、待上传、已上传 / 已压缩、部分 / 全部失败、离线、权限、复制恢复及继续添加均有本地证据；手机隐藏与展示不影响处理，实际目标、成功集与大小可信。P0–P3 进度 28 / 48；P4–P6 未开始。真实 GitHub 授权、上传、部署、Safari / 真机与 PWA 整体验收仍由相应后续任务验证，不将本地 mock 视为真实远端成功。未推送。
+
+| 任务 | 独立实施提交 |
+| --- | --- |
+| T020 持续文件入口与设计图标 | `2fea915` |
+| T021 工作区处理调度 | `702c9d9` |
+| T022 命名与真实体积 | `113f0cd` |
+| T023 链接与复制恢复 | `5f17dd2` |
+| T024 共享快捷设置 | `273ac91` |
+| T025 轻量队列与详情 | `0b44d1f` |
+| T026 逐项结果与目标快照 | `e3919ee` |
+| T027 结果区与继续上传 | `6613f6b` |
+| T028 快捷键与生命周期 | 本节所属提交，标题见上 |

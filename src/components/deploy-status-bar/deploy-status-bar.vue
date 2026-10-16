@@ -6,8 +6,10 @@ import {
   deployGhPages,
   getDeployServerName,
 } from '@/components/deploy-status-bar/deploy-status-bar.util'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { store } from '@/stores'
 import { formatDatetime, getOSName } from '@/utils'
+import { workspaceInputBlocked } from '@/utils/workspace-input'
 
 const props = defineProps({
   disabled: {
@@ -42,15 +44,13 @@ const onDeployShortcut = () => {
   })
 }
 
-const onKeydown = (e: KeyboardEvent) => {
-  if (e.target instanceof Element && e.target.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]'))
+const onKeydown = (event: KeyboardEvent) => {
+  if (props.disabled || isDeploying.value || event.defaultPrevented || event.repeat || event.isComposing || event.altKey || event.shiftKey
+    || !document.hasFocus() || workspaceInputBlocked(event.target)) {
     return
-  const keyCode = e.keyCode || e.which || e.charCode
-  const ctrlKey = e.ctrlKey || e.metaKey
-
-  // 一键部署快捷组合键 Command + D
-  if (ctrlKey && keyCode === 68 && !e.repeat) {
-    e.preventDefault()
+  }
+  if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'd') {
+    event.preventDefault()
     onDeployShortcut()
   }
 }
@@ -72,7 +72,9 @@ onUnmounted(() => {
       class="deploy-item status-bar info"
     >
       <div class="left-wrap flex-start">
-        <span
+        <PicxIcon
+          :name="di.status === true ? 'circle-check' : di.status === false ? 'triangle-alert' : 'circle-dashed'"
+          :size="16"
           class="deploy-status-icon info-item"
           :class="{
             success: di.status === true,
@@ -96,6 +98,7 @@ onUnmounted(() => {
 
       <div class="right-wrap">
         <el-button type="primary" :disabled="disabled" text @click="onDeploy(di)">
+          <PicxIcon name="rocket" :size="16" />
           {{ $t('settings_page.image_hosting_deploy.one_click_deploy') }}
           <span class="shortcut-key">{{ shortcutKey }} D</span>
         </el-button>

@@ -50,6 +50,7 @@ async function blobSha(base64: string) {
 }
 export interface UploadExecutionOptions {
   now?: Date
+  signal?: AbortSignal
   isCurrent?: () => boolean
   onStage?: (uuid: string, stage: UploadItemFailure['stage']) => void
 }
@@ -64,7 +65,7 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
   })
   const batch: UploadBatchResult = { batchId: crypto.randomUUID(), target: files[0]?.target ?? baseTarget, attemptedUuids: files.map(file => file.item.uuid), successes: [], failures: [] }
   const store = usePicxStore(pinia)
-  const current = () => options.isCurrent?.() !== false
+  const current = () => options.isCurrent?.() !== false && !options.signal?.aborted
   function stage(file: FrozenUpload, stage: UploadItemFailure['stage']) {
     if (!current())
       return
@@ -84,9 +85,11 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
     const image = { checked: false, type: isVideo(file.name) ? 'video' : 'image', uuid: file.item.uuid, dir: file.target.dir, name: file.name, sha, path: file.path, deleting: false, size: bytes, deployed: true, uploadTime: Date.now() }
     const success: UploadItemSuccess = { uuid: file.item.uuid, target: file.target, image, commitSha, uploadedBytes: bytes, ...(recovered ? { recovered } : {}) }
     batch.successes.push(success)
-    unconfirmed.delete(file.item)
-    if (!current())
+    if (!current()) {
+      unconfirmed.set(file.item, { path: file.path, content: file.content, target: file.target, sha })
       return
+    }
+    unconfirmed.delete(file.item)
     file.item.uploadStatus.progress = 100
     file.item.uploadedImg = image
     const state = store.uploadRuntime[file.item.uuid]
@@ -116,14 +119,14 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
       const previous = unconfirmed.get(file.item)
       if (previous && previous.path === file.path && previous.content === file.content && previous.target.owner === file.target.owner && previous.target.repo === file.target.repo && previous.target.branch === file.target.branch) {
         stage(file, 'contents')
-        const found = await uploadContentResult(file.target, file.path)
+        const found = await uploadContentResult(file.target, file.path, options.signal)
         if (found.ok) {
           const expectedSha = previous.sha ?? await blobSha(file.content)
           if (found.data.path !== file.path || found.data.sha !== expectedSha) {
             fail(file, 'contents', conflict)
             continue
           }
-          const head = await uploadHeadResult(file.target)
+          const head = await uploadHeadResult(file.target, options.signal)
           if (!head.ok) {
             fail(file, 'head', head.error)
             continue
@@ -144,7 +147,7 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
     if (pending.length === 1 && files.length === 1) {
       const file = pending[0]
       stage(file, 'contents')
-      const result = await uploadContentsResult(file.target, file.path, file.content, config.email ? { name: config.owner, email: config.email } : undefined)
+      const result = await uploadContentsResult(file.target, file.path, file.content, config.email ? { name: config.owner, email: config.email } : undefined, options.signal)
       if (!result.ok) {
         unconfirmed.set(file.item, { ...file })
         fail(file, 'contents', result.error)
@@ -169,7 +172,7 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
         continue
       }
       stage(file, 'blob')
-      const blob = await uploadBlobResult(file.target, file.content)
+      const blob = await uploadBlobResult(file.target, file.content, options.signal)
       if (!blob.ok)
         fail(file, 'blob', blob.error)
       else blobs.push({ file, sha: blob.data.sha })
@@ -182,7 +185,7 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
       blobs.forEach(({ file }) => fail(file, activeStage, stale))
       return batch
     }
-    const head = await uploadHeadResult(batch.target)
+    const head = await uploadHeadResult(batch.target, options.signal)
     if (!head.ok) {
       blobs.forEach(({ file }) => fail(file, 'head', head.error))
       return batch
@@ -193,7 +196,7 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
       blobs.forEach(({ file }) => fail(file, activeStage, stale))
       return batch
     }
-    const tree = await uploadTreeResult(batch.target, blobs.map(({ file, sha }) => ({ path: file.path, sha })), head.data)
+    const tree = await uploadTreeResult(batch.target, blobs.map(({ file, sha }) => ({ path: file.path, sha })), head.data, options.signal)
     if (!tree.ok) {
       blobs.forEach(({ file }) => fail(file, 'tree', tree.error))
       return batch
@@ -204,7 +207,7 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
       blobs.forEach(({ file }) => fail(file, activeStage, stale))
       return batch
     }
-    const commit = await uploadCommitResult(batch.target, tree.data, head.data)
+    const commit = await uploadCommitResult(batch.target, tree.data, head.data, options.signal)
     if (!commit.ok) {
       blobs.forEach(({ file }) => fail(file, 'commit', commit.error))
       return batch
@@ -215,7 +218,7 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
       blobs.forEach(({ file }) => fail(file, activeStage, stale))
       return batch
     }
-    const ref = await uploadRefResult(batch.target, commit.data.sha)
+    const ref = await uploadRefResult(batch.target, commit.data.sha, options.signal)
     if (!ref.ok) {
       blobs.forEach(({ file, sha }) => {
         unconfirmed.set(file.item, { ...file, sha })

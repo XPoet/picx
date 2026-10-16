@@ -80,7 +80,7 @@ describe('图片处理服务与卡片无关', () => {
     const store = usePicxStore(pinia)
     store.UPLOAD_IMG_LIST_ADD(item())
     const pending: ((value: ImageProcessingResult) => void)[] = []
-    const processor = vi.fn(() => new Promise<ImageProcessingResult>(resolve => pending.push(resolve)))
+    const processor = vi.fn<typeof processImage>(() => new Promise<ImageProcessingResult>(resolve => pending.push(resolve)))
     const scope = effectScope()
     scopes.push(scope)
     scope.run(() => useUploadWorkspace(processor))

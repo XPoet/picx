@@ -38,7 +38,7 @@ test('上传导航进入真实文件选择页', async ({ page, picx }) => {
   await expect(page).toHaveURL(/#\/upload$/)
   await expect(upload).toHaveAttribute('aria-current', 'page')
   const main = page.getByRole('main')
-  await expect(main.getByText('拖拽 / 粘贴 / 点击此处选择图片或视频', { exact: true })).toBeVisible()
+  await expect(main.getByRole('heading', { name: '拖拽图片或 MP4 到这里，或直接粘贴图片', exact: true })).toBeVisible()
   await expect(main.locator('input[type="file"]')).toHaveAttribute('accept', 'image/*,video/mp4')
   await expect(main.getByRole('button', { name: '通过 GitHub 授权登录', exact: true })).toHaveCount(0)
 })

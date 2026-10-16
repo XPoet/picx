@@ -24,3 +24,5 @@ flowchart LR
 P1 的 open 参数支持三种语言与三种主题。fixture 使用仅包含固定标记的 window.name 避免刷新重新注入账户，因此登出 / 重载可以验证应用实际清理结果；不会把 Token 或账户写入此标记。登出后默认地区引导的两个精确 GET 目标返回文档保留 IP `203.0.113.1` / `CN`，不发出真实地区查询。安装测试只派发带模拟 prompt 的事件，不执行系统安装。
 
 `directory-selector.html` 是仅在 Vite dev 下使用的受控选择器视觉 fixture，不属于生产路由。访问 `/images-hosting/tests/fixtures/directory-selector.html`，数据完全在内存，选择和展开分开，不调用 GitHub 或存储。用于 T018 的桌面 / 375px 与键盘检查。
+
+P3 的 `tests/e2e/upload-fixture.ts` 只模拟 fixture-owner / picx-images-hosting：blob、head、tree、commit、ref、contents 和有效设置写入；返回真实计算的 Git blob SHA 与字节数，支持部分失败、无权限、结果未确认和延迟 ref。目录只接受初始 fixture 或已模拟上传形成的路径，未知请求继续交给基础 fixture 阻断。所有凭据都是不可认证的占位值，不读取实际用户配置，不执行真实 GitHub 写入。

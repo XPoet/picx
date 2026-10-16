@@ -20,24 +20,24 @@ function head(value: unknown): value is UploadHead {
 }
 const prefix = (target: RepositoryIdentity) => `/repos/${encodeURIComponent(target.owner)}/${encodeURIComponent(target.repo)}`
 const contentPath = (target: RepositoryIdentity, path: string) => `${prefix(target)}/contents/${path.split('/').map(encodeURIComponent).join('/')}`
-export function uploadBlobResult(target: RepositoryIdentity, base64: string) {
-  return requestResult({ url: `${prefix(target)}/git/blobs`, method: 'POST', data: { content: base64, encoding: 'base64' } }, sha)
+export function uploadBlobResult(target: RepositoryIdentity, base64: string, signal?: AbortSignal) {
+  return requestResult({ signal, url: `${prefix(target)}/git/blobs`, method: 'POST', data: { content: base64, encoding: 'base64' } }, sha)
 }
-export function uploadHeadResult(target: RepositoryIdentity) {
-  return requestResult({ url: `${prefix(target)}/branches/${encodeURIComponent(target.branch)}`, method: 'GET', noCache: true }, head)
+export function uploadHeadResult(target: RepositoryIdentity, signal?: AbortSignal) {
+  return requestResult({ signal, url: `${prefix(target)}/branches/${encodeURIComponent(target.branch)}`, method: 'GET', noCache: true }, head)
 }
-export function uploadTreeResult(target: RepositoryIdentity, files: { path: string, sha: string }[], current: UploadHead) {
-  return requestResult({ url: `${prefix(target)}/git/trees`, method: 'POST', data: { base_tree: current.commit.commit.tree.sha, tree: files.map(file => ({ ...file, mode: '100644', type: 'blob' })) } }, sha)
+export function uploadTreeResult(target: RepositoryIdentity, files: { path: string, sha: string }[], current: UploadHead, signal?: AbortSignal) {
+  return requestResult({ signal, url: `${prefix(target)}/git/trees`, method: 'POST', data: { base_tree: current.commit.commit.tree.sha, tree: files.map(file => ({ ...file, mode: '100644', type: 'blob' })) } }, sha)
 }
-export function uploadCommitResult(target: RepositoryIdentity, tree: ShaResult, current: UploadHead) {
-  return requestResult({ url: `${prefix(target)}/git/commits`, method: 'POST', data: { message: PICX_UPLOAD_IMG_DESC, tree: tree.sha, parents: [current.commit.sha] } }, sha)
+export function uploadCommitResult(target: RepositoryIdentity, tree: ShaResult, current: UploadHead, signal?: AbortSignal) {
+  return requestResult({ signal, url: `${prefix(target)}/git/commits`, method: 'POST', data: { message: PICX_UPLOAD_IMG_DESC, tree: tree.sha, parents: [current.commit.sha] } }, sha)
 }
-export function uploadRefResult(target: RepositoryIdentity, commitSha: string) {
-  return requestResult({ url: `${prefix(target)}/git/refs/heads/${encodeURIComponent(target.branch)}`, method: 'PATCH', data: { sha: commitSha, force: false } }, (value): value is { object: ShaResult } => record(value) && sha(value.object) && value.object.sha === commitSha)
+export function uploadRefResult(target: RepositoryIdentity, commitSha: string, signal?: AbortSignal) {
+  return requestResult({ signal, url: `${prefix(target)}/git/refs/heads/${encodeURIComponent(target.branch)}`, method: 'PATCH', data: { sha: commitSha, force: false } }, (value): value is { object: ShaResult } => record(value) && sha(value.object) && value.object.sha === commitSha)
 }
-export function uploadContentsResult(target: RepositoryIdentity, path: string, base64: string, committer?: { name: string, email: string }) {
-  return requestResult({ url: contentPath(target, path), method: 'PUT', data: { message: PICX_UPLOAD_IMG_DESC, branch: target.branch, content: base64, ...(committer ? { committer } : {}) } }, (value): value is ContentsCommit => record(value) && content(value.content) && sha(value.commit))
+export function uploadContentsResult(target: RepositoryIdentity, path: string, base64: string, committer?: { name: string, email: string }, signal?: AbortSignal) {
+  return requestResult({ signal, url: contentPath(target, path), method: 'PUT', data: { message: PICX_UPLOAD_IMG_DESC, branch: target.branch, content: base64, ...(committer ? { committer } : {}) } }, (value): value is ContentsCommit => record(value) && content(value.content) && sha(value.commit))
 }
-export function uploadContentResult(target: RepositoryIdentity, path: string) {
-  return requestResult({ url: contentPath(target, path), method: 'GET', noCache: true, params: { ref: target.branch } }, content)
+export function uploadContentResult(target: RepositoryIdentity, path: string, signal?: AbortSignal) {
+  return requestResult({ signal, url: contentPath(target, path), method: 'GET', noCache: true, params: { ref: target.branch } }, content)
 }

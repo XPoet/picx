@@ -1,7 +1,9 @@
-import { mount } from '@vue/test-utils'
+import type { ImageHandleResult } from '@/common/model'
+import { flushPromises, mount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 import GettingImages from '@/components/getting-images/getting-images.vue'
+import { gettingFilesHandle } from '@/utils'
 
 let id = 0
 vi.mock('@/utils', async importOriginal => ({
@@ -86,5 +88,21 @@ describe('持续接收与默认预览', () => {
     wrappers.pop()
     expect(paste(document.body, file).defaultPrevented).toBe(false)
     expect(wrapper.emitted('getImgList')).toBeUndefined()
+  })
+  it('报告读取状态，重置作废尚未入队的选择并允许后续继续添加', async () => {
+    const wrapper = create({ mode: 'workspace' })
+    let finish: ((value: ImageHandleResult | null) => void) | undefined
+    vi.mocked(gettingFilesHandle).mockImplementationOnce(() => new Promise(resolve => finish = resolve))
+    const file = new File(['x'], 'slow.png', { type: 'image/png' })
+    await select(wrapper, [file])
+    expect(wrapper.emitted('receiving')).toEqual([[true]])
+    wrapper.vm.reset()
+    finish?.({ uuid: 'stale-read', file, base64: 'data:fixture' })
+    await flushPromises()
+    expect(wrapper.emitted('getImgList')).toBeUndefined()
+    expect(wrapper.emitted('receiving')?.at(-1)).toEqual([false])
+    await select(wrapper, [file])
+    expect(wrapper.emitted('getImgList')).toHaveLength(1)
+    expect(wrapper.emitted('receiving')?.at(-1)).toEqual([false])
   })
 })

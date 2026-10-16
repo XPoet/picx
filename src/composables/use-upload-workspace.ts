@@ -8,8 +8,14 @@ import { directoryDraft, validateDirectoryDraft } from '@/utils/directory-utils'
 import { copyLinkText, successLinkText } from '@/utils/image-link-utils'
 import { applyUploadNaming, createNamedUploadImage, finalUploadFile } from '@/utils/upload-naming'
 import { uploadFilesToGitHub } from '@/utils/upload-utils'
+import { workspaceInputBlocked } from '@/utils/workspace-input'
 
-export function useUploadWorkspace(process = processImage) {
+interface WorkspaceOptions {
+  shortcutBlocked?: () => boolean
+  inputBusy?: () => boolean
+  onReset?: () => void
+}
+export function useUploadWorkspace(process = processImage, options: WorkspaceOptions = {}) {
   const store = usePicxStore(pinia)
   const queue = computed(() => store.getUploadImageList)
   const settings = computed(() => store.getUserSettings)
@@ -19,6 +25,7 @@ export function useUploadWorkspace(process = processImage) {
   let generation = 0
   let disposed = false
   let ownsUpload = false
+  let currentUpload: AbortController | null = null
   const online = ref(navigator.onLine !== false)
   const actionError = ref<'storage-unavailable' | null>(null)
   const attemptedTotal = ref(0)
@@ -42,7 +49,7 @@ export function useUploadWorkspace(process = processImage) {
     signatures.delete(uuid)
   }
   function reconcile() {
-    for (const uuid of Object.keys(runtime.value)) {
+    for (const uuid of new Set([...jobs.keys(), ...signatures.keys(), ...Object.keys(runtime.value)])) {
       if (!queue.value.some(item => item.uuid === uuid)) {
         cancel(uuid)
         delete runtime.value[uuid]
@@ -95,7 +102,7 @@ export function useUploadWorkspace(process = processImage) {
       })
     }
   }
-  const stop = watch([() => queue.value.map(item => item.uuid).join('|'), () => JSON.stringify([settings.value.watermark, settings.value.compress]), () => store.uploadTargetBusy], reconcile, { immediate: true })
+  const stop = watch([() => queue.value.map(item => `${item.uuid}:${item.uploadStatus.uploading}:${item.uploadStatus.progress}`).join('|'), () => JSON.stringify([settings.value.watermark, settings.value.compress]), () => store.uploadTargetBusy], reconcile, { immediate: true })
   const stopNaming = watch([() => queue.value.map(item => item.uuid).join('|'), () => JSON.stringify(settings.value.imageName), () => store.uploadTargetBusy], () => {
     if (!store.uploadTargetBusy)
       queue.value.forEach(item => applyUploadNaming(item, settings.value.imageName))
@@ -106,6 +113,8 @@ export function useUploadWorkspace(process = processImage) {
   }
   onScopeDispose(() => {
     disposed = true
+    currentUpload?.abort()
+    document.removeEventListener('keydown', onKeydown)
     window.removeEventListener('online', updateOnline)
     window.removeEventListener('offline', updateOnline)
     if (ownsUpload) {
@@ -145,7 +154,7 @@ export function useUploadWorkspace(process = processImage) {
     return !!config.token && connection.phase === 'connected' && connection.repository.owner === config.owner && connection.repository.repo === config.repo && connection.repository.branch === config.branch
   })
   const uploading = computed(() => store.uploadTargetBusy)
-  const canUpload = computed(() => !uploading.value && !processing.value && online.value && connected.value && !!store.getUserConfigInfo.selectedDir && ready.value.length > 0)
+  const canUpload = computed(() => !uploading.value && !processing.value && !options.inputBusy?.() && online.value && connected.value && !!store.getUserConfigInfo.selectedDir && ready.value.length > 0)
   const pendingBytes = computed(() => {
     if (pending.value.some(item => runtime.value[item.uuid]?.phase === 'processing' || !finalUploadFile(item) || (runtime.value[item.uuid]?.phase === 'failed' && !ready.value.includes(item))))
       return null
@@ -158,13 +167,19 @@ export function useUploadWorkspace(process = processImage) {
       files.forEach(file => store.UPLOAD_IMG_LIST_ADD(createNamedUploadImage(file, settings.value.imageName)))
   }
   function remove(uuid: string) {
-    if (!uploading.value)
+    if (!uploading.value) {
+      cancel(uuid)
       store.UPLOAD_IMG_LIST_REMOVE(uuid)
+    }
   }
   function reset() {
     if (uploading.value)
       return
+    for (const uuid of jobs.keys())
+      cancel(uuid)
+    signatures.clear()
     store.UPLOAD_IMG_LIST_RESET()
+    options.onReset?.()
     actionError.value = null
     attemptedTotal.value = 0
   }
@@ -201,8 +216,10 @@ export function useUploadWorkspace(process = processImage) {
     actionError.value = null
     store.uploadTargetBusy = true
     ownsUpload = true
+    const controller = new AbortController()
+    currentUpload = controller
     try {
-      const result = await uploadFilesToGitHub({ ...config }, files, { now, isCurrent: current })
+      const result = await uploadFilesToGitHub({ ...config }, files, { now, isCurrent: current, signal: controller.signal })
       if (current()) {
         store.uploadBatches.push(result)
         if (result.successes.length)
@@ -211,11 +228,29 @@ export function useUploadWorkspace(process = processImage) {
       return result
     }
     finally {
+      if (currentUpload === controller)
+        currentUpload = null
       if (ownsUpload) {
         ownsUpload = false
         store.uploadTargetBusy = false
       }
     }
   }
-  return { queue, settings, runtime, processing, ready, pending, pendingBytes, successes, connected, uploading, online, actionError, lastBatch, attemptedTotal, completed, canUpload, addFiles, remove, reset, upload, copyAll, setCompress, setWatermark, setFormat, retryProcessing, updateName }
+  const canReset = computed(() => !uploading.value && (queue.value.length > 0 || options.inputBusy?.() === true))
+  function onKeydown(event: KeyboardEvent) {
+    if (event.defaultPrevented || event.repeat || event.isComposing || event.altKey || event.shiftKey || !(event.ctrlKey || event.metaKey)
+      || !document.hasFocus() || options.shortcutBlocked?.() || workspaceInputBlocked(event.target)) {
+      return
+    }
+    if (event.key.toLowerCase() === 'a' && canReset.value) {
+      event.preventDefault()
+      reset()
+    }
+    else if (event.key.toLowerCase() === 's' && canUpload.value) {
+      event.preventDefault()
+      void upload()
+    }
+  }
+  document.addEventListener('keydown', onKeydown)
+  return { queue, settings, runtime, processing, ready, pending, pendingBytes, successes, connected, uploading, online, actionError, lastBatch, attemptedTotal, completed, canUpload, canReset, addFiles, remove, reset, upload, copyAll, setCompress, setWatermark, setFormat, retryProcessing, updateName }
 }
