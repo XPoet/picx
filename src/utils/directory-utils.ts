@@ -1,6 +1,9 @@
 import type { RepositoryIdentity } from '@/common/model/github-connection'
+import type { UploadTargetSnapshot } from '@/common/model/upload'
 import { NEW_DIR_COUNT_MAX } from '@/common/constant'
 import { DirModeEnum } from '@/common/model/user-config'
+
+export type { UploadTargetSnapshot } from '@/common/model/upload'
 
 export interface UploadDirectoryDraft {
   mode: DirModeEnum
@@ -21,11 +24,6 @@ export type DirectoryValidation
 export type DirectorySaveResult
   = | { ok: true, value: UploadDirectoryValue }
     | { ok: false, reason: 'invalid-path' | 'upload-busy' | 'storage-unavailable', field?: 'inputPath' | 'segments' }
-
-export interface UploadTargetSnapshot extends RepositoryIdentity {
-  readonly dir: string
-  readonly resolvedAt: number
-}
 
 export function localDateDirectory(now: Date): string {
   return `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`

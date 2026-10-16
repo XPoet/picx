@@ -1,12 +1,4 @@
-import type { UploadImageModel, UserSettingsModel } from '@/common/model'
-import {
-  addWatermarkToImage,
-  compressImage,
-  getFileSuffix,
-  imgFileToBase64,
-  isNeedCompress,
-  isNeedWatermark,
-} from '@/utils'
+import type { UploadImageModel } from '@/common/model'
 
 /**
  * 图片名称添加前缀的处理
@@ -68,46 +60,5 @@ export const rename = (isRename: boolean, img: UploadImageModel) => {
   }
   else {
     img.filename.final = `${img.filename.name}.${img.filename.suffix}`
-  }
-}
-
-/**
- * 初始化图片设置（是否添加水印，是否压缩等）
- * 视频等不支持处理的格式会跳过水印和压缩，保持原始文件直传
- * @param imgObj
- * @param userSettings
- */
-export const initImgSettings = async (
-  imgObj: UploadImageModel,
-  userSettings: UserSettingsModel,
-) => {
-  const { watermark, compress } = userSettings
-  let file: File = imgObj.fileInfo.originalFile!
-
-  // 添加水印（仅支持图片）
-  if (
-    watermark.enable
-    && watermark.text
-    && isNeedWatermark(imgObj.fileInfo.originalFile!.type)
-    && !imgObj.fileInfo.watermarkFile
-  ) {
-    imgObj.beforeUploadStatus.watermarking = true
-    imgObj.fileInfo.watermarkFile = await addWatermarkToImage(
-      imgObj.fileInfo.originalFile!,
-      watermark,
-    )
-    file = imgObj.fileInfo.watermarkFile!
-    imgObj.base64.watermarkBase64 = await imgFileToBase64(file)
-    imgObj.beforeUploadStatus.watermarking = false
-  }
-
-  // 压缩图片（仅支持图片）
-  if (compress.enable && isNeedCompress(file.type) && !imgObj.fileInfo.compressFile) {
-    imgObj.beforeUploadStatus.compressing = true
-    imgObj.fileInfo.compressFile = await compressImage(file, compress.encoder)
-    file = imgObj.fileInfo.compressFile!
-    imgObj.base64.compressBase64 = await imgFileToBase64(file)
-    imgObj.filename.suffix = getFileSuffix(file.name)
-    imgObj.beforeUploadStatus.compressing = false
   }
 }

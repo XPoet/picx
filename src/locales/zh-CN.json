@@ -427,6 +427,9 @@
     "choose": "选择图片或 MP4",
     "choose_more": "继续选择图片或 MP4",
     "choose_images": "选择图片",
-    "accept": "支持图片与 MP4 · 每个文件最大 30 MB · 可多选"
+    "accept": "支持图片与 MP4 · 每个文件最大 30 MB · 可多选",
+    "processing_failed": "处理失败，请重试或调整压缩、水印设置。",
+    "retry_processing": "重试处理",
+    "processing_skipped": "此格式跳过水印与压缩，使用原文件。"
   }
 }

@@ -5,6 +5,7 @@ import { DirModeEnum, UploadStatusEnum } from '@/common/model'
 import GettingImages from '@/components/getting-images/getting-images.vue'
 import RepositoryContextBar from '@/components/repository-context-bar/repository-context-bar.vue'
 import { useGithubConnection } from '@/composables/use-github-connection'
+import { useUploadWorkspace } from '@/composables/use-upload-workspace'
 import router from '@/router'
 import { pinia, store } from '@/stores'
 import { usePicxStore } from '@/stores/picx-store'
@@ -30,7 +31,11 @@ const repository = computed(() => userConfigInfo.owner && userConfigInfo.repo &&
 const uploadPath = computed(() => userConfigInfo.selectedDir ? displayDirectory(userConfigInfo.selectedDir) : String(instance?.proxy?.$t('upload_directory.incomplete') ?? ''))
 const logoutStatus = computed(() => store.getters.getUserLoginStatus)
 
-const uploadImageList = ref<UploadImageModel[]>([])
+const { queue: uploadImageList, runtime, processing, retryProcessing } = useUploadWorkspace()
+const skippedProcessing = (uuid: string) => {
+  const state = runtime.value[uuid]
+  return state?.phase === 'ready' && state.skippedProcessing
+}
 const uploading = ref(false)
 const directoryVisible = ref(false)
 let directoryTrigger: HTMLElement | null = null
@@ -112,7 +117,9 @@ const uploadImage = async () => {
     return
   }
 
-  const notYetUploadList = uploadImageList.value.filter(x => x.uploadStatus.progress === 0)
+  if (processing.value)
+    return
+  const notYetUploadList = uploadImageList.value.filter(x => x.uploadStatus.progress === 0 && runtime.value[x.uuid]?.phase === 'ready')
 
   if (notYetUploadList.length === 0) {
     ElMessage.error({ message: instance?.proxy?.$t('upload_page.message4') })
@@ -186,17 +193,7 @@ watch(
   },
 )
 
-watch(
-  () => store.state.uploadImageListModule.uploadImageList,
-  (nv) => {
-    uploadImageList.value = nv
-    isCanDeploy.value = uploadImageList.value.some(x => x.uploadStatus.progress === 100)
-  },
-  {
-    immediate: true,
-    deep: true,
-  },
-)
+watch(() => uploadImageList.value.some(item => item.uploadStatus.progress === 100), value => isCanDeploy.value = value, { immediate: true })
 
 function onKeydown(event: KeyboardEvent) {
   if (directoryVisible.value || (event.target instanceof Element && event.target.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')))
@@ -258,6 +255,15 @@ onMounted(() => {
     >
       <div v-for="item in uploadImageList" :key="item.uuid" class="uploaded-item">
         <UploadImageCard :img-obj="item" @remove="remove($event)" />
+        <div v-if="runtime[item.uuid]?.phase === 'failed'" role="alert">
+          <p>{{ $t('upload_workspace.processing_failed') }}</p>
+          <el-button @click="retryProcessing(item.uuid)">
+            {{ $t('upload_workspace.retry_processing') }}
+          </el-button>
+        </div>
+        <p v-if="skippedProcessing(item.uuid)">
+          {{ $t('upload_workspace.processing_skipped') }}
+        </p>
       </div>
     </div>
 
@@ -304,7 +310,7 @@ onMounted(() => {
           <el-button :disabled="uploading" plain type="warning" @click="resetUploadInfo">
             {{ $t('reset') }} <span class="shortcut-key">{{ shortcutKey }} A</span>
           </el-button>
-          <el-button :disabled="uploading" plain type="primary" @click="uploadImage">
+          <el-button :disabled="uploading || processing" plain type="primary" @click="uploadImage">
             {{ $t('upload') }} <span class="shortcut-key">{{ shortcutKey }} S</span>
           </el-button>
         </div>

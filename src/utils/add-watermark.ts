@@ -37,7 +37,9 @@ export async function addWatermarkToImage(
   const [r, g, b] = hexToRgb(textColor).split(',')
   const img = await loadImageFromFile(imageFile)
   const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')!
+  const ctx = canvas.getContext('2d')
+  if (!ctx)
+    throw new Error('Canvas context unavailable')
   canvas.width = img.width
   canvas.height = img.height
   ctx.drawImage(img, 0, 0)
@@ -95,7 +97,9 @@ export async function addWatermarkToImage(
         resolve(null)
       }
       else {
-        const newFile = new File([blob], imageFile.name, { type: imageFile.type })
+        const extension = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp', 'image/avif': 'avif' }[blob.type]
+        const name = blob.type !== imageFile.type && extension ? `${imageFile.name.replace(/\.[^.]+$/, '')}.${extension}` : imageFile.name
+        const newFile = new File([blob], name, { type: blob.type, lastModified: imageFile.lastModified })
         resolve(newFile)
       }
     }, imageFile.type)

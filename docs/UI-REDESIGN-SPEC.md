@@ -679,7 +679,9 @@ interface UploadBatchResult {
 }
 ```
 
-设置快照创建时深复制已有字段；`Readonly` 只描述调用边界，不能用它代替隔离嵌套 `addPrefix` 的引用。命名沿用 `enableHash / enableTimestamp / addPrefix`，不新增 `namingMode`。MP4 或无需处理的图片直接 `ready`；图片按原文件 → 水印 → 压缩进入 `ready`。设置改变时未上传项递增 `generation`，从原文件重新处理；只有 uuid 仍存在且代次相同的结果可发布，已上传项不重算。处理失败必须重试或明确调整设置，不能上传旧产物。
+设置快照创建时深复制已有字段；`Readonly` 只描述调用边界，不能用它代替隔离嵌套 `addPrefix` 的引用。命名沿用 `enableHash / enableTimestamp / addPrefix`，不新增 `namingMode`。T021 实施补充：`ready` 保留 `skippedProcessing` 布尔值以明确不支持格式的跳过；压缩仅采用体积小于输入的实际产物，否则保留压缩前文件。处理服务返回各阶段产物与最终 File，不写队列。调度者用 AbortController 终止编码 Worker；水印 / FileReader 完成后仍按 signal 与 generation 判定是否发布。
+
+MP4 或无需处理的图片直接 `ready`；图片按原文件 → 水印 → 压缩进入 `ready`。设置改变时未上传项递增 `generation`，从原文件重新处理；只有 uuid 仍存在且代次相同的结果可发布，已上传项不重算。处理失败必须重试或明确调整设置，不能上传旧产物。
 
 开始批次时筛选 `ready` 与已重试的失败项、冻结文件名 / 最终 File / 体积、对 owner / repo / branch / dir 取无凭据值快照；日期在这一刻按本地日历解析。批次内不读取后来改变的上传目标，也不因跨午夜改目录；下一批重新解析日期。上传锁期间禁止保存目录、重连目标和重置；退出 / 失效使运行代次过期并忽略晚到结果。认证由既有安全边界提供给请求，不进入目标快照。
 

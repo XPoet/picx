@@ -427,6 +427,9 @@
     "choose": "Choose images or MP4",
     "choose_more": "Add more images or MP4",
     "choose_images": "Choose images",
-    "accept": "Images and MP4 · Up to 30 MB per file · Multiple files supported"
+    "accept": "Images and MP4 · Up to 30 MB per file · Multiple files supported",
+    "processing_failed": "Processing failed. Retry or adjust compression and watermark settings.",
+    "retry_processing": "Retry processing",
+    "processing_skipped": "Watermark and compression are skipped for this format; the original file is used."
   }
 }

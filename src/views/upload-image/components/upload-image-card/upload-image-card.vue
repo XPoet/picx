@@ -6,7 +6,7 @@ import { useStore } from '@/stores'
 import { copyImageLink, isVideo } from '@/utils'
 import { formatDatetime } from '@/utils/common-utils'
 import { getFileSize } from '@/utils/file-utils'
-import { addHashHandle, addPrefixHandle, initImgSettings, rename } from './upload-image-card.util'
+import { addHashHandle, addPrefixHandle, rename } from './upload-image-card.util'
 
 const props = defineProps({
   imgObj: {
@@ -99,8 +99,7 @@ watch(
   },
 )
 
-onMounted(async () => {
-  await initImgSettings(props.imgObj, userSettings)
+onMounted(() => {
   initFilename()
 })
 </script>

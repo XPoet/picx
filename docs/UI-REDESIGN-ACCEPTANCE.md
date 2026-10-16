@@ -382,3 +382,13 @@ Chrome / 简中 / 1440×1080 最终截图已查看：[无配置导航的登录�
 **验证**：Node 24.21.0、临时 Corepack pnpm 11.18.0；`pnpm verify` 通过（lint、stylelint、typecheck、92 单测、build）；preview E2E Desktop / Pixel 5 共 2 项通过。截图已查看：[1440](UI/evidence/p3/t020-intake-1440.png)、[375](UI/evidence/p3/t020-intake-375.png)。覆盖多次追加、同名、MP4、粘贴、错误类型、禁用态与文本保护；实际文件大小由 T022 收口，旧卡片外观由 T025 收口。日志 `/private/tmp/picx-p3-t020-verify.log`、`/private/tmp/picx-p3-t020-e2e.log`。首次 Chrome 被沙箱阻止启动，获工具授权后以独立临时配置复验通过。pnpm 使用 `--config.verifyDepsBeforeRun=false` 避免既有全局虚拟存储配置检查，不改依赖与锁文件。
 
 **回滚**：回滚本项入口、资源、翻译、测试与文档提交；无存储格式变化或远端写入。
+
+### T021 将水印与压缩调度移出卡片挂载
+
+**实施提交**：`refactor(upload): schedule image processing from the workspace`（本节所属提交）。
+
+新增独立处理服务及工作区调度，原文件 → 水印 → 压缩保持单一顺序；只采用更小压缩产物，不支持格式明确跳过。快照和 uuid / generation 控制发布，设置更新、移除、重置和离开均作废旧任务；卡片挂载不再触发处理。运行态只在 Pinia 内存。Worker 成功、异常、无法解码、postMessage 抛错和取消均释放。水印使用实际 blob MIME，并在浏览器格式回退时同步后缀。上传只接受 ready 项；处理失败提供重试。
+
+**验证**：`pnpm verify` 全通过，12 文件 / 102 单测（新增 10 项），build 通过；本地 preview 上传入口回归 Desktop / Pixel 5 共 2 项通过。新增测试直接运行 composable，无卡片渲染，覆盖顺序、视频 / GIF 跳过、编码变大不采用、失败收尾、设置更新从原文件重算、移除失效、scope 取消以及五种 Worker 释放路径。日志 `/private/tmp/picx-p3-t021-verify.log`、`/private/tmp/picx-p3-t021-e2e.log`。无真实远端写入。
+
+**回滚**：回滚调度、处理服务、内存类型、Worker 取消和接入提交；旧卡片文件保留，存储格式兼容。
