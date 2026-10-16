@@ -88,7 +88,7 @@
 
 ### T003 明确认证、设置与目录的存储安全边界
 
-**实施提交**：`docs(ui): define credential and settings storage boundaries`（本节所属提交，可按标题定位）。
+**实施提交**：`15450d4`，`docs(ui): define credential and settings storage boundaries`。
 
 **产出与证据**：[方案 §5.3](UI-REDESIGN-SPEC.md#53-认证调用链与源码安全审计t003) 记录 Token 校验、OAuth 回调、请求鉴权、重连、登出与云同步的真实调用链；[§10.11](UI-REDESIGN-SPEC.md#1011-存储允许字段期限与清理时机t003) 列出五个既有存储键、云文件、组件 / 运行内存和 PWA 缓存的允许字段、期限、禁止项与清理时机。
 
@@ -97,3 +97,43 @@
 **兼容与验证**：旧保存键、长期 / 会话期限和偏好字段保持兼容；新 Token 草稿验证后才提交，目录取消不持久化，上下文只接收无凭据模型，`.settings` 只允许偏好。人工逐项追踪正常、失败、重连和登出分支，未读取任何真实 Token、OAuth code、环境变量值或用户浏览器数据；未运行真实授权。文档相对文件链接、3/48 状态与 `git diff --check` 通过。
 
 **遗留与回滚**：动态安全用例在对应实现任务补充，T005 只建立无凭据 fixture 和网络隔离。回滚本项只撤销安全设计文档，不改现有凭据或用户存储。
+
+### T004 执行并记录当前工程与页面基线
+
+**实施提交**：`docs(ui): record engineering and page baselines`（本节所属提交，可按标题定位）。应用源码基于 `15450d4`，P0 前三项只有文档变化。
+
+**环境与约束**：macOS 14.5 / arm64，Node `v24.21.0`；仓库要求 Node `>=24 <25`，`.node-version` / `.nvmrc` 均为 24。初始 PATH 中 pnpm 为 `11.17.0`，随后以 `COREPACK_HOME=/private/tmp/picx-ui-p0-corepack corepack pnpm --version` 获取并确认仓库声明的 `11.18.0`，最终基线使用该版本。未重装项目依赖或改锁文件。
+
+锁文件 `pnpm-lock.yaml` 格式 9.0，importer 锁定 Vue 3.5.40、Pinia 4.0.2、Vue Router 5.2.0、Element Plus 2.14.3、Vue I18n 11.4.8、Vite 8.2.0、TypeScript 6.0.3、Vitest 4.1.10、Playwright 1.62.1。这些是锁定版本；不读取安装目录来宣称安装完整性。运行输出实际报告 Vite 8.2.0、Vitest 4.1.10、PWA 插件 1.3.0。
+
+`package.json` 已有 `lint / lint:style / typecheck / test / build / test:e2e / verify`，`verify` 串行包含前五项；ESLint 与 app tsconfig 明确排除历史 Vuex 模块实现，运行主 Store 是 Pinia。CI 读取 `.nvmrc`、由 packageManager 配置 pnpm、执行 frozen-lockfile 安装与 verify；没有执行远端 CI，本地通过不代表远端通过。AGENTS 中 Vuex / 无测试脚本的描述不再作为当前工程事实。
+
+**本机隔离办法**：直接 `pnpm verify` 和首次提交 hook 退出 1，原因是 `ERR_PNPM_VERIFY_DEPS_BEFORE_RUN`，提示 `enableGlobalVirtualStore` 与已有安装记录不同。未读取 `node_modules` 安装记录、未运行 install。仅在临时命令包装器 `/private/tmp/picx-ui-p0-bin/pnpm` 给 Corepack 的 pnpm 加 `--config.verifyDepsBeforeRun=false`，再将该目录前置到本次命令 PATH，使 verify 内部子命令、preview 和 Git hooks 使用同一参数与 pnpm 11.18.0；仓库配置保持原样。此参数绕开安装状态预检，不替代依赖完整性证明。Git hooks 的 lint-staged / commitlint 仍实际执行。
+
+| 检查 / 命令 | 退出与结果 | 归属 / 处理 |
+| --- | --- | --- |
+| 原始 `pnpm verify` | 1；依赖状态预检失败，未进入 lint | 本机环境差异；用上述单次参数隔离 |
+| `PATH=/private/tmp/picx-ui-p0-bin:$PATH pnpm verify` | 0；ESLint、Stylelint、app + Worker 类型检查、2 文件 / 11 单测、生产构建均通过 | 最终使用 pnpm 11.18.0；原始运行日志 `/private/tmp/picx-ui-p0-verify.log`，本表保留持久摘要 |
+| 构建附带 PWA 生成 | 通过；生成 SW，预缓存 60 项 | 只记录构建结果，不代表安装、离线或升级验收 |
+| 构建后 `pnpm test:e2e`（同一 PATH，初次在沙箱内） | 1；4 项均在 Chrome 启动前 SIGABRT / EPERM | 主机执行限制；独立临时 Chrome 上下文在获准沙箱外重跑 |
+| 相同 E2E 命令在可启动浏览器环境重跑 | 1；桌面 / 手机登录各通过；桌面 / 手机 `/toolbox` 各失败，合计 2 通过、2 失败 | 旧测试断言未注册路由，交 T005；不能归因为新 UI 或认证失败 |
+| `git diff --check`、文档链接 / 4/48 状态 | 0，通过 | 本项文档及证据检查 |
+| format、真实 OAuth / Token、远端写入、Safari / Firefox、完整 PWA | 未执行 | 不属本项；按后续任务授权与范围验证 |
+
+E2E 原配置为 Desktop Chrome 和 Pixel 5，`channel: chrome`，preview 地址 `http://127.0.0.1:4173`，实际应用 base 是 `/images-hosting/`。Chrome 实际版本 `155.0.8059.82`。终端的 NO_COLOR / FORCE_COLOR 警告不影响退出结果。
+
+**页面复现证据**：[页面与路由记录](UI/evidence/p0/page-baseline.json)，简体中文、亮色、1440×1080 与 375×1080；Pencil 对照节点沿用 T001 表。独立浏览器只注入 owner=`fixture-owner`、branch=`master` 的合成上下文，Token 为空；`.settings` 用 `{}` 模拟已有文件，`.deploy` 用 404；外域请求和远端写入被阻断，Service Worker 在该上下文禁用。`logined: true` 仅用于呈现已有导航 / 仓库上下文，不证明已验证认证。
+
+| 页面 | 桌面证据 | 375px 证据 | 基线结论 |
+| --- | --- | --- | --- |
+| 登录 | [1440](UI/evidence/p0/login-1440.png) | [375](UI/evidence/p0/login-375.png) | 两种登录按钮存在；Token 按钮仍转配置页，P2 再迁移 |
+| 图床配置 | [1440](UI/evidence/p0/config-1440.png) | [375](UI/evidence/p0/config-375.png) | 当前仍是独立页，focus 入口可到达空 Token 输入 |
+| 上传 | [1440](UI/evidence/p0/upload-1440.png) | [375](UI/evidence/p0/upload-375.png) | 文件选择和目标目录可呈现；尚无新快捷设置与结果区 |
+| 图片管理 | [1440](UI/evidence/p0/management-1440.png) | [375](UI/evidence/p0/management-375.png) | 旧文件夹卡片可呈现，尚无面包屑与搜索 |
+| 图床设置 | [1440](UI/evidence/p0/settings-1440.png) | [375](UI/evidence/p0/settings-375.png) | 原有七个折叠设置区存在；尚未拆为三个分区 |
+
+这些页面均有唯一 `main`，所采样初始状态未发现页面级横向溢出；这不代表长内容、输入字号、触摸目标、键盘和所有内部滚动已验收。人工查看桌面登录 / 管理及手机登录 / 上传 / 设置截图，记录现有侧栏、卡片与折叠设置形态，不将其标为新画稿视觉通过。
+
+旧链路复现：`#/toolbox → #/`，`#/login?jump=0 → #/?jump=0`（依赖 catch-all），Token 登录按钮 → `#/config?focus=1`。前者是失效 smoke 的直接原因；后两者留待 T015 的完整迁移。
+
+**遗留与回滚**：阻塞 smoke 的旧断言由 T005 修复；pnpm 预检和 Chrome 沙箱问题已有明确本机隔离命令，不改项目或用户设置。回滚本项只影响任务 / 基线文档与新增证据，不改应用代码、配置、存储或远端资源。

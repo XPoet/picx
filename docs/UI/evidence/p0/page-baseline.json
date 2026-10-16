@@ -1,0 +1,116 @@
+{
+  "date": "2026-10-16",
+  "browser": "155.0.8059.82",
+  "language": "zh-CN",
+  "theme": "light",
+  "credentials": "empty synthetic context",
+  "pages": [
+    {
+      "name": "login",
+      "width": 1440,
+      "height": 1080,
+      "hash": "#/?jump=0",
+      "screenshot": "login-1440.png",
+      "mainCount": 1,
+      "horizontalOverflow": false
+    },
+    {
+      "name": "config",
+      "width": 1440,
+      "height": 1080,
+      "hash": "#/config?focus=1",
+      "screenshot": "config-1440.png",
+      "mainCount": 1,
+      "horizontalOverflow": false
+    },
+    {
+      "name": "upload",
+      "width": 1440,
+      "height": 1080,
+      "hash": "#/upload",
+      "screenshot": "upload-1440.png",
+      "mainCount": 1,
+      "horizontalOverflow": false
+    },
+    {
+      "name": "management",
+      "width": 1440,
+      "height": 1080,
+      "hash": "#/management",
+      "screenshot": "management-1440.png",
+      "mainCount": 1,
+      "horizontalOverflow": false
+    },
+    {
+      "name": "settings",
+      "width": 1440,
+      "height": 1080,
+      "hash": "#/settings",
+      "screenshot": "settings-1440.png",
+      "mainCount": 1,
+      "horizontalOverflow": false
+    },
+    {
+      "name": "login",
+      "width": 375,
+      "height": 1080,
+      "hash": "#/?jump=0",
+      "screenshot": "login-375.png",
+      "mainCount": 1,
+      "horizontalOverflow": false
+    },
+    {
+      "name": "config",
+      "width": 375,
+      "height": 1080,
+      "hash": "#/config?focus=1",
+      "screenshot": "config-375.png",
+      "mainCount": 1,
+      "horizontalOverflow": false
+    },
+    {
+      "name": "upload",
+      "width": 375,
+      "height": 1080,
+      "hash": "#/upload",
+      "screenshot": "upload-375.png",
+      "mainCount": 1,
+      "horizontalOverflow": false
+    },
+    {
+      "name": "management",
+      "width": 375,
+      "height": 1080,
+      "hash": "#/management",
+      "screenshot": "management-375.png",
+      "mainCount": 1,
+      "horizontalOverflow": false
+    },
+    {
+      "name": "settings",
+      "width": 375,
+      "height": 1080,
+      "hash": "#/settings",
+      "screenshot": "settings-375.png",
+      "mainCount": 1,
+      "horizontalOverflow": false
+    }
+  ],
+  "routes": [
+    {
+      "requestedHash": "#/toolbox",
+      "resultingHash": "#/",
+      "page": "login"
+    },
+    {
+      "requestedHash": "#/login?jump=0",
+      "resultingHash": "#/?jump=0",
+      "page": "login"
+    },
+    {
+      "action": "Token 登录按钮",
+      "resultingHash": "#/config?focus=1",
+      "page": "config"
+    }
+  ]
+}
