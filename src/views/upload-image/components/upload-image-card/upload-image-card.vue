@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { UploadImageModel } from '@/common/model'
-import { computed, getCurrentInstance, onMounted, reactive, ref, watch } from 'vue'
+import { computed, getCurrentInstance, reactive, ref, watch } from 'vue'
 import { RENAME_MAX_LENGTH } from '@/common/constant'
 import { useStore } from '@/stores'
 import { copyImageLink, isVideo } from '@/utils'
 import { formatDatetime } from '@/utils/common-utils'
-import { getFileSize } from '@/utils/file-utils'
+import { formatFileBytes } from '@/utils/file-utils'
 import { addHashHandle, addPrefixHandle, rename } from './upload-image-card.util'
 
 const props = defineProps({
@@ -66,26 +66,6 @@ const onPrefixNaming = (value: string | number | boolean) => {
   addPrefixHandle(value === true, props.imgObj)
 }
 
-const initFilename = () => {
-  const { imageName } = userSettings
-  if (props.imgObj!.uploadStatus.progress === 0) {
-    props.imgObj!.filename.isAddHash = imageName.enableHash
-    props.imgObj!.filename.isAddPrefix = imageName.addPrefix.enable
-    props.imgObj!.filename.prefix = imageName.addPrefix.prefix
-
-    // 添加前缀处理
-    addPrefixHandle(imageName.addPrefix.enable, props.imgObj)
-
-    // 添加哈希值处理
-    addHashHandle(imageName.enableHash, props.imgObj)
-
-    fileNameOperateData.isAddHash = props.imgObj!.filename.isAddHash
-    fileNameOperateData.isAddPrefix = props.imgObj!.filename.isAddPrefix
-    fileNameOperateData.isRename = props.imgObj!.filename.isRename
-    fileNameOperateData.newName = props.imgObj!.filename.newName
-  }
-}
-
 watch(
   () => props.imgObj!.uploadStatus,
   (nv) => {
@@ -98,10 +78,6 @@ watch(
     immediate: true,
   },
 )
-
-onMounted(() => {
-  initFilename()
-})
 </script>
 
 <template>
@@ -211,10 +187,10 @@ onMounted(() => {
             class="original-file-size file-size-item"
             :class="{ 'del-line': imgObj.fileInfo?.compressFile?.size }"
           >
-            {{ getFileSize(imgObj.fileInfo.originalFile?.size ?? 0) }} KB
+            {{ formatFileBytes(imgObj.fileInfo.originalFile?.size) }}
           </span>
           <span v-if="imgObj.fileInfo?.compressFile?.size" class="finial-file-size file-size-item">
-            {{ getFileSize(imgObj.fileInfo?.compressFile?.size) }} KB
+            {{ formatFileBytes(imgObj.fileInfo.compressFile?.size) }}
           </span>
         </div>
         <span class="last-modified">

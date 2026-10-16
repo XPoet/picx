@@ -679,7 +679,9 @@ interface UploadBatchResult {
 }
 ```
 
-设置快照创建时深复制已有字段；`Readonly` 只描述调用边界，不能用它代替隔离嵌套 `addPrefix` 的引用。命名沿用 `enableHash / enableTimestamp / addPrefix`，不新增 `namingMode`。T021 实施补充：`ready` 保留 `skippedProcessing` 布尔值以明确不支持格式的跳过；压缩仅采用体积小于输入的实际产物，否则保留压缩前文件。处理服务返回各阶段产物与最终 File，不写队列。调度者用 AbortController 终止编码 Worker；水印 / FileReader 完成后仍按 signal 与 generation 判定是否发布。
+设置快照创建时深复制已有字段；`Readonly` 只描述调用边界，不能用它代替隔离嵌套 `addPrefix` 的引用。命名沿用 `enableHash / enableTimestamp / addPrefix`，不新增 `namingMode`。T022 命名补充：未上传项可带内存 `namingOverrides`（重命名、哈希、前缀开关及文字），未覆写字段跟随共享偏好；时间戳模式优先且不叠加哈希 / 前缀，时间戳只在首次需要时分配。命名预览、实际文件名和文件级编辑共用纯函数，最终扩展名由实际采用 File 的 MIME / 名称共同确定。大小校验允许恰好等于常量上限，超过一字节拒绝，读取 Base64 前完成。
+
+T021 实施补充：`ready` 保留 `skippedProcessing` 布尔值以明确不支持格式的跳过；压缩仅采用体积小于输入的实际产物，否则保留压缩前文件。处理服务返回各阶段产物与最终 File，不写队列。调度者用 AbortController 终止编码 Worker；水印 / FileReader 完成后仍按 signal 与 generation 判定是否发布。
 
 MP4 或无需处理的图片直接 `ready`；图片按原文件 → 水印 → 压缩进入 `ready`。设置改变时未上传项递增 `generation`，从原文件重新处理；只有 uuid 仍存在且代次相同的结果可发布，已上传项不重算。处理失败必须重试或明确调整设置，不能上传旧产物。
 

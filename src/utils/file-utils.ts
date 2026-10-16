@@ -2,7 +2,6 @@ import type { ImageHandleResult } from '@/common/model'
 import { ElMessage } from 'element-plus'
 import { IMG_UPLOAD_MAX_SIZE, VIDEO_UPLOAD_MAX_SIZE } from '@/common/constant'
 import i18n from '@/plugins/vue/i18n'
-import { getUuid } from '@/utils/common-utils'
 import { imgFileToBase64 } from '@/utils/image-utils'
 
 /**
@@ -11,7 +10,7 @@ import { imgFileToBase64 } from '@/utils/image-utils'
  */
 export const getFilename = (filename: string) => {
   const splitIndex = filename.lastIndexOf('.')
-  return filename.substring(0, splitIndex).trim().replace(/\s+/g, '-')
+  return (splitIndex > 0 ? filename.slice(0, splitIndex) : filename).trim().replace(/\s+/g, '-')
 }
 
 /**
@@ -76,40 +75,36 @@ export const getFileSize = (size: number) => {
  * @param file
  * @param allowVideo 是否允许视频格式，默认只允许图片
  */
-export const gettingFilesHandle = (
-  file: File,
-  allowVideo: boolean = false,
-): Promise<ImageHandleResult | null> => {
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    if (!file) {
-      resolve(null)
-      return
-    }
+export function validateUploadFile(file: File, allowVideo = false): { ok: true } | { ok: false, reason: 'type' | 'size', maxSize: number } {
+  const video = allowVideo && isVideo(file.type)
+  const maxSize = video ? VIDEO_UPLOAD_MAX_SIZE : IMG_UPLOAD_MAX_SIZE
+  if (!isImage(file.type) && !video)
+    return { ok: false, reason: 'type', maxSize }
+  return file.size <= maxSize * 1024 * 1024 ? { ok: true } : { ok: false, reason: 'size', maxSize }
+}
 
-    const isVideoFile = allowVideo && isVideo(file.type)
+export async function gettingFilesHandle(file: File, allowVideo = false): Promise<ImageHandleResult | null> {
+  const validation = validateUploadFile(file, allowVideo)
+  if (!validation.ok) {
+    ElMessage.error(validation.reason === 'type'
+      ? i18n.global.t('upload_page.tip_9', { name: file.name })
+      : i18n.global.t('upload_page.tip_10', { name: file.name, size: validation.maxSize }))
+    return null
+  }
+  const base64 = await imgFileToBase64(file)
+  if (!base64) {
+    ElMessage.error(i18n.global.t('upload_workspace.read_failed', { name: file.name }))
+    return null
+  }
+  return { uuid: crypto.randomUUID(), base64, file }
+}
 
-    if (!isImage(file.type) && !isVideoFile) {
-      ElMessage.error(i18n.global.t('upload_page.tip_9', { name: file.name }))
-      resolve(null)
-      return
-    }
-
-    const base64 = (await imgFileToBase64(file)) || ''
-
-    const maxSize = isVideoFile ? VIDEO_UPLOAD_MAX_SIZE : IMG_UPLOAD_MAX_SIZE
-    if (getFileSize(base64.length) >= maxSize * 1024) {
-      ElMessage.error(
-        i18n.global.t('upload_page.tip_10', { name: file.name, size: maxSize }),
-      )
-      resolve(null)
-      return
-    }
-
-    resolve({
-      uuid: getUuid(),
-      base64,
-      file,
-    })
-  })
+/** 未知大小不伪装为 0 KB；零字节显式显示 0 B。 */
+export function formatFileBytes(bytes: number | null | undefined): string {
+  if (bytes === null || bytes === undefined || !Number.isFinite(bytes))
+    return '—'
+  if (bytes < 1024)
+    return `${bytes} B`
+  const unit = bytes < 1024 * 1024 ? 'KB' : 'MB'
+  return `${Number((bytes / (unit === 'KB' ? 1024 : 1024 * 1024)).toFixed(2))} ${unit}`
 }

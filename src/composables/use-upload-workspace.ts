@@ -3,7 +3,7 @@ import { computed, onScopeDispose, watch } from 'vue'
 import { ImageProcessingError, processImage } from '@/services/image-processing'
 import { pinia } from '@/stores'
 import { usePicxStore } from '@/stores/picx-store'
-import { getFileSuffix } from '@/utils/file-utils'
+import { applyUploadNaming } from '@/utils/upload-naming'
 
 export function useUploadWorkspace(process = processImage) {
   const store = usePicxStore(pinia)
@@ -69,8 +69,7 @@ export function useUploadWorkspace(process = processImage) {
           return
         Object.assign(item.fileInfo, { watermarkFile: result.watermarkFile, compressFile: result.compressFile })
         Object.assign(item.base64, { watermarkBase64: result.watermarkBase64, compressBase64: result.compressBase64 })
-        item.filename.suffix = getFileSuffix(result.finalFile.name)
-        item.filename.final = `${item.filename.name}${item.filename.isAddHash ? `.${item.filename.hash}` : ''}.${item.filename.suffix}`
+        applyUploadNaming(item, settings.value.imageName)
         runtime.value[item.uuid] = { ...base, phase: 'ready', finalBytes: result.finalFile.size, skippedProcessing: result.skippedProcessing }
       }).catch((error: unknown) => {
         if (active())
@@ -85,6 +84,10 @@ export function useUploadWorkspace(process = processImage) {
     }
   }
   const stop = watch([() => queue.value.map(item => item.uuid).join('|'), () => JSON.stringify([settings.value.watermark, settings.value.compress]), () => store.uploadTargetBusy], reconcile, { immediate: true })
+  const stopNaming = watch([() => queue.value.map(item => item.uuid).join('|'), () => JSON.stringify(settings.value.imageName), () => store.uploadTargetBusy], () => {
+    if (!store.uploadTargetBusy)
+      queue.value.forEach(item => applyUploadNaming(item, settings.value.imageName))
+  }, { immediate: true })
   function retryProcessing(uuid: string) {
     signatures.delete(uuid)
     reconcile()
@@ -92,6 +95,7 @@ export function useUploadWorkspace(process = processImage) {
   onScopeDispose(() => {
     disposed = true
     stop()
+    stopNaming()
     for (const uuid of jobs.keys()) {
       cancel(uuid)
       delete runtime.value[uuid]

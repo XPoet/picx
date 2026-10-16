@@ -430,6 +430,7 @@
     "accept": "支援圖片與 MP4 · 每個檔案最大 30 MB · 可多選",
     "processing_failed": "處理失敗，請重試或調整壓縮、浮水印設定。",
     "retry_processing": "重試處理",
-    "processing_skipped": "此格式略過浮水印與壓縮，使用原始檔案。"
+    "processing_skipped": "此格式略過浮水印與壓縮，使用原始檔案。",
+    "read_failed": "無法讀取 {name}，請重新選擇檔案。"
   }
 }

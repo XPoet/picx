@@ -430,6 +430,7 @@
     "accept": "Images and MP4 · Up to 30 MB per file · Multiple files supported",
     "processing_failed": "Processing failed. Retry or adjust compression and watermark settings.",
     "retry_processing": "Retry processing",
-    "processing_skipped": "Watermark and compression are skipped for this format; the original file is used."
+    "processing_skipped": "Watermark and compression are skipped for this format; the original file is used.",
+    "read_failed": "Could not read {name}. Choose the file again."
   }
 }

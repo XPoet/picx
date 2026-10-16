@@ -40,6 +40,9 @@ export interface UploadedImageModel {
 export interface UploadImageModel {
   uuid: string
 
+  /** 文件级覆写只在队列内存中保留。 */
+  namingOverrides?: Partial<Pick<UploadImageModel['filename'], 'isRename' | 'newName' | 'isAddHash' | 'isAddPrefix' | 'prefix'>>
+
   base64: {
     originalBase64: string
     watermarkBase64: string | null
