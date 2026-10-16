@@ -6,6 +6,7 @@ import type {
   UserConfigInfoModel,
   UserSettingsModel,
 } from '@/common/model'
+import type { ConnectedRepository, ConnectionState } from '@/common/model/github-connection'
 import type DeployStatusInfo from '@/stores/modules/deploy-status/types'
 import type { DirObject } from '@/stores/modules/dir-image-list/types'
 import type { GitHubAuthorizationInfo } from '@/stores/modules/github-authorize/types'
@@ -52,6 +53,8 @@ import {
 } from '@/utils'
 
 interface PicxState {
+  connection: ConnectionState
+  connectionAttemptId: number
   rootName: string
   githubAuthorizeModule: {
     authorizationInfo: GitHubAuthorizationInfo
@@ -317,6 +320,8 @@ function normalizeUserConfigInfo(userConfigInfo: UserConfigInfoModel): void {
 export const usePicxStore = defineStore('picx', {
   state: (): PicxState => ({
     rootName: 'root',
+    connection: { phase: 'disconnected' },
+    connectionAttemptId: 0,
     githubAuthorizeModule: {
       authorizationInfo: createAuthorizationInfo(),
     },
@@ -376,6 +381,66 @@ export const usePicxStore = defineStore('picx', {
   },
 
   actions: {
+    BEGIN_GITHUB_CONNECTION() {
+      this.connectionAttemptId += 1
+      this.connection = { phase: 'validating', attemptId: this.connectionAttemptId }
+      return this.connectionAttemptId
+    },
+
+    COMMIT_GITHUB_CONNECTION(attemptId: number, token: string, mode: 'token' | 'oauth', result: ConnectedRepository): boolean {
+      if (attemptId !== this.connectionAttemptId) {
+        return false
+      }
+      const previous = this.userConfigInfoModule.userConfigInfo
+      const config: UserConfigInfoModel = {
+        ...previous,
+        token,
+        logined: true,
+        id: String(result.account.id),
+        owner: result.account.login,
+        name: result.account.name ?? '',
+        email: result.account.email ?? '',
+        avatarUrl: result.account.avatar_url,
+        repo: result.repository.repo,
+        branch: result.repository.branch,
+        repoPrivate: result.visibility === 'private',
+        ...(result.reuseDirectory ? {} : { dirMode: DirModeEnum.rootDir, selectedDir: '/', selectedDirList: [], dirList: [], viewDir: '' }),
+      }
+      const authorization: GitHubAuthorizationInfo = {
+        ...this.githubAuthorizeModule.authorizationInfo,
+        code: '',
+        codeCreateTime: 0,
+        authorizing: false,
+        isAutoAuthorize: mode === 'oauth',
+        ...(mode === 'oauth'
+          ? { authorized: true, installed: true, token, tokenCreateTime: Date.now() }
+          : { authorized: false, installed: null, token: '', tokenCreateTime: 0, manualToken: token }),
+      }
+      const oldConfig = localStorage.getItem(LS_CONFIG)
+      const oldAuthorization = localStorage.getItem(LS_AUTHORIZATION)
+      try {
+        localStorage.setItem(LS_CONFIG, JSON.stringify(config))
+        localStorage.setItem(LS_AUTHORIZATION, JSON.stringify(authorization))
+      }
+      catch {
+        // 尽力恢复原快照；即使存储完全不可用也不发布候选内存状态。
+        try {
+          if (oldConfig === null)
+            localStorage.removeItem(LS_CONFIG)
+          else localStorage.setItem(LS_CONFIG, oldConfig)
+          if (oldAuthorization === null)
+            localStorage.removeItem(LS_AUTHORIZATION)
+          else localStorage.setItem(LS_AUTHORIZATION, oldAuthorization)
+        }
+        catch {}
+        this.connection = { phase: 'failed', attemptId, error: { kind: 'storage-unavailable', retryable: true } }
+        return false
+      }
+      Object.assign(previous, config)
+      Object.assign(this.githubAuthorizeModule.authorizationInfo, authorization)
+      this.connection = { phase: 'connected', attemptId, repository: result.repository, visibility: result.visibility, verifiedAt: Date.now() }
+      return true
+    },
     SET_GITHUB_AUTHORIZATION_INFO(authorizationInfo: Partial<GitHubAuthorizationInfo>) {
       assignKnownProperties(this.githubAuthorizeModule.authorizationInfo, authorizationInfo)
       this.GITHUB_AUTHORIZATION_INFO_PERSIST()
@@ -858,6 +923,9 @@ export const usePicxStore = defineStore('picx', {
     },
 
     LOGOUT() {
+      this.connectionAttemptId += 1
+      this.connection = { phase: 'disconnected' }
+      cleanObject(this.githubAuthorizeModule.authorizationInfo)
       this.UPLOAD_AREA_ACTIVE_LOGOUT()
       this.DIR_IMAGE_LOGOUT()
       this.USER_CONFIG_INFO_LOGOUT()

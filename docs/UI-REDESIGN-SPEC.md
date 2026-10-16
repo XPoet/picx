@@ -918,3 +918,5 @@ flowchart TD
   Content --> API
   API --> Request[唯一 Axios 客户端：可信 origin 与脱敏错误]
 ```
+
+T013 连接结果补充：本地提交失败使用 `ConnectionFailure.kind = 'storage-unavailable'`，属于可重试失败。连接服务返回无凭据的账户与仓库信息；composable 仅在当前 attempt 仍有效时，将已验证凭据写入原配置 / 认证两个已有键。保存先写候选值，再一次发布内存值；写入失败恢复旧持久化快照。GitHub App 安装状态通过 `/user/installations` 查询，不根据 403 文案推测未安装；空安装列表才显示安装入口。仓库仅在确认默认仓库 404 时创建，422 并发创建冲突后重新读取；已有指定仓库、分支和目录不重置。空分支列表才允许初始化 README，部分失败可重新进入并复用已创建仓库。

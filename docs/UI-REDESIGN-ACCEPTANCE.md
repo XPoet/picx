@@ -262,3 +262,13 @@ Chrome、无 SW 独立上下文、无凭据 fixture：[1440 简中暗色账户](
 **验证**：`pnpm verify` 退出 0：lint、stylelint、typecheck、4 文件 / 27 单测、build 通过。新增 12 项请求测试使用内存 Axios adapter，无网络请求，验证新旧兼容、目录空 / 失败、鉴权优先与外域隔离。命令沿用 `/private/tmp/picx-ui-p1-bin/pnpm` 的 pnpm 11.18.0、Node 24.21.0 与单次 `verifyDepsBeforeRun=false`；日志 `/private/tmp/picx-p2-t012-verify.log`。`git diff --check` 通过。未改用户界面布局，无新增截图要求。
 
 **回滚**：回滚本任务提交可恢复旧请求与管理刷新调用；存储格式、API 远端协议未变。
+
+### T013 提取 GitHub 连接与仓库初始化服务
+
+**实施提交**：`feat(auth): extract reentrant GitHub connection and initialization`（本节所属提交）。
+
+新增 GitHub 连接 API、服务和 composable，服务不导入 Router / Store；唯一内存连接状态由 Pinia 共享，旧配置页一键配置改调同一服务。显式验证账户、实际仓库与分支后才就绪；已有分支和四模式目录保留，只有确认默认仓库 404 才创建，创建 422 后重新读取，空分支列表才初始化 README。OAuth 安装列表为空与权限错误区分。重复入口共用进行中的尝试，登出递增代次并清理内存认证，过期响应不能继续写仓库或提交。验证失败保留旧配置；保存失败保留旧内存与存储快照，不新建凭据键。
+
+**验证**：`pnpm verify` 退出 0：lint、stylelint、typecheck、5 文件 / 35 单测、build 通过；日志 `/private/tmp/picx-p2-t013-verify.log`。新增 8 项服务测试覆盖首次初始化、已有仓库 / 分支 / 目录、部分失败重试、创建冲突、App 未安装、权限错误、重复触发、登出失效、验证与存储失败；API 均为 mock，无真实仓库创建或初始化。`git diff --check` 通过。
+
+**回滚**：回滚本任务提交恢复旧配置页编排；沿用原字段与存储键，旧页面文件完整保留。登录页呈现与路由切换分别由 T014、T015 完成。
