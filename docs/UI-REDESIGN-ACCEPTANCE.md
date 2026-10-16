@@ -294,3 +294,13 @@ Chrome、无 SW 独立上下文、无凭据 fixture：[1440 简中暗色账户](
 **验证**：`pnpm verify` 退出 0，lint、stylelint、typecheck、6 文件 / 42 单测、build 通过；Vitest 增加已安装 Vue 插件以执行真实组件测试，无新依赖。新增 7 项组件测试验证错误分支、可见性证据、仓库匹配与事件。构建后连接 / 上下文 E2E 9 / 10 通过，长路径旧标签修复后 stylelint、build 与上下文两项复验通过；日志 `/private/tmp/picx-p2-t016-verify.log`、`/private/tmp/picx-p2-t016-context-recheck.log`。Chrome、简中亮色：[1440](UI/evidence/p2/t016-context-1440.png)、[375 长路径](UI/evidence/p2/t016-context-long-375.png)，无页面溢出；fixture Token 为空，显示待验证，无虚构连接或公开提示。`components.d.ts` 由构建生成，diff 检查通过。
 
 **回滚**：回滚组件、上传页接入、图标、翻译与测试提交，不改变仓库或目录存储。
+
+### T017 实现路径规则与目录草稿事务
+
+**实施提交**：`feat(upload): add validated directory drafts and atomic persistence`（本节所属提交）。
+
+路径纯函数统一四模式草稿、展示 / 存储 / API 路径、日期解析与批次目标快照。新路径只规范化首尾空白及展示斜杠，保留内部字符；空分段、点分段、反斜杠、控制字符与超过五层显式失败。Store 不再替换字符或截断目录；新增 action 先校验并持久化候选值，再一次发布目录三字段，存储失败不修改旧配置。composable 的取消、关闭、保存失败均保留正确事务边界，保存不改 viewDir。批次开始解析当天日期并锁定目标，上传中阻止保存和重置，单文件 API 路径逐段编码。管理页初始化只调整浏览目录，不再重置上传目录。
+
+**验证**：`pnpm verify` 退出 0，lint、stylelint、typecheck、7 文件 / 62 单测、build 通过；新增 20 项测试覆盖根 / 首尾空白 / 内部字符 / 分隔符 / 点分段 / 反斜杠 / 五六层边界 / API 解码一致 / 午夜与固定快照 / 取消 / 发布顺序 / 存储失败重试 / 上传锁 / viewDir。测试发现锁定时应优先报告忙碌，已调整保存顺序。日志 `/private/tmp/picx-p2-t017-verify.log`，diff 检查通过。Node 24.21.0、pnpm 11.18.0 已重新读取确认。弹窗用户流程与双入口由 T019 验收，无真实上传或写仓库。
+
+**回滚**：回滚本任务代码与记录，恢复旧保存与上传目标处理；原目录字段和存储键兼容，无持久化新字段。

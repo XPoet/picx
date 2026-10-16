@@ -71,14 +71,13 @@ async function initDirImageList() {
       (dirMode === DirModeEnum.newDir || dirMode === DirModeEnum.dateDir)
       && !getDirContent(selectedDir, dirObject)
     ) {
-      userConfigInfo.selectedDir = '/'
-      userConfigInfo.dirMode = DirModeEnum.rootDir
+      userConfigInfo.viewDir = '/'
     }
 
-    if (userConfigInfo.selectedDir) {
+    if (!userConfigInfo.viewDir && userConfigInfo.selectedDir) {
       userConfigInfo.viewDir = userConfigInfo.selectedDir
     }
-    else {
+    else if (!userConfigInfo.viewDir) {
       userConfigInfo.viewDir = '/'
     }
   }

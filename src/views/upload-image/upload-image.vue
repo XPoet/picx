@@ -1,19 +1,22 @@
 <script lang="ts" setup>
 import type { Ref } from 'vue'
-import type { UploadedImageModel, UploadImageModel } from '@/common/model'
+import type { UploadedImageModel, UploadImageModel, UserConfigInfoModel } from '@/common/model'
 import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
-import { UploadStatusEnum } from '@/common/model'
+import { DirModeEnum, UploadStatusEnum } from '@/common/model'
 import RepositoryContextBar from '@/components/repository-context-bar/repository-context-bar.vue'
 import { useGithubConnection } from '@/composables/use-github-connection'
 import router from '@/router'
-import { store } from '@/stores'
+import { pinia, store } from '@/stores'
+import { usePicxStore } from '@/stores/picx-store'
 import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
+import { directoryDraft, resolveUploadTarget, validateDirectoryDraft } from '@/utils/directory-utils'
 import { uploadImagesToGitHub, uploadImageToGitHub } from '@/utils/upload-utils'
 import SelectedInfoBar from '@/views/upload-image/components/dir-info-bar/dir-info-bar.vue'
 import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
 import { generateUploadImageObject } from './upload-image.util'
 
 const instance = getCurrentInstance()
+const picxStore = usePicxStore(pinia)
 const { connection, restore } = useGithubConnection()
 
 const gettingImagesRef: Ref = ref<null | HTMLElement>(null)
@@ -44,10 +47,10 @@ const resetGettingImages = () => {
 
 // 上传图片的具体操作
 
-const doUploadImages = async (imgList: UploadImageModel[]) => {
+const doUploadImages = async (imgList: UploadImageModel[], targetConfig: UserConfigInfoModel) => {
   // 单张图片
   if (imgList.length === 1) {
-    if (await uploadImageToGitHub(userConfigInfo, imgList[0])) {
+    if (await uploadImageToGitHub(targetConfig, imgList[0])) {
       return UploadStatusEnum.uploaded
     }
     return UploadStatusEnum.uploadFail
@@ -55,7 +58,7 @@ const doUploadImages = async (imgList: UploadImageModel[]) => {
 
   // 多张图片
   if (imgList.length > 1) {
-    if (await uploadImagesToGitHub(userConfigInfo, imgList)) {
+    if (await uploadImagesToGitHub(targetConfig, imgList)) {
       return UploadStatusEnum.allUploaded
     }
     return UploadStatusEnum.uploadFail
@@ -73,12 +76,14 @@ const afterUploadSuccess = async (uploadedImg: UploadedImageModel[], isBatch: bo
     copyImageLink(uploadedImg[0], true)
   }
   await store.dispatch('SET_USER_CONFIG_INFO', {
-    viewDir: userConfigInfo.selectedDir,
+    viewDir: uploadedImg[0]?.dir ?? userConfigInfo.viewDir,
   })
 }
 
 // 上传
 const uploadImage = async () => {
+  if (uploading.value || picxStore.uploadTargetBusy)
+    return
   const { token, repo, selectedDir } = userConfigInfo
 
   if (!token) {
@@ -106,9 +111,25 @@ const uploadImage = async () => {
     return
   }
 
+  if (userConfigInfo.dirMode === DirModeEnum.dateDir) {
+    const resolved = validateDirectoryDraft(directoryDraft(userConfigInfo))
+    if (!resolved.ok || !picxStore.SAVE_UPLOAD_DIRECTORY(resolved.value).ok) {
+      ElMessage.error({ message: instance?.proxy?.$t('connection.storage-unavailable') })
+      return
+    }
+  }
+  const target = resolveUploadTarget(userConfigInfo)
+  const targetConfig = { ...userConfigInfo, selectedDir: target.dir }
   uploading.value = true
-  const uploadRes: UploadStatusEnum = (await doUploadImages(notYetUploadList)) as UploadStatusEnum
-  uploading.value = false
+  picxStore.uploadTargetBusy = true
+  let uploadRes: UploadStatusEnum | undefined
+  try {
+    uploadRes = await doUploadImages(notYetUploadList, targetConfig)
+  }
+  finally {
+    uploading.value = false
+    picxStore.uploadTargetBusy = false
+  }
   const uploadedImg = notYetUploadList
     .filter(v => v.uploadStatus.progress === 100)
     .map((x: UploadImageModel) => x.uploadedImg!)
@@ -134,6 +155,8 @@ const uploadImage = async () => {
 
 // 重置
 const resetUploadInfo = () => {
+  if (uploading.value || picxStore.uploadTargetBusy)
+    return
   uploading.value = false
   isCanDeploy.value = false
   store.dispatch('UPLOAD_IMG_LIST_RESET')

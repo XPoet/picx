@@ -12,13 +12,13 @@ import type { DirObject } from '@/stores/modules/dir-image-list/types'
 import type { GitHubAuthorizationInfo } from '@/stores/modules/github-authorize/types'
 import type UploadAreaStateTypes from '@/stores/modules/upload-area/types'
 import type { GlobalSettingsModel } from '@/stores/modules/user-settings/types'
+import type { DirectorySaveResult, UploadDirectoryValue } from '@/utils/directory-utils'
 import { defineStore } from 'pinia'
 import {
   LS_AUTHORIZATION,
   LS_CONFIG,
   LS_MANAGEMENT,
   LS_SETTINGS,
-  NEW_DIR_COUNT_MAX,
   SS_GLOBAL_SETTINGS,
 } from '@/common/constant'
 import {
@@ -51,10 +51,12 @@ import {
   setLocal,
   setSession,
 } from '@/utils'
+import { directoryDraft, validateDirectoryDraft } from '@/utils/directory-utils'
 
 interface PicxState {
   connection: ConnectionState
   connectionAttemptId: number
+  uploadTargetBusy: boolean
   rootName: string
   githubAuthorizeModule: {
     authorizationInfo: GitHubAuthorizationInfo
@@ -284,35 +286,6 @@ function createDirectoryTree(): DirObject {
 }
 
 /**
- * 规范化新建目录和分支名称。
- */
-function normalizeUserConfigInfo(userConfigInfo: UserConfigInfoModel): void {
-  const { selectedDir, branch, dirMode } = userConfigInfo
-
-  if (dirMode === DirModeEnum.newDir) {
-    const specialCharacters = [' ', '.', '、', ',', '，', '!', '？', '?']
-    let slashCount = 0
-    let normalizedDirectory = ''
-
-    for (const character of selectedDir) {
-      const normalizedCharacter = specialCharacters.includes(character) ? '-' : character
-
-      if (normalizedCharacter === '/') {
-        slashCount += 1
-      }
-      if (slashCount >= NEW_DIR_COUNT_MAX) {
-        break
-      }
-      normalizedDirectory += normalizedCharacter
-    }
-
-    userConfigInfo.selectedDir = normalizedDirectory
-  }
-
-  userConfigInfo.branch = branch.replace(/\s+/g, '-')
-}
-
-/**
  * PicX 的 Pinia 兼容 Store。
  *
  * 第一阶段保留旧 Vuex 的模块状态形状和 action 名称，页面无需同步重写。
@@ -322,6 +295,7 @@ export const usePicxStore = defineStore('picx', {
     rootName: 'root',
     connection: { phase: 'disconnected' },
     connectionAttemptId: 0,
+    uploadTargetBusy: false,
     githubAuthorizeModule: {
       authorizationInfo: createAuthorizationInfo(),
     },
@@ -381,6 +355,25 @@ export const usePicxStore = defineStore('picx', {
   },
 
   actions: {
+    SAVE_UPLOAD_DIRECTORY(value: UploadDirectoryValue): DirectorySaveResult {
+      if (this.uploadTargetBusy || this.getUploadImageList.some(image => image.uploadStatus.uploading)) {
+        return { ok: false, reason: 'upload-busy' }
+      }
+      const validated = validateDirectoryDraft(directoryDraft(value))
+      if (!validated.ok || validated.value.selectedDir !== value.selectedDir
+        || JSON.stringify(validated.value.selectedDirList) !== JSON.stringify(value.selectedDirList)) {
+        return { ok: false, reason: 'invalid-path' }
+      }
+      const candidate = { ...this.userConfigInfoModule.userConfigInfo, ...value, selectedDirList: [...value.selectedDirList] }
+      try {
+        localStorage.setItem(LS_CONFIG, JSON.stringify(candidate))
+      }
+      catch {
+        return { ok: false, reason: 'storage-unavailable' }
+      }
+      Object.assign(this.userConfigInfoModule.userConfigInfo, value, { selectedDirList: [...value.selectedDirList] })
+      return { ok: true, value: { ...value, selectedDirList: [...value.selectedDirList] } }
+    },
     BEGIN_GITHUB_CONNECTION() {
       this.connectionAttemptId += 1
       this.connection = { phase: 'validating', attemptId: this.connectionAttemptId }
@@ -479,7 +472,6 @@ export const usePicxStore = defineStore('picx', {
     },
 
     USER_CONFIG_INFO_PERSIST() {
-      normalizeUserConfigInfo(this.userConfigInfoModule.userConfigInfo)
       localStorage.setItem(LS_CONFIG, JSON.stringify(this.userConfigInfoModule.userConfigInfo))
     },
 
@@ -925,6 +917,7 @@ export const usePicxStore = defineStore('picx', {
     LOGOUT() {
       this.connectionAttemptId += 1
       this.connection = { phase: 'disconnected' }
+      this.uploadTargetBusy = false
       cleanObject(this.githubAuthorizeModule.authorizationInfo)
       this.UPLOAD_AREA_ACTIVE_LOGOUT()
       this.DIR_IMAGE_LOGOUT()

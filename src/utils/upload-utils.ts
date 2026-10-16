@@ -82,7 +82,7 @@ export const uploadUrlHandle = (config: UserConfigInfoModel, imgObj: UploadImage
     path = imgObj.reUploadInfo.path
   }
 
-  return `/repos/${owner}/${repo}/contents/${path}`
+  return `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${path.split('/').map(encodeURIComponent).join('/')}`
 }
 
 /**
