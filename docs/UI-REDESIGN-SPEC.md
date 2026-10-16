@@ -602,7 +602,7 @@ interface ControlledDirectorySelectorProps {
 
 type DirectorySelectorEmits = {
   'update:modelValue': [segments: string[]]
-  'request-children': [parentSegments: string[]]
+  'requestChildren': [parentSegments: string[]]
   'retry': [parentSegments: string[]]
 }
 
@@ -922,3 +922,7 @@ flowchart TD
 T013 连接结果补充：本地提交失败使用 `ConnectionFailure.kind = 'storage-unavailable'`，属于可重试失败。连接服务返回无凭据的账户与仓库信息；composable 仅在当前 attempt 仍有效时，将已验证凭据写入原配置 / 认证两个已有键。保存先写候选值，再一次发布内存值；写入失败恢复旧持久化快照。GitHub App 安装状态通过 `/user/installations` 查询，不根据 403 文案推测未安装；空安装列表才显示安装入口。仓库仅在确认默认仓库 404 时创建，422 并发创建冲突后重新读取；已有指定仓库、分支和目录不重置。空分支列表才允许初始化 README，部分失败可重新进入并复用已创建仓库。
 
 T017 路径规范化补充：新草稿只修剪整段输入首尾空白、移除展示用的单个首尾 `/`，内部字符保持原样；中间空分段、点分段、反斜杠、控制字符和第 6 层均报错。仓库选择以分段为准，根目录分段为空，日期目录分段为当天日期。保存 action 再验证值与分段一致后写候选配置，成功才发布；去掉旧持久化时的字符替换 / 截断。新增上传锁只在内存，批次开始先解析日期并固定目标，单文件 Contents URL 对各路径分段编码，Git tree 的 path 保留原始字符。
+
+T018 查询状态补充：`DirectoryQueryState` 的 loading / failed 分支可携带只读 `items`（上次成功条目），用于刷新与失败时保留列表；loaded 空数组仍明确表示没有子目录。查询 composable 以会话、请求 ID 和仓库身份三重核对响应。受控选择器本体不导入 Store / API；迁移期旧路径隔离到 `legacy-repo-dir-cascader.vue`，由 `controlled=false` 显式调用。受控实例只发出草稿与加载事件，不触发旧持久化。
+
+T018 事件命名遵守现有 Vue lint：TypeScript emit 名为 `requestChildren`，模板监听使用 `@request-children`；两者由 Vue 正常映射，参数与副作用边界不变。

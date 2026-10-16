@@ -85,3 +85,5 @@ export function resolveUploadTarget(config: RepositoryIdentity & UploadDirectory
     resolvedAt: now.getTime(),
   })
 }
+
+export const directoryQueryKey = (segments: readonly string[]) => segments.join('/') || '/'

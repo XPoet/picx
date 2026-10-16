@@ -382,5 +382,17 @@
     "visibility_public": "此儲存庫已確認為公開儲存庫，上傳的檔案可被公開存取。",
     "visibility_private": "此儲存庫為私人儲存庫，檔案存取取決於儲存庫權限與連結來源。",
     "visibility_unknown": "尚未確認儲存庫可見性，請先驗證連線。"
+  },
+  "directory_selector": {
+    "label": "選擇儲存庫目錄",
+    "no_selection": "尚未選擇目錄",
+    "refresh": "重新整理目錄",
+    "breadcrumbs": "目前展開的目錄層級",
+    "level": "第 {level} 層",
+    "loading": "正在載入目錄…",
+    "retry": "重試載入",
+    "empty": "此目錄沒有子目錄，可選擇上層目錄或新增目錄。",
+    "expand": "展開目錄 {name}",
+    "hint": "按目錄名稱選擇，按箭頭展開下層；最多 {max} 層。"
   }
 }

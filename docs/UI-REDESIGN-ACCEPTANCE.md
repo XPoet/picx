@@ -304,3 +304,15 @@ Chrome、无 SW 独立上下文、无凭据 fixture：[1440 简中暗色账户](
 **验证**：`pnpm verify` 退出 0，lint、stylelint、typecheck、7 文件 / 62 单测、build 通过；新增 20 项测试覆盖根 / 首尾空白 / 内部字符 / 分隔符 / 点分段 / 反斜杠 / 五六层边界 / API 解码一致 / 午夜与固定快照 / 取消 / 发布顺序 / 存储失败重试 / 上传锁 / viewDir。测试发现锁定时应优先报告忙碌，已调整保存顺序。日志 `/private/tmp/picx-p2-t017-verify.log`，diff 检查通过。Node 24.21.0、pnpm 11.18.0 已重新读取确认。弹窗用户流程与双入口由 T019 验收，无真实上传或写仓库。
 
 **回滚**：回滚本任务代码与记录，恢复旧保存与上传目标处理；原目录字段和存储键兼容，无持久化新字段。
+
+### T018 将仓库目录选择器改为受控输入
+
+**实施提交**：`feat(upload): add controlled repository directory browsing`（本节所属提交）。
+
+受控选择器只读 modelValue / loads，以 typed emits 提交选择、请求下级与重试；旧即时保存逻辑隔离到按需加载的 Legacy 组件，受控实例不加载旧 Store 逻辑。选择父级和展开下级分为两个 44px 按钮，最大五层；桌面级联列、手机单层列表与面包屑共用数据。loading、空目录、错误与重试独立展示，刷新失败保留草稿和已有条目。目录查询 composable 按会话、请求 ID、仓库身份过滤迟到结果，切换仓库同步作废旧查询。
+
+**验证**：`pnpm verify` 退出 0，lint、stylelint、typecheck、8 文件 / 69 单测、build 通过；新增 7 项组件 / 查询测试覆盖父级选择、逐级加载、五层限制、刷新与失败保留、会话失效、防重、乱序与切换仓库。日志 `/private/tmp/picx-p2-t018-verify.log`，diff 检查通过。
+
+另通过 `tests/fixtures/directory-selector.html` 在 Vite dev（4174）和独立临时 Chrome 检查实际组件：[1440 桌面级联](UI/evidence/p2/t018-selector-desktop.png)、[375 单层列表](UI/evidence/p2/t018-selector-375.png)。键盘 Enter 可选择与返回根层，展开不改变选择，空目录不伪装请求失败；375 无横向溢出，localStorage 写入数为零，外域请求数为零。该 fixture 不进入生产路由，完整弹窗 preview E2E 归 T019。Pencil 的 `Bi2Sk` / `SLz4l` 已只读核对，未修改画稿。
+
+**回滚**：回滚本任务可恢复原选择器；旧配置调用方式、字段与文件保留。

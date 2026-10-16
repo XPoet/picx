@@ -77,6 +77,7 @@ declare module 'vue' {
     IEpVideoPlay: typeof import('~icons/ep/video-play')['default']
     ImageLinkRuleConfig: typeof import('./components/image-link-rule-config/image-link-rule-config.vue')['default']
     ImgProcessStateCard: typeof import('./components/tools/img-process-state-card/img-process-state-card.vue')['default']
+    LegacyRepoDirCascader: typeof import('./components/repo-dir-cascader/legacy-repo-dir-cascader.vue')['default']
     NavContent: typeof import('./components/nav-content/nav-content.vue')['default']
     PicxIcon: typeof import('./components/picx-icon/picx-icon.vue')['default']
     QuickActions: typeof import('./components/quick-actions/quick-actions.vue')['default']

@@ -22,3 +22,5 @@ flowchart LR
 运行：先 `pnpm build`，再 `pnpm test:e2e`；单测 `pnpm test`。本机 pnpm 预检 / Chrome 沙箱差异及单次兼容方式见 [P0 验收记录](../../docs/UI-REDESIGN-ACCEPTANCE.md)。这些 fixture 不提供真实认证、远端写入或 Pages 可用性的验收证据。
 
 P1 的 open 参数支持三种语言与三种主题。fixture 使用仅包含固定标记的 window.name 避免刷新重新注入账户，因此登出 / 重载可以验证应用实际清理结果；不会把 Token 或账户写入此标记。登出后默认地区引导的两个精确 GET 目标返回文档保留 IP `203.0.113.1` / `CN`，不发出真实地区查询。安装测试只派发带模拟 prompt 的事件，不执行系统安装。
+
+`directory-selector.html` 是仅在 Vite dev 下使用的受控选择器视觉 fixture，不属于生产路由。访问 `/images-hosting/tests/fixtures/directory-selector.html`，数据完全在内存，选择和展开分开，不调用 GitHub 或存储。用于 T018 的桌面 / 375px 与键盘检查。

@@ -382,5 +382,17 @@
     "visibility_public": "此仓库已确认为公开仓库，上传的文件可被公开访问。",
     "visibility_private": "此仓库为私有仓库，文件访问取决于仓库权限与链接来源。",
     "visibility_unknown": "尚未确认仓库可见性，请先验证连接。"
+  },
+  "directory_selector": {
+    "label": "选择仓库目录",
+    "no_selection": "尚未选择目录",
+    "refresh": "刷新目录",
+    "breadcrumbs": "当前展开的目录层级",
+    "level": "第 {level} 层",
+    "loading": "正在加载目录…",
+    "retry": "重试加载",
+    "empty": "此目录没有子目录，可选择上级目录或新建目录。",
+    "expand": "展开目录 {name}",
+    "hint": "单击目录名称选择，点击箭头展开下级；最多 {max} 层。"
   }
 }
