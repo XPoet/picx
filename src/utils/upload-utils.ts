@@ -1,207 +1,251 @@
-import type { UploadedImageModel, UploadImageModel, UserConfigInfoModel } from '@/common/model'
+import type { UploadImageModel, UserConfigInfoModel } from '@/common/model'
+import type { UploadBatchResult, UploadItemFailure, UploadItemSuccess, UploadTargetSnapshot } from '@/common/model/upload'
+import type { ApiFailure } from '@/utils/request/types'
 import {
-  createCommit,
-  createRef,
-  createTree,
-  getBranchInfo,
-  getFileBlob,
-  uploadSingleImage,
-} from '@/common/api'
-import { PICX_UPLOAD_IMG_DESC } from '@/common/constant'
-import i18n from '@/plugins/vue/i18n'
-import { store } from '@/stores'
-import { isVideo, purgeImageRuntimeCache } from '@/utils'
+  uploadBlobResult,
+  uploadCommitResult,
+  uploadContentResult,
+  uploadContentsResult,
+  uploadHeadResult,
+  uploadRefResult,
+  uploadTreeResult,
+} from '@/common/api/upload-results'
+import { pinia } from '@/stores'
+import { usePicxStore } from '@/stores/picx-store'
+import { resolveUploadTarget } from '@/utils/directory-utils'
+import { isVideo } from '@/utils/file-utils'
+import { purgeImageRuntimeCache } from '@/utils/image-cache-utils'
+import { finalUploadFile } from '@/utils/upload-naming'
 
-/**
- * 图片上传成功之后的处理
- * @param res
- * @param res.name 文件名。
- * @param res.sha Git blob SHA。
- * @param res.path 仓库内路径。
- * @param res.size 文件大小。
- * @param img
- * @param userConfigInfo
- */
-const uploadedHandle = (
-  res: { name: string, sha: string, path: string, size: number },
-  img: UploadImageModel,
-  userConfigInfo: UserConfigInfoModel,
-) => {
-  let dir = userConfigInfo.selectedDir
+interface FrozenUpload {
+  item: UploadImageModel
+  name: string
+  path: string
+  content: string
+  bytes: number | undefined
+  target: UploadTargetSnapshot
+}
+interface UnconfirmedUpload { path: string, content: string, target: UploadTargetSnapshot, sha?: string }
+const inFlight = new WeakSet<UploadImageModel>()
+const unconfirmed = new WeakMap<UploadImageModel, UnconfirmedUpload>()
+const invalid: ApiFailure = { kind: 'invalid-response', retryable: true }
+const conflict: ApiFailure = { kind: 'conflict', retryable: false }
+const stale: ApiFailure = { kind: 'service', retryable: false }
+const itemPath = (directory: string, name: string) => directory === '/' ? name : `${directory}/${name}`
 
-  if (img?.reUploadInfo?.isReUpload) {
-    dir = img.reUploadInfo.dir
-  }
-
-  // 上传状态处理
-  img.uploadStatus.progress = 100
-  img.uploadStatus.uploading = false
-
-  const uploadedImg: UploadedImageModel = {
-    checked: false,
-    type: isVideo(img.filename.final) ? 'video' : 'image',
-    uuid: img.uuid,
-    dir,
-    name: res.name,
-    sha: res.sha,
-    path: res.path,
-    deleting: false,
-    size: res.size,
-    deployed: true,
-    uploadTime: Date.now(),
-  }
-
-  img.uploadedImg = uploadedImg
-
-  // dirImageList 增加目录
-  store.dispatch('DIR_IMAGE_LIST_ADD_DIR', dir)
-
-  // dirImageList 增加图片
-  store.dispatch('DIR_IMAGE_LIST_ADD_IMAGE', uploadedImg)
-
-  // 同路径覆盖上传时清理运行时缓存里的旧图（新上传为空操作）
-  purgeImageRuntimeCache([res.path])
+/** 兼容管理重命名入口，路径严格从其独立的重传目标获取。 */
+export function uploadUrlHandle(config: UserConfigInfoModel, image: UploadImageModel): string {
+  const path = image.reUploadInfo?.isReUpload ? image.reUploadInfo.path : itemPath(config.selectedDir, image.filename.final)
+  return `/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repo)}/contents/${path.split('/').map(encodeURIComponent).join('/')}`
+}
+async function blobSha(base64: string) {
+  const binary = atob(base64)
+  const prefix = new TextEncoder().encode(`blob ${binary.length}\0`)
+  const bytes = new Uint8Array(prefix.length + binary.length)
+  bytes.set(prefix)
+  for (let index = 0; index < binary.length; index++)
+    bytes[prefix.length + index] = binary.charCodeAt(index)
+  const digest = await crypto.subtle.digest('SHA-1', bytes)
+  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('')
+}
+export interface UploadExecutionOptions {
+  now?: Date
+  isCurrent?: () => boolean
+  onStage?: (uuid: string, stage: UploadItemFailure['stage']) => void
 }
 
-/**
- * 上传图片的 URL 处理
- * @param config
- * @param imgObj
- */
-export const uploadUrlHandle = (config: UserConfigInfoModel, imgObj: UploadImageModel): string => {
-  const { owner, repo, selectedDir: dir } = config
-  const filename: string = imgObj.filename.final
-
-  let path = filename
-
-  if (dir !== '/') {
-    path = `${dir}/${filename}`
-  }
-
-  if (imgObj?.reUploadInfo?.isReUpload) {
-    path = imgObj.reUploadInfo.path
-  }
-
-  return `/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${path.split('/').map(encodeURIComponent).join('/')}`
-}
-
-/**
- * 上传多张图片到 GitHub 仓库
- * @param userConfigInfo
- * @param imgs
- */
-export async function uploadImagesToGitHub(
-  userConfigInfo: UserConfigInfoModel,
-  imgs: UploadImageModel[],
-): Promise<boolean> {
-  const { branch, repo, selectedDir, owner } = userConfigInfo
-
-  const blobs = []
-
-  for (const img of imgs) {
-    img.uploadStatus.uploading = true
-    const tempBase64 = (
-      img.base64.compressBase64
-      || img.base64.watermarkBase64
-      || img.base64.originalBase64
-    ).split(',')[1]
-    // 上传图片文件，为仓库创建 blobs
-    const blobRes = await getFileBlob(tempBase64, owner, repo)
-    if (blobRes) {
-      blobs.push({ img, ...blobRes })
-    }
-    else {
-      img.uploadStatus.uploading = false
-      ElMessage.error(i18n.global.t('upload_page.tip_11', { name: img.filename.final }))
-    }
-  }
-
-  // 获取 head，用于获取当前分支信息（根目录的 tree sha 以及 head commit sha）
-  const branchRes: any = await getBranchInfo(owner, repo, branch)
-  if (!branchRes) {
-    return Promise.resolve(false)
-  }
-
-  const finalPath = selectedDir === '/' ? '' : `${selectedDir}/`
-
-  // 创建 tree
-  const treeRes = await createTree(
-    owner,
-    repo,
-    blobs.map((x: any) => ({
-      sha: x.sha,
-      path: `${finalPath}${x.img.filename.final}`,
-    })),
-    branchRes,
-  )
-  if (!treeRes) {
-    return Promise.resolve(false)
-  }
-
-  // 创建 commit 节点
-  const commitRes: any = await createCommit(owner, repo, treeRes, branchRes)
-  if (!commitRes) {
-    return Promise.resolve(false)
-  }
-
-  // 将当前分支 ref 指向新创建的 commit
-  const refRes = await createRef(owner, repo, branch, commitRes.sha)
-  if (!refRes) {
-    return Promise.resolve(false)
-  }
-
-  blobs.forEach((blob: any) => {
-    const name = blob.img.filename.final
-    uploadedHandle(
-      { name, sha: blob.sha, path: `${finalPath}${name}`, size: 0 },
-      blob.img,
-      userConfigInfo,
-    )
+/** 每个尝试项只出现于一个结果集；提交确认前不发布成功与缓存。 */
+export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: UploadImageModel[], options: UploadExecutionOptions = {}): Promise<UploadBatchResult> {
+  const baseTarget = resolveUploadTarget(config, options.now ?? new Date())
+  const items = images.filter(item => item.uploadStatus.progress === 0 && !item.uploadStatus.uploading && !inFlight.has(item))
+  const files: FrozenUpload[] = items.map((item) => {
+    const target = item.reUploadInfo?.isReUpload ? Object.freeze({ ...baseTarget, dir: item.reUploadInfo.dir }) : baseTarget
+    return Object.freeze({ item, target, name: item.filename.final, path: item.reUploadInfo?.isReUpload ? item.reUploadInfo.path : itemPath(target.dir, item.filename.final), content: (item.base64.compressBase64 || item.base64.watermarkBase64 || item.base64.originalBase64).split(',')[1] ?? '', bytes: finalUploadFile(item)?.size })
   })
-  return Promise.resolve(true)
+  const batch: UploadBatchResult = { batchId: crypto.randomUUID(), target: files[0]?.target ?? baseTarget, attemptedUuids: files.map(file => file.item.uuid), successes: [], failures: [] }
+  const store = usePicxStore(pinia)
+  const current = () => options.isCurrent?.() !== false
+  function stage(file: FrozenUpload, stage: UploadItemFailure['stage']) {
+    if (!current())
+      return
+    const state = store.uploadRuntime[file.item.uuid]
+    if (state)
+      store.uploadRuntime[file.item.uuid] = { ...state, phase: 'uploading', batchId: batch.batchId, stage }
+    options.onStage?.(file.item.uuid, stage)
+  }
+  function fail(file: FrozenUpload, stage: UploadItemFailure['stage'], error: ApiFailure) {
+    const failure: UploadItemFailure = { uuid: file.item.uuid, target: file.target, stage, error }
+    batch.failures.push(failure)
+    const state = store.uploadRuntime[file.item.uuid]
+    if (current() && state)
+      store.uploadRuntime[file.item.uuid] = { ...state, phase: 'failed', source: 'upload', result: failure }
+  }
+  function succeed(file: FrozenUpload, sha: string, commitSha: string, bytes: number, recovered = false) {
+    const image = { checked: false, type: isVideo(file.name) ? 'video' : 'image', uuid: file.item.uuid, dir: file.target.dir, name: file.name, sha, path: file.path, deleting: false, size: bytes, deployed: true, uploadTime: Date.now() }
+    const success: UploadItemSuccess = { uuid: file.item.uuid, target: file.target, image, commitSha, uploadedBytes: bytes, ...(recovered ? { recovered } : {}) }
+    batch.successes.push(success)
+    unconfirmed.delete(file.item)
+    if (!current())
+      return
+    file.item.uploadStatus.progress = 100
+    file.item.uploadedImg = image
+    const state = store.uploadRuntime[file.item.uuid]
+    if (state)
+      store.uploadRuntime[file.item.uuid] = { ...state, phase: 'uploaded', result: success }
+    try {
+      store.DIR_IMAGE_LIST_ADD_DIR(file.target.dir)
+      store.DIR_IMAGE_LIST_ADD_IMAGE(image)
+      purgeImageRuntimeCache([file.path])
+    }
+    catch {
+      batch.cacheFailed = true
+    }
+  }
+  files.forEach((file) => {
+    inFlight.add(file.item)
+    file.item.uploadStatus.uploading = true
+  })
+  let activeStage: UploadItemFailure['stage'] = files.length === 1 ? 'contents' : 'blob'
+  try {
+    const pending: FrozenUpload[] = []
+    for (const file of files) {
+      if (!current()) {
+        fail(file, activeStage, stale)
+        continue
+      }
+      const previous = unconfirmed.get(file.item)
+      if (previous && previous.path === file.path && previous.content === file.content && previous.target.owner === file.target.owner && previous.target.repo === file.target.repo && previous.target.branch === file.target.branch) {
+        stage(file, 'contents')
+        const found = await uploadContentResult(file.target, file.path)
+        if (found.ok) {
+          const expectedSha = previous.sha ?? await blobSha(file.content)
+          if (found.data.path !== file.path || found.data.sha !== expectedSha) {
+            fail(file, 'contents', conflict)
+            continue
+          }
+          const head = await uploadHeadResult(file.target)
+          if (!head.ok) {
+            fail(file, 'head', head.error)
+            continue
+          }
+          succeed(file, found.data.sha, head.data.commit.sha, file.bytes ?? found.data.size, true)
+          continue
+        }
+        if (found.error.kind !== 'not-found') {
+          fail(file, 'contents', found.error)
+          continue
+        }
+        unconfirmed.delete(file.item)
+      }
+      pending.push(file)
+    }
+    if (!pending.length)
+      return batch
+    if (pending.length === 1 && files.length === 1) {
+      const file = pending[0]
+      stage(file, 'contents')
+      const result = await uploadContentsResult(file.target, file.path, file.content, config.email ? { name: config.owner, email: config.email } : undefined)
+      if (!result.ok) {
+        unconfirmed.set(file.item, { ...file })
+        fail(file, 'contents', result.error)
+      }
+      else if (result.data.content.path !== file.path || (file.bytes !== undefined && result.data.content.size !== file.bytes)) {
+        unconfirmed.set(file.item, { ...file })
+        fail(file, 'contents', invalid)
+      }
+      else {
+        succeed(file, result.data.content.sha, result.data.commit.sha, file.bytes ?? result.data.content.size)
+      }
+      return batch
+    }
+    const blobs: { file: FrozenUpload, sha: string }[] = []
+    for (const file of pending) {
+      if (!current()) {
+        fail(file, 'blob', stale)
+        continue
+      }
+      if (pending.some(other => other !== file && other.path === file.path) || file.target.dir !== batch.target.dir) {
+        fail(file, 'blob', conflict)
+        continue
+      }
+      stage(file, 'blob')
+      const blob = await uploadBlobResult(file.target, file.content)
+      if (!blob.ok)
+        fail(file, 'blob', blob.error)
+      else blobs.push({ file, sha: blob.data.sha })
+    }
+    if (!blobs.length)
+      return batch
+    activeStage = 'head'
+    blobs.forEach(({ file }) => stage(file, activeStage))
+    if (!current()) {
+      blobs.forEach(({ file }) => fail(file, activeStage, stale))
+      return batch
+    }
+    const head = await uploadHeadResult(batch.target)
+    if (!head.ok) {
+      blobs.forEach(({ file }) => fail(file, 'head', head.error))
+      return batch
+    }
+    activeStage = 'tree'
+    blobs.forEach(({ file }) => stage(file, activeStage))
+    if (!current()) {
+      blobs.forEach(({ file }) => fail(file, activeStage, stale))
+      return batch
+    }
+    const tree = await uploadTreeResult(batch.target, blobs.map(({ file, sha }) => ({ path: file.path, sha })), head.data)
+    if (!tree.ok) {
+      blobs.forEach(({ file }) => fail(file, 'tree', tree.error))
+      return batch
+    }
+    activeStage = 'commit'
+    blobs.forEach(({ file }) => stage(file, activeStage))
+    if (!current()) {
+      blobs.forEach(({ file }) => fail(file, activeStage, stale))
+      return batch
+    }
+    const commit = await uploadCommitResult(batch.target, tree.data, head.data)
+    if (!commit.ok) {
+      blobs.forEach(({ file }) => fail(file, 'commit', commit.error))
+      return batch
+    }
+    activeStage = 'ref'
+    blobs.forEach(({ file }) => stage(file, activeStage))
+    if (!current()) {
+      blobs.forEach(({ file }) => fail(file, activeStage, stale))
+      return batch
+    }
+    const ref = await uploadRefResult(batch.target, commit.data.sha)
+    if (!ref.ok) {
+      blobs.forEach(({ file, sha }) => {
+        unconfirmed.set(file.item, { ...file, sha })
+        fail(file, 'ref', ref.error)
+      })
+      return batch
+    }
+    blobs.forEach(({ file, sha }) => succeed(file, sha, commit.data.sha, file.bytes ?? atob(file.content).length))
+    return batch
+  }
+  catch {
+    const settled = new Set([...batch.successes, ...batch.failures].map(result => result.uuid))
+    files.filter(file => !settled.has(file.item.uuid)).forEach(file => fail(file, activeStage, invalid))
+    return batch
+  }
+  finally {
+    files.forEach((file) => {
+      file.item.uploadStatus.uploading = false
+      inFlight.delete(file.item)
+    })
+  }
 }
 
-/**
- * 上传一张图片到 GitHub 仓库
- * @param userConfigInfo
- * @param img
- */
-export function uploadImageToGitHub(
-  userConfigInfo: UserConfigInfoModel,
-  img: UploadImageModel,
-): Promise<boolean> {
-  const { branch, email, owner } = userConfigInfo
-
-  const data: any = {
-    message: PICX_UPLOAD_IMG_DESC,
-    branch,
-    content: (
-      img.base64.compressBase64
-      || img.base64.watermarkBase64
-      || img.base64.originalBase64
-    ).split(',')[1],
-  }
-
-  if (email) {
-    data.committer = {
-      name: owner,
-      email,
-    }
-  }
-
-  img.uploadStatus.uploading = true
-
-  // eslint-disable-next-line no-async-promise-executor
-  return new Promise(async (resolve) => {
-    const uploadRes = await uploadSingleImage(uploadUrlHandle(userConfigInfo, img), data)
-    img.uploadStatus.uploading = false
-    if (uploadRes) {
-      const { name, sha, path, size } = uploadRes.content
-      uploadedHandle({ name, sha, path, size }, img, userConfigInfo)
-      resolve(true)
-    }
-    else {
-      resolve(false)
-    }
-  })
+/** 旧管理重命名调用保留布尔契约。 */
+export async function uploadImageToGitHub(config: UserConfigInfoModel, image: UploadImageModel): Promise<boolean> {
+  const result = await uploadFilesToGitHub(config, [image])
+  return result.successes.length === 1 && result.failures.length === 0
+}
+/** 旧批量调用只有每个尝试项成功才为 true。 */
+export async function uploadImagesToGitHub(config: UserConfigInfoModel, images: UploadImageModel[]): Promise<boolean> {
+  const result = await uploadFilesToGitHub(config, images)
+  return result.attemptedUuids.length > 0 && result.successes.length === result.attemptedUuids.length && result.failures.length === 0
 }

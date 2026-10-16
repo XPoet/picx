@@ -18,6 +18,7 @@ export interface UploadItemSuccess {
   image: UploadedImageModel
   commitSha: string
   uploadedBytes: number
+  recovered?: boolean
 }
 export interface UploadItemFailure {
   uuid: string
@@ -43,4 +44,5 @@ export interface UploadBatchResult {
   attemptedUuids: readonly string[]
   successes: UploadItemSuccess[]
   failures: UploadItemFailure[]
+  cacheFailed?: boolean
 }

@@ -944,3 +944,9 @@ T015 连接到不同 owner / repo / branch 时，同步清空旧仓库的管理�
 ### P3 链接与剪贴板契约补充（T023）
 
 共享纯函数接收仓库身份、路径、规则和格式，路径按 URL 分段编码，普通文本预览与复制使用同一结果。上传成功项的链接使用成功记录中的 target，不能受后续目录或仓库设置影响。旧 generateImageLink / copyImageLink / batchCopyImageLinks 保持调用兼容，空或非法规则不输出 null 字面值。copyText 返回显式成功 / denied / unavailable 结果；拒绝时只在内存保留待复制文本，由 AppWrap 内唯一的安全文本弹窗提供选择、重试与关闭。复制失败不改变上传状态，不将模板作为 HTML 执行。
+
+### P3 上传执行补充（T026）
+
+`uploadFilesToGitHub` 返回 UploadBatchResult；旧单图与批量布尔函数仅作为兼容适配器，只有全部尝试项成功才返回 true。开始时冻结实际 File、Base64、名称、字节数和无凭据目标。批内同路径冲突在 blob 阶段返回 conflict，不构造会静默覆盖同批文件的 tree。成功文件同时保留实际提交 SHA；只有确认提交后更新队列和缓存，本地缓存写入失败以可选 cacheFailed 反馈，不能反转远端成功。
+
+contents / ref 请求失败且可能已提交时，仅在内存按文件记录未确认的内容和目标；重试前读取该目标内容与分支 head，用精确 Git blob SHA 匹配确认已经提交的文件。缺失可重传，不同内容或查询失败明确失败，不盲目覆盖。不将 blob 存在视为 ref 提交成功。上传执行有文件级防重；已经成功的项不进入本次 attemptedUuids。工作区失效后不继续提交后续步骤，不向新账户队列或缓存发布旧响应。

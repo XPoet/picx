@@ -432,3 +432,13 @@ Chrome / 简中 / 1440×1080 最终截图已查看：[无配置导航的登录�
 **验证**：阶段 `pnpm verify` 通过（122 单测、静态检查、typecheck、build）；新增运行态动作组件测试 2 项单独通过，验证处理重试事件、不修改原 File、处理中操作与权限错误本地化，合计现有 124 项。Desktop / Pixel 5 队列与入口 E2E 4 项通过；队列最终独立复验 2 项通过，24 项文件覆盖长名、同名、视频、键盘重命名、移除和持续追加。已查看 [1440](UI/evidence/p3/t025-queue-1440.png) 与 [375](UI/evidence/p3/t025-queue-375.png)，无页面横向溢出，图片 fixture 为透明 PNG，视频 fixture 仅验证 MP4 输入和控制入口，不宣称验证真实视频播放。日志 `/private/tmp/picx-p3-t025-verify.log`、`/private/tmp/picx-p3-t025-card-test.log`、`/private/tmp/picx-p3-t025-e2e.log`、`/private/tmp/picx-p3-t025-queue-e2e.log`。上传失败与成功结果完整页面由 T026–T027 验收。
 
 **回滚**：回滚本任务恢复原卡片；旧 util 文件保留，原文件、设置与远端不受影响。
+
+### T026 提供逐项上传结果和批次目标快照
+
+**实施提交**：`fix(upload): report committed item results with frozen batch targets`（本节所属提交）。
+
+上传 API 新增类型化响应校验，执行器返回成功 / 失败清单、实际目标、commit SHA 和真实字节数。单图 contents 需有效提交响应；批量仅 ref 指向本次 commit 后发布成功和缓存。blob 部分失败独立保留，全失败不提交空 tree；head / tree / commit / ref 失败没有虚假 100%。开始时冻结 File、Base64、名称、仓库、分支、目录和日期；文件级防重，已成功项不重传。同路径冲突显式失败，上传锁由工作区继续使用。contents / ref 结果未确认时，重试先查目标内容并精确核对 Git blob SHA；匹配则恢复真实提交，不同内容或无权限不覆盖。缓存失败不反转远端成功。旧单图 / 管理重命名布尔调用兼容，缺 File 时采用成功 contents 响应大小。另修复上一项全局 Stylus 中错误使用 :deep 的构建警告。
+
+**验证**：最终 `pnpm verify` 全通过，18 文件 / 141 单测，类型、lint、stylelint、build 通过。新增 17 项上传执行与 API 测试覆盖单图、全部 / 部分 blob 成功、四个提交阶段失败、空 tree 防护、同路径冲突、防重、已成功项排除、文件名 / 目标快照、跨午夜、ref 未确认恢复、contents SHA 核验、权限失败、真实大小与旧管理适配、缓存失败、任务失效，以及 ref / contents / head 响应结构。断言成功 / 失败集合不相交且覆盖全部 attemptedUuids，ref 前无成功缓存。日志 `/private/tmp/picx-p3-t026-verify.log`、`/private/tmp/picx-p3-t026-upload-tests.log`。本项所有 API 为 mock，不进行真实远端写入；新结果横幅、重试按钮和端到端主流程由 T027 接入验收。
+
+**回滚**：回滚类型化 API、结果执行器、模型与测试提交；旧布尔入口和目录格式保留，不撤销已发生的远端提交。
