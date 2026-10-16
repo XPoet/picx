@@ -23,22 +23,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="main-container">
-    <div class="top-container border-box">
+  <div class="main-container" :class="{ folded: store.getters.getGlobalSettings.folded }">
+    <aside class="sidebar border-box">
       <HeaderContent />
-    </div>
-    <div class="bottom-container border-box">
-      <div
-        class="bottom-left-box border-box"
-        :class="{ folded: store.getters.getGlobalSettings.folded }"
-      >
-        <NavContent />
-      </div>
-      <div class="bottom-right-box border-box">
-        <router-view />
-      </div>
-    </div>
-  </main>
+      <NavContent />
+    </aside>
+    <main class="main-content border-box">
+      <router-view />
+    </main>
+  </div>
 </template>
 
 <style scoped lang="stylus">

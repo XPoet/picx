@@ -33,7 +33,7 @@ const persistGlobalSettings = () => {
 
 <template>
   <el-popover
-    placement="bottom-end"
+    placement="top-start"
     trigger="click"
     width="240rem"
     :show-arrow="false"
@@ -44,11 +44,14 @@ const persistGlobalSettings = () => {
     }"
   >
     <template #reference>
-      <div
+      <button
+        type="button"
+        :aria-label="$t('header.account')"
+        :title="$t('header.account')"
         class="user-avatar-v2 border-box"
         :class="{ folded: store.getters.getGlobalSettings.folded }"
       >
-        <div class="avatar flex-center">
+        <span class="avatar flex-center">
           <img
             v-if="userConfigInfo?.avatarUrl"
             :src="userConfigInfo?.avatarUrl"
@@ -57,11 +60,8 @@ const persistGlobalSettings = () => {
           <el-icon v-else class="user-filled-icon">
             <IEpUserFilled />
           </el-icon>
-        </div>
-        <el-icon class="popover-tip-icon">
-          <IEpCaretBottom />
-        </el-icon>
-      </div>
+        </span>
+      </button>
     </template>
     <ul class="personal-center-popover border-box">
       <li v-if="userConfigInfo.logined" class="user-info border-box">

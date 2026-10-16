@@ -2,7 +2,8 @@
   display grid
   grid-gap 20rem
   grid-template-rows repeat(1, 1fr)
-  grid-template-columns repeat(2, 1fr)
+  grid-template-columns repeat(2, minmax(0, 1fr))
+
 
   .box-item {
     display flex
@@ -45,6 +46,25 @@
             border-bottom 1rem solid var(--el-color-primary)
           }
         }
+      }
+    }
+  }
+
+  +picx-mobile() {
+    grid-template-rows repeat(2, minmax(200px, 1fr))
+    grid-template-columns minmax(0, 1fr)
+
+    .box-item {
+      .el-button {
+        min-height 44px
+        font-size 14px
+        height auto
+        padding 12px
+        white-space normal
+      }
+
+      .tips-box {
+        font-size 14px
       }
     }
   }

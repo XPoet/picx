@@ -25,6 +25,9 @@
   "copy_success_2": "图片链接复制成功",
   "copy_fail_1": "复制失败",
   "header": {
+    "brand": "PicX · 图床",
+    "home": "PicX 图床首页",
+    "account": "账户与偏好设置",
     "not_login": "未登录",
     "theme": "主题",
     "announcement": {
@@ -34,6 +37,9 @@
     }
   },
   "nav": {
+    "label": "主导航",
+    "expand": "展开侧栏",
+    "collapse": "收起侧栏",
     "config": "图床配置",
     "upload": "上传图片",
     "management": "图床管理",

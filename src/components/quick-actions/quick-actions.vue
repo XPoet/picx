@@ -12,7 +12,7 @@ const persistUserSettings = () => {
 
 <template>
   <el-popover
-    placement="bottom-end"
+    placement="top-start"
     :width="globalSettings.language === 'en' ? '230rem' : '190rem'"
     trigger="click"
     :show-arrow="false"
@@ -23,7 +23,7 @@ const persistUserSettings = () => {
     }"
   >
     <template #reference>
-      <el-button circle text>
+      <el-button class="quick-actions-btn" circle text :aria-label="$t('nav.actions')" :title="$t('nav.actions')">
         <el-icon :size="22">
           <IEpOperation />
         </el-icon>

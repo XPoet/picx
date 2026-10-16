@@ -1,57 +1,24 @@
 .nav-content-container {
   display flex
+  flex 1
   flex-direction column
-  justify-content space-between
+  min-height 0
   width 100%
-  height 100%
   padding-top $left-side-padding
-  padding-right $left-side-padding
-  padding-bottom $left-side-padding
-
-
-  &.folded {
-    padding-left $left-side-padding
-
-    .top-box {
-      .nav-menu-item {
-        justify-content center
-        height $left-side-folded-width - $left-side-padding * 2
-        margin-bottom 8rem
-        padding 0
-        border-radius $box-border-radius
-
-        .nav-name {
-          display none
-        }
-      }
-    }
-
-
-    .bottom-box {
-      justify-content space-between
-      padding-left 0
-
-      .fold-icon {
-        font-size 20rem
-      }
-
-      .site-count {
-        display none
-      }
-    }
-  }
-
 
   .top-box {
+    flex 1
+    min-height 0
+    padding-right $left-side-padding
+    overflow-y auto
+
     .nav-menu-item {
       display flex
       align-items center
-      justify-content flex-start
+      min-height 44px
       width 100%
       margin-bottom 4rem
-      padding-top $left-side-padding * 0.6
-      padding-bottom $left-side-padding * 0.6
-      padding-left $left-side-padding
+      padding 12rem $left-side-padding
       border-top-right-radius $box-border-radius
       border-bottom-right-radius $box-border-radius
       cursor pointer
@@ -62,6 +29,10 @@
         background var(--el-color-primary-light-9)
       }
 
+      &:focus-visible {
+        outline 2px solid var(--el-color-primary)
+        outline-offset -2px
+      }
 
       &.active {
         color var(--el-color-primary)
@@ -69,24 +40,93 @@
         background var(--el-color-primary-light-9)
       }
 
+      .nav-icon {
+        flex-shrink 0
+      }
 
       .nav-name {
-        margin-left $left-side-padding * 0.5
-        font-size 14rem
+        margin-left 10rem
+        font-size unquote('max(14px, 14rem)')
       }
     }
   }
 
-
   .bottom-box {
+    flex-shrink 0
+    margin 12rem 12rem 0
+    padding 12rem 0 unquote('max(16rem, env(safe-area-inset-bottom))')
+    border-top 1px solid var(--border-color)
+  }
+
+  .sidebar-actions {
     display flex
     align-items center
     justify-content space-between
-    padding-left $left-side-padding
+    gap 0
+
+    :deep(.site-announcement-btn)
+    :deep(.quick-actions-btn) {
+      flex-shrink 0
+      width 44px
+      height 44px
+      margin 0
+    }
+  }
+
+  .fold-button {
+    display flex
+    flex-shrink 0
+    align-items center
+    justify-content center
+    width 44px
+    height 44px
+    padding 0
+    color var(--text-color)
+    background transparent
+    border 0
+    border-radius $box-border-radius
+    cursor pointer
+
+    &:hover {
+      color var(--el-color-primary)
+      background var(--el-color-primary-light-9)
+    }
+
+    &:focus-visible {
+      outline 2px solid var(--el-color-primary)
+      outline-offset -2px
+    }
 
     .fold-icon {
-      font-size 20rem
-      cursor pointer
+      font-size 20px
+    }
+  }
+
+  &.folded {
+    .top-box {
+      padding 0 10px
+
+      .nav-menu-item {
+        justify-content center
+        min-height 48px
+        margin-bottom 8rem
+        padding 0
+        border-radius $box-border-radius
+
+        .nav-name {
+          display none
+        }
+      }
+    }
+
+    .bottom-box {
+      margin-right 10px
+      margin-left 10px
+    }
+
+    .sidebar-actions {
+      flex-direction column
+      gap 4px
     }
   }
 }

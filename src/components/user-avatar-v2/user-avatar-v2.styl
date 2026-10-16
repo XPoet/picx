@@ -1,36 +1,44 @@
 .user-avatar-v2 {
   display flex
+  flex-shrink 0
   align-items center
-  justify-content space-between
+  justify-content center
+  width 44px
+  height 44px
+  padding 0
+  color var(--text-color)
+  background transparent
+  border 0
+  border-radius $box-border-radius
   cursor pointer
   user-select none
 
+  &:hover {
+    background var(--el-color-primary-light-9)
+  }
+
+  &:focus-visible {
+    outline 2px solid var(--el-color-primary)
+    outline-offset -2px
+  }
+
   .avatar {
-    display flex
-    align-items center
-    justify-content center
     box-sizing border-box
-    width 38rem
-    height 38rem
-    padding 1rem
-    color var(--text-color)
-    border 1rem solid var(--text-color)
+    width 34px
+    height 34px
+    padding 1px
+    border 1px solid var(--text-color)
     border-radius 50%
 
     img {
       width 100%
       height 100%
+      object-fit cover
       border-radius 50%
     }
 
     .user-filled-icon {
-      font-size 20rem
+      font-size 20px
     }
-  }
-
-
-  .popover-tip-icon {
-    margin-left 6rem
-    font-size 22rem
   }
 }

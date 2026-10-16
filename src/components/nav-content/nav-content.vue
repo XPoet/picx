@@ -2,6 +2,9 @@
 import { computed, onMounted, triggerRef, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElementPlusSizeEnum } from '@/common/model'
+import QuickActions from '@/components/quick-actions/quick-actions.vue'
+import SiteAnnouncement from '@/components/site-announcement/site-announcement.vue'
+import UserAvatarV2 from '@/components/user-avatar-v2/user-avatar-v2.vue'
 import i18n from '@/plugins/vue/i18n'
 import { useStore } from '@/stores'
 import { navInfoList } from './nav-content.data'
@@ -23,7 +26,7 @@ const navIconSize = computed(() => {
   }
 })
 
-const onNavClick = (e: any) => {
+const onNavClick = (e: (typeof navInfoList.value)[number]) => {
   const { path } = e
 
   if (path === '/management') {
@@ -68,7 +71,7 @@ watch(
 watch(
   () => userConfigInfo.logined,
   (_n) => {
-    navInfoList.value.forEach((v: any) => {
+    navInfoList.value.forEach((v) => {
       switch (v.path) {
         case '/management':
         case '/settings':
@@ -90,16 +93,17 @@ onMounted(() => {
 </script>
 
 <template>
-  <aside
+  <nav
     class="nav-content-container border-box"
+    :aria-label="$t('nav.label')"
     :class="{ folded: store.getters.getGlobalSettings.folded }"
   >
     <div class="top-box border-box">
       <ul class="nav-menu-list border-box">
         <el-tooltip
-          v-for="(nav, idx) in navInfoList"
-          :key="idx + nav.uuid"
-          placement="left"
+          v-for="nav in navInfoList"
+          :key="nav.uuid"
+          placement="right"
           :content="$t(nav.name)"
           :show-arrow="false"
           :disabled="!store.getters.getGlobalSettings.folded"
@@ -108,7 +112,13 @@ onMounted(() => {
             v-show="nav.isShow"
             class="nav-menu-item border-box"
             :class="{ active: nav.isActive }"
+            :aria-current="nav.isActive ? 'page' : undefined"
+            tabindex="0"
+            role="link"
+            :aria-label="$t(nav.name)"
             @click="onNavClick(nav)"
+            @keydown.enter="onNavClick(nav)"
+            @keydown.space.prevent="onNavClick(nav)"
           >
             <el-icon class="nav-icon" :size="navIconSize">
               <component :is="nav.icon" />
@@ -120,14 +130,26 @@ onMounted(() => {
     </div>
 
     <div class="bottom-box border-box">
-      <el-icon v-if="globalSettings.folded" class="fold-icon" @click="onFoldNav">
-        <IEpDArrowRight />
-      </el-icon>
-      <el-icon v-else class="fold-icon" @click="onFoldNav">
-        <IEpDArrowLeft />
-      </el-icon>
+      <div class="sidebar-actions">
+        <SiteAnnouncement />
+        <QuickActions v-if="userConfigInfo.logined" />
+        <UserAvatarV2 />
+        <button
+          class="fold-button"
+          type="button"
+          :aria-label="globalSettings.folded ? $t('nav.expand') : $t('nav.collapse')"
+          :title="globalSettings.folded ? $t('nav.expand') : $t('nav.collapse')"
+          :aria-expanded="!globalSettings.folded"
+          @click="onFoldNav"
+        >
+          <el-icon class="fold-icon">
+            <IEpDArrowRight v-if="globalSettings.folded" />
+            <IEpDArrowLeft v-else />
+          </el-icon>
+        </button>
+      </div>
     </div>
-  </aside>
+  </nav>
 </template>
 
 <style scoped lang="stylus">

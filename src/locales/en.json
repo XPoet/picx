@@ -25,6 +25,9 @@
   "copy_success_2": "Image link copied successfully",
   "copy_fail_1": "Copy failed",
   "header": {
+    "brand": "PicX · Hosting",
+    "home": "PicX home",
+    "account": "Account and preferences",
     "not_login": "Not log in",
     "theme": "Theme",
     "announcement": {
@@ -34,6 +37,9 @@
     }
   },
   "nav": {
+    "label": "Main navigation",
+    "expand": "Expand sidebar",
+    "collapse": "Collapse sidebar",
     "config": "Image Hosting Configuration",
     "upload": "Upload Image",
     "management": "Image Hosting Management",

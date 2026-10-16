@@ -32,6 +32,8 @@ onMounted(() => {
     :class="{
       dot: userSettings.showAnnouncement,
     }"
+    :aria-label="$t('header.announcement.text_1')"
+    :title="$t('header.announcement.text_1')"
     circle
     text
     @click="dialogVisible = true"
@@ -43,7 +45,7 @@ onMounted(() => {
   <el-dialog
     v-model="dialogVisible"
     :title="$t('header.announcement.text_1')"
-    width="500"
+    width="min(500px, calc(100vw - 32px))"
     :modal="false"
     draggable
     @close="onClose"
