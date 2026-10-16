@@ -1,27 +1,97 @@
+picx-status(name, tone, surface, is-dark) {
+  --el-color-{name} tone
+  --el-color-{name}-dark-2 mix(tone, is-dark ? #fff : #183443, 80%)
+  --el-color-{name}-light-3 mix(surface, tone, 30%)
+  --el-color-{name}-light-5 mix(surface, tone, 50%)
+  --el-color-{name}-light-7 mix(surface, tone, 70%)
+  --el-color-{name}-light-8 mix(surface, tone, 80%)
+  --el-color-{name}-light-9 mix(surface, tone, 90%)
+}
+
+picx-theme(mode) {
+  is-dark = mode == 'dark'
+  surface = is-dark ? #1b2c37 : #fff
+  primary = is-dark ? #91b4ef : #416aaf
+  success = is-dark ? #71d4ae : #168264
+  warning = is-dark ? #f0c477 : #8a5b12
+  danger = is-dark ? #f29c9c : #b04444
+  muted = is-dark ? #b0c3cf : #536874
+
+  color-scheme mode
+  --picx-color-brand #4d79c7
+  --picx-color-brand-accent #62cd94
+  --picx-color-primary primary
+  --picx-color-primary-hover is-dark ? #b2ccf7 : #315da3
+  --picx-color-primary-soft is-dark ? #253e59 : #eaf1f8
+  --picx-color-on-primary is-dark ? #142936 : #fff
+  --picx-color-text is-dark ? #e5edf3 : #183443
+  --picx-color-text-muted muted
+  --picx-color-bg is-dark ? #12212b : #f5f8fa
+  --picx-color-surface surface
+  --picx-color-surface-muted is-dark ? #263b49 : #edf2f5
+  --picx-color-border is-dark ? #3b515f : #dce5eb
+  --picx-color-control-border is-dark ? #8299a8 : #81919c
+  --picx-color-success success
+  --picx-color-connected is-dark ? #71d4ae : #127a5d
+  --picx-color-success-soft is-dark ? #203e35 : #eaf6f0
+  --picx-color-warning warning
+  --picx-color-warning-soft is-dark ? #413625 : #fff7e8
+  --picx-color-danger danger
+  --picx-color-danger-soft is-dark ? #442f36 : #fff1f0
+  --picx-color-focus is-dark ? #a8c7ff : #4d79c7
+  --picx-color-overlay is-dark ? #08151dcc : #18344366
+  --picx-color-shadow is-dark ? #00000040 : #18344314
+  --picx-color-shadow-hover is-dark ? #0006 : #18344329
+
+  // Element Plus 的渐变层级与语义状态使用同一主题表。
+  picx-status('primary', primary, surface, is-dark)
+  picx-status('success', success, surface, is-dark)
+  picx-status('warning', warning, surface, is-dark)
+  picx-status('danger', danger, surface, is-dark)
+  picx-status('error', danger, surface, is-dark)
+  picx-status('info', muted, surface, is-dark)
+
+  root-color(mode)
+}
+
 :root {
-  root-color('light')
+  --picx-space-1 4px
+  --picx-space-2 8px
+  --picx-space-3 12px
+  --picx-space-4 16px
+  --picx-space-5 20px
+  --picx-space-6 24px
+  --picx-space-7 28px
+  --picx-space-8 32px
+  --picx-space-10 40px
+  --picx-space-12 48px
+  --picx-radius-control 12px
+  --picx-radius-card 20px
+  --picx-radius-dialog 20px
+  --picx-radius-header 40px
+  --picx-control-height 44px
+  --picx-header-height 72px
+  --picx-font-body 14px
+  --picx-font-input-mobile 16px
+  --picx-font-title 30px
+  --picx-content-max-width $picx-content-max-width
+  --picx-duration 180ms
+  --picx-layer-header 100
+  --picx-layer-menu 200
+  --picx-layer-overlay 3000
+  picx-theme('light')
 }
-
-
-@media (prefers-color-scheme light) {
-  :root {
-    root-color('light')
-  }
-}
-
 
 @media (prefers-color-scheme dark) {
-  :root {
-    root-color('dark')
+  :root:not(.light) {
+    picx-theme('dark')
   }
 }
 
-
-.light {
-  root-color('light')
+:root.light {
+  picx-theme('light')
 }
 
-
-.dark {
-  root-color('dark')
+:root.dark {
+  picx-theme('dark')
 }

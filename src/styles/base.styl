@@ -46,7 +46,23 @@ body {
   margin 0
   padding 0
   color var(--text-color)
-  font-size 14rem
+  font-size var(--picx-font-body)
+}
+
+:focus-visible {
+  outline 2px solid var(--picx-color-focus)
+  outline-offset 3px
+}
+
+@media (prefers-reduced-motion reduce) {
+  *
+  *::before
+  *::after {
+    animation-duration 0.01ms !important
+    animation-iteration-count 1 !important
+    transition-duration 0.01ms !important
+    scroll-behavior auto !important
+  }
 }
 
 

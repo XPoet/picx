@@ -164,3 +164,21 @@ fixture 覆盖合成仓库、空 / 仅文件夹 / 混合目录、图片与 MP4�
 **P0 准出结论**：T001–T005 的盘点、类型 / 状态 / 安全契约与可复现检查基线已交付；旧 smoke 阻塞已修复，本机执行限制已有隔离办法。目录草稿、逐项结果、部署真实性、认证清理和云同步缺口仍按 T012–T040 逐项实现，不能将 P0 完成解释为 UI / 业务改造已完成。P1–P6 保持未开始。
 
 **回滚**：本项提交只涉及测试、fixture 和文档；回滚不会改用户配置、凭据或远端文件。P0 各提交可独立回滚，实际删除新增文件仍须遵守仓库的删除授权规则。
+
+## P1 设计系统与公共布局
+
+2026-10-16 开始，起点 `a7c62bd`，工作区干净，分支 `develop`。组件边界为 `AppWrap → MainContainer → HeaderContent（NavContent / 账户工具）+ RouterView + SiteFooter`；主题通过 CSS Token 供公共组件与 Element Plus 共用。保留旧业务路由、Store、存储键，不修改设计稿、不删除文件、不推送。
+
+### T006 建立语义 Token 与 Element Plus 主题桥接
+
+**实施提交**：`feat(ui): establish semantic theme tokens and Element Plus bridge`（本节所属提交）。
+
+集中定义设计稿 `Zo7cz` 的品牌、操作、文本、背景、边框、状态和焦点色；补齐暗色、尺寸、间距、圆角和层级 Token。历史 `--background-color` 等变量映射到新 Token；Element Plus 表单、按钮、禁用、错误和浮层共用主题。根字号换算保持原样，正文采用 14px，手机输入 16px，按钮至少 44px；提供通用焦点和减少动态效果规则。暗色桥接使用明确选择器优先级，避免组件库暗色变量覆盖。
+
+**验证**：`pnpm lint`、`pnpm lint:style`、`pnpm build`、`git diff --check` 通过。沿用 P0 的临时命令包装方式，本次路径为 `/private/tmp/picx-ui-p1-bin/pnpm`，Corepack pnpm 11.18.0 / Node 24.21.0，单次 `verifyDepsBeforeRun=false`，未安装依赖或分析禁止目录。纯主题未增加业务单测。
+
+Chrome、简体中文、1440×1080 / 375×812 检查了配置输入、按钮、公告弹窗和管理页图片预览；凭据为空，远端请求全部使用模拟响应或阻断。证据：[亮色](UI/evidence/p1/t006-light.png)、[暗色](UI/evidence/p1/t006-dark.png)、[手机弹窗](UI/evidence/p1/t006-dialog-375.png)、[图片预览](UI/evidence/p1/t006-preview.png)。浏览器确认桌面根字号 1px、正文 14px、手机输入 16px，暗色表单背景为语义 surface。
+
+WCAG 对比度计算：亮 / 暗正文 13.03 / 12.13，辅助文本对页面背景 5.47 / 9.04，主按钮 5.38 / 7.13，Hover 6.51 / 9.19，错误 5.59 / 6.85，控件边界 3.25 / 4.84，焦点 4.31 / 8.40。旧业务细节的逐页视觉验收仍归 P2–P6。
+
+**回滚**：回滚本任务样式与记录提交即可恢复旧主题；不改用户配置或业务数据。
