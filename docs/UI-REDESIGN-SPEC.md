@@ -6,7 +6,7 @@
 | 编写日期 | 2026-10-16 |
 | 设计依据 | [新版 UI 设计稿](UI/picx-ih.pen) |
 | 适用项目 | PicX · GitHub 图床，当前 `picx-ih` 仓库 |
-| 当前状态 | 方案已编写，实施任务均未开始；本次只新增本文档 |
+| 当前状态 | P0 执行中；状态、类型与结果契约已固化，实施证据见 [验收记录](UI-REDESIGN-ACCEPTANCE.md) |
 
 ## 1. 改造目标与范围
 
@@ -83,7 +83,7 @@
 | 部署 | `components/deploy-status-bar`、`common/api/branch.ts`、`common/api/deploy.ts` | 两个页面共享执行状态；现有固定等待时间不能证明站点可访问 |
 | 持久化 | `stores/picx-store.ts`、`utils/storage.ts`、`use-cloud-settings-sync.ts` | 保留旧键、旧字段与云同步范围，区分表单草稿和已保存配置 |
 
-工作区已有导航、顶栏、头像、多语言和登录样式等未提交改动。后续实施应在这些改动基础上逐项整合，不能重置或覆盖。旧配置页相关文件在迁移期保留，不将物理删除文件作为本方案的实施步骤。
+编写方案时工作区已有导航、顶栏、头像、多语言和登录样式改动；P0 开始时这些改动已提交，工作区干净，详见验收记录。后续实施应在现有实现基础上逐项整合，不能重置或覆盖。旧配置页相关文件在迁移期保留，不将物理删除文件作为本方案的实施步骤。
 
 ## 3. 信息架构与路由迁移
 
@@ -479,7 +479,7 @@ flowchart TD
 
 本次为触达的目录、连接与部署查询增加类型化结果路径，保留现有默认请求函数供未迁移调用方使用：成功返回数据，包括合法空数组；失败返回不含凭据的错误类别、可选 HTTP 状态和重试信息。至少区分未认证、无权限、资源不存在、离线 / 网络失败、请求受限和其他失败。不能在组件里根据错误字符串猜测状态，也不能每个页面重新创建 Axios 实例。
 
-上传结果按文件 uuid 返回成功清单、失败清单及实际上传目标；部署结果返回提交、等待、可用或失败的明确阶段。以上为内部类型调整，不新增远程接口，不改变 GitHub API 的协议。具体类型在相应阶段先更新本文，再同步 API、服务与测试。
+上传结果按文件 uuid 返回成功清单、失败清单及实际上传目标；部署结果返回提交、等待、可用或失败的明确阶段。以上为内部类型调整，不新增远程接口，不改变 GitHub API 的协议。P0 固定的具体类型与迁移方式见 §10.5–10.10；后续按任务分阶段落地，不提前更改运行时代码。
 
 ### 10.4 状态与持久化
 
@@ -497,6 +497,242 @@ flowchart TD
 | 搜索、弹窗展开、当前选择 | 页面内存；选择状态遵守目录和过滤范围规则 |
 
 采用旧数据直接读取、缺失字段补默认值的方式，避免新增持久化版本迁移。新命名 UI 映射旧字段，路径展示转换不改旧存储格式。回滚 UI 后仍可读取配置；如实施中确需新增持久化字段或改变云文件结构，必须先修订数据兼容说明与验证用例。
+
+### 10.5 类型化请求与连接状态（T002）
+
+以下是后续实现的内部 TypeScript 契约，P0 只固定设计。错误来自 HTTP 状态、受限响应头、网络状态和响应结构检查，不把服务端 message、AxiosError、请求配置或响应对象作为 UI 错误保存。
+
+```ts
+type ApiErrorKind =
+  | 'unauthenticated' | 'forbidden' | 'not-found'
+  | 'offline' | 'network' | 'rate-limited'
+  | 'conflict' | 'invalid-response' | 'service'
+
+interface ApiFailure {
+  kind: ApiErrorKind
+  status?: number
+  retryable: boolean
+  retryAfterMs?: number
+}
+
+type ApiResult<T> =
+  | { ok: true, data: T }
+  | { ok: false, error: ApiFailure }
+
+interface RepositoryIdentity {
+  readonly owner: string
+  readonly repo: string
+  readonly branch: string
+}
+
+type ConnectionFailure = ApiFailure | {
+  kind: 'app-not-installed' | 'initialization-failed'
+  retryable: boolean
+}
+
+type ConnectionState =
+  | { phase: 'disconnected' }
+  | { phase: 'validating', attemptId: number }
+  | { phase: 'initializing', attemptId: number, step: 'user' | 'repository' | 'branch' }
+  | {
+    phase: 'connected'
+    attemptId: number
+    repository: RepositoryIdentity
+    visibility: 'public' | 'private'
+    verifiedAt: number
+  }
+  | { phase: 'failed', attemptId: number, error: ConnectionFailure }
+```
+
+`requestResult<T>` 复用现有 Axios 客户端；端点以守卫将 `unknown` 校验成 `T`。目录成功空值为 `{ ok: true, data: [] }`，不存在为 `not-found`，非法结构为 `invalid-response`，三者不可合并。401 为未认证，403 依据结构化限流证据区分 `rate-limited` 和 `forbidden`，429 为限流，409 为冲突；网络无响应时只有明确离线才为 `offline`，否则为 `network`。不根据英文错误字符串分类，也不把一次 network 错误认定为断网。
+
+连接转换：`disconnected / failed → validating → initializing → connected`；任一步失败进入 `failed`。读取旧 Token 和 `logined` 后先显示待验证，不能直接恢复成 `connected`。仓库可见性只来自成功仓库查询；验证未完成显示未知说明。断网保留已保存配置与队列、将当前检查标记失败，恢复网络后显式重试。重连、切换账户、登出递增 `attemptId`，旧响应不得改新状态；登出回 `disconnected`。
+
+仓库展示 Props 为 `{ repository: RepositoryIdentity | null, uploadPath: string, connection: ConnectionState }`，不接收 `UserConfigInfoModel`、认证模型或 Token。连接服务显式接收本次验证凭据，验证成功后经唯一既有认证链路提交；凭据不属于上述结果类型。
+
+### 10.6 目录草稿、受控选择器与保存事务（T002）
+
+§6.2 的 `UploadDirectoryDraft` 是唯一草稿类型，属于 `use-upload-directory`，不能放进 Pinia 持久化字段。已保存值及选择器契约如下：
+
+```ts
+interface UploadDirectoryValue {
+  dirMode: DirModeEnum
+  selectedDir: string
+  selectedDirList: string[]
+}
+
+interface RepositoryDirectoryOption {
+  name: string
+  segments: readonly string[]
+  leaf: boolean
+}
+
+type DirectoryQueryState =
+  | { phase: 'idle' }
+  | { phase: 'loading', requestId: number }
+  | { phase: 'loaded', items: readonly RepositoryDirectoryOption[] }
+  | { phase: 'failed', error: ApiFailure }
+
+interface ControlledDirectorySelectorProps {
+  modelValue: readonly string[]
+  loads: Readonly<Record<string, DirectoryQueryState>>
+  disabled: boolean
+}
+
+type DirectorySelectorEmits = {
+  'update:modelValue': [segments: string[]]
+  'request-children': [parentSegments: string[]]
+  'retry': [parentSegments: string[]]
+}
+
+type DirectorySaveResult =
+  | { ok: true, value: UploadDirectoryValue }
+  | {
+    ok: false
+    reason: 'invalid-path' | 'upload-busy' | 'storage-unavailable'
+    field?: 'inputPath' | 'segments'
+  }
+```
+
+根节点查询键为 `/`，其余用标准化分段拼接；选择器仅读 `loads`，通过事件请求 composable 加载，不能导入 Store、路由或 API。`loaded.items.length === 0` 是空目录，`failed` 仅显示失败与重试；加载失败保留原选择和已加载内容。单击行选择，展开按钮单独请求下级；最多 5 层共用常量，选择父目录不要求子级已加载。手机逐级列表使用同一输入 / 输出。
+
+弹窗状态转换：`closed → editing → saving → closed`；字段错误或持久化失败回到 `editing` 并保留草稿；所有关闭路径回 `closed` 且不提交。打开时复制已有分段数组，编辑不共享可变引用；刷新不重建草稿。查询按弹窗会话与 `requestId` 检查有效性，关闭后的响应不能回写新会话。
+
+保存先用纯函数校验 / 规范化成 `UploadDirectoryValue`，再由一个明确类型的 Store action 执行事务：检查上传锁、构造旧配置加三个新目录字段的候选值、写入既有 `PICX_IH_CONFIG`，成功后一次发布已提交值；序列化或 `setItem` 抛错则不发布候选值。不能先修改共享对象再提示存储错误，也不能经旧 `normalizeUserConfigInfo` 静默截断。自由文本规范化后的值先回显再保存，根路径 `/` 对应空分段，非根路径无首尾 `/`。保存不改 `viewDir`。
+
+`repo-dir-cascader` 通过显式 `controlled: true` 启用以上契约；过渡期 `controlled` 默认 false，保留旧 `elKey / elSize / elWidth / elClearable` 与立即持久化行为。两条路径隔离，不能让受控实例触发旧保存副作用。T018 / T019 完成旧调用方迁移后再收口，不删除旧文件。
+
+### 10.7 队列运行态与批次目标（T002）
+
+文件仍由现有 `UploadImageModel` 持有，运行态按 uuid 关联，不复制 File / Base64 到另一个持久化模型。以下定义归上传领域模型，运行态由上传工作区调度、Pinia 共享；处理算法不依赖 View。
+
+```ts
+interface ProcessingSnapshot {
+  readonly revision: number
+  readonly imageName: Readonly<UserSettingsModel['imageName']>
+  readonly compress: Readonly<UserSettingsModel['compress']>
+  readonly watermark: Readonly<UserSettingsModel['watermark']>
+}
+
+interface UploadTargetSnapshot extends RepositoryIdentity {
+  readonly dir: string
+  readonly resolvedAt: number
+}
+
+interface UploadItemSuccess {
+  uuid: string
+  target: UploadTargetSnapshot
+  image: UploadedImageModel
+  commitSha: string
+  uploadedBytes: number
+}
+
+interface UploadItemFailure {
+  uuid: string
+  target: UploadTargetSnapshot
+  stage: 'blob' | 'head' | 'tree' | 'commit' | 'ref' | 'contents'
+  error: ApiFailure
+}
+
+type QueueItemRuntime = {
+  uuid: string
+  generation: number
+  settings: ProcessingSnapshot
+} & (
+  | { phase: 'processing', step: 'watermark' | 'compress' }
+  | { phase: 'ready', finalBytes: number }
+  | { phase: 'uploading', batchId: string, stage: UploadItemFailure['stage'] }
+  | { phase: 'uploaded', result: UploadItemSuccess }
+  | { phase: 'failed', source: 'processing', reason: 'decode' | 'watermark' | 'encode' }
+  | { phase: 'failed', source: 'upload', result: UploadItemFailure }
+)
+
+interface UploadBatchResult {
+  batchId: string
+  target: UploadTargetSnapshot
+  attemptedUuids: readonly string[]
+  successes: UploadItemSuccess[]
+  failures: UploadItemFailure[]
+}
+```
+
+设置快照创建时深复制已有字段；`Readonly` 只描述调用边界，不能用它代替隔离嵌套 `addPrefix` 的引用。命名沿用 `enableHash / enableTimestamp / addPrefix`，不新增 `namingMode`。MP4 或无需处理的图片直接 `ready`；图片按原文件 → 水印 → 压缩进入 `ready`。设置改变时未上传项递增 `generation`，从原文件重新处理；只有 uuid 仍存在且代次相同的结果可发布，已上传项不重算。处理失败必须重试或明确调整设置，不能上传旧产物。
+
+开始批次时筛选 `ready` 与已重试的失败项、冻结文件名 / 最终 File / 体积、对 owner / repo / branch / dir 取无凭据值快照；日期在这一刻按本地日历解析。批次内不读取后来改变的上传目标，也不因跨午夜改目录；下一批重新解析日期。上传锁期间禁止保存目录、重连目标和重置；退出 / 失效使运行代次过期并忽略晚到结果。认证由既有安全边界提供给请求，不进入目标快照。
+
+单个重新上传使用 `reUploadInfo` 的实际目标；旧管理重命名调用走独立单文件快照，不把其他目标塞入当前批次。当前工作区一批只对应一个目标。`uploadedBytes` 必须是最终 File.size；旧管理调用缺少 File 时以成功 contents 返回 size 补齐，不能伪造 0。
+
+### 10.8 成功集合、部署与同步状态（T002）
+
+批量编排先为每个尝试项生成 blob；blob 失败项记入 `failures`，其余构造 tree / commit / ref。只有 ref 更新成功才生成 `successes` 并更新队列和目录缓存。若所有 blob 失败，不提交空 tree；head / tree / commit / ref 任一步失败，将仍未提交的所有项按失败阶段记入 `failures`。单文件 contents API 成功且响应结构有效，视为 GitHub 已完成提交并以返回 commit SHA 记录。若请求失败但服务端可能已写入，仍报告失败 / 结果未确认，重试前查询目标，不能编造成功。
+
+每个 `attemptedUuids` 恰好出现于成功或失败之一，集合无交集；未尝试 / 已成功项不进入本次汇总。结果摘要由集合计算：全部成功、部分成功、全部失败；没有尝试项时阻止请求。复制只用成功集合，查看管理用成功结果的 `target.dir`；复制失败不改上传结果。`image.path / dir / size` 与实际提交目标和最终文件一致。
+
+```ts
+type DeploymentState =
+  | { phase: 'idle' }
+  | { phase: 'checking', operationId: number, target: RepositoryIdentity }
+  | { phase: 'not-deployed', target: RepositoryIdentity, checkedAt: number }
+  | {
+    phase: 'submitting'
+    operationId: number
+    target: RepositoryIdentity
+    step: 'cname' | 'branch' | 'pages'
+  }
+  | { phase: 'waiting', operationId: number, target: RepositoryIdentity, commitSha: string }
+  | {
+    phase: 'available'
+    operationId: number
+    target: RepositoryIdentity
+    commitSha: string
+    url: string
+    checkedAt: number
+    evidence: 'pages-build' | 'site-probe'
+  }
+  | { phase: 'failed', operationId: number, target: RepositoryIdentity, error: ApiFailure }
+
+type SettingsSyncState =
+  | { phase: 'idle' }
+  | { phase: 'saving-local', revision: number }
+  | { phase: 'local-saved', revision: number }
+  | { phase: 'syncing', revision: number }
+  | { phase: 'synced', revision: number, syncedAt: number }
+  | { phase: 'failed', revision: number, scope: 'local' | 'cloud', retryable: boolean }
+```
+
+部署状态由唯一部署服务 / Pinia 运行态持有，两页与快捷键共用防重。`checking` 查询成功且确认未部署才到 `not-deployed`；查询失败到 `failed`，不能当成不存在。`submitting → waiting` 只说明分支 / Pages 请求已提交，只有与本次目标和提交相符的构建结果或可验证站点探测才到 `available`；`.deploy`、分支存在、计时器、CORS 探测失败都不能作为可用证据。超时仍 `waiting` 并允许重新检查；查询权限不足显示原因，保留原链接来源。重建分支与清空 CNAME 必须先明确确认，CNAME 失败不进入分支操作。晚到的 `operationId` 不得覆盖新操作；不自动切换链接来源。
+
+同步状态归现有单实例 `use-cloud-settings-sync`，按本地修订号区分。先本地保存再防抖云同步；本地失败不宣称已保存，云失败保留本地有效值并提供重试。旧修订成功不能把新修订标为 `synced`。拉取结果明确区分文件 404、网络 / 权限失败和内容损坏；只有确认文件不存在才允许播种，后两种保留本地值并反馈失败，不能自动覆盖远端。断连 / 登出使旧任务失效，设置或云文件中不写同步状态。
+
+### 10.9 唯一归属与兼容迁移（T002）
+
+| 契约 | 唯一定义归属 / 实现任务 | 兼容方式 |
+| --- | --- | --- |
+| `ApiResult`、`ApiFailure` | `utils/request/types.ts`，T012 | 保留默认 `request` 的旧返回；新端点显式使用 typed 路径，不用失败 `[]` 适配新界面 |
+| `RepositoryIdentity`、`ConnectionState` | 连接领域模型；`services/github-connection.ts` / composable 实施 T013、T016 | Pinia 门面暂留，旧 `logined` 只作历史配置，展示状态走新验证结果 |
+| `UploadDirectoryDraft`、目录值 / 保存结果 / 查询状态 | 目录领域模型；路径纯函数和目录 composable，T017 | 不加存储键；原三字段与合法旧路径可直接读取 |
+| 选择器 Props / Emits | `repo-dir-cascader.vue` 类型边界，T018 | 受控模式无 Store 副作用，默认旧模式保留至调用方迁移 |
+| `ProcessingSnapshot`、队列运行态 / 上传结果 | 上传领域模型，调度 T021、结果 T026 | 复用 `UploadImageModel`；旧 `progress` 只在真实成功后置 100 |
+| `UploadTargetSnapshot` | 同一上传领域模型，T026 | 调用边界只传无凭据值，旧重命名单文件请求显式捕获自己的目标 |
+| `DeploymentState` | 部署领域模型与共享服务，T038–T039 | `.deploy` / 旧布尔字段只作历史记录，不映射成新 `available` |
+| `SettingsSyncState` | `use-cloud-settings-sync` 与共享内存状态，T037 | 云文件仍是既有偏好对象，无同步元数据和新增版本号 |
+
+不为展示组件、API、Store 各复制一份业务类型；实现时可按领域建立 `src/common/model/` 文件，其他层用 `import type` 引用。API 返回数据，composable / service 编排，Store 负责已提交值与事务；通用服务与工具不得导入 View。P0 的测试 fixture 是脱敏数据，不作为提前实现新业务服务的理由。
+
+### 10.10 反例核对（T002）
+
+| 输入 / 时序 | 契约结论 | 后续验证 |
+| --- | --- | --- |
+| 目录改为 6 层后 Esc；刷新请求随后返回 | 没有保存事务，已保存三字段不变；旧弹窗响应失效 | T017–T019 |
+| 已选父目录，下级查询返回成功 `[]` / 403 | 前者空目录可选，后者失败保留选择并重试 | T012、T018 |
+| `localStorage.setItem` 抛错 | 已保存值不变；弹窗与草稿保留，不提示成功 | T017 |
+| 两文件中一个 blob 失败，另一个 ref 成功 | 一成功一失败；只复制成功项，失败项可单独重试 | T026–T027 |
+| blob / tree / commit 成功但 ref 失败 | 所有未提交项失败；没有成功缓存、100% 或完成横幅 | T026 |
+| 日期批次跨午夜，下一批开始 | 本批同一目录；下一批解析新日期；旧成功结果不变 | T017、T026 |
+| 水印旧任务完成前移除项或修改设置 | uuid / generation 不匹配，丢弃旧结果 | T021 |
+| 已生成 gh-pages，但 Pages 仍构建或不可查询 | `waiting` 或查询失败，保留原链接来源，不能显示已可用 | T038 |
+| 云端 `.settings` 损坏或查询 403 | 保留本地有效偏好并报云失败，不播种覆盖 | T037 |
+| 新设置写入后旧修订云推送才成功 | 新修订仍需同步，旧完成不覆盖新状态 | T037 |
 
 ## 11. 响应式、多语言与可访问性
 
