@@ -390,6 +390,8 @@ P4 T029：目录工具栏接收 `{ path: string, loading: boolean }`，以 `brow
 - 名称升降序、最新上传与原始顺序继续复用现有排序逻辑。画稿中的“名称”“最新上传”是状态示例，不重置旧用户的排序偏好；时间回填继续按需执行，离开或切换排序时取消。
 - 仅实现已交付的网格视图。画稿里的视图图标不能被实现为无效果的切换按钮；没有列表视图时作为当前视图标识呈现。
 
+P4 T031：媒体卡片接收 `{ imageObj: UploadedImageModel, selected: boolean }`，通过 `select(boolean)`、`action(ManagementMediaAction)`、`availability(boolean)` 上报，不能写入 Props。`ManagementMediaAction` 为 `copy | property | rename | move | delete | repository`。图片 naturalWidth / naturalHeight、视频 videoWidth / videoHeight 只存卡片内存，正数时展示；未知大小省略，不扩展持久化字段。预览与菜单由常驻原生按钮打开，关闭后恢复触发按钮焦点。管理页负责调用现有操作，T033 统一服务与失败恢复。
+
 ## 9. 图床设置页面
 
 按 `M0qx2A` 将原折叠面板改为三个可直接浏览的分区。普通偏好继续本地保存并沿用 `.settings` 云同步；域名和部署是显式远端操作。

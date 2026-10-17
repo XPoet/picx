@@ -273,7 +273,20 @@
       "noMedia": "当前目录暂无图片或视频",
       "folderHelp": "进入上方文件夹查看媒体，或上传到当前目录。",
       "emptyDirectory": "当前目录为空",
-      "emptyHelp": "上传图片或 MP4，开始管理此目录。"
+      "emptyHelp": "上传图片或 MP4，开始管理此目录。",
+      "selectMedia": "选择 {name}",
+      "previewMedia": "预览 {name}",
+      "moreMedia": "更多操作：{name}",
+      "copyLink": "复制链接",
+      "previewFailed": "预览加载失败",
+      "invalidLink": "链接不可用，请检查链接设置。",
+      "retryPreview": "重新加载预览",
+      "video": "视频",
+      "rename": "重命名",
+      "move": "移动",
+      "delete": "删除",
+      "property": "文件属性",
+      "repository": "在 GitHub 查看"
     }
   },
   "toolbox": {

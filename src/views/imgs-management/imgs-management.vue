@@ -1,12 +1,16 @@
 <script lang="ts" setup>
+import type { UploadedImageModel } from '@/common/model'
+import type { ManagementMediaAction } from '@/common/model/management'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { ImageSortEnum } from '@/common/model'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { useImageUploadTime } from '@/composables/use-image-upload-time'
 import { useManagementDirectory } from '@/composables/use-management-directory'
 import { store } from '@/stores'
+import { copyImageLink, getGitHubRepoDirURL } from '@/utils'
 import { filterManagementContent, sortDirList, sortImageList } from '@/utils/management-utils'
 import FolderCard from './components/folder-card/folder-card.vue'
+import { checkImgProperty, onDeleteImage, onMoveImage, onRenameImage } from './components/image-card/image-card.util'
 import ImageCard from './components/image-card/image-card.vue'
 import ImageSelector from './components/image-selector/image-selector.vue'
 import MoveImageDialog from './components/move-image-dialog/move-image-dialog.vue'
@@ -37,6 +41,26 @@ watch([images, sortMode], ([items, mode]) => {
   if (mode === ImageSortEnum.timeDesc)
     backfillUploadTime(items)
 }, { immediate: true })
+function selectMedia(image: UploadedImageModel, selected: boolean) {
+  image.checked = selected
+}
+function setAvailability(image: UploadedImageModel, available: boolean) {
+  image.deployed = available
+}
+async function mediaAction(image: UploadedImageModel, action: ManagementMediaAction) {
+  if (action === 'copy')
+    await copyImageLink(image)
+  else if (action === 'property')
+    await checkImgProperty(image).catch(() => undefined)
+  else if (action === 'rename')
+    await onRenameImage(image).catch(() => undefined)
+  else if (action === 'move')
+    onMoveImage(image)
+  else if (action === 'delete')
+    onDeleteImage(image)
+  else if (action === 'repository')
+    window.open(getGitHubRepoDirURL(store.getters.getUserConfigInfo, image.dir === '/' ? '' : image.dir), '_blank', 'noopener,noreferrer')
+}
 onBeforeUnmount(cancelBackfill)
 </script>
 
@@ -76,7 +100,7 @@ onBeforeUnmount(cancelBackfill)
         <h2>{{ $t('management_page.workspace.media') }} <span>{{ sortedImageList.length }}</span></h2>
         <ul class="image-card-list">
           <li v-for="image in sortedImageList" :key="image.uuid">
-            <ImageCard :image-obj="image" />
+            <ImageCard :image-obj="image" :selected="image.checked" @select="selectMedia(image, $event)" @availability="setAvailability(image, $event)" @action="mediaAction(image, $event)" />
           </li>
         </ul>
       </section>

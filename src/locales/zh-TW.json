@@ -273,7 +273,20 @@
       "noMedia": "目前目錄暫無圖片或影片",
       "folderHelp": "進入上方資料夾查看媒體，或上傳到目前目錄。",
       "emptyDirectory": "目前目錄為空",
-      "emptyHelp": "上傳圖片或 MP4，開始管理此目錄。"
+      "emptyHelp": "上傳圖片或 MP4，開始管理此目錄。",
+      "selectMedia": "選取 {name}",
+      "previewMedia": "預覽 {name}",
+      "moreMedia": "更多操作：{name}",
+      "copyLink": "複製連結",
+      "previewFailed": "預覽載入失敗",
+      "invalidLink": "連結無法使用，請檢查連結設定。",
+      "retryPreview": "重新載入預覽",
+      "video": "影片",
+      "rename": "重新命名",
+      "move": "移動",
+      "delete": "刪除",
+      "property": "檔案內容",
+      "repository": "在 GitHub 查看"
     }
   },
   "toolbox": {

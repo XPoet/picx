@@ -118,7 +118,7 @@ test('低高度公告弹窗可完整操作，图片预览覆盖顶栏', async ({
   await page.keyboard.press('Escape')
   await expect(dialog).toBeHidden()
   await page.keyboard.press('Escape')
-  await page.locator('.image-card .el-image').first().click()
+  await page.locator('.image-card .image-preview').first().click()
   const viewer = page.locator('.el-image-viewer__wrapper')
   await expect(viewer).toBeVisible()
   expect(await viewer.evaluate(element => Number(getComputedStyle(element).zIndex))).toBeGreaterThanOrEqual(3000)

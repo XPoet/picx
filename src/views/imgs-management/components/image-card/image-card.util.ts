@@ -141,7 +141,7 @@ export const checkImgProperty = async (imgObj: UploadedImageModel) => {
   await ElMessageBox.confirm(
     `${i18n.global.t('management_page.imageName')}：${imgObj.name}\n${i18n.global.t(
       'management_page.imageSize',
-    )}：${getFileSize(imgObj.size)} KB`,
+    )}：${imgObj.size > 0 ? `${getFileSize(imgObj.size)} KB` : '—'}`,
     i18n.global.t('management_page.property'),
     {
       showCancelButton: false,

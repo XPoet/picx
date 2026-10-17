@@ -508,3 +508,13 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 **验证**：改动 ESLint、全量 stylelint、typecheck、build 通过；目录 Store / 过滤排序 10 项单测通过，时间回填取消 1 项单测通过。管理搜索分区与导航 E2E 桌面 / 移动共 10 项通过，日志 `/private/tmp/picx-p4-t030-e2e.log`。首轮发现移除旧外层 padding 后工具栏 content-box 溢出，已改 border-box；排序用例通过真实 Enter 打开选择器，避免点到 Element Plus 内层输入被占位层遮挡。截图核对 [混合根目录 1440](UI/evidence/p4/t030-mixed-1440.png)、[仅文件夹根目录 1440](UI/evidence/p4/t030-folders-1440.png)、[375 搜索无结果](UI/evidence/p4/t030-search-375.png)。
 
 **回滚**：回滚此提交恢复原搜索与分区展示；未增加持久化字段或远端写入。批量选择范围与常驻媒体操作分别在 T031–T033 收口。
+
+### T031 媒体卡片、预览与常驻操作
+
+**实施提交**：本节所属提交 `feat(management): expose accessible media card actions`；T030 为 `dc43bf0`。
+
+**实施**：卡片通过 typed select / action / availability 事件报告，Props 无写入。选择、复制、更多与完整名称属性入口常驻，图标复用 T029 下载的 Lucide。体积使用实际字节，未知值省略；图片 / 视频尺寸仅从真实加载元数据获取，失败清除，绝不补 0×0。图片可 Enter 打开并在 Esc 后返回焦点；MP4 列表不自动播放，显式预览使用原生 controls；加载失败有重试，无效链接有文本且禁用预览 / 复制。更多菜单接现有管理能力，T033 接统一服务。修正旧选择条的换行，供 T032 受控工具条替换。
+
+**验证**：改动 ESLint、全量 stylelint、typecheck、build 通过；受控 Props 与原生视频约束 2 项组件测试通过。媒体卡片与复制回退 E2E 共 6 项桌面 / 移动通过，日志 `/private/tmp/picx-p4-t031-e2e.log`。覆盖加载失败后重试、未知体积、长名、图片预览关闭焦点、属性 / 菜单、剪贴板拒绝与重试、无效链接及 MP4 暂停。无效链接 fixture 同步覆盖云设置返回，避免刷新时被正常云偏好恢复。已查看 [1440 卡片](UI/evidence/p4/t031-media-1440.png) 与 [375 卡片](UI/evidence/p4/t031-media-375.png)，无横向溢出；图片 fixture 实际为 1×1，尺寸按实展示。旧 P3 截图不覆盖。视频可播放源的真实解码兼容性仍由 P6 浏览器验收覆盖。
+
+**回滚**：回滚本提交恢复旧卡片，持久化格式未改变，未执行真实远端管理。

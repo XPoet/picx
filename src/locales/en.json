@@ -273,7 +273,20 @@
       "noMedia": "No images or videos in this directory",
       "folderHelp": "Open a folder above to view media, or upload to this directory.",
       "emptyDirectory": "This directory is empty",
-      "emptyHelp": "Upload images or MP4 files to start managing this directory."
+      "emptyHelp": "Upload images or MP4 files to start managing this directory.",
+      "selectMedia": "Select {name}",
+      "previewMedia": "Preview {name}",
+      "moreMedia": "More actions for {name}",
+      "copyLink": "Copy link",
+      "previewFailed": "Preview could not load",
+      "invalidLink": "Link unavailable. Check your link settings.",
+      "retryPreview": "Reload preview",
+      "video": "Video",
+      "rename": "Rename",
+      "move": "Move",
+      "delete": "Delete",
+      "property": "File properties",
+      "repository": "View on GitHub"
     }
   },
   "toolbox": {
