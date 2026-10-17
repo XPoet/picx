@@ -1,21 +1,26 @@
 <script lang="ts" setup>
-import { computed, onBeforeUnmount, watch } from 'vue'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { ImageSortEnum } from '@/common/model'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { useImageUploadTime } from '@/composables/use-image-upload-time'
 import { useManagementDirectory } from '@/composables/use-management-directory'
 import { store } from '@/stores'
+import { filterManagementContent, sortDirList, sortImageList } from '@/utils/management-utils'
 import FolderCard from './components/folder-card/folder-card.vue'
 import ImageCard from './components/image-card/image-card.vue'
 import ImageSelector from './components/image-selector/image-selector.vue'
 import MoveImageDialog from './components/move-image-dialog/move-image-dialog.vue'
 import ToolsBar from './components/tools-bar/tools-bar.vue'
-import { sortDirList, sortImageList } from './imgs-management.util'
 
 const { path, directories, images, loading, failed, browse, upload, reload } = useManagementDirectory()
 const sortMode = computed(() => store.getters.getUserSettings.management.sort)
-const sortedDirList = computed(() => sortDirList(directories.value, sortMode.value))
-const sortedImageList = computed(() => sortImageList(images.value, sortMode.value))
+const query = ref('')
+const visible = computed(() => filterManagementContent(directories.value, images.value, query.value))
+const sortedDirList = computed(() => sortDirList(visible.value.directories, sortMode.value))
+const sortedImageList = computed(() => sortImageList(visible.value.images, sortMode.value))
+watch(path, () => {
+  query.value = ''
+})
 const sortOptions = [
   { value: ImageSortEnum.default, labelKey: 'management_page.sortDefault' },
   { value: ImageSortEnum.nameAsc, labelKey: 'management_page.sortNameAsc' },
@@ -37,9 +42,15 @@ onBeforeUnmount(cancelBackfill)
 
 <template>
   <div class="page-container management-page-container">
-    <ToolsBar :path="path" :loading="loading" @browse="browse" @upload="upload" @reload="reload" />
+    <ToolsBar :path="path" :loading="loading" @browse="browse" @upload="upload" @reload="reload">
+      <label class="management-search">
+        <PicxIcon name="search" :size="18" />
+        <input v-model="query" type="search" :aria-label="$t('management_page.workspace.search')" :placeholder="$t('management_page.workspace.search')">
+      </label>
+    </ToolsBar>
     <div class="management-summary">
-      <span>{{ $t('nav.management') }}</span>
+      <h1>{{ $t('management_page.workspace.contents') }}</h1>
+      <span class="grid-indicator" :aria-label="$t('management_page.workspace.gridView')" role="img"><PicxIcon name="layout-grid" /></span>
       <el-select :model-value="sortMode" :aria-label="$t('management_page.sort')" @update:model-value="setSort">
         <el-option v-for="option in sortOptions" :key="option.value" :value="option.value" :label="$t(option.labelKey)" />
       </el-select>
@@ -52,22 +63,41 @@ onBeforeUnmount(cancelBackfill)
       </el-button>
     </div>
     <div v-loading="loading" class="management-content" :aria-busy="loading" :element-loading-text="$t('management_page.loadingTxt1')">
-      <ImageSelector v-if="images.length" :key="path" :current-dir-image-list="images" />
-      <ul v-if="sortedDirList.length" class="dir-card-list">
-        <li v-for="dir in sortedDirList" :key="dir.dirPath">
-          <FolderCard :folder-obj="dir" @open="browse" />
-        </li>
-      </ul>
-      <ul v-if="sortedImageList.length" class="image-card-list">
-        <li v-for="image in sortedImageList" :key="image.uuid">
-          <ImageCard :image-obj="image" />
-        </li>
-      </ul>
-      <el-empty v-if="!loading && !failed && !images.length && !directories.length">
-        <el-button type="primary" @click="upload()">
-          {{ path === '/' ? $t('management_page.workspace.uploadRoot') : $t('management_page.workspace.uploadCurrent') }}
-        </el-button>
-      </el-empty>
+      <ImageSelector v-if="images.length" :key="path" :current-dir-image-list="sortedImageList" />
+      <section v-if="sortedDirList.length" :aria-label="$t('management_page.workspace.folders')">
+        <h2>{{ $t('management_page.workspace.folders') }} <span>{{ sortedDirList.length }}</span></h2>
+        <ul class="dir-card-list">
+          <li v-for="dir in sortedDirList" :key="dir.dirPath">
+            <FolderCard :folder-obj="dir" @open="browse" />
+          </li>
+        </ul>
+      </section>
+      <section v-if="sortedImageList.length" :aria-label="$t('management_page.workspace.media')">
+        <h2>{{ $t('management_page.workspace.media') }} <span>{{ sortedImageList.length }}</span></h2>
+        <ul class="image-card-list">
+          <li v-for="image in sortedImageList" :key="image.uuid">
+            <ImageCard :image-obj="image" />
+          </li>
+        </ul>
+      </section>
+      <div v-if="!loading && !failed && !sortedImageList.length" class="management-empty">
+        <PicxIcon name="images" :size="48" />
+        <template v-if="query.trim() && !sortedDirList.length">
+          <h2>{{ $t('management_page.workspace.noResults') }}</h2>
+          <p>{{ $t('management_page.workspace.searchScope') }}</p>
+          <el-button @click="query = ''">
+            {{ $t('management_page.workspace.clearSearch') }}
+          </el-button>
+        </template>
+        <template v-else>
+          <h2>{{ $t(`management_page.workspace.${sortedDirList.length ? 'noMedia' : 'emptyDirectory'}`) }}</h2>
+          <p>{{ $t(`management_page.workspace.${sortedDirList.length ? 'folderHelp' : 'emptyHelp'}`) }}</p>
+          <el-button type="primary" @click="upload()">
+            <PicxIcon name="upload" :size="18" />
+            {{ path === '/' ? $t('management_page.workspace.uploadRoot') : $t('management_page.workspace.uploadCurrent') }}
+          </el-button>
+        </template>
+      </div>
     </div>
     <MoveImageDialog />
   </div>

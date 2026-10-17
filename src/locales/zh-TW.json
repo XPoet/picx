@@ -261,7 +261,19 @@
       "loadFailed": "目錄載入失敗，已保留原有內容。請重試。",
       "retry": "重試載入",
       "uploadSaveFailed": "上傳目錄儲存失敗，請檢查儲存權限和目錄層級後重試。",
-      "uploadBusy": "上傳正在進行，請完成後再變更目標目錄。"
+      "uploadBusy": "上傳正在進行，請完成後再變更目標目錄。",
+      "contents": "目錄內容",
+      "search": "搜尋資料夾或媒體名稱",
+      "folders": "資料夾",
+      "media": "圖片與影片",
+      "gridView": "網格檢視",
+      "noResults": "目前目錄沒有符合的結果",
+      "searchScope": "僅搜尋目前目錄已載入的資料夾和媒體名稱。",
+      "clearSearch": "清除搜尋",
+      "noMedia": "目前目錄暫無圖片或影片",
+      "folderHelp": "進入上方資料夾查看媒體，或上傳到目前目錄。",
+      "emptyDirectory": "目前目錄為空",
+      "emptyHelp": "上傳圖片或 MP4，開始管理此目錄。"
     }
   },
   "toolbox": {

@@ -261,7 +261,19 @@
       "loadFailed": "Could not load this directory. Existing contents were kept. Try again.",
       "retry": "Retry loading",
       "uploadSaveFailed": "Could not save the upload directory. Check storage access and path depth, then retry.",
-      "uploadBusy": "An upload is running. Wait before changing its destination."
+      "uploadBusy": "An upload is running. Wait before changing its destination.",
+      "contents": "Directory contents",
+      "search": "Search folder or media names",
+      "folders": "Folders",
+      "media": "Images and videos",
+      "gridView": "Grid view",
+      "noResults": "No matches in this directory",
+      "searchScope": "Search only filters folder and media names already loaded in this directory.",
+      "clearSearch": "Clear search",
+      "noMedia": "No images or videos in this directory",
+      "folderHelp": "Open a folder above to view media, or upload to this directory.",
+      "emptyDirectory": "This directory is empty",
+      "emptyHelp": "Upload images or MP4 files to start managing this directory."
     }
   },
   "toolbox": {

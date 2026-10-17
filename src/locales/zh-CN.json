@@ -261,7 +261,19 @@
       "loadFailed": "目录加载失败，已保留原有内容。请重试。",
       "retry": "重试加载",
       "uploadSaveFailed": "上传目录保存失败，请检查存储权限和目录层级后重试。",
-      "uploadBusy": "上传正在进行，请完成后再更改目标目录。"
+      "uploadBusy": "上传正在进行，请完成后再更改目标目录。",
+      "contents": "目录内容",
+      "search": "搜索文件夹或媒体名称",
+      "folders": "文件夹",
+      "media": "图片与视频",
+      "gridView": "网格视图",
+      "noResults": "当前目录没有匹配结果",
+      "searchScope": "仅搜索当前目录已加载的文件夹和媒体名称。",
+      "clearSearch": "清空搜索",
+      "noMedia": "当前目录暂无图片或视频",
+      "folderHelp": "进入上方文件夹查看媒体，或上传到当前目录。",
+      "emptyDirectory": "当前目录为空",
+      "emptyHelp": "上传图片或 MP4，开始管理此目录。"
     }
   },
   "toolbox": {

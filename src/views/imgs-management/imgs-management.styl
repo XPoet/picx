@@ -3,8 +3,8 @@
   flex-direction column
   gap 16px
   min-width 0
-  padding-top 0 !important
-  padding-bottom 24px !important
+  padding 0 !important
+  background transparent
   font-size 14px
 
   .management-summary {
@@ -13,6 +13,25 @@
     justify-content space-between
     gap 16px
     min-height 48px
+
+    h1 {
+      flex 1
+      margin 0
+      font-size 16px
+      font-weight 600
+    }
+
+    .grid-indicator {
+      display inline-flex
+      align-items center
+      justify-content center
+      width 44px
+      height 44px
+      border-radius 8px
+      background var(--picx-color-primary-soft)
+      color var(--picx-color-primary)
+      order 1
+    }
 
     .el-select {
       width 180px
@@ -25,6 +44,68 @@
     border 1px solid var(--picx-color-border)
     border-radius 14px
     background var(--picx-color-surface)
+  }
+
+  h2 {
+    display flex
+    align-items center
+    gap 8px
+    margin 0 0 16px
+    font-size 14px
+    font-weight 600
+
+    span {
+      color var(--picx-color-text-muted)
+      font-weight 400
+    }
+  }
+
+  .management-search {
+    display flex
+    align-items center
+    gap 8px
+    box-sizing border-box
+    min-width 0
+    width 280px
+    min-height 44px
+    padding 0 12px
+    border 1px solid var(--picx-color-border)
+    border-radius 8px
+    color var(--picx-color-text-muted)
+
+    input {
+      min-width 0
+      width 100%
+      height 42px
+      border 0
+      background transparent
+      color var(--picx-color-text)
+      font-size 14px
+    }
+  }
+
+  .management-empty {
+    display flex
+    flex-direction column
+    align-items center
+    gap 16px
+    padding 80px 16px
+    text-align center
+    color var(--picx-color-text-muted)
+
+    h2, p {
+      margin 0
+      line-height 1.6
+    }
+
+    h2 {
+      color var(--picx-color-text)
+      font-size 18px
+    }
+
+    .el-button :deep(> span) {
+      gap 8px
+    }
   }
 
   ul {
@@ -74,6 +155,19 @@
   @media (max-width 767px) {
     .management-content {
       padding 16px
+    }
+
+    .management-search {
+      flex 1 0 calc(100% - 60px)
+      width auto
+
+      input {
+        font-size 16px
+      }
+    }
+
+    :deep(.directory-tools) {
+      flex-wrap wrap
     }
 
     .image-card-list {
