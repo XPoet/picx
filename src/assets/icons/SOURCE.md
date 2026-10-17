@@ -19,3 +19,5 @@ P3 T020 于 2026-10-17 通过 Pencil 只读核对 O9DRIk、OL0pP、dFSNj：上�
 本次补齐后的 sprite SHA-256：`0648a23e529002396907d4c63e36054fc24e676aea07c76867ea791bc84e3df1`。运行时仅访问本站本地资源，许可继续使用 LICENSE-lucide.txt。
 
 P3 T028 将部署状态与操作中的 circle-dashed、circle-check、triangle-alert、rocket 同样接入 PicxIcon；所有 49 个 typed 图标名称均与本地 symbol 对应，sprite SHA-256 重新核对不变。
+
+P4 T029 于 2026-10-17 通过 Pencil 只读核对 YxFJA、EAM8q、UUeb5；按设计稿从官方 0.468.0 标签下载 arrow-left、chevron-right、search、images、layout-grid、link、check、square-minus，附加管理操作继续使用同体系 play、video、pencil、folder-input。原始 SVG 下载后仅转为 symbol，几何不变，无新增依赖或运行时外域请求。不实现设计稿中尚无功能的列表切换。sprite SHA-256：`8131c0acbf2c38c644164d1ff45805a764ef9760b556445621d80cd66b22cb4d`。

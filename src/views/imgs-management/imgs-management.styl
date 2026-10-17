@@ -1,114 +1,94 @@
-$top-box-height = 50rem
-$grid-gap = 20rem
-
 .management-page-container {
   display flex
   flex-direction column
-  justify-content space-between
-  padding-top 10rem !important
-  padding-bottom 0 !important
+  gap 16px
+  min-width 0
+  padding-top 0 !important
+  padding-bottom 24px !important
+  font-size 14px
 
-  .top-box {
+  .management-summary {
     display flex
     align-items center
     justify-content space-between
-    width 100%
-    min-height var(--picx-control-height)
-    height auto
+    gap 16px
+    min-height 48px
 
-
-    .right {
-      .btn-icon {
-        margin-left 10rem
-        color var(--text-color-3)
-        font-size 22rem
-        cursor pointer
-      }
+    .el-select {
+      width 180px
     }
   }
 
+  .management-content {
+    min-height 480px
+    padding 24px
+    border 1px solid var(--picx-color-border)
+    border-radius 14px
+    background var(--picx-color-surface)
+  }
 
-  .bottom-box {
-    width 100%
-    height auto
-    border 1rem solid var(--border-color)
-    border-bottom none
+  ul {
+    margin 0
+    padding 0
+    list-style none
+  }
 
-    .content-list-box {
-      width 100%
-      height auto
-      padding $grid-gap
-      overflow visible
+  .dir-card-list {
+    display grid
+    grid-template-columns repeat(auto-fill, minmax(120px, 140px))
+    gap 16px
+    margin-bottom 24px
+  }
 
-      &.has-tools {
-        height auto
-      }
+  .image-card-list {
+    display grid
+    grid-template-columns repeat(4, minmax(0, 1fr))
+    gap 20px
 
+    > li {
+      min-width 0
+      min-height 240px
+    }
+  }
 
-      .list-item {
-        display grid
-        grid-auto-rows 120rem
-        grid-auto-flow row
-        grid-gap $grid-gap
-        grid-template-columns repeat(10, 1fr)
-      }
+  .management-error {
+    display flex
+    align-items center
+    gap 12px
+    padding 12px
+    border-radius var(--picx-radius-control)
+    background var(--picx-color-danger-soft)
+    color var(--picx-color-danger)
 
+    span {
+      flex 1
+    }
+  }
 
-      .dir-card-list {
-        margin-bottom $grid-gap
+  @media (max-width 1023px) {
+    .image-card-list {
+      grid-template-columns repeat(3, minmax(0, 1fr))
+    }
+  }
 
-        .dir-card-item {
-          grid-row span 1
-          grid-column span 1
-        }
-      }
+  @media (max-width 767px) {
+    .management-content {
+      padding 16px
+    }
 
+    .image-card-list {
+      grid-template-columns repeat(2, minmax(0, 1fr))
+      gap 16px
+    }
 
-      .image-card-list {
-        .image-card-item {
-          grid-row span 2
-          grid-column span 2
-        }
-      }
+    .management-error {
+      flex-wrap wrap
+    }
+  }
 
-
-      +picx-tablet-2() {
-        padding $grid-gap * 0.9
-
-        .list-item {
-          grid-auto-rows 110rem
-          grid-gap $grid-gap * 0.9
-          grid-template-columns repeat(8, 1fr)
-        }
-      }
-
-
-      +picx-tablet() {
-        padding $grid-gap * 0.8
-
-        .list-item {
-          grid-auto-rows 100rem
-          grid-gap $grid-gap * 0.8
-          grid-template-columns repeat(6, 1fr)
-        }
-      }
-
-
-      +picx-mobile() {
-        padding $grid-gap* 0.9
-
-        .list-item {
-          grid-auto-rows 120rem
-          grid-gap $grid-gap* 0.9
-          grid-template-columns repeat(4, 1fr)
-        }
-      }
-
-      @media (max-width 479px) {
-        .image-card-list {
-          grid-template-columns repeat(2, minmax(0, 1fr))
-        }
-      }
+  @media (max-width 479px) {
+    .image-card-list {
+      grid-template-columns minmax(0, 1fr)
     }
   }
 }

@@ -249,7 +249,20 @@
     "moveTips": "Select a target directory",
     "loadingTxt4": "Moving...",
     "message8": "Moved successfully",
-    "message9": "Failed to move, please try again"
+    "message9": "Failed to move, please try again",
+    "workspace": {
+      "navigation": "Directory navigation",
+      "back": "Go to parent directory",
+      "root": "Root directory",
+      "openFolder": "Open folder {name}",
+      "folder": "Folder",
+      "uploadRoot": "Upload to root",
+      "uploadCurrent": "Upload to this directory",
+      "loadFailed": "Could not load this directory. Existing contents were kept. Try again.",
+      "retry": "Retry loading",
+      "uploadSaveFailed": "Could not save the upload directory. Check storage access and path depth, then retry.",
+      "uploadBusy": "An upload is running. Wait before changing its destination."
+    }
   },
   "toolbox": {
     "tool_1": "Image Compression",

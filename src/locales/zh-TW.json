@@ -249,7 +249,20 @@
     "moveTips": "請選擇目標目錄",
     "loadingTxt4": "正在移動 ...",
     "message8": "移動成功",
-    "message9": "移動失敗，請重試"
+    "message9": "移動失敗，請重試",
+    "workspace": {
+      "navigation": "目錄導覽",
+      "back": "返回上層目錄",
+      "root": "根目錄",
+      "openFolder": "進入資料夾 {name}",
+      "folder": "資料夾",
+      "uploadRoot": "上傳到根目錄",
+      "uploadCurrent": "上傳到目前目錄",
+      "loadFailed": "目錄載入失敗，已保留原有內容。請重試。",
+      "retry": "重試載入",
+      "uploadSaveFailed": "上傳目錄儲存失敗，請檢查儲存權限和目錄層級後重試。",
+      "uploadBusy": "上傳正在進行，請完成後再變更目標目錄。"
+    }
   },
   "toolbox": {
     "tool_1": "圖片壓縮",

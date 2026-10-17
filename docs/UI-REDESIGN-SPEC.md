@@ -377,6 +377,8 @@ interface UploadDirectoryDraft {
 
 点击“上传到根目录 / 当前目录”时明确更新上传目标并进入上传页，不能仅导航到仍指向其他位置的上传页。浏览目录本身不改变上传目录。
 
+P4 T029：目录工具栏接收 `{ path: string, loading: boolean }`，以 `browse(path)`、`upload(path)`、`reload()` 事件向页面报告动作；文件夹卡片接收 `DirObject` 并发出 `open(path)`。页面目录 composable 只通过 `SET_USER_CONFIG_INFO({ viewDir })` 浏览；定向上传调用既有 `SAVE_UPLOAD_DIRECTORY` 事务，根目录保存 `rootDir`，其他目录保存 `repoDir` 与完整分段，保存失败不导航。面包屑由真实路径生成，长路径区域横向滚动并支持键盘聚焦。
+
 ### 8.2 图片卡片与批量操作
 
 - 卡片包含缩略图或视频预览入口、完整文件名的可查看入口、真实体积、可获得的尺寸、常驻选择框、复制链接和“更多”。文件名、尺寸等未知数据不能用画稿样例或 `0 × 0` 填充。

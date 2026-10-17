@@ -62,9 +62,10 @@ test('管理空目录保持上传恢复入口', async ({ page, picx }) => {
 
   await expect(page).toHaveURL(/#\/management$/)
   const main = page.getByRole('main')
-  await expect(main.getByRole('button', { name: '立即上传', exact: true })).toBeVisible()
+  const upload = main.locator('.management-content').getByRole('button', { name: '上传到根目录', exact: true })
+  await expect(upload).toBeVisible()
   await expect(main.getByText('coast.png', { exact: true })).toHaveCount(0)
-  await main.getByRole('button', { name: '立即上传', exact: true }).click()
+  await upload.click()
   await expect(page).toHaveURL(/#\/upload$/)
   await expect(main.locator('input[type="file"]')).toHaveCount(1)
 })

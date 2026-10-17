@@ -249,7 +249,20 @@
     "moveTips": "请选择目标目录",
     "loadingTxt4": "正在移动 ...",
     "message8": "移动成功",
-    "message9": "移动失败，请重试"
+    "message9": "移动失败，请重试",
+    "workspace": {
+      "navigation": "目录导航",
+      "back": "返回上级目录",
+      "root": "根目录",
+      "openFolder": "进入文件夹 {name}",
+      "folder": "文件夹",
+      "uploadRoot": "上传到根目录",
+      "uploadCurrent": "上传到当前目录",
+      "loadFailed": "目录加载失败，已保留原有内容。请重试。",
+      "retry": "重试加载",
+      "uploadSaveFailed": "上传目录保存失败，请检查存储权限和目录层级后重试。",
+      "uploadBusy": "上传正在进行，请完成后再更改目标目录。"
+    }
   },
   "toolbox": {
     "tool_1": "图片压缩",

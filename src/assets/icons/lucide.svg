@@ -252,4 +252,54 @@
     <line x1="21" x2="14" y1="3" y2="10" />
     <line x1="3" x2="10" y1="21" y2="14" />
   </symbol>
+  <symbol id="arrow-left" viewBox="0 0 24 24">
+<path d="m12 19-7-7 7-7" />
+  <path d="M19 12H5" />
+  </symbol>
+  <symbol id="chevron-right" viewBox="0 0 24 24">
+<path d="m9 18 6-6-6-6" />
+  </symbol>
+  <symbol id="search" viewBox="0 0 24 24">
+<circle cx="11" cy="11" r="8" />
+  <path d="m21 21-4.3-4.3" />
+  </symbol>
+  <symbol id="images" viewBox="0 0 24 24">
+<path d="M18 22H4a2 2 0 0 1-2-2V6" />
+  <path d="m22 13-1.296-1.296a2.41 2.41 0 0 0-3.408 0L11 18" />
+  <circle cx="12" cy="8" r="2" />
+  <rect width="16" height="16" x="6" y="2" rx="2" />
+  </symbol>
+  <symbol id="layout-grid" viewBox="0 0 24 24">
+<rect width="7" height="7" x="3" y="3" rx="1" />
+  <rect width="7" height="7" x="14" y="3" rx="1" />
+  <rect width="7" height="7" x="14" y="14" rx="1" />
+  <rect width="7" height="7" x="3" y="14" rx="1" />
+  </symbol>
+  <symbol id="link" viewBox="0 0 24 24">
+<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+  </symbol>
+  <symbol id="check" viewBox="0 0 24 24">
+<path d="M20 6 9 17l-5-5" />
+  </symbol>
+  <symbol id="square-minus" viewBox="0 0 24 24">
+<rect width="18" height="18" x="3" y="3" rx="2" />
+  <path d="M8 12h8" />
+  </symbol>
+  <symbol id="play" viewBox="0 0 24 24">
+<polygon points="6 3 20 12 6 21 6 3" />
+  </symbol>
+  <symbol id="video" viewBox="0 0 24 24">
+<path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5" />
+  <rect x="2" y="6" width="14" height="12" rx="2" />
+  </symbol>
+  <symbol id="pencil" viewBox="0 0 24 24">
+<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z" />
+  <path d="m15 5 4 4" />
+  </symbol>
+  <symbol id="folder-input" viewBox="0 0 24 24">
+<path d="M2 9V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H20a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-1" />
+  <path d="M2 13h10" />
+  <path d="m9 16 3-3-3-3" />
+  </symbol>
 </svg>

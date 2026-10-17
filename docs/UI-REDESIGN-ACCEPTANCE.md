@@ -484,3 +484,17 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 | T026 逐项结果与目标快照 | `e3919ee` |
 | T027 结果区与继续上传 | `6613f6b` |
 | T028 快捷键与生命周期 | 本节所属提交，标题见上 |
+
+## P4 图片管理
+
+### T029 目录浏览、面包屑和定向上传
+
+**实施提交**：本节所属提交 `feat(management): add directory navigation and targeted uploads`。执行前 `develop` 工作区干净，较 origin/develop 超前 31 个提交；不推送、不删除文件、不修改设计稿。
+
+**实施**：Pencil 只读核对 `YxFJA`、`EAM8q`、`UUeb5` 的结构和截图；所需 Lucide SVG 按官方 0.468.0 标签下载，加入本地 sprite，来源、许可与 SHA-256 记录在 `src/assets/icons/SOURCE.md`。工具栏与文件夹使用 typed Props / Emits，浏览仅更新 `viewDir`；根目录返回禁用，面包屑可到任意父级，长路径可滚动。定向上传通过既有保存事务同步目标与分段后导航；保存失败保留页面和原目标。新建 `use-management-directory` 管理异步目录浏览，媒体与批量卡片留给后续任务。
+
+**验证**：`pnpm --config.verifyDepsBeforeRun=false` 前缀执行改动 ESLint、`lint:style`、`typecheck`、`build` 均通过。当前 Node 24.21.0、pnpm 11.17.0（packageManager 声明 11.18.0）；pnpm 默认依赖校验因 enableGlobalVirtualStore 配置不一致拒绝启动，使用既有命令级覆盖继续，不安装或更新依赖。Chrome 在沙箱内启动失败，获自动审核许可后于沙箱外运行本地拦截测试。`test:e2e tests/e2e/management-navigation.spec.ts tests/e2e/smoke.spec.ts --workers=2` 20 项通过，覆盖单击、Enter、深层返回、任意父级、375px 无溢出、上传目标独立与保存失败；日志 `/private/tmp/picx-p4-t029-e2e.log`，构建日志 `/private/tmp/picx-p4-t029-build.log`。更新 smoke 空态断言为实际定向上传入口。
+
+已查看 [1440 简中截图](UI/evidence/p4/t029-directory-1440.png) 与 [375 简中截图](UI/evidence/p4/t029-directory-375.png)：导航可见、路径可滚动、上传入口可操作；媒体仍是旧卡片，缩略图 fixture 是既有 1px 图片，不代表真实图片内容。三语言新增文本同步。
+
+**回滚**：回滚本提交恢复旧浏览编排；不改变存储键，不撤销远端操作。本任务未执行真实 GitHub 写入。
