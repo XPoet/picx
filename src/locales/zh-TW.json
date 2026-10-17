@@ -286,7 +286,14 @@
       "move": "移動",
       "delete": "刪除",
       "property": "檔案內容",
-      "repository": "在 GitHub 查看"
+      "repository": "在 GitHub 查看",
+      "selectVisible": "全選目前目錄媒體（{total} 項）",
+      "selectResults": "全選目前結果（{total} 項）",
+      "selectedCount": "已選 {selected} / {total} 項",
+      "clearSelection": "取消選取",
+      "batchCopy": "複製所選連結",
+      "batchDelete": "刪除所選媒體",
+      "deleteSelectionConfirm": "將從 {dir} 刪除所選的 {total} 個媒體檔案。此操作會提交到 GitHub，無法在 PicX 中復原。"
     }
   },
   "toolbox": {

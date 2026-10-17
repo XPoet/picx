@@ -286,7 +286,14 @@
       "move": "Move",
       "delete": "Delete",
       "property": "File properties",
-      "repository": "View on GitHub"
+      "repository": "View on GitHub",
+      "selectVisible": "Select all media in this directory ({total})",
+      "selectResults": "Select all current results ({total})",
+      "selectedCount": "Selected {selected} / {total}",
+      "clearSelection": "Clear selection",
+      "batchCopy": "Copy selected links",
+      "batchDelete": "Delete selected media",
+      "deleteSelectionConfirm": "Delete the {total} selected media files from {dir}. This creates a GitHub commit and cannot be undone in PicX."
     }
   },
   "toolbox": {

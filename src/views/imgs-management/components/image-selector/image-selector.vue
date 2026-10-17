@@ -1,126 +1,35 @@
-<script lang="ts" setup>
-import type { UploadedImageModel } from '@/common/model'
-import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
-import { DeleteStatusEnum } from '@/common/model'
-import { useStore } from '@/stores'
-import { batchCopyImageLinks, deleteImageOfGitHub } from '@/utils'
+<script setup lang="ts">
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 
-const props = defineProps({
-  currentDirImageList: {
-    type: Array,
-    default: () => [],
-  },
-})
-
-const store = useStore()
-const allChecked = ref(false)
-const instance = getCurrentInstance()
-
-const getImageCardCheckedArr = computed(() => store.getters.getImageCardCheckedArr)
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const getImageCardCheckedNum = computed(() => getImageCardCheckedArr.value.length || 0)
-
-watch(
-  () => getImageCardCheckedNum.value,
-  (newVal) => {
-    const newValCheckedNum = props.currentDirImageList.length
-    allChecked.value = newVal === newValCheckedNum
-  },
-)
-
-const batchCopy = () => {
-  batchCopyImageLinks(getImageCardCheckedArr.value)
+defineProps<{ total: number, selected: number, allSelected: boolean, indeterminate: boolean, filtered: boolean, busy: boolean }>()
+const emit = defineEmits<{ selectAll: [checked: boolean], clear: [], copy: [], delete: [] }>()
+function change(event: Event) {
+  if (event.target instanceof HTMLInputElement)
+    emit('selectAll', event.target.checked)
 }
-
-const cancelPick = () => {
-  props.currentDirImageList.forEach((item: any) => {
-    if (item.checked) {
-      item.checked = false
-    }
-  })
-}
-
-const batchDeleteImage = () => {
-  if (getImageCardCheckedArr.value?.length > 0) {
-    ElMessageBox.confirm(
-      instance?.proxy?.$t('management_page.delTips2', {
-        total: getImageCardCheckedArr.value?.length,
-      }),
-      instance?.proxy?.$t('tip'),
-      {
-        type: 'warning',
-      },
-    )
-      .then(async () => {
-        const res = await deleteImageOfGitHub(getImageCardCheckedArr.value, userConfigInfo)
-        if (res === DeleteStatusEnum.deleted) {
-          ElMessage.success({ message: instance?.proxy?.$t('management_page.message5') })
-        }
-        if (res === DeleteStatusEnum.allDeleted) {
-          ElMessage.success({ message: instance?.proxy?.$t('management_page.message6') })
-        }
-        if (res === DeleteStatusEnum.deleteFail) {
-          ElMessage.error({ message: instance?.proxy?.$t('management_page.message7') })
-        }
-      })
-      .catch(() => undefined)
-  }
-}
-
-const allCheckChange = () => {
-  let checkedImgArr: Array<UploadedImageModel> = []
-  props.currentDirImageList.forEach((item: any) => {
-    item.checked = allChecked.value
-  })
-  checkedImgArr = props.currentDirImageList as any
-  store.commit('REPLACE_IMAGE_CARD', { checkedImgArr })
-}
-
-onMounted(() => {
-  allCheckChange()
-})
 </script>
 
 <template>
-  <div v-if="getImageCardCheckedNum" class="selector-wrapper">
-    <div class="selector-left-box">
-      <el-checkbox
-        v-model="allChecked"
-        :label="allChecked ? $t('management_page.deselectAll') : $t('management_page.selectAll')"
-        @change="allCheckChange"
-      />
-      <div class="item">
-        {{ $t('management_page.selectTotal', { total: getImageCardCheckedNum }) }}
-      </div>
-      <div class="item cancel-select-btn" @click="cancelPick">
-        {{ $t('management_page.unselect') }}
-      </div>
-    </div>
-    <div class="selector-right-box">
-      <el-tooltip
-        placement="top"
-        :content="$t('management_page.batchCopy')"
-        :show-arrow="false"
-        :offset="6"
-      >
-        <el-icon class="btn-icon" @click="batchCopy">
-          <IEpCopyDocument />
-        </el-icon>
-      </el-tooltip>
-      <el-tooltip
-        placement="top"
-        :content="$t('management_page.batchDelete')"
-        :show-arrow="false"
-        :offset="6"
-      >
-        <el-icon class="btn-icon" @click="batchDeleteImage">
-          <IEpDelete />
-        </el-icon>
-      </el-tooltip>
-    </div>
+  <div class="selector-wrapper" :class="{ 'has-selection': selected > 0 }">
+    <label class="select-all">
+      <input type="checkbox" :checked="allSelected" :indeterminate.prop="indeterminate" :disabled="busy || !total" @change="change">
+      <span>{{ $t(`management_page.workspace.${filtered ? 'selectResults' : 'selectVisible'}`, { total }) }}</span>
+    </label>
+    <span v-if="selected" role="status">{{ $t('management_page.workspace.selectedCount', { selected, total }) }}</span>
+    <template v-if="selected">
+      <button type="button" :disabled="busy" @click="emit('clear')">
+        {{ $t('management_page.workspace.clearSelection') }}
+      </button>
+      <button type="button" :disabled="busy" @click="emit('copy')">
+        <PicxIcon name="copy" :size="18" />{{ $t('management_page.workspace.batchCopy') }}
+      </button>
+      <button type="button" class="batch-delete" :disabled="busy" @click="emit('delete')">
+        <PicxIcon name="trash-2" :size="18" />{{ $t('management_page.workspace.batchDelete') }}
+      </button>
+    </template>
   </div>
 </template>
 
 <style scoped lang="stylus">
-@import 'image-selector.styl'
+@import './image-selector.styl'
 </style>

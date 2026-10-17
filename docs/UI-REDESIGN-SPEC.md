@@ -392,6 +392,8 @@ P4 T029：目录工具栏接收 `{ path: string, loading: boolean }`，以 `brow
 
 P4 T031：媒体卡片接收 `{ imageObj: UploadedImageModel, selected: boolean }`，通过 `select(boolean)`、`action(ManagementMediaAction)`、`availability(boolean)` 上报，不能写入 Props。`ManagementMediaAction` 为 `copy | property | rename | move | delete | repository`。图片 naturalWidth / naturalHeight、视频 videoWidth / videoHeight 只存卡片内存，正数时展示；未知大小省略，不扩展持久化字段。预览与菜单由常驻原生按钮打开，关闭后恢复触发按钮焦点。管理页负责调用现有操作，T033 统一服务与失败恢复。
 
+P4 T032：`use-management-selection` 以 `path + sha` 作为媒体身份，在页面内存中维护选择集合；不使用刷新后重新生成的 uuid，也不把勾选写入目录缓存。目录或搜索输入变化同步清空选择，排序仅改变显示顺序，刷新按实际身份取交集。选择组件接收可见数量、选中数量、筛选状态与 busy，通过 selectAll / clear / copy / delete 发出动作；页面使用同一 `selectedImages` 计算值构造确认、复制与删除快照，不能重新查询隐藏项或递归目录。
+
 ## 9. 图床设置页面
 
 按 `M0qx2A` 将原折叠面板改为三个可直接浏览的分区。普通偏好继续本地保存并沿用 `.settings` 云同步；域名和部署是显式远端操作。

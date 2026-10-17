@@ -286,7 +286,14 @@
       "move": "移动",
       "delete": "删除",
       "property": "文件属性",
-      "repository": "在 GitHub 查看"
+      "repository": "在 GitHub 查看",
+      "selectVisible": "全选当前目录媒体（{total} 项）",
+      "selectResults": "全选当前结果（{total} 项）",
+      "selectedCount": "已选 {selected} / {total} 项",
+      "clearSelection": "取消选择",
+      "batchCopy": "复制所选链接",
+      "batchDelete": "删除所选媒体",
+      "deleteSelectionConfirm": "将从 {dir} 删除所选的 {total} 个媒体文件。此操作会提交到 GitHub，无法在 PicX 中撤销。"
     }
   },
   "toolbox": {

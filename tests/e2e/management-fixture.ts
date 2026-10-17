@@ -1,4 +1,4 @@
-import { createDirectoryContentsFixture, createRepositoryFixture } from '../fixtures/ui-redesign'
+import { createCloudSettingsFixture, createDirectoryContentsFixture, createRepositoryFixture } from '../fixtures/ui-redesign'
 import { test as base, expect } from './fixtures'
 
 export const test = base.extend<{
@@ -7,9 +7,21 @@ export const test = base.extend<{
   management: async ({ page, picx }, use) => {
     const requests: string[] = []
     let contents = createDirectoryContentsFixture()
+    let cloudSettings: object | null = null
     const prefix = `/repos/${createRepositoryFixture().owner}/${createRepositoryFixture().repo}/contents/`
     await page.route('https://api.github.com/**', async (route) => {
       const url = new URL(route.request().url())
+      if (url.pathname === `${prefix}.settings` && route.request().method() === 'PUT') {
+        const body = route.request().postDataJSON() as { content: string }
+        const binary = atob(body.content)
+        cloudSettings = JSON.parse(new TextDecoder().decode(Uint8Array.from(binary, character => character.charCodeAt(0)))) as object
+        await route.fulfill({ json: { content: { sha: 'fixture-settings-next' }, commit: { sha: 'fixture-settings-commit' } } })
+        return
+      }
+      if (url.pathname === `${prefix}.settings` && cloudSettings) {
+        await route.fulfill({ json: createCloudSettingsFixture(cloudSettings) })
+        return
+      }
       const path = decodeURIComponent(url.pathname.slice(prefix.length))
       if (route.request().method() === 'GET' && url.pathname.startsWith(prefix) && Object.hasOwn(contents, path)) {
         requests.push(path)

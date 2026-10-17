@@ -2,12 +2,14 @@
 import type { UploadedImageModel } from '@/common/model'
 import type { ManagementMediaAction } from '@/common/model/management'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import { ImageSortEnum } from '@/common/model'
+import { DeleteStatusEnum, ImageSortEnum } from '@/common/model'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { useImageUploadTime } from '@/composables/use-image-upload-time'
 import { useManagementDirectory } from '@/composables/use-management-directory'
+import { useManagementSelection } from '@/composables/use-management-selection'
+import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
-import { copyImageLink, getGitHubRepoDirURL } from '@/utils'
+import { batchCopyImageLinks, copyImageLink, deleteImageOfGitHub, getGitHubRepoDirURL } from '@/utils'
 import { filterManagementContent, sortDirList, sortImageList } from '@/utils/management-utils'
 import FolderCard from './components/folder-card/folder-card.vue'
 import { checkImgProperty, onDeleteImage, onMoveImage, onRenameImage } from './components/image-card/image-card.util'
@@ -25,6 +27,8 @@ const sortedImageList = computed(() => sortImageList(visible.value.images, sortM
 watch(path, () => {
   query.value = ''
 })
+const selection = useManagementSelection(sortedImageList, path, query)
+const deleting = ref(false)
 const sortOptions = [
   { value: ImageSortEnum.default, labelKey: 'management_page.sortDefault' },
   { value: ImageSortEnum.nameAsc, labelKey: 'management_page.sortNameAsc' },
@@ -35,14 +39,34 @@ function setSort(value: ImageSortEnum) {
   void store.dispatch('SET_USER_SETTINGS', { management: { sort: value } })
 }
 const { backfillUploadTime, cancelBackfill } = useImageUploadTime()
-watch(images, value => store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: value }), { immediate: true })
 watch([images, sortMode], ([items, mode]) => {
   cancelBackfill()
   if (mode === ImageSortEnum.timeDesc)
     backfillUploadTime(items)
 }, { immediate: true })
-function selectMedia(image: UploadedImageModel, selected: boolean) {
-  image.checked = selected
+async function batchCopy() {
+  await batchCopyImageLinks([...selection.selectedImages.value])
+}
+async function batchDelete() {
+  const targets = [...selection.selectedImages.value]
+  if (!targets.length || deleting.value)
+    return
+  try {
+    await ElMessageBox.confirm(i18n.global.t('management_page.workspace.deleteSelectionConfirm', { total: targets.length, dir: path.value }), i18n.global.t('management_page.workspace.batchDelete'), { type: 'warning' })
+  }
+  catch {
+    return
+  }
+  deleting.value = true
+  try {
+    const result = await deleteImageOfGitHub(targets, store.getters.getUserConfigInfo)
+    if (result === DeleteStatusEnum.deleteFail)
+      ElMessage.error(i18n.global.t('management_page.message7'))
+    else selection.clear()
+  }
+  finally {
+    deleting.value = false
+  }
 }
 function setAvailability(image: UploadedImageModel, available: boolean) {
   image.deployed = available
@@ -73,7 +97,10 @@ onBeforeUnmount(cancelBackfill)
       </label>
     </ToolsBar>
     <div class="management-summary">
-      <h1>{{ $t('management_page.workspace.contents') }}</h1>
+      <ImageSelector v-if="sortedImageList.length" :total="sortedImageList.length" :selected="selection.selectedImages.value.length" :all-selected="selection.allSelected.value" :indeterminate="selection.indeterminate.value" :filtered="Boolean(query.trim())" :busy="deleting" @select-all="selection.selectAll" @clear="selection.clear" @copy="batchCopy" @delete="batchDelete" />
+      <h1 v-else>
+        {{ $t('management_page.workspace.contents') }}
+      </h1>
       <span class="grid-indicator" :aria-label="$t('management_page.workspace.gridView')" role="img"><PicxIcon name="layout-grid" /></span>
       <el-select :model-value="sortMode" :aria-label="$t('management_page.sort')" @update:model-value="setSort">
         <el-option v-for="option in sortOptions" :key="option.value" :value="option.value" :label="$t(option.labelKey)" />
@@ -87,7 +114,6 @@ onBeforeUnmount(cancelBackfill)
       </el-button>
     </div>
     <div v-loading="loading" class="management-content" :aria-busy="loading" :element-loading-text="$t('management_page.loadingTxt1')">
-      <ImageSelector v-if="images.length" :key="path" :current-dir-image-list="sortedImageList" />
       <section v-if="sortedDirList.length" :aria-label="$t('management_page.workspace.folders')">
         <h2>{{ $t('management_page.workspace.folders') }} <span>{{ sortedDirList.length }}</span></h2>
         <ul class="dir-card-list">
@@ -100,7 +126,7 @@ onBeforeUnmount(cancelBackfill)
         <h2>{{ $t('management_page.workspace.media') }} <span>{{ sortedImageList.length }}</span></h2>
         <ul class="image-card-list">
           <li v-for="image in sortedImageList" :key="image.uuid">
-            <ImageCard :image-obj="image" :selected="image.checked" @select="selectMedia(image, $event)" @availability="setAvailability(image, $event)" @action="mediaAction(image, $event)" />
+            <ImageCard :image-obj="image" :selected="selection.isSelected(image)" @select="selection.select(image, $event)" @availability="setAvailability(image, $event)" @action="mediaAction(image, $event)" />
           </li>
         </ul>
       </section>
