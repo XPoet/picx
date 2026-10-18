@@ -112,6 +112,16 @@ export const test = base.extend<{ picx: PicxFixture }>({
         }
       }
 
+      if (url.origin === 'https://api.github.com' && method === 'GET' && url.pathname === `/repos/${fixtureRepository.owner}/${fixtureRepository.repo}`) {
+        await route.fulfill({ json: simulatedRepository })
+        return
+      }
+
+      if (url.origin === 'https://api.github.com' && method === 'GET' && url.pathname === `/repos/${fixtureRepository.owner}/${fixtureRepository.repo}/git/ref/heads/gh-pages`) {
+        await route.fulfill(createFailureFixture('not-found'))
+        return
+      }
+
       if (settingsWritable && url.origin === 'https://api.github.com' && method === 'PUT' && url.pathname === `${contentPrefix}.settings`) {
         const payload: unknown = request.postDataJSON()
         if (!payload || typeof payload !== 'object' || !('content' in payload) || typeof payload.content !== 'string')

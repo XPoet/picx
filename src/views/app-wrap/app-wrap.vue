@@ -7,6 +7,7 @@ import { computed, h, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
 import CopyFallbackDialog from '@/components/copy-fallback-dialog/copy-fallback-dialog.vue'
+import { useDeploymentLifecycle } from '@/components/deploy-status-bar/deploy-status-bar.util'
 import { useCloudSettingsSync } from '@/composables/use-cloud-settings-sync'
 import router from '@/router'
 import { useStore } from '@/stores'
@@ -18,6 +19,7 @@ import { initGithubAuthorize } from '@/views/picx-login/picx-login.util'
 const { locale, t } = useI18n()
 const store = useStore()
 useCloudSettingsSync()
+useDeploymentLifecycle()
 setThemeMode()
 const globalSettings = computed(() => store.getters.getGlobalSettings)
 const elementPlusLocale = computed(() => ({

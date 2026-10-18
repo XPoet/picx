@@ -563,5 +563,22 @@
     "tile_hint": "These parameters apply only to full-screen tiling.",
     "invalid_preferences": "Settings were not saved. Check the prefix and parameters, or retry local saving.",
     "invalid_watermark": "Enter valid values: size 1–200, opacity 0.1–1, rotation -45–45, spacing 20–200."
+  },
+  "deployment": {
+    "idle": "Not checked",
+    "checking": "Checking",
+    "not-deployed": "Not deployed",
+    "submitting": "Submitting",
+    "waiting": "Waiting for build",
+    "available": "Available",
+    "failed": "Check or deployment failed",
+    "step_cname": "Syncing CNAME",
+    "step_branch": "Submitting gh-pages branch",
+    "step_pages": "Configuring Pages source",
+    "waiting_hint": "This commit has not been confirmed as built. Check again later. Your current link source is preserved.",
+    "check": "Check status",
+    "visit": "Visit site",
+    "rebuild_confirm": "Rebuild gh-pages in {owner}/{repo} from the current content of {branch}? This replaces existing Pages content and may affect the current site.",
+    "empty_domain_confirm": "The domain setting is empty. Deployment will remove an existing CNAME file from the source branch, if present. Continue?"
   }
 }

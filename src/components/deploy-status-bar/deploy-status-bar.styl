@@ -1,49 +1,40 @@
-.deploy-status-bar-box {
-  width 100%
+.deploy-item {
+  display grid
+  gap 12px
+  min-width 0
+  color var(--picx-color-text)
+  font-size 14px
+  line-height 1.6
 
-  .deploy-item {
+  .left-wrap, .deployment-actions {
     display flex
+    flex-wrap wrap
     align-items center
-    justify-content space-between
-    margin-bottom 10rem
+    gap 8px
+  }
 
+  p {
+    margin 0
+    overflow-wrap anywhere
+  }
 
-    &:last-child {
-      margin-bottom 0
-    }
+  a {
+    display inline-flex
+    align-items center
+    gap 8px
+    min-height 44px
+    color var(--picx-color-primary)
+  }
 
-    .left-wrap {
-      .info-item {
-        margin-right 10rem
-      }
-    }
+  .el-button {
+    min-height 44px
+    height auto
+    margin-left 0
 
-    .shortcut-key {
-      margin-left 5rem
-      padding 4rem 5rem
-      font-size 12rem
-      letter-spacing 1rem
-      border-radius 4rem
-      box-shadow 1rem 2rem 3rem var(--shadow-color)
-
-      +picx-tablet() {
-        display none
-      }
-    }
-
-    .deploy-status-icon {
-      display inline-block
-      color var(--picx-color-text-muted)
-
-      &.success {
-        color var(--picx-color-success)
-      }
-
-      &.fail {
-        color var(--picx-color-danger)
-      }
+    :deep(> span) {
+      flex-wrap wrap
+      gap 8px
+      white-space normal
     }
   }
 }
-
-

@@ -978,3 +978,11 @@ T028 输入事务补充：getting-images 以 typed receiving(active) 事件报�
 `SAVE_UPLOAD_PREFERENCES` 只接收 imageName / compress / watermark 的明确局部值，合并为候选值后验证并持久化，成功后才发布 Store；不新增存储字段。设置页与上传快捷面板共用此 action。命名 radio 映射既有 enableHash / enableTimestamp；时间戳模式仅使前缀不参与输出，保留 addPrefix.enable 和 prefix 以便切回恢复。预览使用同一 applyUploadNaming 和稳定示例对象，不随渲染重建时间戳。
 
 前缀最多 100 字符，不含路径分隔符与控制字符；水印文字最多 20 字符；字号 1–200（兼容旧 32px），不透明度 0.1–1，旋转 -45–45，间距 20–200，全部有限数值；颜色为 6 位十六进制，位置为既有五种枚举。只读恢复不改写旧值。自由文本用本地草稿，change / blur 通过校验后才发配置；数值清空 / 非法值保留编辑态和错误提示，不触发云同步。原图片工具仍复用相同控件，外部 modelValue 缺省时沿用初始化参数。
+
+### P5 部署判定与接口细化（T038）
+
+部署服务只持有 RepositoryIdentity 与 operationId，不持有凭据副本。查询 Git ref、Pages 配置和 latest build，只有 `source.branch=gh-pages`、`source.path=/`、Pages 状态 built、latest build 状态 built 且 commit 与本次提交（初次检查取 gh-pages 当前 SHA）一致时可到 available；URL 还需为无用户名 / 密码的 HTTP(S) 地址。分支确认 404 是 not-deployed；权限、网络、结构错误是 failed；旧构建 / 构建中 / latest build 404 是 waiting。历史 .deploy 仅保留兼容读取，不发布可用状态。不向自定义站点发送请求，避免凭据跨域风险。
+
+提交先读取源分支 SHA，再查询目标分支；存在 gh-pages 必须由上层确认后允许重建，目标分支操作失败立即停止。分支提交后查询 Pages：确认不存在时 POST 创建，现有站点使用 gh-pages 根目录作为 source，随后进入 waiting。定时器仅安排下一次查询，最多 12 次 / 5 秒间隔，超时保持 waiting，可手动检查；错误停止轮询。断连 / 仓库或连接代次变化使旧操作失效，在每个后续写入前检查是否仍有效。提交期间的重复入口共用同一个 Promise，旧响应不得覆盖新状态。不自动切换链接来源。
+
+接口依据：[GitHub Pages REST API](https://docs.github.com/en/rest/pages/pages#get-latest-pages-build)、[Git references REST API](https://docs.github.com/en/rest/git/refs)。本地 mock 不代表实际站点构建或可访问验证。

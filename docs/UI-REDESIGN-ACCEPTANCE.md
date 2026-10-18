@@ -573,10 +573,20 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 
 ### T035 接入上传处理偏好并兼容旧命名
 
-**实施提交**：本任务提交 `feat(settings): preserve and validate upload preferences`。
+**实施提交**：`e6e2501`，`feat(settings): preserve and validate upload preferences`。
 
 **实施**：三种模式映射既有命名字段，时间戳仅禁用前缀输出并保留内容 / 开关，预览复用 applyUploadNaming 与稳定示例。原名 / 完整哈希 / 文件覆写 / 实际扩展名算法不变。设置与上传开关共用 SAVE_UPLOAD_PREFERENCES，候选有效且本地写入成功才发布；自由文本 change 才提交。压缩保留四个编码器，水印保留五位置及平铺参数。控件改为明确 Props / Emits，接收云端替换，挂载不发布已存在的值；旧 32px 不再被强制改为 40px。数值空值与非法参数保留草稿并提示错误。
 
 **验证**：lint、stylelint、typecheck、build 通过；偏好 / 命名 / 处理 20 个单测，偏好 / 生命周期 8 个单测通过（偏好 3 项重合，不重复计数）；Chrome 两项目 E2E 2/2，通过旧模式、前缀未完成编辑不保存、时间戳禁用与恢复、avif、平铺控制和模拟云同步后刷新。已查看 [1440](UI/evidence/p5/t035-settings-1440.png)、[375](UI/evidence/p5/t035-settings-375.png)。fixture 仅显式启用 .settings 内存写入，仍拦截其他远端写入；真实云写入未执行。Element Plus 数字框图标插槽依据官方组件文档，使用已下载 Lucide minus / plus。
 
 **回滚**：回滚组件、action、有效值工具与相应测试 / 文档；不新增持久化字段，旧配置和云文件仍可读。
+
+### T038 实现有依据的部署阶段与可用性判定
+
+**实施提交**：本任务提交 `fix(deploy): require matching Pages build evidence`。
+
+**实施**：独立领域状态与共享部署服务，Git ref 操作只返回提交 SHA；去除固定 50 秒模拟成功与自动切换来源。查询 ref、Pages source 和 latest build；同 SHA / gh-pages 根路径 / built 才可用。初次 ref 404 还确认仓库可访问才视为未部署。权限、网络、结构与构建失败不冒充未部署，旧构建或构建中保持等待，12 次轮询后仍等待并允许手动查询。仓库 / 连接代次变化同步作废旧任务，重复入口共用 Promise。没有向自定义站点发送请求；历史 .deploy 保留兼容读取但不作为可用证据。重建分支及空域名行为先有确认保护，T039 / T040 继续细化入口与域名事务。
+
+**验证**：lint、stylelint、typecheck、build 通过；8 个单测覆盖提交后等待、轮询上限、手动恢复、重复调用、无权限、失效任务、构建 SHA、源 ref 失败不删除、未确认不重建、分支只报告提交。Chrome 两项目 6/6 E2E，通过历史 .deploy=true 仍按新构建判定、等待 / 可用 / 权限失败、原来源不变。已查看 375px [等待](UI/evidence/p5/t038-waiting-375.png)、[可用](UI/evidence/p5/t038-available-375.png)、[失败](UI/evidence/p5/t038-forbidden-375.png)。API 依据方案补充的 GitHub 官方文档；未执行真实部署或站点验证。
+
+**回滚**：回滚此服务、查询与阶段展示提交，不自动回撤任何远端分支 / Pages 操作；旧 .deploy 文件仍可读。

@@ -563,5 +563,22 @@
     "tile_hint": "以下參數僅在全螢幕平鋪時生效。",
     "invalid_preferences": "設定未儲存。請檢查前綴與參數，或重試本機儲存。",
     "invalid_watermark": "請填寫有效浮水印參數：字號 1–200，不透明度 0.1–1，旋轉 -45–45，間距 20–200。"
+  },
+  "deployment": {
+    "idle": "尚未檢查",
+    "checking": "檢查中",
+    "not-deployed": "未部署",
+    "submitting": "正在提交",
+    "waiting": "等待生效",
+    "available": "已可用",
+    "failed": "檢查或部署失敗",
+    "step_cname": "正在同步 CNAME",
+    "step_branch": "正在提交 gh-pages 分支",
+    "step_pages": "正在設定 Pages 來源",
+    "waiting_hint": "尚未確認此次提交已建置完成。稍後可重新檢查，目前連結來源維持不變。",
+    "check": "檢查狀態",
+    "visit": "造訪網站",
+    "rebuild_confirm": "將重建 {owner}/{repo} 的 gh-pages 分支，以 {branch} 目前內容取代既有 Pages 內容。此操作可能影響現有網站，是否繼續？",
+    "empty_domain_confirm": "目前網域設定為空。部署會移除來源分支既有的 CNAME 檔案（如有）。是否繼續？"
   }
 }
