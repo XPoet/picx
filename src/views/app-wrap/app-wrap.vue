@@ -7,8 +7,9 @@ import { computed, h, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
 import CopyFallbackDialog from '@/components/copy-fallback-dialog/copy-fallback-dialog.vue'
-import { useDeploymentLifecycle } from '@/components/deploy-status-bar/deploy-status-bar.util'
+import { deployGhPages, deploymentShortcutEnabled, useDeploymentLifecycle } from '@/components/deploy-status-bar/deploy-status-bar.util'
 import { useCloudSettingsSync } from '@/composables/use-cloud-settings-sync'
+import { useDeploymentShortcut } from '@/composables/use-deployment-shortcut'
 import router from '@/router'
 import { useStore } from '@/stores'
 import { getLanguageByRegion, getRegionByIP, setWindowTitle } from '@/utils'
@@ -20,6 +21,9 @@ const { locale, t } = useI18n()
 const store = useStore()
 useCloudSettingsSync()
 useDeploymentLifecycle()
+useDeploymentShortcut(() => ['/upload', '/settings'].includes(router.currentRoute.value.path) && deploymentShortcutEnabled(), () => {
+  void deployGhPages()
+})
 setThemeMode()
 const globalSettings = computed(() => store.getters.getGlobalSettings)
 const elementPlusLocale = computed(() => ({

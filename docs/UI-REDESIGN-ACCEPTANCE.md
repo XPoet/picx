@@ -603,10 +603,20 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 
 ### T037 实现有效值保存与云同步反馈
 
-**实施提交**：本任务提交 `fix(settings): make cloud sync revision aware and recoverable`。
+**实施提交**：`4bc71e0`，`fix(settings): make cloud sync revision aware and recoverable`。
 
 **实施**：AppWrap 保持单实例同步，展示组件只读取状态。成功本地保存递增内存 revision，偏好 / 链接 / 既有兼容持久化共用候选保存；本地失败保留有效候选并可重试。GET / PUT 显式指定 branch，typed result 区分 404、权限 / 网络和损坏；保存前重新读取验证，不把失败当空文件。递归允许字段投影排除未知和认证字段；旧对象缺少新增字段仍可读取，合并内置来源 / 格式但不静默重写模板。推送使用不可变快照，旧修订不能标记新修订已同步；拉取中修改、登出重连和晚到响应有代次保护，生命周期卸载清理监听。两页共享本地 / 云端阶段、原因与重试；损坏提示先修复远端文件。
 
 **验证**：lint、stylelint、typecheck、build 通过；API / 同步 / 兼容 / 规则共 18 个相关单测通过，覆盖无文件播种、损坏 / 权限阻止 PUT、投影、单实例 / 无回声、推送期间修改、离线、存储失败、拉取期间修改与登出后迟到响应。Chrome 两项目回归 10/10，通过失败 / 损坏后本地不丢、无覆盖、显式重试成功、偏好刷新及链接流程。已查看 375px [权限失败](UI/evidence/p5/t037-forbidden-375.png)、[损坏](UI/evidence/p5/t037-corrupt-375.png)。真实 .settings 写入未执行。
 
 **回滚**：回滚同步、投影、反馈与 Store 保存提交，继续兼容既有偏好对象，无新增存储键 / 版本号；不回撤已存在的云文件。
+
+### T039 统一两处部署入口、防重与部署快捷键
+
+**实施提交**：本任务提交 `feat(deploy): share entry guards and deployment shortcut`。
+
+**实施**：两页部署 / 域名按钮使用共享 busy 与执行 action。AppWrap 唯一注册 D，页面组件只登记可执行判断，保留上传成功结果与连接门禁，快捷键与当前按钮禁用态一致；输入 / 弹窗 / 预览 / repeat / 组合键修饰 / 失焦不接管。卸载注销判断与监听，切页不新建部署服务。重建 gh-pages 明确目标、源分支和影响并确认，取消无写入；可用后提供访问与显式选择 Pages 来源，不自动切换。
+
+**验证**：lint、stylelint、typecheck、build 通过；快捷键 / 部署共 9 个单测通过，含 scope 清理和重复调用；两项目部署回归 8/8，通过取消无写入、D 同动作、设置提交中切到上传同阶段 / 按钮禁用、仅一次分支删除与创建、可用后来源仍为原值及显式选择。已查看 [设置等待](UI/evidence/p5/t039-settings-waiting.png)、[上传可用 / 375](UI/evidence/p5/t039-upload-available-375.png)。所有 DELETE / POST 均为 fixture 响应，没有真实分支操作。
+
+**回滚**：回滚入口守卫、快捷键及对应测试 / 翻译，部署证据服务仍保留；不自动回撤远端内容。

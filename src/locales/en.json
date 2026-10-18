@@ -579,7 +579,10 @@
     "check": "Check status",
     "visit": "Visit site",
     "rebuild_confirm": "Rebuild gh-pages in {owner}/{repo} from the current content of {branch}? This replaces existing Pages content and may affect the current site.",
-    "empty_domain_confirm": "The domain setting is empty. Deployment will remove an existing CNAME file from the source branch, if present. Continue?"
+    "empty_domain_confirm": "The domain setting is empty. Deployment will remove an existing CNAME file from the source branch, if present. Continue?",
+    "redeploy": "Redeploy",
+    "use_pages": "Use GitHub Pages links",
+    "using_pages": "Current link source: GitHub Pages"
   },
   "link_rules": {
     "title": "Custom link rules",

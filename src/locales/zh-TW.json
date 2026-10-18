@@ -579,7 +579,10 @@
     "check": "檢查狀態",
     "visit": "造訪網站",
     "rebuild_confirm": "將重建 {owner}/{repo} 的 gh-pages 分支，以 {branch} 目前內容取代既有 Pages 內容。此操作可能影響現有網站，是否繼續？",
-    "empty_domain_confirm": "目前網域設定為空。部署會移除來源分支既有的 CNAME 檔案（如有）。是否繼續？"
+    "empty_domain_confirm": "目前網域設定為空。部署會移除來源分支既有的 CNAME 檔案（如有）。是否繼續？",
+    "redeploy": "重新部署",
+    "use_pages": "使用 GitHub Pages 連結",
+    "using_pages": "目前連結來源：GitHub Pages"
   },
   "link_rules": {
     "title": "自訂連結規則",

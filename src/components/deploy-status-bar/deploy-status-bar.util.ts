@@ -1,4 +1,4 @@
-import { watch } from 'vue'
+import { computed, onScopeDispose, ref, watch } from 'vue'
 import { checkoutGhPagesBranch, getGitReference } from '@/common/api/branch'
 import { CloudCnameSyncStatusEnum, syncCloudCnameFile } from '@/common/api/deploy'
 import { configurePages, queryPagesDeployment } from '@/common/api/pages'
@@ -117,11 +117,35 @@ export const deployment = createDeploymentService({
     return pages.ok ? branch : pages
   },
 })
+export const deploymentOnline = ref(navigator.onLine !== false)
+export const canDeploy = computed(() => Boolean(currentRepository()) && deploymentOnline.value && !deployment.busy.value && !usePicxStore(pinia).uploadTargetBusy)
+const deploymentEntries = new Set<() => boolean>()
+export function useDeploymentEntry(enabled: () => boolean) {
+  deploymentEntries.add(enabled)
+  onScopeDispose(() => deploymentEntries.delete(enabled))
+}
+export function deploymentShortcutEnabled() {
+  return canDeploy.value && [...deploymentEntries].some(enabled => enabled())
+}
 export function useDeploymentLifecycle() {
   const picx = usePicxStore(pinia)
-  return watch(() => `${repositoryKey(currentRepository())}:${picx.connectionAttemptId}`, () => deployment.reset(), { flush: 'sync' })
+  const stop = watch(() => `${repositoryKey(currentRepository())}:${picx.connectionAttemptId}`, () => deployment.reset(), { flush: 'sync' })
+  const online = () => deploymentOnline.value = true
+  const offline = () => deploymentOnline.value = false
+  window.addEventListener('online', online)
+  window.addEventListener('offline', offline)
+  onScopeDispose(() => {
+    stop()
+    window.removeEventListener('online', online)
+    window.removeEventListener('offline', offline)
+  })
 }
+
 export const deployGhPages = async (cb?: (success: boolean) => void) => {
+  if (!canDeploy.value) {
+    cb?.(false)
+    return deployment.state.value
+  }
   const result = await deployment.deploy()
   cb?.(result.phase === 'available')
   return result

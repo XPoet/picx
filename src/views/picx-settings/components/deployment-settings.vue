@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { isValidCustomDomain, normalizeCustomDomain } from '@/common/api'
-import { deployGhPages } from '@/components/deploy-status-bar/deploy-status-bar.util'
+import { canDeploy, deployGhPages } from '@/components/deploy-status-bar/deploy-status-bar.util'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
@@ -17,7 +17,7 @@ const pagesDomain = userConfigInfo.owner
   : 'username.github.io'
 
 const saveCustomDomain = () => {
-  if (customDomainSyncing.value) {
+  if (customDomainSyncing.value || !canDeploy.value) {
     return
   }
 
@@ -54,7 +54,7 @@ const saveCustomDomain = () => {
       <article class="settings-card">
         <h2>{{ $t('settings_page.image_hosting_deploy.custom_domain_label') }}</h2>
         <div class="settings-domain-row">
-          <el-input v-model="customDomainInput" :aria-label="$t('settings_page.image_hosting_deploy.custom_domain_label')" :placeholder="$t('settings_page.image_hosting_deploy.custom_domain_placeholder')" clearable :disabled="customDomainSyncing" @keyup.enter="saveCustomDomain" /><el-button type="primary" :loading="customDomainSyncing" @click="saveCustomDomain">
+          <el-input v-model="customDomainInput" :aria-label="$t('settings_page.image_hosting_deploy.custom_domain_label')" :placeholder="$t('settings_page.image_hosting_deploy.custom_domain_placeholder')" clearable :disabled="customDomainSyncing" @keyup.enter="saveCustomDomain" /><el-button type="primary" :loading="customDomainSyncing" :disabled="!canDeploy" @click="saveCustomDomain">
             <PicxIcon name="download" :size="18" />{{ $t('settings_page.image_hosting_deploy.custom_domain_save') }}
           </el-button>
         </div>
