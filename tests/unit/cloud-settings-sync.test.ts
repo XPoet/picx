@@ -146,4 +146,12 @@ describe('单实例云同步与修订竞争', () => {
     expect(getCloudSettings).toHaveBeenCalledTimes(2)
     expect(saveCloudSettingsResult).not.toHaveBeenCalled()
   })
+  it('仓库身份多个字段在一轮提交中变化时只对最终目标拉取一次', async () => {
+    start()
+    await flush()
+    Object.assign(store.getUserConfigInfo, { owner: 'next-owner', repo: 'next-repo', branch: 'main' })
+    await flush()
+    expect(getCloudSettings).toHaveBeenCalledTimes(2)
+    expect(vi.mocked(getCloudSettings).mock.calls[1]?.[0]).toEqual({ owner: 'next-owner', repo: 'next-repo', branch: 'main' })
+  })
 })

@@ -619,5 +619,24 @@
     "failed_cloud": "Local preferences are preserved. Cloud sync failed.",
     "retry": "Retry sync",
     "corrupt": "Cloud settings are damaged. The remote file was not overwritten. Repair .settings in your repository, then retry."
+  },
+  "domain_settings": {
+    "save": "Save and deploy",
+    "format_hint": "The saved value has no scheme or path. An empty value removes the remote CNAME after confirmation.",
+    "normalized": "Will save: {domain}",
+    "no_domain": "No custom domain",
+    "dns": "Add a CNAME record pointing to {pagesDomain}. Saving syncs the repository CNAME before submitting deployment.",
+    "remove_confirm": "Remove the domain binding for {domain} and delete CNAME from the source branch, if present? This may affect access through the existing domain.",
+    "local_saved": "Saved locally: {domain}",
+    "cname_created": "Remote CNAME created.",
+    "cname_updated": "Remote CNAME updated.",
+    "cname_deleted": "Remote CNAME removed.",
+    "cname_consistent": "Remote CNAME already matches; no write needed.",
+    "cname_skipped": "No remote CNAME to remove.",
+    "running": "Saving the domain and submitting deployment…",
+    "cancelled": "Cancelled. Your domain draft is preserved.",
+    "failed_local": "Local domain saving failed. CNAME and deployment were not submitted.",
+    "failed_cname": "CNAME sync failed. Deployment was not submitted. Correct the issue and retry.",
+    "failed_deployment": "Deployment did not complete. Check its status and retry. Completed saving steps are preserved."
   }
 }

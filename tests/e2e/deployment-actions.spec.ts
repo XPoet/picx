@@ -45,7 +45,7 @@ test('两处共享部署、确认取消、防重与 D 快捷键，成功后显�
       return
     }
     if (path === `${base}/pages` && method === 'GET') {
-      await route.fulfill({ json: { status: 'built', html_url: 'https://images.example.test/', source: { branch: 'gh-pages', path: '/' } } })
+      await route.fulfill({ json: { status: 'built', cname: 'images.example.test', html_url: 'https://images.example.test/', source: { branch: 'gh-pages', path: '/' } } })
       return
     }
     if (path === `${base}/pages/builds/latest` && method === 'GET') {
@@ -60,7 +60,7 @@ test('两处共享部署、确认取消、防重与 D 快捷键，成功后显�
     }
     await route.fallback()
   })
-  await picx.open('/settings', { savedRepository: true, settingsWritable: true })
+  await picx.open('/settings', { savedRepository: true, savedCredential: true, connectionScenario: 'ready', settingsWritable: true })
   const deployment = page.locator('.deploy-item')
   await expect(deployment).toContainText('已可用')
   await deployment.getByRole('button', { name: /重新部署/ }).click()

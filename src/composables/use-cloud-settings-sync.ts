@@ -27,7 +27,7 @@ export function useCloudSettingsSync() {
   }
   const key = () => {
     const value = target()
-    return value ? `${value.owner}/${value.repo}/${value.branch}:${store.connectionAttemptId}` : ''
+    return value ? `${value.owner}/${value.repo}/${value.branch}:${store.connectionSessionId}` : ''
   }
   const snapshot = () => JSON.stringify(projectSettings(store.getUserSettings))
   let lastCloudError: ApiFailure | undefined
@@ -145,7 +145,7 @@ export function useCloudSettingsSync() {
     lastCloudError = undefined
     if (target())
       void pull(true)
-  }, { immediate: true, flush: 'sync' })
+  }, { immediate: true })
   const stopRevision = watch(settingsRevision, () => {
     if (!target() || pulling || snapshot() === syncedSnapshot)
       return

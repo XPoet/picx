@@ -14,3 +14,8 @@ export type DeploymentObservation
   = | { phase: 'not-deployed' }
     | { phase: 'waiting', commitSha: string }
     | { phase: 'available', commitSha: string, url: string }
+
+export interface DeploymentRequest {
+  domain?: string
+  saveDomain?: boolean
+}

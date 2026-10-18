@@ -1,42 +1,36 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { isValidCustomDomain, normalizeCustomDomain } from '@/common/api'
-import { canDeploy, deployGhPages } from '@/components/deploy-status-bar/deploy-status-bar.util'
+import { computed, ref, useId, watch } from 'vue'
+import { isValidCustomDomain, normalizeCustomDomain } from '@/common/api/deploy'
+import { canDeploy, deployment, domainSaveFeedback, saveDomainAndDeploy } from '@/components/deploy-status-bar/deploy-status-bar.util'
+import DeployStatusBar from '@/components/deploy-status-bar/deploy-status-bar.vue'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
-import i18n from '@/plugins/vue/i18n'
-import { store } from '@/stores'
+import { pinia } from '@/stores'
+import { usePicxStore } from '@/stores/picx-store'
 
-const userSettings = computed(() => store.getters.getUserSettings).value
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const persistUserSettings = () => store.dispatch('USER_SETTINGS_PERSIST')
-// 自定义域名（CNAME）
-const customDomainInput = ref(userSettings.deploy.customDomain)
-const customDomainSyncing = ref(false)
-const pagesDomain = userConfigInfo.owner
-  ? `${userConfigInfo.owner}.github.io`
-  : 'username.github.io'
-
-const saveCustomDomain = () => {
-  if (customDomainSyncing.value || !canDeploy.value) {
+const store = usePicxStore(pinia)
+const id = useId()
+const input = ref(store.getUserSettings.deploy.customDomain)
+const dirty = ref(false)
+const invalid = ref(false)
+const normalized = computed(() => normalizeCustomDomain(input.value))
+const pagesDomain = computed(() => store.getUserConfigInfo.owner ? `${store.getUserConfigInfo.owner}.github.io` : '')
+const busy = deployment.busy
+const feedback = domainSaveFeedback
+watch(() => store.getUserSettings.deploy.customDomain, (value) => {
+  if (!dirty.value)
+    input.value = value
+})
+async function save() {
+  if (!canDeploy.value)
     return
-  }
-
-  const domain = normalizeCustomDomain(customDomainInput.value)
-  if (domain && !isValidCustomDomain(domain)) {
-    ElMessage.warning(i18n.global.t('settings_page.image_hosting_deploy.custom_domain_invalid'))
+  invalid.value = Boolean((input.value.trim() && !normalized.value) || (normalized.value && !isValidCustomDomain(normalized.value)))
+  if (invalid.value)
     return
+  const result = await saveDomainAndDeploy(normalized.value)
+  if (feedback.value?.phase !== 'cancelled' && (result.phase === 'available' || result.phase === 'waiting')) {
+    input.value = normalized.value
+    dirty.value = false
   }
-
-  // 先持久化设置（LocalStorage + 云端 .settings 静默同步），deployGhPages 内部会先把
-  // customDomain 同步为图床仓库当前分支的 CNAME 文件，再一键部署，保证 CNAME 与设置一致
-  userSettings.deploy.customDomain = domain
-  customDomainInput.value = domain
-  persistUserSettings()
-
-  customDomainSyncing.value = true
-  deployGhPages(() => {
-    customDomainSyncing.value = false
-  })
 }
 </script>
 
@@ -49,17 +43,60 @@ const saveCustomDomain = () => {
     </header>
     <div class="settings-grid">
       <article class="settings-card">
-        <deploy-status-bar /><p>{{ $t('settings_workspace.deploy_desc') }}</p>
+        <DeployStatusBar /><p>{{ $t('settings_workspace.deploy_desc') }}</p>
       </article>
       <article class="settings-card">
-        <h2>{{ $t('settings_page.image_hosting_deploy.custom_domain_label') }}</h2>
-        <div class="settings-domain-row">
-          <el-input v-model="customDomainInput" :aria-label="$t('settings_page.image_hosting_deploy.custom_domain_label')" :placeholder="$t('settings_page.image_hosting_deploy.custom_domain_placeholder')" clearable :disabled="customDomainSyncing" @keyup.enter="saveCustomDomain" /><el-button type="primary" :loading="customDomainSyncing" :disabled="!canDeploy" @click="saveCustomDomain">
-            <PicxIcon name="download" :size="18" />{{ $t('settings_page.image_hosting_deploy.custom_domain_save') }}
-          </el-button>
+        <form class="settings-domain-form" @submit.prevent="save">
+          <label :for="id" class="settings-field-title">{{ $t('settings_page.image_hosting_deploy.custom_domain_label') }}</label>
+          <div class="settings-domain-row">
+            <el-input :id="id" v-model="input" :placeholder="$t('settings_page.image_hosting_deploy.custom_domain_placeholder')" :disabled="busy" :aria-invalid="invalid" @input="dirty = true; invalid = false" />
+            <el-button type="primary" native-type="submit" :loading="feedback?.phase === 'running' && busy" :disabled="!canDeploy">
+              <PicxIcon name="download" :size="18" />{{ $t('domain_settings.save') }}
+            </el-button>
+          </div>
+          <p>{{ $t('domain_settings.format_hint') }}</p>
+          <p data-testid="domain-normalized">
+            {{ $t('domain_settings.normalized', { domain: normalized || $t('domain_settings.no_domain') }) }}
+          </p>
+          <p v-if="invalid" role="alert" class="settings-error">
+            {{ $t('settings_page.image_hosting_deploy.custom_domain_invalid') }}
+          </p>
+          <p v-if="pagesDomain" class="settings-preview">
+            {{ $t('domain_settings.dns', { pagesDomain }) }}
+          </p>
+        </form>
+        <div v-if="feedback" class="domain-save-feedback" aria-live="polite" role="status">
+          <p v-if="feedback.localSaved">
+            {{ $t('domain_settings.local_saved', { domain: feedback.domain || $t('domain_settings.no_domain') }) }}
+          </p>
+          <p v-if="feedback.cnameStatus">
+            {{ $t(`domain_settings.cname_${feedback.cnameStatus}`) }}
+          </p>
+          <p v-if="feedback.phase === 'running'">
+            {{ $t('domain_settings.running') }}
+          </p>
+          <p v-if="feedback.phase === 'cancelled'">
+            {{ $t('domain_settings.cancelled') }}
+          </p>
+          <p v-if="feedback.phase === 'failed'" class="settings-error">
+            {{ $t(`domain_settings.failed_${feedback.scope || 'deployment'}`) }}
+          </p>
+          <p v-if="feedback.scope !== 'local' && feedback.error" class="settings-error">
+            {{ $t(`request_error.${feedback.error.kind}`) }}
+          </p>
+          <p v-if="feedback.phase === 'available' || feedback.phase === 'waiting'">
+            {{ $t(`deployment.${feedback.phase}`) }}
+          </p>
         </div>
-        <p>{{ $t('settings_page.image_hosting_deploy.custom_domain_desc', { pagesDomain }) }}</p>
       </article>
     </div>
   </section>
 </template>
+
+<style scoped lang="stylus">
+.settings-domain-form, .domain-save-feedback {
+  display grid
+  gap 12px
+  min-width 0
+}
+</style>

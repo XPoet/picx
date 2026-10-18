@@ -1010,3 +1010,19 @@ T037：本地旧偏好恢复同样使用允许字段结构校验与默认项合�
 既有 gh-pages 分支重建先显示 owner/repo、源分支及影响并确认，取消无任何写操作。构建可用后两处展示站点入口和显式“使用 GitHub Pages 链接”，经同一来源检查事务再提交，不自动切换。等待 / 错误跨页保持，失败可重试；实际构建证据仍由 T038 提供。
 
 T039：部署展示组件只注册可执行判断，D 的唯一监听检查当前可见入口是否可用，因而保留上传页已有的成功结果 / 连接门禁，并与按钮禁用态一致；离开页面注销判断，不新增键盘监听。
+
+### P5 域名草稿与 CNAME 事务（T040）
+
+域名草稿只在设置组件；输入与规范化预览分开，提交前验证规范化主机名（单段限制及总长 253），不在 input / blur 时保存。保存并部署调用同一部署服务，带不可变 domain / saveDomain 请求；先完成必要的分支重建确认，再保存有效本地域名、同步 CNAME、提交分支与 Pages，CNAME 任一步失败停止后续部署。域名操作的 localSaved、CNAME 结果、失败归属与最终 waiting / available 是内存反馈，不进入 .settings。
+
+CNAME 新增 typed read / write result；GET 显式 ref，区分 404、查询失败与损坏，不按 null 推断文件不存在。PUT / DELETE 使用当前 sha 与 branch。空域名先读取实际 CNAME，仅存在时明确展示远端主机名并确认删除；取消不保存、不写远端；确认后再次读取的 sha 变化返回 conflict，不删除新内容。普通部署也沿用此保护。自定义域名 URL 不接受协议 / 路径保存，但复用原规范化函数去除这些输入并显示最终结果。DNS 提示来自实际 owner；没有 owner 时不显示虚构账号。
+
+CNAME 与 .settings 是两个远端文件：普通云同步仍由单实例异步处理；“本地已保存”“CNAME 已同步 / 删除或失败”“部署等待 / 可用”分别显示，云同步反馈继续独立呈现，不能用一条成功消息涵盖全过程。失败保留草稿和原链接来源，不回滚已完成的本地或远端步骤；用户可修正后重试。
+
+T040 的 Contents API sha / branch / commit 返回结构依据 [GitHub repository contents](https://docs.github.com/en/rest/repos/contents)；DNS 指向依据 [GitHub Pages 自定义域名指南](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site)。仅规范化后为空、原始草稿非空的输入（如仅路径）按非法输入处理，不能当作清空域名。
+
+P5 生命周期收口：`connectionAttemptId` 表示验证请求代次，上传页挂载会对同一已保存连接做验证，不能据此清空正在跨页执行的部署或重新拉取偏好。新增仅内存 `connectionSessionId`：在可信连接提交边界比较现有凭据 / 仓库和已验证候选，只有实际会话变化或登出才递增；不存储凭据副本、指纹或新持久化字段。部署 / 云同步监听仓库身份与此会话号，普通重验同一连接不重置任务。修改既有认证提交时仍先持久化成功再发布会话变化，不改变 Token 保存位置或期限。
+
+T040 域名绑定补充：CNAME 文件和 Pages 的 cname 配置分别确认。配置已存在的 Pages 时，将 cname 设为规范化域名；清空用 null 移除绑定。首次 Pages 创建只带 source，若返回的 cname 尚未匹配再 PUT 域名配置。空域名操作还读取 Pages 当前绑定，连同存在的 CNAME 主机名展示后确认，不能因源分支文件缺失而跳过已有绑定的移除确认。Pages 配置失败保留已完成的本地 / CNAME 结果并显示部署失败，不宣称域名可用。依据同一官方 Pages REST 文档。
+
+P5 同步连接切换按 Vue 批次合并：配置提交会同时更新 owner / repo / branch / 会话号，云同步只对最终组合发起一次拉取；每个异步结果仍直接比较当前身份与会话号，因此旧任务立即失效，不依赖 watcher 的执行时间。USER_CONFIG_INFO_LOGOUT 在清空配置前递增会话号，避免同一轮登出再重连同一仓库被合并成未变化。

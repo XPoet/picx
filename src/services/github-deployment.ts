@@ -1,4 +1,4 @@
-import type { DeploymentObservation, DeploymentState } from '@/common/model/deployment'
+import type { DeploymentObservation, DeploymentRequest, DeploymentState } from '@/common/model/deployment'
 import type { RepositoryIdentity } from '@/common/model/github-connection'
 import type { ApiResult } from '@/utils/request/types'
 import { computed, shallowRef } from 'vue'
@@ -6,7 +6,7 @@ import { computed, shallowRef } from 'vue'
 interface DeploymentDependencies {
   target: () => RepositoryIdentity | null
   query: (target: RepositoryIdentity, sha?: string) => Promise<ApiResult<DeploymentObservation>>
-  submit: (target: RepositoryIdentity, current: () => boolean, step: (value: 'cname' | 'branch' | 'pages') => void) => Promise<ApiResult<{ commitSha: string }> | null>
+  submit: (target: RepositoryIdentity, current: () => boolean, step: (value: 'cname' | 'branch' | 'pages') => void, request?: DeploymentRequest) => Promise<ApiResult<{ commitSha: string }> | null>
   pause?: () => Promise<void>
   pollLimit?: number
 }
@@ -24,7 +24,7 @@ export function createDeploymentService(dependencies: DeploymentDependencies) {
     pending = null
     busy.value = false
   }
-  function run(submit: boolean) {
+  function run(submit: boolean, request?: DeploymentRequest) {
     if (pending)
       return pending
     const target = dependencies.target()
@@ -43,7 +43,7 @@ export function createDeploymentService(dependencies: DeploymentDependencies) {
         const result = await dependencies.submit(target, current, (step) => {
           if (current())
             state.value = { phase: 'submitting', operationId: id, target, step }
-        })
+        }, request)
         if (!current())
           return state.value
         if (!result) {
@@ -97,5 +97,5 @@ export function createDeploymentService(dependencies: DeploymentDependencies) {
     pending = promise
     return promise
   }
-  return { state, busy: computed(() => busy.value), check: () => run(false), deploy: () => run(true), reset }
+  return { state, busy: computed(() => busy.value), check: () => run(false), deploy: (request?: DeploymentRequest) => run(true, request), reset }
 }

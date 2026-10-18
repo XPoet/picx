@@ -63,6 +63,7 @@ import { validUploadPreferences } from '@/utils/upload-preferences'
 interface PicxState {
   connection: ConnectionState
   connectionAttemptId: number
+  connectionSessionId: number
   uploadTargetBusy: boolean
   uploadRuntime: Record<string, QueueItemRuntime>
   uploadBatches: UploadBatchResult[]
@@ -311,6 +312,7 @@ export const usePicxStore = defineStore('picx', {
     rootName: 'root',
     connection: { phase: 'disconnected' },
     connectionAttemptId: 0,
+    connectionSessionId: 0,
     uploadTargetBusy: false,
     uploadRuntime: {},
     uploadBatches: [],
@@ -427,6 +429,7 @@ export const usePicxStore = defineStore('picx', {
           ? { authorized: true, installed: true, token, tokenCreateTime: Date.now() }
           : { authorized: false, installed: null, token: '', tokenCreateTime: 0, manualToken: token }),
       }
+      const changedSession = !previous.logined || previous.token !== token || previous.owner !== result.repository.owner || previous.repo !== result.repository.repo || previous.branch !== result.repository.branch
       const changedRepository = Boolean(previous.owner) && (previous.owner !== result.repository.owner || previous.repo !== result.repository.repo || previous.branch !== result.repository.branch)
       const emptyTree = changedRepository ? createDirObject('/', '/') : null
       const oldManagement = changedRepository ? localStorage.getItem(LS_MANAGEMENT) : null
@@ -465,6 +468,8 @@ export const usePicxStore = defineStore('picx', {
       }
       Object.assign(previous, config)
       Object.assign(this.githubAuthorizeModule.authorizationInfo, authorization)
+      if (changedSession)
+        this.connectionSessionId += 1
       this.connection = { phase: 'connected', attemptId, repository: result.repository, visibility: result.visibility, verifiedAt: Date.now() }
       return true
     },
@@ -510,6 +515,7 @@ export const usePicxStore = defineStore('picx', {
     },
 
     USER_CONFIG_INFO_LOGOUT() {
+      this.connectionSessionId += 1
       cleanObject(this.userConfigInfoModule.userConfigInfo)
     },
 

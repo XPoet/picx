@@ -619,5 +619,24 @@
     "failed_cloud": "本地偏好已保留，云端同步失败。",
     "retry": "重试同步",
     "corrupt": "云端设置内容损坏，未覆盖远端文件。请先修复仓库中的 .settings 文件，再重试。"
+  },
+  "domain_settings": {
+    "save": "保存并部署",
+    "format_hint": "保存值不含协议或路径；留空将移除远端 CNAME，执行前需确认。",
+    "normalized": "将保存：{domain}",
+    "no_domain": "无自定义域名",
+    "dns": "添加 CNAME 记录，指向 {pagesDomain}。保存后先同步仓库 CNAME，再提交部署。",
+    "remove_confirm": "将移除域名绑定 {domain}，并删除源分支的 CNAME 文件（如存在）。现有域名访问可能受影响。确认继续？",
+    "local_saved": "本地已保存：{domain}",
+    "cname_created": "远端 CNAME 已创建。",
+    "cname_updated": "远端 CNAME 已更新。",
+    "cname_deleted": "远端 CNAME 已移除。",
+    "cname_consistent": "远端 CNAME 已一致，无需写入。",
+    "cname_skipped": "远端没有 CNAME，无需移除。",
+    "running": "域名保存与部署流程进行中…",
+    "cancelled": "操作已取消，域名草稿已保留。",
+    "failed_local": "本地域名保存失败，未同步 CNAME 或提交部署。",
+    "failed_cname": "CNAME 同步失败，未提交部署。可修正后重试。",
+    "failed_deployment": "部署未完成。请查看部署状态后重试；已完成的保存步骤保持原样。"
   }
 }

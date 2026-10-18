@@ -125,7 +125,21 @@ onMounted(() => {
   }
 
   .el-input-number {
+    --el-input-number-controls-width 44px
     width 100%
+    height 46px
+
+    :deep(.el-input) {
+      height 100%
+    }
+
+    :deep(.el-input-number__decrease), :deep(.el-input-number__increase) {
+      display flex
+      align-items center
+      justify-content center
+      width 44px
+      min-height 44px
+    }
   }
 
   .watermark-color {

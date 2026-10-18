@@ -619,5 +619,24 @@
     "failed_cloud": "本機偏好已保留，雲端同步失敗。",
     "retry": "重試同步",
     "corrupt": "雲端設定內容損壞，未覆寫遠端檔案。請先修復儲存庫中的 .settings 檔案，再重試。"
+  },
+  "domain_settings": {
+    "save": "儲存並部署",
+    "format_hint": "儲存值不含協定或路徑；留空將移除遠端 CNAME，執行前須確認。",
+    "normalized": "將儲存：{domain}",
+    "no_domain": "無自訂網域",
+    "dns": "新增 CNAME 記錄，指向 {pagesDomain}。儲存後先同步儲存庫 CNAME，再提交部署。",
+    "remove_confirm": "將移除網域綁定 {domain}，並刪除來源分支的 CNAME 檔案（如存在）。現有網域存取可能受影響。確認繼續？",
+    "local_saved": "本機已儲存：{domain}",
+    "cname_created": "遠端 CNAME 已建立。",
+    "cname_updated": "遠端 CNAME 已更新。",
+    "cname_deleted": "遠端 CNAME 已移除。",
+    "cname_consistent": "遠端 CNAME 已一致，無須寫入。",
+    "cname_skipped": "遠端沒有 CNAME，無須移除。",
+    "running": "網域儲存與部署流程進行中…",
+    "cancelled": "操作已取消，網域草稿已保留。",
+    "failed_local": "本機網域儲存失敗，未同步 CNAME 或提交部署。",
+    "failed_cname": "CNAME 同步失敗，未提交部署。可修正後重試。",
+    "failed_deployment": "部署未完成。請查看部署狀態後重試；已完成的儲存步驟維持原樣。"
   }
 }

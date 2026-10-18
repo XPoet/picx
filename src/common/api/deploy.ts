@@ -1,159 +1,66 @@
-import type { UserConfigInfoModel } from '@/common/model'
-import {
-  PICX_DEL_CNAME_MSG,
-  PICX_INIT_CNAME_MSG,
-  PICX_UPDATE_CNAME_MSG,
-} from '@/common/constant'
-import request from '@/utils/request'
+import type { RepositoryIdentity } from '@/common/model/github-connection'
+import type { ApiResult } from '@/utils/request/types'
+import { PICX_DEL_CNAME_MSG, PICX_INIT_CNAME_MSG, PICX_UPDATE_CNAME_MSG } from '@/common/constant'
+import { requestResult } from '@/utils/request'
 
-const filename = 'CNAME'
-
-/**
- * 自定义域名同步到云端仓库指定分支根目录 CNAME 文件的结果状态
- */
 export enum CloudCnameSyncStatusEnum {
-  /** CNAME 文件已创建 */
   created = 'created',
-
-  /** CNAME 文件已更新 */
   updated = 'updated',
-
-  /** CNAME 文件已删除 */
   deleted = 'deleted',
-
-  /** CNAME 文件内容与域名已一致，无需写入 */
   consistent = 'consistent',
-
-  /** 域名为空且目标分支不存在 CNAME 文件，无需处理 */
   skipped = 'skipped',
-
-  /** 同步失败 */
   failed = 'failed',
 }
-
-/**
- * 规范化自定义域名输入：去掉协议、路径和首尾空白，统一小写
- */
-export const normalizeCustomDomain = (domain: string): string => {
-  return domain
-    .trim()
-    .replace(/^https?:\/\//i, '')
-    .replace(/\/.*$/, '')
-    .toLowerCase()
+export const normalizeCustomDomain = (domain: string): string => domain.trim().replace(/^https?:\/\//i, '').replace(/\/.*$/, '').toLowerCase()
+export const isValidCustomDomain = (domain: string): boolean => domain.length <= 253 && /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/.test(domain)
+interface CnameFile { sha: string, content: string }
+export type CloudCnameRead = { kind: 'missing' } | { kind: 'present', file: CnameFile, domain: string }
+function isCnameFile(value: unknown): value is CnameFile {
+  return Boolean(value && typeof value === 'object' && 'sha' in value && typeof value.sha === 'string' && value.sha && 'content' in value && typeof value.content === 'string')
 }
-
-/**
- * 校验自定义域名格式，例如 img.example.com（各段仅允许字母数字和中划线，且中划线不能在段首尾）
- */
-export const isValidCustomDomain = (domain: string): boolean => {
-  return /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)+$/.test(
-    domain,
-  )
-}
-
-interface CnamePayloadModel {
-  message: string
-  branch: string
-  content?: string
-  sha?: string
-}
-
-interface CnameFileModel {
-  sha: string
-  content?: string
-}
-
-/**
- * 解码 CNAME 文件内容，失败返回空字符串（视为与任何域名不一致，走覆盖写入）
- */
-const decodeCnameContent = (file: CnameFileModel): string => {
+export async function getCloudCnameFile(target: RepositoryIdentity, branch = target.branch): Promise<ApiResult<CloudCnameRead>> {
+  const result = await requestResult({ url: `/repos/${target.owner}/${target.repo}/contents/CNAME`, method: 'GET', params: { ref: branch }, noCache: true }, isCnameFile)
+  if (!result.ok)
+    return result.error.kind === 'not-found' ? { ok: true, data: { kind: 'missing' } } : result
   try {
-    return window.atob(file.content ?? '').trim()
+    const domain = window.atob(result.data.content).trim().toLowerCase()
+    return isValidCustomDomain(domain) ? { ok: true, data: { kind: 'present', file: result.data, domain } } : { ok: false, error: { kind: 'invalid-response', retryable: true } }
   }
-  catch {
-    return ''
-  }
+  catch { return { ok: false, error: { kind: 'invalid-response', retryable: true } } }
 }
-
-/**
- * 同步自定义域名到云端仓库指定分支根目录的 CNAME 文件。
- *
- * - 域名非空：文件不存在则创建，内容不一致则更新，已一致则跳过写入
- * - 域名为空：删除已有的 CNAME 文件，不存在则跳过
- *
- * 一键部署场景下先同步图床仓库当前分支，gh-pages 分支由当前分支复制创建，
- * 自定义域名随分支带入部署分支，保证部署结果与 .settings 的 customDomain 一致。
- *
- * @param userConfigInfo
- * @param domain 自定义域名（未校验格式时内部会先规范化，非法域名返回 failed）
- * @param branch 目标分支
- */
-export const syncCloudCnameFile = async (
-  userConfigInfo: UserConfigInfoModel,
-  domain: string,
-  branch: string,
-): Promise<CloudCnameSyncStatusEnum> => {
-  const { owner, repo } = userConfigInfo
-  const customDomain = normalizeCustomDomain(domain)
-
-  if (!owner || !repo || !branch || (customDomain && !isValidCustomDomain(customDomain))) {
-    return CloudCnameSyncStatusEnum.failed
-  }
-
-  // 查询 CNAME 文件是否已存在（不存在或请求失败返回 null）
-  const fileRes: CnameFileModel | null = await request({
-    url: `/repos/${owner}/${repo}/contents/${filename}`,
-    method: 'GET',
-    noShowErrMsg: true,
-    noCache: true,
-    params: {
-      ref: branch,
-    },
-  })
-
-  if (customDomain) {
-    if (fileRes && decodeCnameContent(fileRes) === customDomain) {
-      return CloudCnameSyncStatusEnum.consistent
-    }
-
-    const payload: CnamePayloadModel = {
-      message: fileRes ? PICX_UPDATE_CNAME_MSG : PICX_INIT_CNAME_MSG,
-      content: window.btoa(customDomain),
-      branch,
-    }
-    if (fileRes) {
-      payload.sha = fileRes.sha
-    }
-
-    const res = await request({
-      url: `/repos/${owner}/${repo}/contents/${filename}`,
-      method: 'PUT',
-      data: payload,
-      noShowErrMsg: true,
-    })
-
-    return res
-      ? fileRes
-        ? CloudCnameSyncStatusEnum.updated
-        : CloudCnameSyncStatusEnum.created
-      : CloudCnameSyncStatusEnum.failed
-  }
-
-  // 域名为空：清理已有的 CNAME 文件
-  if (!fileRes) {
-    return CloudCnameSyncStatusEnum.skipped
-  }
-
-  const res = await request({
-    url: `/repos/${owner}/${repo}/contents/${filename}`,
-    method: 'DELETE',
-    data: {
-      message: PICX_DEL_CNAME_MSG,
-      sha: fileRes.sha,
-      branch,
-    } satisfies CnamePayloadModel,
-    noShowErrMsg: true,
-  })
-
-  return res ? CloudCnameSyncStatusEnum.deleted : CloudCnameSyncStatusEnum.failed
+interface CnameSyncOptions {
+  allowDelete?: boolean
+  expectedSha?: string
+  current?: () => boolean
+}
+function contentWritten(value: unknown): value is { commit: { sha: string } } {
+  return Boolean(value && typeof value === 'object' && 'commit' in value && value.commit && typeof value.commit === 'object' && 'sha' in value.commit && typeof value.commit.sha === 'string')
+}
+export async function syncCloudCnameFileResult(target: RepositoryIdentity, domain: string, branch = target.branch, options: CnameSyncOptions = {}): Promise<ApiResult<{ status: CloudCnameSyncStatusEnum }>> {
+  const normalized = normalizeCustomDomain(domain)
+  if (!target.owner || !target.repo || !branch || (normalized && !isValidCustomDomain(normalized)))
+    return { ok: false, error: { kind: 'invalid-response', retryable: false } }
+  const read = await getCloudCnameFile(target, branch)
+  if (!read.ok)
+    return read
+  if (options.current && !options.current())
+    return { ok: false, error: { kind: 'conflict', retryable: true } }
+  const existing = read.data.kind === 'present' ? read.data : null
+  if (!normalized && !existing)
+    return { ok: true, data: { status: CloudCnameSyncStatusEnum.skipped } }
+  if (existing?.domain === normalized)
+    return { ok: true, data: { status: CloudCnameSyncStatusEnum.consistent } }
+  if (!normalized && existing && (!options.allowDelete || (options.expectedSha !== undefined && options.expectedSha !== existing.file.sha)))
+    return { ok: false, error: { kind: 'conflict', retryable: true } }
+  const result = await requestResult({
+    url: `/repos/${target.owner}/${target.repo}/contents/CNAME`,
+    method: normalized ? 'PUT' : 'DELETE',
+    data: { message: normalized ? existing ? PICX_UPDATE_CNAME_MSG : PICX_INIT_CNAME_MSG : PICX_DEL_CNAME_MSG, branch, ...(normalized ? { content: window.btoa(normalized) } : {}), ...(existing ? { sha: existing.file.sha } : {}) },
+  }, contentWritten)
+  return result.ok ? { ok: true, data: { status: normalized ? existing ? CloudCnameSyncStatusEnum.updated : CloudCnameSyncStatusEnum.created : CloudCnameSyncStatusEnum.deleted } } : result
+}
+/** 兼容旧结果枚举；未经确认默认不允许删除。 */
+export async function syncCloudCnameFile(target: RepositoryIdentity, domain: string, branch: string): Promise<CloudCnameSyncStatusEnum> {
+  const result = await syncCloudCnameFileResult(target, domain, branch)
+  return result.ok ? result.data.status : CloudCnameSyncStatusEnum.failed
 }

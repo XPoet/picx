@@ -81,7 +81,7 @@ for (const source of ['outer', 'hash'] as const) {
       : '/images-hosting/#/config?code=fixture-callback&state=%2Fsettings'
     await page.goto(path)
     await expect(page).toHaveURL(/\/images-hosting\/#\/settings$/)
-    await expect(page.getByRole('button', { name: '图片名称设置', exact: true })).toBeVisible()
+    await expect(page.getByRole('region', { name: '上传处理', exact: true })).toBeVisible()
     expect(exchanges).toBe(1)
     expect(await page.evaluate(() => ['code', 'state', 'auto'].every(key => !new URLSearchParams(location.search).has(key) && !location.hash.includes(`${key}=`)))).toBe(true)
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('PICX_IH_AUTHORIZATION') ?? '{}').code)).toBe('')

@@ -1,7 +1,10 @@
-import { computed, onScopeDispose, ref, watch } from 'vue'
+import type { CloudCnameSyncStatusEnum } from '@/common/api/deploy'
+import type { ApiFailure } from '@/utils/request/types'
+import { ElMessageBox } from 'element-plus'
+import { computed, onScopeDispose, ref, shallowRef, watch } from 'vue'
 import { checkoutGhPagesBranch, getGitReference } from '@/common/api/branch'
-import { CloudCnameSyncStatusEnum, syncCloudCnameFile } from '@/common/api/deploy'
-import { configurePages, queryPagesDeployment } from '@/common/api/pages'
+import { getCloudCnameFile, isValidCustomDomain, normalizeCustomDomain, syncCloudCnameFileResult } from '@/common/api/deploy'
+import { configurePages, getPagesInfo, queryPagesDeployment } from '@/common/api/pages'
 import { GH_PAGES, PICX_INIT_DEPLOY_MSG, PICX_UPDATE_DEPLOY_MSG } from '@/common/constant'
 import { DeployServerEnum } from '@/components/deploy-status-bar/deploy-status-bar.model'
 import i18n from '@/plugins/vue/i18n'
@@ -84,41 +87,114 @@ async function confirmAction(message: string): Promise<boolean> {
   }
   catch { return false }
 }
+interface DomainSaveFeedback {
+  phase: 'running' | 'cancelled' | 'failed' | 'waiting' | 'available'
+  domain: string
+  localSaved: boolean
+  cnameStatus?: CloudCnameSyncStatusEnum
+  scope?: 'local' | 'cname' | 'deployment'
+  error?: ApiFailure
+}
+export const domainSaveFeedback = shallowRef<DomainSaveFeedback | null>(null)
+let domainRequestId = 0
 export const deployment = createDeploymentService({
   target: currentRepository,
   query: queryPagesDeployment,
-  submit: async (target, current, step) => {
+  submit: async (target, current, step, request) => {
+    if (!request?.saveDomain && current())
+      domainSaveFeedback.value = null
+    const domain = request?.domain ?? store.getters.getUserSettings.deploy.customDomain
+    const report = (patch: Partial<DomainSaveFeedback>) => {
+      if (request?.saveDomain && current())
+        domainSaveFeedback.value = { ...domainSaveFeedback.value, phase: 'running', domain, localSaved: false, ...patch }
+    }
+    const cancelled = () => {
+      report({ phase: 'cancelled' })
+      return null
+    }
+    if (domain && !isValidCustomDomain(domain))
+      return { ok: false, error: { kind: 'invalid-response', retryable: false } }
     const existing = await getGitReference(target, GH_PAGES)
     if (!current())
       return null
     if (!existing.ok && existing.error.kind !== 'not-found')
       return existing
     if (existing.ok && !await confirmAction(i18n.global.t('deployment.rebuild_confirm', target)))
-      return null
+      return cancelled()
     if (!current())
       return null
-    const domain = store.getters.getUserSettings.deploy.customDomain
-    if (!domain && !await confirmAction(i18n.global.t('deployment.empty_domain_confirm')))
-      return null
+    let deleteSha: string | undefined
+    if (!domain) {
+      const cname = await getCloudCnameFile(target)
+      if (!current())
+        return null
+      if (!cname.ok) {
+        report({ phase: 'failed', scope: 'cname', error: cname.error })
+        return cname
+      }
+      const pages = await getPagesInfo(target)
+      if (!current())
+        return null
+      if (!pages.ok && pages.error.kind !== 'not-found') {
+        report({ phase: 'failed', scope: 'cname', error: pages.error })
+        return pages
+      }
+      const domains = new Set<string>()
+      if (cname.data.kind === 'present')
+        domains.add(cname.data.domain)
+      if (pages.ok && pages.data.cname)
+        domains.add(pages.data.cname)
+      if (domains.size && !await confirmAction(i18n.global.t('domain_settings.remove_confirm', { domain: [...domains].join('、') })))
+        return cancelled()
+      if (cname.data.kind === 'present')
+        deleteSha = cname.data.file.sha
+    }
     if (!current())
       return null
+    if (request?.saveDomain) {
+      const picx = usePicxStore(pinia)
+      if (picx.getUserSettings.deploy.customDomain !== domain && !picx.SAVE_SETTINGS_CANDIDATE({ deploy: { customDomain: domain } })) {
+        report({ phase: 'failed', scope: 'local' })
+        return { ok: false, error: { kind: 'service', retryable: true } }
+      }
+      report({ localSaved: true })
+    }
     step('cname')
-    const cname = await syncCloudCnameFile(store.getters.getUserConfigInfo, domain, target.branch)
+    const cname = await syncCloudCnameFileResult(target, domain, target.branch, { allowDelete: deleteSha !== undefined, expectedSha: deleteSha, current })
     if (!current())
       return null
-    if (cname === CloudCnameSyncStatusEnum.failed)
-      return { ok: false, error: { kind: 'service', retryable: true } }
+    if (!cname.ok) {
+      report({ phase: 'failed', localSaved: request?.saveDomain === true, scope: 'cname', error: cname.error })
+      return cname
+    }
+    report({ localSaved: request?.saveDomain === true, cnameStatus: cname.data.status })
     step('branch')
     const branch = await checkoutGhPagesBranch(target, existing.ok, current)
     if (!branch.ok || !current())
       return branch
     step('pages')
-    const pages = await configurePages(target, current)
+    const pages = await configurePages(target, current, domain)
     return pages.ok ? branch : pages
   },
 })
+
 export const deploymentOnline = ref(navigator.onLine !== false)
 export const canDeploy = computed(() => Boolean(currentRepository()) && deploymentOnline.value && !deployment.busy.value && !usePicxStore(pinia).uploadTargetBusy)
+export async function saveDomainAndDeploy(value: string) {
+  if (!canDeploy.value)
+    return deployment.state.value
+  const domain = normalizeCustomDomain(value)
+  const id = ++domainRequestId
+  domainSaveFeedback.value = { phase: 'running', domain, localSaved: false }
+  const result = await deployment.deploy({ domain, saveDomain: true })
+  if (id === domainRequestId && domainSaveFeedback.value?.phase !== 'cancelled') {
+    const feedback = domainSaveFeedback.value
+    if (feedback)
+      domainSaveFeedback.value = { ...feedback, phase: result.phase === 'available' ? 'available' : result.phase === 'waiting' ? 'waiting' : 'failed', ...(result.phase === 'failed' ? { scope: feedback.scope ?? 'deployment', error: result.error } : {}) }
+  }
+  return result
+}
+
 const deploymentEntries = new Set<() => boolean>()
 export function useDeploymentEntry(enabled: () => boolean) {
   deploymentEntries.add(enabled)
@@ -129,7 +205,11 @@ export function deploymentShortcutEnabled() {
 }
 export function useDeploymentLifecycle() {
   const picx = usePicxStore(pinia)
-  const stop = watch(() => `${repositoryKey(currentRepository())}:${picx.connectionAttemptId}`, () => deployment.reset(), { flush: 'sync' })
+  const stop = watch(() => `${repositoryKey(currentRepository())}:${picx.connectionSessionId}`, () => {
+    deployment.reset()
+    domainRequestId += 1
+    domainSaveFeedback.value = null
+  }, { flush: 'sync' })
   const online = () => deploymentOnline.value = true
   const offline = () => deploymentOnline.value = false
   window.addEventListener('online', online)

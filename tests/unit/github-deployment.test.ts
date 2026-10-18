@@ -107,3 +107,17 @@ describe('分支提交安全边界', () => {
     expect(vi.mocked(requestResult).mock.calls[2]?.[0]).toMatchObject({ method: 'POST', data: { ref: 'refs/heads/gh-pages', sha: 'new-sha' } })
   })
 })
+
+describe('pages 域名绑定配置', () => {
+  it('既有站点清空用 cname=null，不能只删除 CNAME 文件', async () => {
+    vi.mocked(requestResult).mockReset().mockResolvedValueOnce({ ok: true, data: { status: 'built', html_url: 'https://old.example.test/', cname: 'old.example.test', source: { branch: 'gh-pages', path: '/' } } }).mockResolvedValueOnce({ ok: true, data: '' })
+    expect((await configurePages(target, () => true, '')).ok).toBe(true)
+    expect(vi.mocked(requestResult).mock.calls[1]?.[0]).toMatchObject({ method: 'PUT', data: { cname: null, source: { branch: 'gh-pages', path: '/' } } })
+  })
+  it('首次先创建 Pages，再补域名绑定；未知 / 失败结果不继续', async () => {
+    vi.mocked(requestResult).mockReset().mockResolvedValueOnce(notFound).mockResolvedValueOnce({ ok: true, data: { status: null, html_url: 'https://images.example.test/', cname: null, source: { branch: 'gh-pages', path: '/' } } }).mockResolvedValueOnce({ ok: true, data: '' })
+    expect((await configurePages(target, () => true, 'images.example.test')).ok).toBe(true)
+    expect(vi.mocked(requestResult).mock.calls[1]?.[0]).toMatchObject({ method: 'POST', data: { source: { branch: 'gh-pages', path: '/' } } })
+    expect(vi.mocked(requestResult).mock.calls[2]?.[0]).toMatchObject({ method: 'PUT', data: { cname: 'images.example.test' } })
+  })
+})

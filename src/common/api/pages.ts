@@ -8,11 +8,14 @@ import { getGitReference } from './branch'
 interface PagesInfo {
   status: string | null
   html_url: string
+  cname?: string | null
   source?: { branch: string, path: string }
 }
 interface PagesBuild { status: string, commit: string }
 function isPagesInfo(value: unknown): value is PagesInfo {
   if (!value || typeof value !== 'object' || !('html_url' in value) || typeof value.html_url !== 'string' || !('status' in value) || (value.status !== null && typeof value.status !== 'string'))
+    return false
+  if ('cname' in value && value.cname !== null && typeof value.cname !== 'string')
     return false
   if (!('source' in value) || value.source === undefined)
     return true
@@ -61,13 +64,25 @@ export async function queryPagesDeployment(target: RepositoryIdentity, expectedS
     ? { ok: true, data: { phase: 'available', commitSha, url: pages.data.html_url } }
     : { ok: false, error: { kind: 'invalid-response', retryable: true } }
 }
-export async function configurePages(target: RepositoryIdentity, current: () => boolean): Promise<ApiResult<unknown>> {
+export async function configurePages(target: RepositoryIdentity, current: () => boolean, domain?: string): Promise<ApiResult<unknown>> {
   const existing = await getPagesInfo(target)
   if (!existing.ok && existing.error.kind !== 'not-found')
     return existing
+  const conflict = { ok: false, error: { kind: 'conflict', retryable: true } } as const
   if (!current())
-    return { ok: false, error: { kind: 'conflict', retryable: true } }
-  if (existing.ok && existing.data.source?.branch === GH_PAGES && existing.data.source.path === '/')
-    return { ok: true, data: null }
-  return requestResult({ url: `/repos/${target.owner}/${target.repo}/pages`, method: existing.ok ? 'PUT' : 'POST', data: { source: { branch: GH_PAGES, path: '/' } } }, (value): value is unknown => value !== undefined)
+    return conflict
+  const source = { branch: GH_PAGES, path: '/' }
+  const desiredDomain = domain || null
+  if (existing.ok) {
+    const sourceMatches = existing.data.source?.branch === GH_PAGES && existing.data.source.path === '/'
+    if (sourceMatches && (domain === undefined || (existing.data.cname ?? null) === desiredDomain))
+      return { ok: true, data: null }
+    return requestResult({ url: `/repos/${target.owner}/${target.repo}/pages`, method: 'PUT', data: { source, ...(domain === undefined ? {} : { cname: desiredDomain }) } }, (value): value is unknown => value !== undefined)
+  }
+  const created = await requestResult({ url: `/repos/${target.owner}/${target.repo}/pages`, method: 'POST', data: { source } }, isPagesInfo)
+  if (!created.ok || domain === undefined || (created.data.cname ?? null) === desiredDomain)
+    return created
+  if (!current())
+    return conflict
+  return requestResult({ url: `/repos/${target.owner}/${target.repo}/pages`, method: 'PUT', data: { cname: desiredDomain } }, (value): value is unknown => value !== undefined)
 }

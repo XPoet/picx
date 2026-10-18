@@ -57,9 +57,7 @@ test('页脚帮助链接真实可用，反馈入口可用键盘进入', async ({
 
 test('长英文设置使用文档主滚动，五档宽度和低高度窗口均可访问页尾', async ({ page, picx }) => {
   await picx.open('/settings', { savedRepository: true, language: 'en' })
-  for (const header of await page.locator('.el-collapse-item__header').all()) {
-    await header.click()
-  }
+  await expect(page.locator('.settings-section')).toHaveCount(3)
   for (const [width, height] of [[375, 812], [768, 900], [1024, 900], [1280, 900], [1440, 1080], [1024, 400]]) {
     await page.setViewportSize({ width, height })
     const feedback = page.getByRole('contentinfo').getByRole('link', { name: 'Feedback', exact: true })
@@ -76,7 +74,8 @@ test('长英文设置使用文档主滚动，五档宽度和低高度窗口均�
     expect(metrics.mainOverflow).toBe('visible')
     expect(metrics.pageOverflow).toBe('visible')
     if (width === 375) {
-      const heights = await page.locator('.el-select__wrapper').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height))
+      const heights = await page.locator('.settings-section select').evaluateAll(elements => elements.map(element => element.getBoundingClientRect().height))
+      expect(heights.length).toBeGreaterThan(0)
       expect(Math.min(...heights)).toBeGreaterThanOrEqual(44)
       const description = page.locator('.img-encoder-group .desc').first()
       await expect(description).toHaveCSS('white-space', 'normal')

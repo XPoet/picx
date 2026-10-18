@@ -70,7 +70,7 @@ test('管理空目录保持上传恢复入口', async ({ page, picx }) => {
   await expect(main.locator('input[type="file"]')).toHaveCount(1)
 })
 
-test('设置导航进入现有偏好并能打开命名设置', async ({ page, picx }) => {
+test('设置导航进入三个展开分区并回显旧命名', async ({ page, picx }) => {
   await picx.open('/upload', { savedRepository: true })
   await openNavigation(page)
   const settings = page.getByRole('navigation', { name: '主导航', includeHidden: true }).getByRole('link', { name: '图床设置', exact: true, includeHidden: true })
@@ -79,14 +79,12 @@ test('设置导航进入现有偏好并能打开命名设置', async ({ page, pi
   await expect(page).toHaveURL(/#\/settings$/)
   await expect(settings).toHaveAttribute('aria-current', 'page')
   const main = page.getByRole('main')
-  const naming = main.getByRole('button', { name: '图片名称设置', exact: true })
-  await expect(naming).toBeVisible()
-  await expect(main.getByRole('button', { name: '图片压缩设置', exact: true })).toBeVisible()
-  await expect(main.getByRole('button', { name: '图床部署', exact: true })).toBeVisible()
-  await naming.click()
-  await expect(naming).toHaveAttribute('aria-expanded', 'true')
-  await expect(main.getByText('哈希化', { exact: true })).toBeVisible()
-  await expect(main.getByText('时间戳命名', { exact: true })).toBeVisible()
+  for (const name of ['上传处理', '链接与分享', '部署与域名'])
+    await expect(main.getByRole('region', { name, exact: true })).toBeVisible()
+  const processing = main.getByRole('region', { name: '上传处理', exact: true })
+  await expect(processing.getByRole('button', { name: '保留原名', exact: true })).toHaveAttribute('aria-pressed', 'true')
+  await expect(processing.getByRole('button', { name: '原名 + 哈希', exact: true })).toBeVisible()
+  await expect(processing.getByRole('button', { name: '时间戳', exact: true })).toBeVisible()
 })
 
 test('失效工具箱地址按未知路由回到可操作的登录页', async ({ page, picx }) => {
