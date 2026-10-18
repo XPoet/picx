@@ -54,6 +54,7 @@ import {
   setSession,
 } from '@/utils'
 import { directoryDraft, validateDirectoryDraft } from '@/utils/directory-utils'
+import { validateLinkRule } from '@/utils/link-rule-validation'
 import { validUploadPreferences } from '@/utils/upload-preferences'
 
 interface PicxState {
@@ -527,13 +528,62 @@ export const usePicxStore = defineStore('picx', {
     },
 
     SET_USER_SETTINGS(settingsInfo: Partial<UserSettingsModel>) {
-      assignKnownProperties(this.userSettingsModule.userSettings, settingsInfo)
+      const defaults = createDefaultUserSettings()
+      const incoming = { ...settingsInfo }
+      if (settingsInfo.imageLinkType)
+        incoming.imageLinkType = { ...settingsInfo.imageLinkType, presetList: { ...defaults.imageLinkType.presetList, ...settingsInfo.imageLinkType.presetList } }
+      if (settingsInfo.imageLinkFormat) {
+        const formats = new Map(defaults.imageLinkFormat.presetList.map(format => [format.name, format]))
+        settingsInfo.imageLinkFormat.presetList.forEach(format => formats.set(format.name, format))
+        incoming.imageLinkFormat = { ...settingsInfo.imageLinkFormat, presetList: [...formats.values()] }
+      }
+      assignKnownProperties(this.userSettingsModule.userSettings, incoming)
       this.USER_SETTINGS_PERSIST()
     },
 
     SET_GLOBAL_SETTINGS(globalSettings: Partial<GlobalSettingsModel>) {
       assignKnownProperties(this.userSettingsModule.globalSettings, globalSettings)
       setSession(SS_GLOBAL_SETTINGS, this.userSettingsModule.globalSettings)
+    },
+
+    SAVE_IMAGE_LINK_RULE(rule: ImageLinkRuleModel, originalName?: string): boolean {
+      const current = this.getUserSettings.imageLinkType
+      const previous = originalName ? current.presetList[originalName] : undefined
+      if ((originalName && !previous) || (previous && !previous.editable && rule.name !== originalName) || validateLinkRule(rule, current.presetList, originalName))
+        return false
+      const rules = { ...current.presetList }
+      if (originalName)
+        delete rules[originalName]
+      const candidate = { ...rule, name: rule.name.trim(), rule: rule.rule.trim(), editable: previous ? previous.editable : true }
+      rules[candidate.name] = candidate
+      return this.SAVE_LINK_PREFERENCES({ ...current, presetList: rules, selected: current.selected === originalName ? candidate.name : current.selected })
+    },
+
+    REMOVE_IMAGE_LINK_RULE(rule: ImageLinkRuleModel): boolean {
+      const current = this.getUserSettings.imageLinkType
+      if (!current.presetList[rule.name]?.editable)
+        return false
+      const rules = { ...current.presetList }
+      delete rules[rule.name]
+      const selected = current.selected === rule.name ? (rules[ImageLinkTypeEnum.GitHub] ? ImageLinkTypeEnum.GitHub : Object.keys(rules)[0]) : current.selected
+      return Boolean(selected) && this.SAVE_LINK_PREFERENCES({ selected, presetList: rules })
+    },
+
+    SAVE_LINK_PREFERENCES(imageLinkType: UserSettingsModel['imageLinkType']): boolean {
+      if (!Object.hasOwn(imageLinkType.presetList, imageLinkType.selected))
+        return false
+      return this.SAVE_SETTINGS_CANDIDATE({ imageLinkType })
+    },
+
+    SAVE_SETTINGS_CANDIDATE(patch: Partial<UserSettingsModel>): boolean {
+      try {
+        setLocal(LS_SETTINGS, { ...this.getUserSettings, ...patch })
+      }
+      catch {
+        return false
+      }
+      assignKnownProperties(this.userSettingsModule.userSettings, patch)
+      return true
     },
 
     ADD_IMAGE_LINK_TYPE_RULE({ rule }: { rule: ImageLinkRuleModel }) {

@@ -986,3 +986,11 @@ T028 输入事务补充：getting-images 以 typed receiving(active) 事件报�
 提交先读取源分支 SHA，再查询目标分支；存在 gh-pages 必须由上层确认后允许重建，目标分支操作失败立即停止。分支提交后查询 Pages：确认不存在时 POST 创建，现有站点使用 gh-pages 根目录作为 source，随后进入 waiting。定时器仅安排下一次查询，最多 12 次 / 5 秒间隔，超时保持 waiting，可手动检查；错误停止轮询。断连 / 仓库或连接代次变化使旧操作失效，在每个后续写入前检查是否仍有效。提交期间的重复入口共用同一个 Promise，旧响应不得覆盖新状态。不自动切换链接来源。
 
 接口依据：[GitHub Pages REST API](https://docs.github.com/en/rest/pages/pages#get-latest-pages-build)、[Git references REST API](https://docs.github.com/en/rest/git/refs)。本地 mock 不代表实际站点构建或可访问验证。
+
+### P5 链接规则编辑与来源提交（T036）
+
+规则草稿不进入 Store。显式保存时 trim 名称与模板，名称 1–60 字符、大小写不敏感去重、禁止对象原型保留键；模板必须有精确 `{{path}}`，只接受 owner / repo / branch / path 四种精确变量与 HTTP(S) URL，不接受账号口令 URL 或未闭合变量。历史规则读取不校验改写，编辑时才采用新约束。预设 name 固定且不可删除，自定义项可改名 / 删除，id 保留；选中规则改名同步 selected，删除选中项回落到现存 GitHub 或首个规则。所有编辑先持久化候选再发布，失败保留草稿。
+
+来源选择独立于下拉框草稿：非 Pages 有效规则即时保存；选择 Pages 时只查询共享服务，available 且目标仍匹配才提交，waiting / failed / unknown 保留原来源。每次选择有代次，晚到检查不能覆盖后续选择。预览和上传 / 管理复制继续调用 imageLinkText，不新增模板渲染分支。关闭自动格式转换保留默认格式字段，只复制原始 URL。
+
+T036：应用旧云偏好时，将缺少的内置来源 / 格式补到内存与本地候选中，保留同名旧模板、id 和 selected；不会因读取立即回写远端。自定义规则以云端内容为准，不合并已删除的旧本地自定义项。

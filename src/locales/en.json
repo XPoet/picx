@@ -580,5 +580,30 @@
     "visit": "Visit site",
     "rebuild_confirm": "Rebuild gh-pages in {owner}/{repo} from the current content of {branch}? This replaces existing Pages content and may affect the current site.",
     "empty_domain_confirm": "The domain setting is empty. Deployment will remove an existing CNAME file from the source branch, if present. Continue?"
+  },
+  "link_rules": {
+    "title": "Custom link rules",
+    "description": "Use your own CDN or image URL. Added rules appear in link sources. Preset templates can be edited; presets cannot be deleted.",
+    "name": "Rule name",
+    "template": "Rule template",
+    "name_placeholder": "For example: My CDN",
+    "variables": "Available variables: {variables}",
+    "add": "Add rule",
+    "edit_named": "Edit rule {name}",
+    "delete_named": "Delete rule {name}",
+    "delete_confirm": "Delete rule “{name}”? If selected, the source will switch to an existing default.",
+    "name-required": "Enter a rule name.",
+    "name-invalid": "Use at most 60 characters and avoid reserved names.",
+    "name-duplicate": "A rule with this name already exists.",
+    "path-required": "The template must contain the path variable in double braces.",
+    "variable-invalid": "Use only the four listed variables with complete double braces.",
+    "protocol-invalid": "Only HTTP and HTTPS are supported.",
+    "url-invalid": "Enter a valid URL without a username or password.",
+    "save-failed": "Local saving failed. Retry; your draft is preserved.",
+    "pages-unavailable": "GitHub Pages has not been confirmed as available. The previous source is preserved. Check or deploy in the deployment section.",
+    "source_desc": "Choose how image links are accessed.",
+    "format_desc": "Supports Markdown, HTML and BBCode. Disable conversion to copy the original URL.",
+    "edit": "Edit",
+    "save": "Save rule"
   }
 }

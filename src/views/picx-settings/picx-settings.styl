@@ -226,4 +226,24 @@
       grid-template-columns minmax(0, 1fr)
     }
   }
+  .settings-field-title {
+    font-size 17px
+    font-weight 600
+  }
+
+  select {
+    box-sizing border-box
+    width 100%
+    min-height 44px
+    padding 8px 12px
+    color var(--picx-color-text)
+    background var(--picx-color-surface)
+    border 1px solid var(--picx-color-control-border)
+    border-radius var(--picx-radius-control)
+    font inherit
+
+    @media (max-width 767px) {
+      font-size 16px
+    }
+  }
 }

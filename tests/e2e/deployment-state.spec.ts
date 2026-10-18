@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { expect, test } from './fixtures'
 
 for (const scenario of ['waiting', 'available', 'forbidden'] as const) {
@@ -18,7 +19,7 @@ for (const scenario of ['waiting', 'available', 'forbidden'] as const) {
     await expect(deploy).toContainText(scenario === 'available' ? '已可用' : scenario === 'waiting' ? '等待生效' : '检查或部署失败')
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('PICX_IH_SETTINGS') ?? '{}').imageLinkType.selected)).toBe('Fixture CDN')
     await expect(deploy.getByRole('link', { name: '访问站点' })).toHaveCount(scenario === 'available' ? 1 : 0)
-    if (info.project.name === 'desktop-chrome') {
+    if (process.env.PICX_CAPTURE_TASK === 'T038' && info.project.name === 'desktop-chrome') {
       await page.setViewportSize({ width: 375, height: 812 })
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
       await deploy.screenshot({ path: `docs/UI/evidence/p5/t038-${scenario}-375.png` })

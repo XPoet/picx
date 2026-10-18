@@ -1,159 +1,98 @@
 <script setup lang="ts">
-import type { FormInstance } from 'element-plus'
 import type { ImageLinkRuleModel } from '@/common/model'
-import { computed, getCurrentInstance, reactive, ref } from 'vue'
-import { store } from '@/stores'
+import { computed, reactive, ref, useId } from 'vue'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
+import i18n from '@/plugins/vue/i18n'
 import { getUuid } from '@/utils/common-utils'
+import { validateLinkRule } from '@/utils/link-rule-validation'
 
-const instance = getCurrentInstance()
-
-const userSettings = computed(() => store.getters.getUserSettings).value
-const linkRuleTableData = computed(() => {
-  const tmpArr = []
-
-  for (const key in userSettings.imageLinkType.presetList) {
-    tmpArr.push(userSettings.imageLinkType.presetList[key])
-  }
-  return tmpArr
-})
-
-const formRef = ref<FormInstance>()
-
-const imageLinkRuleForm: ImageLinkRuleModel = reactive({
-  id: '',
-  name: '',
-  rule: '',
-  editable: true,
-})
-
-const isImageLinkRule = (value: unknown): value is ImageLinkRuleModel => {
-  if (!value || typeof value !== 'object') {
-    return false
-  }
-
-  const candidate = value as Partial<ImageLinkRuleModel>
-  return (
-    typeof candidate.id === 'string'
-    && typeof candidate.name === 'string'
-    && typeof candidate.rule === 'string'
-  )
+const props = defineProps<{ rules: Record<string, ImageLinkRuleModel> }>()
+const emit = defineEmits<{
+  save: [rule: ImageLinkRuleModel, originalName: string | undefined, done: (success: boolean) => void]
+  remove: [rule: ImageLinkRuleModel]
+}>()
+const id = useId()
+const form = reactive({ name: '', rule: '' })
+const editing = ref<string>()
+const error = ref('')
+const list = computed(() => Object.values(props.rules))
+const templateExample = 'https://cdn.example.com/{{owner}}/{{repo}}/{{path}}'
+const variables = ['{{owner}}', '{{repo}}', '{{branch}}', '{{path}}'].join('、')
+function reset() {
+  form.name = ''
+  form.rule = ''
+  editing.value = undefined
+  error.value = ''
 }
-
-const editImageLinkRule = (event: FocusEvent, ruleObj: unknown) => {
-  if (!(event.currentTarget instanceof HTMLElement) || !isImageLinkRule(ruleObj)) {
+function edit(rule: ImageLinkRuleModel) {
+  form.name = rule.name
+  form.rule = rule.rule
+  editing.value = rule.name
+  error.value = ''
+  document.getElementById(`${id}-template`)?.focus()
+}
+function save() {
+  const issue = validateLinkRule(form, props.rules, editing.value)
+  if (issue) {
+    error.value = `link_rules.${issue}`
     return
   }
-
-  const tmpRuleObj: ImageLinkRuleModel = JSON.parse(JSON.stringify(ruleObj))
-  const newRule = event.currentTarget.textContent ?? ''
-  tmpRuleObj.rule = newRule
-  store.dispatch('UPDATE_IMAGE_LINK_TYPE_RULE', { rule: tmpRuleObj })
-}
-
-const removeImageLinkRule = (obj: unknown) => {
-  if (!isImageLinkRule(obj)) {
-    return
-  }
-
-  ElMessageBox.confirm(
-    `${instance?.proxy?.$t('settings_page.link_format.delete_tips')}：${obj.name}`,
-    instance?.proxy?.$t('tip'),
-    {
-      type: 'warning',
-    },
-  )
-    .then(() => {
-      store.dispatch('DEL_IMAGE_LINK_TYPE_RULE', obj)
-    })
-    .catch(() => undefined)
-}
-
-const addImageLinkRule = (formEl: FormInstance | undefined) => {
-  if (!formEl)
-    return
-  formEl.validate((valid) => {
-    if (valid) {
-      imageLinkRuleForm.id = getUuid()
-      store.dispatch('ADD_IMAGE_LINK_TYPE_RULE', {
-        rule: JSON.parse(JSON.stringify(imageLinkRuleForm)),
-      })
-    }
+  const previous = editing.value ? props.rules[editing.value] : undefined
+  emit('save', { ...previous, id: previous?.id ?? getUuid(), name: form.name.trim(), rule: form.rule.trim(), editable: previous ? previous.editable : true }, editing.value, (success) => {
+    if (success)
+      reset()
+    else error.value = 'link_rules.save-failed'
   })
+}
+async function remove(rule: ImageLinkRuleModel) {
+  try {
+    await ElMessageBox.confirm(i18n.global.t('link_rules.delete_confirm', { name: rule.name }), i18n.global.t('tip'), { type: 'warning', confirmButtonText: i18n.global.t('confirm'), cancelButtonText: i18n.global.t('cancel') })
+    emit('remove', rule)
+  }
+  catch {}
 }
 </script>
 
 <template>
-  <el-card class="settings-item-card">
-    <template #header>
-      <div class="card-header">
-        <span>{{ $t('settings_page.link_rule.card_title') }}</span>
-      </div>
-    </template>
-    <el-table :data="linkRuleTableData" style="width: 100%">
-      <el-table-column
-        prop="name"
-        :label="$t('settings_page.link_rule.card_table_col_title_1')"
-        width="120"
-      />
-      <el-table-column :label="$t('settings_page.link_rule.card_table_col_title_2')">
-        <template #default="scope">
-          <div :contenteditable="true" @focusout="editImageLinkRule($event, scope.row)">
-            {{ scope.row.rule }}
-          </div>
-        </template>
-      </el-table-column>
-      <el-table-column
-        :label="$t('settings_page.link_rule.card_table_col_title_3')"
-        width="80"
-        align="center"
-      >
-        <template #default="scope">
-          <el-button
-            link
-            size="small"
-            :disabled="!scope.row.editable"
-            @click="removeImageLinkRule(scope.row)"
-          >
-            <IEpDelete />
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-divider />
-    <div style="margin-top: 20px">
-      <el-form
-        ref="formRef"
-        label-position="left"
-        :model="imageLinkRuleForm"
-        label-width="120px"
-        size="default"
-      >
-        <el-form-item
-          :label="$t('settings_page.link_rule.input_name_1')"
-          prop="name"
-          :rules="[{ required: true, message: $t('settings_page.link_rule.input_name_1_rule') }]"
-        >
-          <el-input v-model="imageLinkRuleForm.name" type="text" />
-        </el-form-item>
-        <el-form-item
-          :label="$t('settings_page.link_rule.input_name_2')"
-          prop="rule"
-          :rules="[{ required: true, message: $t('settings_page.link_rule.input_name_2_rule') }]"
-        >
-          <el-input v-model="imageLinkRuleForm.rule" type="text" />
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            type="primary"
-            :disabled="!imageLinkRuleForm.name || !imageLinkRuleForm.rule"
-            @click="addImageLinkRule(formRef)"
-          >
-            {{ $t('settings_page.link_rule.btn_name_1') }}
-          </el-button>
-        </el-form-item>
-      </el-form>
+  <article class="settings-card link-rule-config">
+    <div class="link-rule-intro">
+      <h2>{{ $t('link_rules.title') }}</h2><p>{{ $t('link_rules.description') }}</p>
     </div>
-  </el-card>
+    <ul class="link-rule-list">
+      <li v-for="rule in list" :key="rule.id">
+        <strong>{{ rule.name }}</strong><code class="settings-preview">{{ rule.rule }}</code>
+        <div class="link-rule-actions">
+          <el-button :aria-label="$t('link_rules.edit_named', { name: rule.name })" @click="edit(rule)">
+            <PicxIcon name="pencil" :size="18" />{{ $t('link_rules.edit') }}
+          </el-button>
+          <el-button :disabled="!rule.editable" :aria-label="$t('link_rules.delete_named', { name: rule.name })" @click="remove(rule)">
+            <PicxIcon name="trash-2" :size="18" />{{ $t('delete') }}
+          </el-button>
+        </div>
+      </li>
+    </ul>
+    <form class="link-rule-form" @submit.prevent="save">
+      <h3 v-if="editing">
+        {{ $t('link_rules.edit_named', { name: editing }) }}
+      </h3>
+      <label :for="`${id}-name`">{{ $t('link_rules.name') }}</label>
+      <el-input :id="`${id}-name`" v-model="form.name" :disabled="editing !== undefined && !rules[editing]?.editable" maxlength="60" :placeholder="$t('link_rules.name_placeholder')" />
+      <label :for="`${id}-template`">{{ $t('link_rules.template') }}</label>
+      <el-input :id="`${id}-template`" v-model="form.rule" type="textarea" :rows="3" :placeholder="templateExample" />
+      <p>{{ $t('link_rules.variables', { variables }) }}</p>
+      <p v-if="error" role="alert" class="settings-error">
+        {{ $t(error) }}
+      </p>
+      <div class="link-rule-actions">
+        <el-button v-if="editing" @click="reset">
+          {{ $t('cancel') }}
+        </el-button>
+        <el-button type="primary" native-type="submit">
+          <PicxIcon :name="editing ? 'check' : 'plus'" :size="18" />{{ $t(editing ? 'link_rules.save' : 'link_rules.add') }}
+        </el-button>
+      </div>
+    </form>
+  </article>
 </template>
 
 <style scoped lang="stylus">

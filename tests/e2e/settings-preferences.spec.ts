@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { expect, test } from './fixtures'
 
 test('旧命名、前缀草稿、编码器与水印参数在刷新后保留', async ({ page, picx }, info) => {
@@ -29,10 +30,10 @@ test('旧命名、前缀草稿、编码器与水印参数在刷新后保留', as
   await page.reload()
   await expect(prefix).toHaveValue('picx-')
   await expect(processing.getByRole('radio', { name: /avif/ })).toBeChecked()
-  if (info.project.name === 'desktop-chrome')
+  if (process.env.PICX_CAPTURE_TASK === 'T035' && info.project.name === 'desktop-chrome')
     await page.screenshot({ path: 'docs/UI/evidence/p5/t035-settings-1440.png', fullPage: true })
   await page.setViewportSize({ width: 375, height: 812 })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-  if (info.project.name === 'desktop-chrome')
+  if (process.env.PICX_CAPTURE_TASK === 'T035' && info.project.name === 'desktop-chrome')
     await page.screenshot({ path: 'docs/UI/evidence/p5/t035-settings-375.png', fullPage: true })
 })

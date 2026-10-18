@@ -580,5 +580,30 @@
     "visit": "造訪網站",
     "rebuild_confirm": "將重建 {owner}/{repo} 的 gh-pages 分支，以 {branch} 目前內容取代既有 Pages 內容。此操作可能影響現有網站，是否繼續？",
     "empty_domain_confirm": "目前網域設定為空。部署會移除來源分支既有的 CNAME 檔案（如有）。是否繼續？"
+  },
+  "link_rules": {
+    "title": "自訂連結規則",
+    "description": "使用自己的 CDN 或圖片存取位址，新增後可在連結來源中選擇。預設規則可編輯範本，不可刪除。",
+    "name": "規則名稱",
+    "template": "規則範本",
+    "name_placeholder": "例如：我的 CDN",
+    "variables": "可用變數：{variables}",
+    "add": "新增規則",
+    "edit_named": "編輯規則 {name}",
+    "delete_named": "刪除規則 {name}",
+    "delete_confirm": "確認刪除規則「{name}」？若目前使用此規則，將切換至既有預設來源。",
+    "name-required": "請填寫規則名稱。",
+    "name-invalid": "名稱最多 60 個字元，不能使用保留名稱。",
+    "name-duplicate": "已有同名規則，請使用其他名稱。",
+    "path-required": "範本必須包含 path 變數（雙大括號包裹）。",
+    "variable-invalid": "範本只能使用列出的四種變數，且大括號必須完整。",
+    "protocol-invalid": "規則僅支援 HTTP 或 HTTPS 協定。",
+    "url-invalid": "請填寫有效 URL，不能包含使用者名稱或密碼。",
+    "save-failed": "本機儲存失敗，請重試；草稿已保留。",
+    "pages-unavailable": "尚未確認 GitHub Pages 可用，已保留原連結來源。請在部署區檢查或部署。",
+    "source_desc": "選擇圖片連結的存取來源。",
+    "format_desc": "支援 Markdown、HTML 和 BBCode，關閉自動轉換後複製原始 URL。",
+    "edit": "編輯",
+    "save": "儲存規則"
   }
 }

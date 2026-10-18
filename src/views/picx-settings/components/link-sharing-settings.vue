@@ -1,55 +1,31 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { isBranchExist } from '@/common/api'
-import { GH_PAGES } from '@/common/constant'
-import { ImageLinkTypeEnum } from '@/common/model'
-import { deployGhPages } from '@/components/deploy-status-bar/deploy-status-bar.util'
+import type { ImageLinkRuleModel } from '@/common/model'
+import { computed, useId } from 'vue'
 import ImageLinkPreview from '@/components/image-link-preview/image-link-preview.vue'
-import i18n from '@/plugins/vue/i18n'
-import { store } from '@/stores'
+import ImageLinkRuleConfig from '@/components/image-link-rule-config/image-link-rule-config.vue'
+import { useImageLinkSource } from '@/composables/use-image-link-source'
+import { pinia } from '@/stores'
+import { usePicxStore } from '@/stores/picx-store'
 
-const userSettings = computed(() => store.getters.getUserSettings).value
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const persistUserSettings = () => store.dispatch('USER_SETTINGS_PERSIST')
-const saveUserSettings = () => store.dispatch('SET_USER_SETTINGS', { ...userSettings })
-// 上一次有效的图片链接规则，选择 GitHub Pages 但远端未部署 gh-pages 时用于回退
-const lastValidLinkType = ref(userSettings.imageLinkType.selected)
-
-const onImageLinkTypeChange = async (name: string) => {
-  if (name !== ImageLinkTypeEnum.GitHubPages) {
-    lastValidLinkType.value = name
-    saveUserSettings()
+const store = usePicxStore(pinia)
+const settings = computed(() => store.getUserSettings)
+const config = computed(() => store.getUserConfigInfo)
+const target = computed(() => ({ owner: config.value.owner, repo: config.value.repo, branch: config.value.branch }))
+const source = useImageLinkSource()
+const id = useId()
+function sourceChange(event: Event) {
+  if (!(event.target instanceof HTMLSelectElement))
     return
-  }
-
-  // 选择 GitHub Pages 时，先检查远端图床仓库是否已部署 gh-pages 分支
-  const deployed = await isBranchExist(userConfigInfo.owner, userConfigInfo.repo, GH_PAGES)
-
-  // 检查期间用户已改选其他规则，放弃本次检查结果
-  if (userSettings.imageLinkType.selected !== ImageLinkTypeEnum.GitHubPages) {
-    return
-  }
-
-  if (deployed) {
-    lastValidLinkType.value = name
-    saveUserSettings()
-    return
-  }
-
-  // 未部署 GitHub Pages：不能选择，回退后给出一键部署快捷入口
-  userSettings.imageLinkType.selected = lastValidLinkType.value
-  saveUserSettings()
-  ElMessageBox.confirm(
-    i18n.global.t('settings_page.link_rule.gh_pages_not_deployed'),
-    i18n.global.t('tip'),
-    {
-      confirmButtonText: i18n.global.t('settings_page.image_hosting_deploy.one_click_deploy'),
-      cancelButtonText: i18n.global.t('cancel'),
-      type: 'warning',
-    },
-  )
-    .then(() => deployGhPages())
-    .catch(() => {})
+  const value = event.target.value
+  event.target.value = settings.value.imageLinkType.selected
+  void source.select(value)
+}
+function formatChange(event: Event) {
+  if (event.target instanceof HTMLSelectElement)
+    store.SAVE_SETTINGS_CANDIDATE({ imageLinkFormat: { ...settings.value.imageLinkFormat, selected: event.target.value } })
+}
+function saveRule(rule: ImageLinkRuleModel, originalName: string | undefined, done: (success: boolean) => void) {
+  done(store.SAVE_IMAGE_LINK_RULE(rule, originalName))
 }
 </script>
 
@@ -62,23 +38,35 @@ const onImageLinkTypeChange = async (name: string) => {
     </header>
     <div class="settings-grid">
       <article class="settings-card">
-        <h2>{{ $t('settings_page.link_rule.select_title') }}</h2>
-        <el-select v-model="userSettings.imageLinkType.selected" :aria-label="$t('settings_page.link_rule.select_title')" @change="onImageLinkTypeChange">
-          <el-option v-for="item in userSettings.imageLinkType.presetList" :key="item.id" :label="item.name" :value="item.name" />
-        </el-select>
-        <p>{{ $t('settings_workspace.current_rule') }}</p><code class="settings-preview">{{ userSettings.imageLinkType.presetList[userSettings.imageLinkType.selected]?.rule }}</code>
+        <label :for="`${id}-source`" class="settings-field-title">{{ $t('settings_page.link_rule.select_title') }}</label>
+        <p>{{ $t('link_rules.source_desc') }}</p>
+        <select :id="`${id}-source`" :value="settings.imageLinkType.selected" @change="sourceChange">
+          <option v-for="rule in settings.imageLinkType.presetList" :key="rule.id" :value="rule.name">
+            {{ rule.name }}
+          </option>
+        </select>
+        <p v-if="source.checking.value" role="status">
+          {{ $t('deployment.checking') }}
+        </p>
+        <p v-if="source.error.value" role="alert" class="settings-error">
+          {{ $t(source.error.value) }}
+        </p>
+        <p>{{ $t('settings_workspace.current_rule') }}</p><code class="settings-preview">{{ settings.imageLinkType.presetList[settings.imageLinkType.selected]?.rule }}</code>
       </article>
       <article class="settings-card">
-        <h2>{{ $t('settings_page.link_format.select_title') }}</h2>
-        <el-select v-model="userSettings.imageLinkFormat.selected" :aria-label="$t('settings_page.link_format.select_title')" @change="saveUserSettings">
-          <el-option v-for="item in userSettings.imageLinkFormat.presetList" :key="item.name" :label="item.name" :value="item.name" />
-        </el-select>
-        <ImageLinkPreview :target="{ owner: userConfigInfo.owner, repo: userConfigInfo.repo, branch: userConfigInfo.branch }" :directory="userConfigInfo.selectedDir || '/'" :settings="userSettings" />
+        <label :for="`${id}-format`" class="settings-field-title">{{ $t('settings_page.link_format.select_title') }}</label>
+        <p>{{ $t('link_rules.format_desc') }}</p>
+        <select :id="`${id}-format`" :value="settings.imageLinkFormat.selected" @change="formatChange">
+          <option v-for="format in settings.imageLinkFormat.presetList" :key="format.name" :value="format.name">
+            {{ format.name }}
+          </option>
+        </select>
+        <ImageLinkPreview :target="target" :directory="config.selectedDir || '/'" :settings="settings" />
       </article>
     </div>
     <article class="settings-card settings-switch-row">
-      <div><h2>{{ $t('settings_page.link_format.switch_name') }}</h2><p>{{ $t('settings_workspace.format_desc') }}</p></div><el-switch v-model="userSettings.imageLinkFormat.enable" :aria-label="$t('settings_page.link_format.switch_name')" @change="persistUserSettings" />
+      <div><h2>{{ $t('settings_page.link_format.switch_name') }}</h2><p>{{ $t('settings_workspace.format_desc') }}</p></div><el-switch :model-value="settings.imageLinkFormat.enable" :aria-label="$t('settings_page.link_format.switch_name')" @update:model-value="store.SAVE_SETTINGS_CANDIDATE({ imageLinkFormat: { ...settings.imageLinkFormat, enable: $event === true } })" />
     </article>
-    <image-link-rule-config />
+    <ImageLinkRuleConfig :rules="settings.imageLinkType.presetList" @save="saveRule" @remove="store.REMOVE_IMAGE_LINK_RULE" />
   </section>
 </template>

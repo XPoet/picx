@@ -580,5 +580,30 @@
     "visit": "访问站点",
     "rebuild_confirm": "将重建 {owner}/{repo} 的 gh-pages 分支，以 {branch} 当前内容替换已有 Pages 内容。此操作可能影响现有站点，是否继续？",
     "empty_domain_confirm": "当前域名设置为空。部署会移除源分支已有的 CNAME 文件（如有）。是否继续？"
+  },
+  "link_rules": {
+    "title": "自定义链接规则",
+    "description": "使用自己的 CDN 或图片访问地址，添加后可在链接来源中选择。预设规则可编辑模板，不可删除。",
+    "name": "规则名称",
+    "template": "规则模板",
+    "name_placeholder": "例如：我的 CDN",
+    "variables": "可用变量：{variables}",
+    "add": "添加规则",
+    "edit_named": "编辑规则 {name}",
+    "delete_named": "删除规则 {name}",
+    "delete_confirm": "确认删除规则「{name}」？若该规则正在使用，将切换到现存的默认来源。",
+    "name-required": "请填写规则名称。",
+    "name-invalid": "名称最多 60 个字符，不能使用保留名称。",
+    "name-duplicate": "已有同名规则，请使用其他名称。",
+    "path-required": "模板必须包含 path 变量（双花括号包裹）。",
+    "variable-invalid": "模板只能使用列出的四种变量，且花括号必须完整。",
+    "protocol-invalid": "规则仅支持 HTTP 或 HTTPS 协议。",
+    "url-invalid": "请填写有效 URL，不能包含用户名或密码。",
+    "save-failed": "本地保存失败，请重试；草稿已保留。",
+    "pages-unavailable": "尚未确认 GitHub Pages 可用，已保留原链接来源。请在部署区检查或部署。",
+    "source_desc": "选择图片链接的访问来源。",
+    "format_desc": "支持 Markdown、HTML 和 BBCode，关闭自动转换后复制原始 URL。",
+    "edit": "编辑",
+    "save": "保存规则"
   }
 }

@@ -583,10 +583,20 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 
 ### T038 实现有依据的部署阶段与可用性判定
 
-**实施提交**：本任务提交 `fix(deploy): require matching Pages build evidence`。
+**实施提交**：`9060562`，`fix(deploy): require matching Pages build evidence`。
 
 **实施**：独立领域状态与共享部署服务，Git ref 操作只返回提交 SHA；去除固定 50 秒模拟成功与自动切换来源。查询 ref、Pages source 和 latest build；同 SHA / gh-pages 根路径 / built 才可用。初次 ref 404 还确认仓库可访问才视为未部署。权限、网络、结构与构建失败不冒充未部署，旧构建或构建中保持等待，12 次轮询后仍等待并允许手动查询。仓库 / 连接代次变化同步作废旧任务，重复入口共用 Promise。没有向自定义站点发送请求；历史 .deploy 保留兼容读取但不作为可用证据。重建分支及空域名行为先有确认保护，T039 / T040 继续细化入口与域名事务。
 
 **验证**：lint、stylelint、typecheck、build 通过；8 个单测覆盖提交后等待、轮询上限、手动恢复、重复调用、无权限、失效任务、构建 SHA、源 ref 失败不删除、未确认不重建、分支只报告提交。Chrome 两项目 6/6 E2E，通过历史 .deploy=true 仍按新构建判定、等待 / 可用 / 权限失败、原来源不变。已查看 375px [等待](UI/evidence/p5/t038-waiting-375.png)、[可用](UI/evidence/p5/t038-available-375.png)、[失败](UI/evidence/p5/t038-forbidden-375.png)。API 依据方案补充的 GitHub 官方文档；未执行真实部署或站点验证。
 
 **回滚**：回滚此服务、查询与阶段展示提交，不自动回撤任何远端分支 / Pages 操作；旧 .deploy 文件仍可读。
+
+### T036 接入链接来源、格式与自定义规则
+
+**实施提交**：本任务提交 `feat(settings): validate link rules and Pages source selection`。
+
+**实施**：来源与格式预览复用 imageLinkText，HTML 模板以文本显示；关闭转换保留默认格式。历史云偏好补齐缺失预设 / 格式，旧自定义内容与选中值不被改写。规则使用独立草稿、显式添加 / 编辑 / 取消 / 确认删除；名称 / 去重 / path / 变量 / 协议 / URL 校验明确。编辑保留 id，自定义改名更新 selected，删除当前规则回落现有默认来源；内置规则不可删除。Pages 检查不先写来源，available 且目标匹配才提交；晚到结果不覆盖用户后续选择。
+
+**验证**：lint、stylelint、typecheck、build 通过；规则 / 链接 / 兼容共 19 个单测通过；两项目 E2E 4/4，通过增删与取消、非法协议、HTML 文本预览、预设删除保护、Pages 未就绪保留来源及可用后显式选择。已查看 [1440](UI/evidence/p5/t036-links-1440.png)、[375](UI/evidence/p5/t036-links-375.png)。前三项历史截图增加显式任务采集开关，整套回归不会重写已有证据。共享部署入口的跨页联动留 T039 集成验证。无真实远端写入。
+
+**回滚**：回滚规则编辑、来源事务、Store 与相应翻译 / 测试提交；旧存储字段与模板格式不变。
