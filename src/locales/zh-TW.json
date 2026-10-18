@@ -538,5 +538,16 @@
     "preview": "格式預覽",
     "example_name": "範例圖片.png",
     "no_preview": "連接儲存庫並選擇有效連結規則後可預覽。"
+  },
+  "settings_workspace": {
+    "processing": "上傳處理",
+    "processing_desc": "設定檔案命名與上傳前的圖片處理方式。",
+    "sharing": "連結與分享",
+    "sharing_desc": "選擇存取來源、複製格式，或新增自己的連結規則。",
+    "deployment": "部署與網域",
+    "deployment_desc": "將圖片儲存庫部署至 GitHub Pages，並視需要綁定網域。",
+    "current_rule": "目前連結規則",
+    "format_desc": "開啟後使用預設複製格式；關閉則複製原始 URL。",
+    "deploy_desc": "首次建置需要等待幾分鐘。部署可用後，可在連結來源中選擇 GitHub Pages。"
   }
 }

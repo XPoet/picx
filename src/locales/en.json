@@ -538,5 +538,16 @@
     "preview": "Format preview",
     "example_name": "example.png",
     "no_preview": "Connect a repository and select a valid link rule to preview."
+  },
+  "settings_workspace": {
+    "processing": "Upload processing",
+    "processing_desc": "Choose file naming and image processing before upload.",
+    "sharing": "Links and sharing",
+    "sharing_desc": "Choose a link source, copy format, or add your own link rules.",
+    "deployment": "Deployment and domain",
+    "deployment_desc": "Deploy your image repository to GitHub Pages and connect a domain.",
+    "current_rule": "Current link rule",
+    "format_desc": "Use the default copy format when enabled; otherwise copy the original URL.",
+    "deploy_desc": "The first build can take a few minutes. Once available, choose GitHub Pages as your link source."
   }
 }

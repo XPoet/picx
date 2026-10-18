@@ -556,3 +556,17 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 | T031 媒体卡片与常驻操作 | `5161068` |
 | T032 可见范围批量选择 | `026a897` |
 | T033 管理操作与失败恢复 | 本节所属提交，标题见上 |
+
+## P5 图床设置与部署
+
+### T034 将设置页拆成三个可浏览分区
+
+**实施提交**：本任务提交 `feat(settings): split preferences into three browsable sections`（下项记录实际 SHA）。
+
+**初始状态与边界**：2026-10-18，develop，HEAD 相对 origin/develop 领先 36 个提交，工作区干净。设置 View 仅编排三个页面私有分区；上传处理、链接分享、部署域名分别复用旧控件 / Store / API；主题和语言沿用顶栏。没有修改认证、存储格式、依赖或设计文件。Pencil 只读核对 M0qx2A 的结构、文字和截图，图标按 SOURCE.md 从 Lucide 官方下载。
+
+**验证**：lint、stylelint、typecheck、build 通过；Chrome 两个项目的设置页 E2E 4/4 通过。1440 / 1024 / 768 为两列，375 为单列；检查三个 region、无折叠面板、页面无横向溢出。已查看 [1440](UI/evidence/p5/t034-settings-1440.png)、[375](UI/evidence/p5/t034-settings-375.png)、[英文暗色 375](UI/evidence/p5/t034-settings-en-dark-375.png)；另有 768 / 1024 截图。现有高级配置完整可达，T035 继续完成命名 / 参数有效值提交，T036 / T038–T040 继续收口链接与部署行为。自动声明由 Vite 插件更新。
+
+**环境**：普通 pnpm 命令被 enableGlobalVirtualStore 一致性检查拦截，统一使用 --config.verifyDepsBeforeRun=false；未安装 / 升级依赖。Chrome 在沙箱内 SIGABRT，获准沙箱外执行同一 fixture 测试。第一次重入 fixture 的语言种子冲突已改为独立测试上下文。无真实远端读写。
+
+**回滚**：回滚本任务组件、样式、图标、翻译和对应测试 / 文档，不修改用户配置或远端资源。

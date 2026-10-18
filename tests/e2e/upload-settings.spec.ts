@@ -16,7 +16,6 @@ test('快捷设置复用旧偏好，两页一致且目录入口保留', async ({
     await page.screenshot({ path: 'docs/UI/evidence/p3/t024-settings-1440.png', fullPage: true })
   await openNavigation(page)
   await page.getByRole('link', { name: '图床设置', exact: true }).click()
-  await page.locator('.el-collapse-item__header').filter({ hasText: '图片压缩' }).click()
   const compression = page.getByRole('switch', { name: '是否压缩图片', exact: true })
   await expect(compression).toBeChecked()
   await compression.press('Space')

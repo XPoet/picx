@@ -538,5 +538,16 @@
     "preview": "格式预览",
     "example_name": "示例图片.png",
     "no_preview": "连接仓库并选择有效链接规则后可预览。"
+  },
+  "settings_workspace": {
+    "processing": "上传处理",
+    "processing_desc": "设置文件命名和上传前的图片处理方式。",
+    "sharing": "链接与分享",
+    "sharing_desc": "选择访问来源、复制格式，或添加自己的链接规则。",
+    "deployment": "部署与域名",
+    "deployment_desc": "将图片仓库部署到 GitHub Pages，并按需绑定域名。",
+    "current_rule": "当前链接规则",
+    "format_desc": "开启后使用默认复制格式；关闭则复制原始 URL。",
+    "deploy_desc": "首次构建需要等待几分钟。部署可用后，可在链接来源中选择 GitHub Pages。"
   }
 }
