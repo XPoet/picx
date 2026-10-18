@@ -13,6 +13,7 @@ import {
 } from '../fixtures/ui-redesign'
 
 interface OpenPageOptions {
+  settingsWritable?: boolean
   savedRepository?: boolean
   directoryScenario?: DirectoryScenario
   language?: 'zh-CN' | 'zh-TW' | 'en'
@@ -40,6 +41,8 @@ export const test = base.extend<{ picx: PicxFixture }>({
     const unexpectedRequests: string[] = []
     let contents = createDirectoryContentsFixture()
     let settings = createSettingsFixture()
+    let settingsWritable = false
+    let cloudSettingsFile = createCloudSettingsFixture(settings)
     let connectionScenario: OpenPageOptions['connectionScenario']
     let repositoryCreated = true
     let branchInitialized = true
@@ -109,12 +112,21 @@ export const test = base.extend<{ picx: PicxFixture }>({
         }
       }
 
+      if (settingsWritable && url.origin === 'https://api.github.com' && method === 'PUT' && url.pathname === `${contentPrefix}.settings`) {
+        const payload: unknown = request.postDataJSON()
+        if (!payload || typeof payload !== 'object' || !('content' in payload) || typeof payload.content !== 'string')
+          throw new Error('Expected simulated settings content')
+        cloudSettingsFile = { sha: 'fixture-settings-updated', content: payload.content }
+        await route.fulfill({ status: 200, json: { content: { sha: cloudSettingsFile.sha } } })
+        return
+      }
+
       if (url.origin === 'https://api.github.com' && method === 'GET' && url.pathname.startsWith(contentPrefix)) {
         const requestedPath = decodeURIComponent(url.pathname.slice(contentPrefix.length))
         // 现有目录 API 将根目录 / 拼成 contents//，兼容这一明确的根路径。
         const path = requestedPath === '/' ? '' : requestedPath
         if (path === '.settings') {
-          await route.fulfill({ json: createCloudSettingsFixture(settings) })
+          await route.fulfill({ json: cloudSettingsFile })
           return
         }
         if (path === '.deploy') {
@@ -144,10 +156,12 @@ export const test = base.extend<{ picx: PicxFixture }>({
         branchInitialized = options.connectionScenario !== 'initialize'
         contents = createDirectoryContentsFixture(options.directoryScenario)
         settings = createSettingsFixture()
+        settingsWritable = Boolean(options.settingsWritable)
         if (options.processingDisabled) {
           settings.compress.enable = false
           settings.watermark.enable = false
         }
+        cloudSettingsFile = createCloudSettingsFixture(settings)
         const savedConfig = options.savedRepository || options.savedCredential || options.partialConfiguration ? createRepositoryFixture() : null
         if (savedConfig && options.savedCredential)
           savedConfig.token = 'fixture-invalid-credential'

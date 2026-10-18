@@ -185,11 +185,11 @@ export function useUploadWorkspace(process = processImage, options: WorkspaceOpt
   }
   function setCompress(enable: boolean) {
     if (!uploading.value)
-      store.SET_USER_SETTINGS({ compress: { ...settings.value.compress, enable } })
+      store.SAVE_UPLOAD_PREFERENCES({ compress: { ...settings.value.compress, enable } })
   }
   function setWatermark(enable: boolean) {
     if (!uploading.value)
-      store.SET_USER_SETTINGS({ watermark: { ...settings.value.watermark, enable } })
+      store.SAVE_UPLOAD_PREFERENCES({ watermark: { ...settings.value.watermark, enable } })
   }
   function setFormat(value: string) {
     if (!uploading.value)

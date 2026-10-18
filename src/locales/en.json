@@ -548,6 +548,20 @@
     "deployment_desc": "Deploy your image repository to GitHub Pages and connect a domain.",
     "current_rule": "Current link rule",
     "format_desc": "Use the default copy format when enabled; otherwise copy the original URL.",
-    "deploy_desc": "The first build can take a few minutes. Once available, choose GitHub Pages as your link source."
+    "deploy_desc": "The first build can take a few minutes. Once available, choose GitHub Pages as your link source.",
+    "naming": "File naming",
+    "naming_desc": "Choose how files are named after upload.",
+    "naming_hash": "Original + hash",
+    "naming_timestamp": "Timestamp",
+    "naming_original": "Keep original name",
+    "timestamp_hint": "Timestamp naming omits the prefix. Your saved prefix returns when switching back.",
+    "prefix": "Filename prefix",
+    "prefix_desc": "Add a shared identifier to uploaded files.",
+    "prefix_content": "Prefix text",
+    "compress": "Compress before upload",
+    "watermark": "Add watermark before upload",
+    "tile_hint": "These parameters apply only to full-screen tiling.",
+    "invalid_preferences": "Settings were not saved. Check the prefix and parameters, or retry local saving.",
+    "invalid_watermark": "Enter valid values: size 1–200, opacity 0.1–1, rotation -45–45, spacing 20–200."
   }
 }

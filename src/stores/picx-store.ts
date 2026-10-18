@@ -14,6 +14,7 @@ import type { GitHubAuthorizationInfo } from '@/stores/modules/github-authorize/
 import type UploadAreaStateTypes from '@/stores/modules/upload-area/types'
 import type { GlobalSettingsModel } from '@/stores/modules/user-settings/types'
 import type { DirectorySaveResult, UploadDirectoryValue } from '@/utils/directory-utils'
+import type { UploadPreferencesPatch } from '@/utils/upload-preferences'
 import { defineStore } from 'pinia'
 import {
   LS_AUTHORIZATION,
@@ -53,6 +54,7 @@ import {
   setSession,
 } from '@/utils'
 import { directoryDraft, validateDirectoryDraft } from '@/utils/directory-utils'
+import { validUploadPreferences } from '@/utils/upload-preferences'
 
 interface PicxState {
   connection: ConnectionState
@@ -506,6 +508,22 @@ export const usePicxStore = defineStore('picx', {
 
     USER_CONFIG_INFO_LOGOUT() {
       cleanObject(this.userConfigInfoModule.userConfigInfo)
+    },
+
+    SAVE_UPLOAD_PREFERENCES(patch: UploadPreferencesPatch): boolean {
+      if (this.uploadTargetBusy)
+        return false
+      const candidate = { ...this.getUserSettings, ...patch }
+      if (!validUploadPreferences(candidate))
+        return false
+      try {
+        setLocal(LS_SETTINGS, candidate)
+      }
+      catch {
+        return false
+      }
+      assignKnownProperties(this.userSettingsModule.userSettings, patch)
+      return true
     },
 
     SET_USER_SETTINGS(settingsInfo: Partial<UserSettingsModel>) {

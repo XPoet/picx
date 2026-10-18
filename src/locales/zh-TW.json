@@ -548,6 +548,20 @@
     "deployment_desc": "將圖片儲存庫部署至 GitHub Pages，並視需要綁定網域。",
     "current_rule": "目前連結規則",
     "format_desc": "開啟後使用預設複製格式；關閉則複製原始 URL。",
-    "deploy_desc": "首次建置需要等待幾分鐘。部署可用後，可在連結來源中選擇 GitHub Pages。"
+    "deploy_desc": "首次建置需要等待幾分鐘。部署可用後，可在連結來源中選擇 GitHub Pages。",
+    "naming": "檔案命名",
+    "naming_desc": "選擇上傳後檔案的命名方式。",
+    "naming_hash": "原名 + 雜湊",
+    "naming_timestamp": "時間戳記",
+    "naming_original": "保留原名",
+    "timestamp_hint": "時間戳記模式不使用前綴；切回其他模式後恢復已儲存的前綴。",
+    "prefix": "檔名前綴",
+    "prefix_desc": "為上傳的檔案加上統一識別。",
+    "prefix_content": "前綴內容",
+    "compress": "上傳前壓縮",
+    "watermark": "上傳前加入浮水印",
+    "tile_hint": "以下參數僅在全螢幕平鋪時生效。",
+    "invalid_preferences": "設定未儲存。請檢查前綴與參數，或重試本機儲存。",
+    "invalid_watermark": "請填寫有效浮水印參數：字號 1–200，不透明度 0.1–1，旋轉 -45–45，間距 20–200。"
   }
 }

@@ -548,6 +548,20 @@
     "deployment_desc": "将图片仓库部署到 GitHub Pages，并按需绑定域名。",
     "current_rule": "当前链接规则",
     "format_desc": "开启后使用默认复制格式；关闭则复制原始 URL。",
-    "deploy_desc": "首次构建需要等待几分钟。部署可用后，可在链接来源中选择 GitHub Pages。"
+    "deploy_desc": "首次构建需要等待几分钟。部署可用后，可在链接来源中选择 GitHub Pages。",
+    "naming": "文件命名",
+    "naming_desc": "选择上传后文件的命名方式。",
+    "naming_hash": "原名 + 哈希",
+    "naming_timestamp": "时间戳",
+    "naming_original": "保留原名",
+    "timestamp_hint": "时间戳模式不使用前缀；切回其他模式后恢复已保存的前缀。",
+    "prefix": "文件名前缀",
+    "prefix_desc": "为上传的文件添加统一标识。",
+    "prefix_content": "前缀内容",
+    "compress": "上传前压缩",
+    "watermark": "上传前添加水印",
+    "tile_hint": "以下参数仅在全屏平铺时生效。",
+    "invalid_preferences": "设置未保存。请检查前缀与参数，或重试本地保存。",
+    "invalid_watermark": "请填写有效水印参数：字号 1–200，不透明度 0.1–1，旋转 -45–45，间距 20–200。"
   }
 }

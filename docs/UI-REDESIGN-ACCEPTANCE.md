@@ -561,7 +561,7 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 
 ### T034 将设置页拆成三个可浏览分区
 
-**实施提交**：本任务提交 `feat(settings): split preferences into three browsable sections`（下项记录实际 SHA）。
+**实施提交**：`e28cb76`，`feat(settings): split preferences into three browsable sections`。
 
 **初始状态与边界**：2026-10-18，develop，HEAD 相对 origin/develop 领先 36 个提交，工作区干净。设置 View 仅编排三个页面私有分区；上传处理、链接分享、部署域名分别复用旧控件 / Store / API；主题和语言沿用顶栏。没有修改认证、存储格式、依赖或设计文件。Pencil 只读核对 M0qx2A 的结构、文字和截图，图标按 SOURCE.md 从 Lucide 官方下载。
 
@@ -570,3 +570,13 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 **环境**：普通 pnpm 命令被 enableGlobalVirtualStore 一致性检查拦截，统一使用 --config.verifyDepsBeforeRun=false；未安装 / 升级依赖。Chrome 在沙箱内 SIGABRT，获准沙箱外执行同一 fixture 测试。第一次重入 fixture 的语言种子冲突已改为独立测试上下文。无真实远端读写。
 
 **回滚**：回滚本任务组件、样式、图标、翻译和对应测试 / 文档，不修改用户配置或远端资源。
+
+### T035 接入上传处理偏好并兼容旧命名
+
+**实施提交**：本任务提交 `feat(settings): preserve and validate upload preferences`。
+
+**实施**：三种模式映射既有命名字段，时间戳仅禁用前缀输出并保留内容 / 开关，预览复用 applyUploadNaming 与稳定示例。原名 / 完整哈希 / 文件覆写 / 实际扩展名算法不变。设置与上传开关共用 SAVE_UPLOAD_PREFERENCES，候选有效且本地写入成功才发布；自由文本 change 才提交。压缩保留四个编码器，水印保留五位置及平铺参数。控件改为明确 Props / Emits，接收云端替换，挂载不发布已存在的值；旧 32px 不再被强制改为 40px。数值空值与非法参数保留草稿并提示错误。
+
+**验证**：lint、stylelint、typecheck、build 通过；偏好 / 命名 / 处理 20 个单测，偏好 / 生命周期 8 个单测通过（偏好 3 项重合，不重复计数）；Chrome 两项目 E2E 2/2，通过旧模式、前缀未完成编辑不保存、时间戳禁用与恢复、avif、平铺控制和模拟云同步后刷新。已查看 [1440](UI/evidence/p5/t035-settings-1440.png)、[375](UI/evidence/p5/t035-settings-375.png)。fixture 仅显式启用 .settings 内存写入，仍拦截其他远端写入；真实云写入未执行。Element Plus 数字框图标插槽依据官方组件文档，使用已下载 Lucide minus / plus。
+
+**回滚**：回滚组件、action、有效值工具与相应测试 / 文档；不新增持久化字段，旧配置和云文件仍可读。
