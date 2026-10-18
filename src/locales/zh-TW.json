@@ -605,5 +605,16 @@
     "format_desc": "支援 Markdown、HTML 和 BBCode，關閉自動轉換後複製原始 URL。",
     "edit": "編輯",
     "save": "儲存規則"
+  },
+  "settings_sync": {
+    "idle": "偏好儲存在目前瀏覽器，連接儲存庫後可同步。",
+    "saving-local": "正在儲存至本機…",
+    "local-saved": "本機已儲存",
+    "syncing": "本機偏好 / 雲端設定同步中…",
+    "synced": "本機與雲端設定已同步",
+    "failed_local": "本機儲存失敗，編輯值尚未儲存。",
+    "failed_cloud": "本機偏好已保留，雲端同步失敗。",
+    "retry": "重試同步",
+    "corrupt": "雲端設定內容損壞，未覆寫遠端檔案。請先修復儲存庫中的 .settings 檔案，再重試。"
   }
 }

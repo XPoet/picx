@@ -4,16 +4,16 @@ import { LS_SETTINGS } from '@/common/constant/storage'
 import { CompressEncoderEnum, ImageSortEnum } from '@/common/model'
 import { pinia, store } from '@/stores'
 import { usePicxStore } from '@/stores/picx-store'
-import request from '@/utils/request'
+import { requestResult } from '@/utils/request'
 import { createCloudSettingsFixture, createLegacySettingsFixture, createRepositoryFixture } from '../fixtures/ui-redesign'
 
-vi.mock('@/utils/request', () => ({ default: vi.fn() }))
+vi.mock('@/utils/request', () => ({ default: vi.fn(), requestResult: vi.fn() }))
 
 describe('旧设置兼容与云文件边界', () => {
   beforeEach(() => {
     localStorage.clear()
     sessionStorage.clear()
-    vi.mocked(request).mockReset()
+    vi.mocked(requestResult).mockReset()
     usePicxStore(pinia).$reset()
   })
 
@@ -29,6 +29,7 @@ describe('旧设置兼容与云文件边界', () => {
     expect(settings.imageLinkType.presetList['Fixture CDN']).toEqual(legacy.imageLinkType.presetList['Fixture CDN'])
     expect(settings.imageLinkFormat.enable).toBe(false)
     expect(settings.imageLinkFormat.selected).toBe('BBCode')
+    expect(settings.imageLinkFormat.presetList.map(format => format.name)).toEqual(['Markdown', 'HTML', 'BBCode'])
     expect(settings.watermark).toEqual({ ...legacy.watermark, rotate: -20, gap: 80 })
     expect(settings.management.sort).toBe(ImageSortEnum.default)
     expect(settings.deploy.customDomain).toBe('')
@@ -49,11 +50,11 @@ describe('旧设置兼容与云文件边界', () => {
   })
 
   it('云保存只序列化偏好，不包含仓库上下文或凭据字段', async () => {
-    vi.mocked(request).mockResolvedValueOnce(null).mockResolvedValueOnce('SUCCESS')
+    vi.mocked(requestResult).mockResolvedValueOnce({ ok: false, error: { kind: 'not-found', retryable: false } }).mockResolvedValueOnce({ ok: true, data: { content: { sha: 'fixture-saved' } } })
     const settings = store.getters.getUserSettings
     expect(await saveCloudSettings(settings, createRepositoryFixture())).toBe(true)
 
-    const payload: unknown = vi.mocked(request).mock.calls[1]?.[0].data
+    const payload: unknown = vi.mocked(requestResult).mock.calls[1]?.[0].data
     if (!payload || typeof payload !== 'object' || !('content' in payload) || typeof payload.content !== 'string') {
       throw new Error('Expected a cloud settings content payload')
     }
@@ -63,6 +64,6 @@ describe('旧设置兼容与云文件边界', () => {
     for (const key of ['token', 'manualToken', 'code', 'owner', 'repo', 'branch', 'selectedDir', 'selectedDirList']) {
       expect(cloudSettings).not.toHaveProperty(key)
     }
-    expect(vi.mocked(request).mock.calls[1]?.[0].method).toBe('PUT')
+    expect(vi.mocked(requestResult).mock.calls[1]?.[0].method).toBe('PUT')
   })
 })

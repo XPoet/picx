@@ -1,103 +1,48 @@
-import type { UserConfigInfoModel, UserSettingsModel } from '@/common/model'
+import type { UserSettingsModel } from '@/common/model'
+import type { RepositoryIdentity } from '@/common/model/github-connection'
+import type { ApiResult } from '@/utils/request/types'
+import type { SettingsPayload } from '@/utils/settings-payload'
 import { PICX_INIT_SETTINGS_MSG, PICX_UPDATE_SETTINGS_MSG } from '@/common/constant'
-import request from '@/utils/request'
+import { requestResult } from '@/utils/request'
+import { projectSettings, readSettingsPayload } from '@/utils/settings-payload'
 
-const filename = '.settings'
-
-/**
- * 云端设置文件（.settings）的 GitHub Contents API 返回结构
- */
-export interface CloudSettingsFileModel {
-  sha: string
-  content: string
-}
-
-interface PutContentPayload {
-  message: string
-  content: string
-  branch?: string
-  sha?: string
-}
-
-/**
- * UTF-8 安全的 Base64 编码（水印文字等内容包含中文时，window.btoa 会直接抛异常）
- */
-const encodeBase64 = (text: string): string => {
+export interface CloudSettingsFileModel { sha: string, content: string }
+export type CloudSettingsRead = { kind: 'missing' } | { kind: 'present', file: CloudSettingsFileModel, settings: SettingsPayload }
+export const encodeSettingsBase64 = (text: string): string => {
   const bytes = new TextEncoder().encode(text)
-  let binary = ''
-  bytes.forEach((byte) => {
-    binary += String.fromCharCode(byte)
-  })
-  return window.btoa(binary)
+  return window.btoa(Array.from(bytes, byte => String.fromCharCode(byte)).join(''))
 }
-
-/**
- * UTF-8 安全的 Base64 解码
- */
-const decodeBase64 = (base64: string): string => {
-  const binary = window.atob(base64)
-  const bytes = Uint8Array.from(binary, char => char.charCodeAt(0))
-  return new TextDecoder().decode(bytes)
-}
-
-/**
- * 获取云端仓库的设置文件（.settings）原始信息，文件不存在或请求失败时返回 null
- */
-export const getCloudSettings = async (
-  userConfigInfo: UserConfigInfoModel,
-): Promise<CloudSettingsFileModel | null> => {
-  const { owner, repo } = userConfigInfo
-  return request({
-    url: `/repos/${owner}/${repo}/contents/${filename}`,
-    method: 'GET',
-    noShowErrMsg: true,
-    noCache: true,
-  })
-}
-
-/**
- * 将云端设置文件（.settings）内容解析为用户设置数据，内容损坏时返回 null
- */
-export const parseCloudSettings = (file: CloudSettingsFileModel): UserSettingsModel | null => {
+export function parseCloudSettings(file: CloudSettingsFileModel): SettingsPayload | null {
   try {
-    const settings = JSON.parse(decodeBase64(file.content))
-    return settings && typeof settings === 'object' ? settings : null
+    const bytes = Uint8Array.from(window.atob(file.content), char => char.charCodeAt(0))
+    const value: unknown = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes))
+    return readSettingsPayload(value)
   }
-  catch (err) {
-    console.error('PicX Error // parse cloud settings failed >> ', err)
-    return null
-  }
+  catch { return null }
 }
-
-/**
- * 保存用户设置数据到云端仓库，成功返回 true
- */
-export const saveCloudSettings = async (
-  userSettings: UserSettingsModel,
-  userConfigInfo: UserConfigInfoModel,
-): Promise<boolean> => {
-  const { owner, repo, branch } = userConfigInfo
-
-  const cloudFile = await getCloudSettings(userConfigInfo)
-
-  const payload: PutContentPayload = {
-    message: cloudFile ? PICX_UPDATE_SETTINGS_MSG : PICX_INIT_SETTINGS_MSG,
-    content: encodeBase64(JSON.stringify(userSettings)),
-  }
-
-  if (cloudFile) {
-    payload.sha = cloudFile.sha
-  }
-  else {
-    payload.branch = branch
-  }
-
-  const res = await request({
-    url: `/repos/${owner}/${repo}/contents/${filename}`,
+function isFile(value: unknown): value is CloudSettingsFileModel {
+  return Boolean(value && typeof value === 'object' && 'sha' in value && typeof value.sha === 'string' && value.sha && 'content' in value && typeof value.content === 'string')
+}
+export async function getCloudSettings(target: RepositoryIdentity): Promise<ApiResult<CloudSettingsRead>> {
+  const result = await requestResult({ url: `/repos/${target.owner}/${target.repo}/contents/.settings`, method: 'GET', params: { ref: target.branch }, noCache: true }, isFile)
+  if (!result.ok)
+    return result.error.kind === 'not-found' ? { ok: true, data: { kind: 'missing' } } : result
+  const settings = parseCloudSettings(result.data)
+  return settings ? { ok: true, data: { kind: 'present', file: result.data, settings } } : { ok: false, error: { kind: 'invalid-response', retryable: true } }
+}
+export async function saveCloudSettingsResult(settings: UserSettingsModel, target: RepositoryIdentity, current: () => boolean = () => true): Promise<ApiResult<unknown>> {
+  const read = await getCloudSettings(target)
+  if (!read.ok)
+    return read
+  if (!current())
+    return { ok: false, error: { kind: 'conflict', retryable: true } }
+  return requestResult({
+    url: `/repos/${target.owner}/${target.repo}/contents/.settings`,
     method: 'PUT',
-    data: payload,
-    noShowErrMsg: true,
-  })
-
-  return Boolean(res)
+    data: { message: read.data.kind === 'present' ? PICX_UPDATE_SETTINGS_MSG : PICX_INIT_SETTINGS_MSG, content: encodeSettingsBase64(JSON.stringify(projectSettings(settings))), branch: target.branch, ...(read.data.kind === 'present' ? { sha: read.data.file.sha } : {}) },
+  }, (value): value is { content: { sha: string } } => Boolean(value && typeof value === 'object' && 'content' in value && value.content && typeof value.content === 'object' && 'sha' in value.content && typeof value.content.sha === 'string'))
+}
+/** 兼容旧布尔调用方；失败不记录响应对象或正文。 */
+export async function saveCloudSettings(settings: UserSettingsModel, target: RepositoryIdentity): Promise<boolean> {
+  return (await saveCloudSettingsResult(settings, target)).ok
 }

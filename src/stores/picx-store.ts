@@ -14,6 +14,7 @@ import type { GitHubAuthorizationInfo } from '@/stores/modules/github-authorize/
 import type UploadAreaStateTypes from '@/stores/modules/upload-area/types'
 import type { GlobalSettingsModel } from '@/stores/modules/user-settings/types'
 import type { DirectorySaveResult, UploadDirectoryValue } from '@/utils/directory-utils'
+import type { SettingsPayload } from '@/utils/settings-payload'
 import type { UploadPreferencesPatch } from '@/utils/upload-preferences'
 import { defineStore } from 'pinia'
 import {
@@ -43,6 +44,7 @@ import {
 } from '@/stores/modules/dir-image-list/utils'
 import { ImgLinkRuleActionsEnum } from '@/stores/modules/user-settings/types'
 import { imgLinkRuleVerification } from '@/stores/modules/user-settings/utils'
+import { localSettingsFailed, localSettingsSaved } from '@/stores/settings-sync-state'
 import {
   cleanObject,
   deepAssignObject,
@@ -55,6 +57,7 @@ import {
 } from '@/utils'
 import { directoryDraft, validateDirectoryDraft } from '@/utils/directory-utils'
 import { validateLinkRule } from '@/utils/link-rule-validation'
+import { mergeSettings, projectSettings, readSettingsPayload } from '@/utils/settings-payload'
 import { validUploadPreferences } from '@/utils/upload-preferences'
 
 interface PicxState {
@@ -258,14 +261,13 @@ function createDefaultUserSettings(): UserSettingsModel {
  * 创建持久化后的用户设置。
  */
 function createUserSettings(): UserSettingsModel {
-  const userSettings = createDefaultUserSettings()
-  const storedSettings = getLocal(LS_SETTINGS) as Partial<UserSettingsModel> | null
-
-  if (storedSettings) {
-    deepAssignObject(userSettings, storedSettings)
+  const defaults = createDefaultUserSettings()
+  try {
+    const stored: unknown = getLocal(LS_SETTINGS)
+    const payload = readSettingsPayload(stored)
+    return payload ? mergeSettings(defaults, payload) : defaults
   }
-
-  return userSettings
+  catch { return defaults }
 }
 
 /**
@@ -517,28 +519,11 @@ export const usePicxStore = defineStore('picx', {
       const candidate = { ...this.getUserSettings, ...patch }
       if (!validUploadPreferences(candidate))
         return false
-      try {
-        setLocal(LS_SETTINGS, candidate)
-      }
-      catch {
-        return false
-      }
-      assignKnownProperties(this.userSettingsModule.userSettings, patch)
-      return true
+      return this.SAVE_SETTINGS_CANDIDATE(patch)
     },
 
-    SET_USER_SETTINGS(settingsInfo: Partial<UserSettingsModel>) {
-      const defaults = createDefaultUserSettings()
-      const incoming = { ...settingsInfo }
-      if (settingsInfo.imageLinkType)
-        incoming.imageLinkType = { ...settingsInfo.imageLinkType, presetList: { ...defaults.imageLinkType.presetList, ...settingsInfo.imageLinkType.presetList } }
-      if (settingsInfo.imageLinkFormat) {
-        const formats = new Map(defaults.imageLinkFormat.presetList.map(format => [format.name, format]))
-        settingsInfo.imageLinkFormat.presetList.forEach(format => formats.set(format.name, format))
-        incoming.imageLinkFormat = { ...settingsInfo.imageLinkFormat, presetList: [...formats.values()] }
-      }
-      assignKnownProperties(this.userSettingsModule.userSettings, incoming)
-      this.USER_SETTINGS_PERSIST()
+    SET_USER_SETTINGS(settingsInfo: SettingsPayload): boolean {
+      return this.SAVE_SETTINGS_CANDIDATE(mergeSettings(this.getUserSettings, settingsInfo))
     },
 
     SET_GLOBAL_SETTINGS(globalSettings: Partial<GlobalSettingsModel>) {
@@ -576,13 +561,16 @@ export const usePicxStore = defineStore('picx', {
     },
 
     SAVE_SETTINGS_CANDIDATE(patch: Partial<UserSettingsModel>): boolean {
+      const candidate = projectSettings({ ...this.getUserSettings, ...patch })
       try {
-        setLocal(LS_SETTINGS, { ...this.getUserSettings, ...patch })
+        setLocal(LS_SETTINGS, candidate)
       }
       catch {
+        localSettingsFailed(() => this.SAVE_SETTINGS_CANDIDATE(patch))
         return false
       }
-      assignKnownProperties(this.userSettingsModule.userSettings, patch)
+      assignKnownProperties(this.userSettingsModule.userSettings, candidate)
+      localSettingsSaved()
       return true
     },
 
@@ -617,7 +605,7 @@ export const usePicxStore = defineStore('picx', {
     },
 
     USER_SETTINGS_PERSIST() {
-      setLocal(LS_SETTINGS, this.userSettingsModule.userSettings)
+      return this.SAVE_SETTINGS_CANDIDATE({})
     },
 
     USER_GLOBAL_PERSIST() {

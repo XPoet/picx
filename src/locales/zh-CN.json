@@ -605,5 +605,16 @@
     "format_desc": "支持 Markdown、HTML 和 BBCode，关闭自动转换后复制原始 URL。",
     "edit": "编辑",
     "save": "保存规则"
+  },
+  "settings_sync": {
+    "idle": "偏好保存在当前浏览器。连接仓库后可同步。",
+    "saving-local": "正在保存到本地…",
+    "local-saved": "本地已保存",
+    "syncing": "本地偏好 / 云端设置同步中…",
+    "synced": "本地与云端设置已同步",
+    "failed_local": "本地保存失败，编辑值尚未保存。",
+    "failed_cloud": "本地偏好已保留，云端同步失败。",
+    "retry": "重试同步",
+    "corrupt": "云端设置内容损坏，未覆盖远端文件。请先修复仓库中的 .settings 文件，再重试。"
   }
 }

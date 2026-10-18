@@ -605,5 +605,16 @@
     "format_desc": "Supports Markdown, HTML and BBCode. Disable conversion to copy the original URL.",
     "edit": "Edit",
     "save": "Save rule"
+  },
+  "settings_sync": {
+    "idle": "Preferences are stored in this browser. Connect a repository to sync.",
+    "saving-local": "Saving locally…",
+    "local-saved": "Saved locally",
+    "syncing": "Syncing local preferences and cloud settings…",
+    "synced": "Local and cloud settings are in sync",
+    "failed_local": "Local saving failed. Your edit has not been saved.",
+    "failed_cloud": "Local preferences are preserved. Cloud sync failed.",
+    "retry": "Retry sync",
+    "corrupt": "Cloud settings are damaged. The remote file was not overwritten. Repair .settings in your repository, then retry."
   }
 }

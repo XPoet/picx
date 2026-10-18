@@ -4,6 +4,7 @@ import type { RepositoryIdentity } from '@/common/model/github-connection'
 import { computed, useId } from 'vue'
 import ImageLinkPreview from '@/components/image-link-preview/image-link-preview.vue'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
+import SettingsSyncFeedback from '@/components/settings-sync-feedback.vue'
 import { formatFileBytes } from '@/utils/file-utils'
 import UploadDirectorySummary from './upload-directory-summary.vue'
 
@@ -79,6 +80,7 @@ function formatChange(event: Event) {
         <PicxIcon name="copy" :size="18" />{{ $t('upload_workspace.copy_all') }}
       </el-button>
     </div>
+    <SettingsSyncFeedback />
     <div class="workspace-deployment">
       <slot name="deployment" />
     </div>
