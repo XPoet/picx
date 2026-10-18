@@ -2,6 +2,11 @@ import type { UploadedImageModel } from '@/common/model'
 import type { DirObject } from '@/stores/modules/dir-image-list/types'
 import { ImageSortEnum } from '@/common/model/image'
 
+export function isValidManagementName(value: string): boolean {
+  return Boolean(value.trim()) && !value.includes('/') && !value.includes('\\') && value !== '.' && value !== '..'
+    && ![...value].some(character => character.charCodeAt(0) < 32 || character.charCodeAt(0) === 127)
+}
+
 export function directoryBreadcrumbs(path: string): Array<{ name: string, path: string }> {
   const segments = path.split('/').filter(Boolean)
   return [{ name: '/', path: '/' }, ...segments.map((name, index) => ({ name, path: segments.slice(0, index + 1).join('/') }))]

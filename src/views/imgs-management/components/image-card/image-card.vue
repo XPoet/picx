@@ -6,7 +6,7 @@ import { ContextmenuEnum } from '@/common/directive/types'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { generateImageLink } from '@/utils/image-link-utils'
 
-const props = defineProps<{ imageObj: UploadedImageModel, selected: boolean }>()
+const props = withDefaults(defineProps<{ imageObj: UploadedImageModel, selected: boolean, busy?: boolean }>(), { busy: false })
 const emit = defineEmits<{ select: [selected: boolean], action: [action: ManagementMediaAction], availability: [available: boolean] }>()
 const previewButton = useTemplateRef<HTMLButtonElement>('previewButton')
 const imageUrl = computed(() => generateImageLink(props.imageObj) ?? undefined)
@@ -58,7 +58,7 @@ async function closePreview() {
         <PicxIcon v-if="isVideo && !failed" class="play-icon" name="play" :size="32" />
       </button>
       <label class="media-select">
-        <input type="checkbox" :checked="selected" :aria-label="$t('management_page.workspace.selectMedia', { name: imageObj.name })" :disabled="imageObj.deleting" @change="select">
+        <input type="checkbox" :checked="selected" :aria-label="$t('management_page.workspace.selectMedia', { name: imageObj.name })" :disabled="imageObj.deleting || busy" @change="select">
         <span aria-hidden="true"><PicxIcon v-if="selected" name="check" :size="16" /></span>
       </label>
       <div v-if="failed || !imageUrl" class="media-error" role="status">
@@ -84,7 +84,7 @@ async function closePreview() {
         <PicxIcon name="link" :size="16" />{{ $t('management_page.workspace.copyLink') }}
       </button>
       <el-dropdown trigger="click" placement="bottom-end" @command="emit('action', $event)">
-        <button type="button" class="media-more" :aria-label="$t('management_page.workspace.moreMedia', { name: imageObj.name })">
+        <button type="button" class="media-more" :disabled="busy" :aria-label="$t('management_page.workspace.moreMedia', { name: imageObj.name })">
           <PicxIcon name="ellipsis" />
         </button>
         <template #dropdown>

@@ -46,7 +46,6 @@ declare module 'vue' {
     ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
-    ElTreeSelect: typeof import('element-plus/es')['ElTreeSelect']
     GettingImages: typeof import('./components/getting-images/getting-images.vue')['default']
     HeaderContent: typeof import('./components/header-content/header-content.vue')['default']
     HeaderMenu: typeof import('./components/header-menu/header-menu.vue')['default']

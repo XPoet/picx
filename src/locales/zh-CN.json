@@ -293,7 +293,17 @@
       "clearSelection": "取消选择",
       "batchCopy": "复制所选链接",
       "batchDelete": "删除所选媒体",
-      "deleteSelectionConfirm": "将从 {dir} 删除所选的 {total} 个媒体文件。此操作会提交到 GitHub，无法在 PicX 中撤销。"
+      "deleteSelectionConfirm": "将从 {dir} 删除所选的 {total} 个媒体文件。此操作会提交到 GitHub，无法在 PicX 中撤销。",
+      "deletePartial": "已删除 {succeeded} 项，{failed} 项失败。失败文件已保留，可重试。",
+      "cacheFailed": "远端操作已成功，本地缓存未保存。请刷新目录核对。",
+      "renameImpact": "将 {path} 改为下方完整文件名。在一次 GitHub 提交中变更路径，旧链接会失效；不会重新编码文件。",
+      "renameDirectoryImpact": "将重命名 {path} 及其全部子路径，原目录下的旧链接会失效。",
+      "deleteDirectoryImpact": "将递归删除 {path} 中的全部文件和子目录，包括未显示的非媒体文件。此操作会提交到 GitHub，无法在 PicX 中撤销。",
+      "deleteDirectory": "删除整个目录",
+      "moreDirectory": "目录操作：{name}",
+      "retryDelete": "重试删除失败项",
+      "moveImpact": "移动 {path} 到所选目录。原链接会失效；目标存在同名文件时会停止，原目录保持不变。",
+      "operationBusy": "正在提交管理操作，请稍候。"
     }
   },
   "toolbox": {

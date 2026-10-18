@@ -293,7 +293,17 @@
       "clearSelection": "Clear selection",
       "batchCopy": "Copy selected links",
       "batchDelete": "Delete selected media",
-      "deleteSelectionConfirm": "Delete the {total} selected media files from {dir}. This creates a GitHub commit and cannot be undone in PicX."
+      "deleteSelectionConfirm": "Delete the {total} selected media files from {dir}. This creates a GitHub commit and cannot be undone in PicX.",
+      "deletePartial": "Deleted {succeeded}; {failed} failed. Failed files were kept and can be retried.",
+      "cacheFailed": "The remote operation succeeded, but the local cache could not be saved. Refresh to verify.",
+      "renameImpact": "Rename {path} using the full filename below. One GitHub commit changes the path; old links stop working. The file is not re-encoded.",
+      "renameDirectoryImpact": "Rename {path} and all descendant paths. Old links under this directory will stop working.",
+      "deleteDirectoryImpact": "Recursively delete all files and subdirectories in {path}, including non-media files that are not displayed. This creates a GitHub commit and cannot be undone in PicX.",
+      "deleteDirectory": "Delete entire directory",
+      "moreDirectory": "Actions for directory {name}",
+      "retryDelete": "Retry failed deletions",
+      "moveImpact": "Move {path} to the selected directory. Old links will stop working. A matching destination filename stops the operation and keeps the source unchanged.",
+      "operationBusy": "Submitting management changes. Please wait."
     }
   },
   "toolbox": {

@@ -6,7 +6,7 @@
 | 编写日期 | 2026-10-16 |
 | 设计依据 | [新版 UI 设计稿](UI/picx-ih.pen) |
 | 适用项目 | PicX · GitHub 图床，当前 `picx-ih` 仓库 |
-| 当前状态 | P0、P1、P2、P3 已完成；P4–P6 未开始，实施证据见 [验收记录](UI-REDESIGN-ACCEPTANCE.md) |
+| 当前状态 | P0、P1、P2、P3、P4 已完成；P5–P6 未开始，实施证据见 [验收记录](UI-REDESIGN-ACCEPTANCE.md) |
 
 ## 1. 改造目标与范围
 
@@ -393,6 +393,10 @@ P4 T029：目录工具栏接收 `{ path: string, loading: boolean }`，以 `brow
 P4 T031：媒体卡片接收 `{ imageObj: UploadedImageModel, selected: boolean }`，通过 `select(boolean)`、`action(ManagementMediaAction)`、`availability(boolean)` 上报，不能写入 Props。`ManagementMediaAction` 为 `copy | property | rename | move | delete | repository`。图片 naturalWidth / naturalHeight、视频 videoWidth / videoHeight 只存卡片内存，正数时展示；未知大小省略，不扩展持久化字段。预览与菜单由常驻原生按钮打开，关闭后恢复触发按钮焦点。管理页负责调用现有操作，T033 统一服务与失败恢复。
 
 P4 T032：`use-management-selection` 以 `path + sha` 作为媒体身份，在页面内存中维护选择集合；不使用刷新后重新生成的 uuid，也不把勾选写入目录缓存。目录或搜索输入变化同步清空选择，排序仅改变显示顺序，刷新按实际身份取交集。选择组件接收可见数量、选中数量、筛选状态与 busy，通过 selectAll / clear / copy / delete 发出动作；页面使用同一 `selectedImages` 计算值构造确认、复制与删除快照，不能重新查询隐藏项或递归目录。
+
+P4 T033：管理 API 使用既有 `ApiResult`，显式携带分支、编码路径并检查响应结构。批量删除返回 `{ successes: string[], failures: { path, sha, error: ApiFailure }[], cacheFailed: boolean }`，逐项 Contents 提交后才移除该项缓存，失败项继续显示并可重试。重试仍须核对原 path+sha，刷新后文件已消失或变更版本时清理旧失败状态，不能把新版本当作原失败项删除。媒体移动 / 重命名改为复用原 blob，在一次 tree / commit / 非强制 ref 更新中新增目标并移除旧路径，不重新下载、转码或先上传再清理；拒绝目标冲突和源 SHA 变化，完整告知路径与影响。目录操作读取当前 head 的完整 tree；截断时按该 commit SHA 逐级读取 Contents，不能把截断列表当作完整目录。嵌套目录重命名保留父路径，递归删除单独确认。
+
+目录刷新成功后一次替换直属内容，保留仍存在的子目录缓存；同 path+sha 媒体保留身份与已知时间。刷新失败不写缓存；切目录、登出或仓库变化后丢弃迟到结果。新增 Store action 接收 `{ path, directories: DirObject[], images: UploadedImageModel[] }` 替换目录，另以 `{ path, sha }` 精确移除已确认媒体，不据“无媒体”推断远端目录已删除或更改上传目标。所有管理 UI 与右键入口共用 services 中的操作，通用服务与指令不再依赖 View 内工具；原工具文件保留为兼容导出，不删除文件或改变存储键。
 
 ## 9. 图床设置页面
 

@@ -293,7 +293,17 @@
       "clearSelection": "取消選取",
       "batchCopy": "複製所選連結",
       "batchDelete": "刪除所選媒體",
-      "deleteSelectionConfirm": "將從 {dir} 刪除所選的 {total} 個媒體檔案。此操作會提交到 GitHub，無法在 PicX 中復原。"
+      "deleteSelectionConfirm": "將從 {dir} 刪除所選的 {total} 個媒體檔案。此操作會提交到 GitHub，無法在 PicX 中復原。",
+      "deletePartial": "已刪除 {succeeded} 項，{failed} 項失敗。失敗檔案已保留，可重試。",
+      "cacheFailed": "遠端操作已成功，本機快取未儲存。請重新整理目錄核對。",
+      "renameImpact": "將 {path} 改為下方完整檔名。在一次 GitHub 提交中變更路徑，舊連結會失效；不會重新編碼檔案。",
+      "renameDirectoryImpact": "將重新命名 {path} 及其全部子路徑，原目錄下的舊連結會失效。",
+      "deleteDirectoryImpact": "將遞迴刪除 {path} 中的全部檔案和子目錄，包括未顯示的非媒體檔案。此操作會提交到 GitHub，無法在 PicX 中復原。",
+      "deleteDirectory": "刪除整個目錄",
+      "moreDirectory": "目錄操作：{name}",
+      "retryDelete": "重試刪除失敗項",
+      "moveImpact": "移動 {path} 到所選目錄。原連結會失效；目標已有同名檔案時會停止，原目錄保持不變。",
+      "operationBusy": "正在提交管理操作，請稍候。"
     }
   },
   "toolbox": {

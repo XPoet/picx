@@ -1,4 +1,5 @@
 .folder-card {
+  position relative
   min-width 0
   height 100%
   border-radius var(--picx-radius-control)
@@ -21,6 +22,18 @@
     color var(--picx-color-primary)
     font inherit
     cursor pointer
+  }
+
+  .folder-menu {
+    position absolute
+    top 0
+    right 0
+
+    button {
+      min-height 44px
+      width 44px
+      padding 10px
+    }
   }
 
   .folder-name {

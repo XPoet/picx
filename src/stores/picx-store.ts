@@ -725,6 +725,40 @@ export const usePicxStore = defineStore('picx', {
       this.DIR_IMAGE_LIST_PERSIST()
     },
 
+    DIR_IMAGE_LIST_REPLACE_CONTENT({ path, directories, images }: { path: string, directories: DirObject[], images: UploadedImageModel[] }) {
+      if (path !== '/' && !getDirContent(path, this.getDirObject))
+        this.DIR_IMAGE_LIST_ADD_DIR(path)
+      const directory = getDirContent(path, this.getDirObject)
+      if (!directory)
+        return
+      directory.childrenDirs = directories
+      directory.imageList = images
+      if (path === '/') {
+        this.userConfigInfoModule.userConfigInfo.dirList = directories.map(item => ({ value: item.dir, label: item.dir }))
+        this.USER_CONFIG_INFO_PERSIST()
+      }
+      this.DIR_IMAGE_LIST_PERSIST()
+    },
+
+    DIR_IMAGE_LIST_REMOVE_CONFIRMED_MEDIA({ path, sha }: { path: string, sha: string }) {
+      const parent = path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '/'
+      const directory = getDirContent(parent, this.getDirObject)
+      if (directory)
+        directory.imageList = directory.imageList.filter(image => image.path !== path || image.sha !== sha)
+      this.DIR_IMAGE_LIST_PERSIST()
+    },
+
+    DIR_IMAGE_LIST_RELOCATE_MEDIA({ original, image }: { original: UploadedImageModel, image: UploadedImageModel }) {
+      this.DIR_IMAGE_LIST_REMOVE_CONFIRMED_MEDIA(original)
+      if (image.dir !== '/')
+        this.DIR_IMAGE_LIST_ADD_DIR(image.dir)
+      const directory = getDirContent(image.dir, this.getDirObject)
+      if (!directory)
+        return
+      directory.imageList = [...directory.imageList.filter(item => item.path !== image.path), image]
+      this.DIR_IMAGE_LIST_PERSIST()
+    },
+
     // 图床管理 - 重命名目录（同步更新子孙目录 dirPath、图片 dir/path 及用户配置里的目录引用）
     DIR_IMAGE_LIST_RENAME_DIR({
       oldDirPath,

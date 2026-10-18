@@ -33,6 +33,9 @@ describe('受控媒体卡片', () => {
     await image.trigger('error')
     expect(wrapper.text()).not.toContain('640 × 480')
     expect(wrapper.text()).not.toContain('0 × 0')
+    await wrapper.setProps({ busy: true })
+    expect(wrapper.get('input[type="checkbox"]').attributes('disabled')).toBeDefined()
+    expect(wrapper.get('.media-more').attributes('disabled')).toBeDefined()
     wrapper.unmount()
   })
 

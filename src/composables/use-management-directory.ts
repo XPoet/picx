@@ -1,8 +1,7 @@
+import type { ApiFailure } from '@/utils/request/types'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import { DirModeEnum } from '@/common/model'
-import i18n from '@/plugins/vue/i18n'
-import router from '@/router'
-import { loadRepositoryContent } from '@/services/repository-content'
+import { uploadToManagementDirectory } from '@/services/management-actions'
+import { refreshManagementDirectory } from '@/services/repository-content'
 import { pinia, store } from '@/stores'
 import { getDirContent } from '@/stores/modules/dir-image-list/utils'
 import { usePicxStore } from '@/stores/picx-store'
@@ -19,25 +18,28 @@ export function useManagementDirectory() {
   const directories = computed(() => directory.value?.childrenDirs ?? [])
   const images = computed(() => directory.value?.imageList ?? [])
   const loading = ref(false)
-  const failed = ref(false)
+  const error = ref<ApiFailure | null>(null)
+  const failed = computed(() => error.value !== null)
   const fetched = new Set<string>()
   let version = 0
 
   async function load(force = false) {
     const target = path.value
     const requestVersion = ++version
-    failed.value = false
-    if (!force && (fetched.has(target) || directories.value.length || images.value.length)) {
+    error.value = null
+    if (!force && fetched.has(target)) {
       loading.value = false
       return
     }
     loading.value = true
-    const result = await loadRepositoryContent(config.value, target)
+    const repository = { owner: config.value.owner, repo: config.value.repo, branch: config.value.branch }
+    const current = () => requestVersion === version && config.value.logined && config.value.owner === repository.owner && config.value.repo === repository.repo && config.value.branch === repository.branch
+    const result = await refreshManagementDirectory(repository, target, current)
     if (requestVersion !== version)
       return
     loading.value = false
-    failed.value = !result
-    if (result)
+    error.value = result.ok ? null : result.error
+    if (result.ok)
       fetched.add(target)
   }
 
@@ -46,22 +48,11 @@ export function useManagementDirectory() {
       picx.SET_USER_CONFIG_INFO({ viewDir: target })
   }
 
-  async function upload(target = path.value) {
-    const result = picx.SAVE_UPLOAD_DIRECTORY({
-      dirMode: target === '/' ? DirModeEnum.rootDir : DirModeEnum.repoDir,
-      selectedDir: target,
-      selectedDirList: target === '/' ? [] : target.split('/'),
-    })
-    if (!result.ok) {
-      ElMessage.error(i18n.global.t(`management_page.workspace.${result.reason === 'upload-busy' ? 'uploadBusy' : 'uploadSaveFailed'}`))
-      return
-    }
-    await router.push('/upload')
-  }
+  const upload = (target = path.value) => uploadToManagementDirectory(target)
 
   watch(path, () => void load(), { immediate: true })
   onBeforeUnmount(() => {
     version += 1
   })
-  return { path, directories, images, loading, failed, browse, upload, reload: () => load(true) }
+  return { path, directories, images, loading, failed, error, browse, upload, reload: () => load(true) }
 }
