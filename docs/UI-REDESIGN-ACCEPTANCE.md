@@ -655,6 +655,18 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 
 开始时 `develop` 位于 `80aafc5`，领先 `origin/develop` 43 个提交，工作区干净。沿用当前依赖，不分析 `node_modules` / `dist`，不删除文件、不推送。真实页面使用用户已授权登录的 `http://localhost:4000/images-hosting/#/upload`；本地 fixture 使用独立 `127.0.0.1:4173`、临时浏览器配置与严格网络拦截，不混用会话。
 
+**本轮收口范围（用户 2026-10-19 确认）**：用户要求“Chrome 浏览器测试通过就够了”，随后确认“按现有环境收口，列明未覆盖专项”。采用桌面 Chrome、手机模拟、现有 OAuth 连接恢复及真实仓库操作作为本轮验收范围。以下项目没有通过证据，作为后续专项保留，不再阻塞本轮收口：
+
+| 未覆盖专项 | 实际边界 |
+| --- | --- |
+| 真机触摸、软键盘、读屏 | 本轮仅桌面键盘、明确宽度模拟、语义 / live region 标记及对比度检查；没有真实播报或真机操作证据 |
+| 首次 App 安装、空仓初始化 | 使用用户已安装 App、已存在的获准仓库；没有新建仓库或扩大权限 |
+| 手动 Token、真实过期 / 无权限重连、真实登出后登录 | 采用现有 OAuth 会话恢复与实际读写；这些分支的 fixture 通过只作为自动化结果 |
+| Safari / Firefox | 用户明确排除本轮要求，不宣称兼容性已验证 |
+| 真实删除、CNAME / 自定义域名变更 | 用户明确不允许，未执行；已有模拟验证不替代真实专项 |
+
+本轮完成标记只适用于上述调整后的范围。未删除远端测试文件，不清空用户配置，不将专项未覆盖记为测试通过。
+
 ### T041 完成画板视觉对照
 
 **实施提交**：本节所属提交 `fix(ui): align upload workspace with visual acceptance baseline`。
@@ -683,9 +695,9 @@ Chrome 155.0.8059.82 执行三语 × light / dark / system 共 9 个组合，逐
 
 **回滚**：回退新增验收测试与证据即可；无产品 / 依赖 / 存储格式修改，无真实云写入。
 
-### T043 响应式、键盘与可访问性：自动化完成，人工项目待验
+### T043 响应式、键盘与可访问性：按本轮 Chrome 范围完成
 
-**实施提交**：本节所属提交 `fix(a11y): improve success contrast and add acceptance coverage`；本任务保持未勾选。
+**实施提交**：实现及自动化 `6e7c35b`，收口记录为本节所属提交 `docs(a11y): close Chrome acceptance scope with explicit exclusions`。
 
 新增 [可访问性回归](../tests/e2e/acceptance-accessibility.spec.ts)，在 375、768、1024、1280、1440px 和 375×400 低高度下遍历登录、上传、管理、设置，断言文档无横向溢出、页尾可滚动到达、375px Token 输入为 16px。键盘用合成凭据完成连接、目录四选项中的新建 / 取消 / 根目录保存、上传、全部复制、管理选择与所选复制；检查 Tab / Shift+Tab 焦点留在弹窗、Esc 返回触发按钮、重新打开后的初始焦点，以及管理选择 / 复制 / 更多动作至少 44×44px。文件输入由 fixture 注入，真实系统选择框另见 T044 / T046。
 
@@ -693,7 +705,7 @@ Chrome 155.0.8059.82 执行三语 × light / dark / system 共 9 个组合，逐
 
 **验证**：T043 的 4 项 Desktop Chrome E2E 最终通过，原有 layout 6 项也通过。目录弹窗测试等待实际 initial focus 后才继续，截图等待自动通知自然关闭；首轮定位 / 动画时序失败已修正，不计为通过。最终日志 `/private/tmp/picx-p6-t043-final.log`，layout 记录 `/private/tmp/picx-p6-t043.log`。已逐一查看六档 [375px](UI/evidence/p6/t043-login-375-812.png)、[低高度](UI/evidence/p6/t043-login-375-400.png)、[768px](UI/evidence/p6/t043-login-768-1024.png)、[1024px](UI/evidence/p6/t043-login-1024-900.png)、[1280px](UI/evidence/p6/t043-login-1280-900.png)、[1440px](UI/evidence/p6/t043-login-1440-1080.png) 和 [键盘管理](UI/evidence/p6/t043-keyboard-management-375.png)；透明 1×1 媒体为 fixture。
 
-**待验**：没有连接真实手机软键盘、触摸设备或读屏会话；语义角色、live region 和模拟视口不能证明实际读屏播报及软键盘通过，因此 T043 不勾选。回滚本提交可恢复成功色及验收测试，不影响用户数据和远端文件。
+**收口与未覆盖**：没有连接真实手机软键盘、触摸设备或读屏会话；语义角色、live region 和模拟视口不能证明实际读屏播报及软键盘通过。用户明确按现有环境收口后，这些项目单列专项，T043 在本轮 Chrome 范围内完成；原始未覆盖事实保留。回滚实现提交可恢复成功色及验收测试，不影响用户数据和远端文件。
 
 ### T044 Chrome 主流程验证
 
