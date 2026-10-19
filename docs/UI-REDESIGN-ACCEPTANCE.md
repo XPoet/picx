@@ -706,3 +706,19 @@ Chrome 155.0.8059.82 执行三语 × light / dark / system 共 9 个组合，逐
 实际 Chrome 系统文件选择框完成自建 MP4、PNG 与用户测试图片选择；真实 Worker 处理、复制和管理媒体加载结果见 T046 的独立远端证据。公开 Pages MP4 完整播放至 1.133033 秒，ended=true、readyState=4、error=null。没有将模拟手机写成真机通过。Safari 曾在调整前尝试连接但超时，用户取消该要求后停止；不记为通过或剩余阻塞。
 
 **回滚**：回退新增媒体验收测试与记录，不撤销已上传的测试素材或用户浏览器数据。
+
+### T047 PWA 安装入口、SW 升级与离线恢复
+
+**实施提交**：本节所属提交 `test(pwa): verify production worker updates and offline recovery`。依用户指定的 Chrome 验收范围完成；没有修改缓存策略或新增依赖。
+
+[PWA 验收](../tests/e2e/acceptance-pwa.spec.ts)使用生产 preview、独立浏览器上下文及真实 Service Worker，允许本地源读请求、阻止外域网络，仅注入无真实凭据的合成配置。通过浏览器读取 manifest，确认 PicX、`/images-hosting/` scope / start_url、standalone、192 / 512 图标。`serviceWorker.ready` 和 controller 均实际成立；该上下文缓存 52 项，条目 URL 不含 API / 认证目标，未读取用户浏览器凭据或构建输出目录，见 [manifest / 缓存摘要](UI/evidence/p6/t047-manifest-cache.json)。
+
+断网后真正 reload 上传页仍能打开，明确提示离线，上传按钮禁用；恢复网络后工作区离线提示消失，失败的云同步保留“重试同步”入口，避免把网络恢复误写成业务请求成功。已查看 [离线页](UI/evidence/p6/t047-offline-upload.png)。
+
+升级测试在其余 E2E 结束后单独运行：先记录浏览器实际缓存，调用第二次生产构建，再 `registration.update()`，观察 updatefound / installed / activating / activated 及 controllerchange。实际替换 2 个资源 URL，旧条目被移除、新条目加入；更新后再次断网 reload 并进入按需设置页，三个分区可用。见 [原始升级数值](UI/evidence/p6/t047-update.json)、[更新后离线设置](UI/evidence/p6/t047-updated-offline-settings.png)。这不是普通刷新或模拟 SW 事件。
+
+实际 Chrome 的生产预览触发浏览器原生 beforeinstallprompt，顶栏出现有可访问名称的“安装 PicX”按钮，点击进入浏览器安装申请；已查看 [真实安装入口](UI/evidence/p6/t047-chrome-install-entry.png)。本轮检查可安装条件与入口，未确认系统安装、未创建或删除 OS 应用；不把 fixture 派发的安装事件当作真实安装证明。开发服务 `localhost:4000` 的 PWA 开发态不作为生产 SW 证据。
+
+**验证**：最终 `PICX_CAPTURE_TASK=T047 PICX_PWA_UPDATE=1 pnpm exec playwright test tests/e2e/acceptance-pwa.spec.ts --project=desktop-chrome --workers=1` 共 2 项通过，日志 `/private/tmp/picx-p6-t047-accepted.log`；第二次构建日志 `/private/tmp/picx-p6-t047-rebuild.log`。全量中的普通离线用例在桌面 / 手机模拟均通过；默认跳过双构建用例，避免更换构建影响并行测试。使用临时 pnpm 包装器实际运行 11.18.0，与仓库 packageManager 一致；保留命令级 verifyDepsBeforeRun=false，不改安装或锁文件。
+
+**回滚**：回退新增测试和证据，不改用户缓存策略、登录态、已上传文件或部署。
