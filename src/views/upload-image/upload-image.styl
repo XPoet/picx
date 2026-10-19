@@ -13,17 +13,17 @@
   .upload-stage {
     display grid
     min-width 0
-    min-height 600px
+    min-height 408px
     background var(--picx-color-surface)
-    border-radius var(--picx-radius-control)
+    border-radius 24px
 
     &.has-queue {
-      grid-template-columns 220px minmax(0, 1fr)
+      grid-template-columns 244px minmax(0, 1fr)
       border 1px solid var(--picx-color-border)
 
       > .upload-intake {
         border 0
-        border-radius 0 var(--picx-radius-control) var(--picx-radius-control) 0
+        border-radius 0 24px 24px 0
       }
     }
   }
@@ -104,7 +104,7 @@
     grid-template-columns minmax(0, 1fr)
 
     .upload-stage {
-      min-height 480px
+      min-height 408px
     }
 
     .upload-stage.has-successes {

@@ -68,6 +68,17 @@ function save() {
           <span v-if="compressed">{{ $t('upload_workspace.compressed') }}</span>
         </span>
       </div>
+      <div class="queue-actions">
+        <button v-if="uploaded" type="button" :aria-label="$t('upload_workspace.copy_name', { name: imgObj.filename.final })" @click="$emit('copy', imgObj.uuid)">
+          <PicxIcon name="copy" :size="18" />
+        </button>
+        <button v-if="phase === 'failed' && !uploadFailure" type="button" :disabled="disabled" :aria-label="$t('upload_workspace.retry_processing')" @click="$emit('retry', imgObj.uuid)">
+          <PicxIcon name="refresh-cw" :size="18" />
+        </button>
+        <button v-if="!uploaded" type="button" :disabled="disabled" :aria-label="$t('upload_workspace.remove_name', { name: imgObj.filename.final })" @click="$emit('remove', imgObj.uuid)">
+          <PicxIcon name="x" :size="18" />
+        </button>
+      </div>
     </div>
     <p v-if="skipped" class="queue-note">
       {{ $t('upload_workspace.processing_skipped') }}
@@ -75,20 +86,6 @@ function save() {
     <p v-if="phase === 'failed'" class="queue-note" role="alert">
       {{ uploadFailure ? $t(`request_error.${uploadFailure}`) : $t('upload_workspace.processing_failed') }}
     </p>
-    <div class="queue-actions">
-      <button v-if="uploaded" type="button" :aria-label="$t('upload_workspace.copy_name', { name: imgObj.filename.final })" @click="$emit('copy', imgObj.uuid)">
-        <PicxIcon name="copy" :size="18" />
-      </button>
-      <button v-if="phase === 'failed' && !uploadFailure" type="button" :disabled="disabled" :aria-label="$t('upload_workspace.retry_processing')" @click="$emit('retry', imgObj.uuid)">
-        <PicxIcon name="refresh-cw" :size="18" />
-      </button>
-      <button type="button" :aria-label="$t('upload_workspace.details_name', { name: imgObj.filename.final })" @click="details">
-        <PicxIcon name="ellipsis" :size="18" />
-      </button>
-      <button v-if="!uploaded" type="button" :disabled="disabled" :aria-label="$t('upload_workspace.remove_name', { name: imgObj.filename.final })" @click="$emit('remove', imgObj.uuid)">
-        <PicxIcon name="x" :size="18" />
-      </button>
-    </div>
   </article>
   <el-dialog v-model="visible" :title="$t('upload_workspace.details')" width="720px" class="upload-item-detail" append-to-body>
     <video v-if="video" class="detail-preview" :src="visible ? src : undefined" controls preload="metadata" />

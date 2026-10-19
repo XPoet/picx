@@ -1,15 +1,16 @@
 .upload-image-card-container {
   box-sizing border-box
   min-width 0
-  padding 12px 0
+  padding 8px 0
   color var(--picx-color-text)
   border-bottom 1px solid var(--picx-color-border)
   font-size 14px
 
   .queue-media-line {
-    display flex
+    display grid
+    grid-template-columns 48px minmax(0, 1fr) auto
     align-items center
-    gap 10px
+    gap 8px
     min-width 0
   }
 
@@ -63,7 +64,7 @@
     flex-wrap wrap
     align-items center
     gap 4px
-    margin-top 4px
+    margin-top 0
     font-size 14px
     color var(--picx-color-text-muted)
     line-height 1.5
@@ -85,8 +86,8 @@
 
   .queue-actions {
     display flex
+    flex-shrink 0
     justify-content flex-end
-    margin-top 4px
 
     button {
       display grid

@@ -650,3 +650,21 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 | T037 保存与云同步 | `4bc71e0` |
 | T039 共享入口与快捷键 | `8f37883` |
 | T040 域名与 CNAME 事务 | 本节所属提交 |
+
+## P6：整体验收（2026-10-19 起）
+
+开始时 `develop` 位于 `80aafc5`，领先 `origin/develop` 43 个提交，工作区干净。沿用当前依赖，不分析 `node_modules` / `dist`，不删除文件、不推送。真实页面使用用户已授权登录的 `http://localhost:4000/images-hosting/#/upload`；本地 fixture 使用独立 `127.0.0.1:4173`、临时浏览器配置与严格网络拦截，不混用会话。
+
+### T041 完成画板视觉对照
+
+**实施提交**：本节所属提交 `fix(ui): align upload workspace with visual acceptance baseline`。
+
+通过 Pencil 重新只读核对 11 个画板、`IGX9S` 品牌与 `cOfT3` / `lA2S0` 上下文，导出本轮参考图；在 1440×1080、简中、亮色 Chrome 截图并逐一检查，覆盖登录、上传空态、目录四模式 / 加载 / 空 / 失败、待上传、真实 Worker 压缩完成、管理三个状态与设置三区。完整节点映射、原图、并排对照和差异说明见 [P6 证据](UI/evidence/p6/README.md)。尺寸测试不是视觉检查的替代，所有保留图都已检查。
+
+修复空态 600px → 408px、24px 圆角，待上传队列 220px → 244px；队列操作并入缩略图所在行，去掉重复的详情按钮，详情仍通过 48px 缩略图按钮到达，移除 / 复制保持 44px 常驻。链接预览保留完整文本，在最多三行的可聚焦区域内滚动，避免编码路径挤占快捷操作。已在方案 §4.1 说明状态文字、压缩体积、失败说明及保留能力造成的自适应高度；未压缩字级或点击区域来强制行高。未新增数据 / API / 持久化格式。
+
+**验证**：build、typecheck、改动 ESLint、全量 stylelint 退出 0；队列组件 2 项单测通过。T041 的 6 项截图 / 尺寸 / 业务状态 E2E 通过，受影响目录 / 队列 / 复制回归 Desktop Chrome + Pixel 5 共 16 项通过。日志为 `/private/tmp/picx-p6-t041.log`、`picx-p6-t041-regression.log`、`picx-p6-t041-unit.log`、`picx-p6-t041-typecheck.log`、`picx-p6-t041-lint.log`、`picx-p6-style.log`、`picx-p6-build.log`。首次沙箱内 Chrome 进程 SIGABRT，不计通过；沙箱外复跑通过。Node 24.21.0、实际 pnpm 11.17.0 与 packageManager 11.18.0 有差异，沿用命令级 `verifyDepsBeforeRun=false`，未安装依赖；Git hooks 通过临时 pnpm 包装使用同参数运行，没有跳过检查。旧 P2 / P3 被回归覆盖的截图恢复所属提交版本。
+
+**边界**：透明 1×1 图片、空 MP4、账号和数量是 fixture；MP4 的预览失败界面不证明解码成功。字体使用获准系统回退。安全说明、真实部署状态、存量设置和页脚增加高度按方案保留；没有条款目标则不补伪链接。移动 / 暗色 / 键盘 / 真实远端与 PWA 分别归后续任务。
+
+**回滚**：回退本提交的展示样式、预览和验收测试；不清空设置，不改认证，不撤销用户远端操作。

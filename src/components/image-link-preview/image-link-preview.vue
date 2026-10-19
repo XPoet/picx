@@ -18,7 +18,7 @@ const preview = computed(() => {
 <template>
   <div class="image-link-preview">
     <span>{{ $t('clipboard.preview') }}</span>
-    <pre>{{ preview || $t('clipboard.no_preview') }}</pre>
+    <pre tabindex="0" :aria-label="$t('clipboard.preview')">{{ preview || $t('clipboard.no_preview') }}</pre>
   </div>
 </template>
 
@@ -32,7 +32,9 @@ const preview = computed(() => {
   line-height 1.6
 
   pre {
+    max-height 4.8em
     margin 8px 0 0
+    overflow auto
     color var(--picx-color-text)
     font-family inherit
     font-size inherit
