@@ -6,7 +6,6 @@ import ImageLinkPreview from '@/components/image-link-preview/image-link-preview
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import SettingsSyncFeedback from '@/components/settings-sync-feedback.vue'
 import { formatFileBytes } from '@/utils/file-utils'
-import UploadDirectorySummary from './upload-directory-summary.vue'
 
 const props = defineProps<{
   settings: UserSettingsModel
@@ -49,7 +48,6 @@ function formatChange(event: Event) {
       <span :id="`${formatId}-watermark`">{{ $t('upload_workspace.add_watermark') }}</span>
       <el-switch :model-value="settings.watermark.enable" :disabled="busy" :aria-label="$t('upload_workspace.add_watermark')" @update:model-value="$emit('watermark', $event === true)" />
     </div>
-    <UploadDirectorySummary :path="displayPath" :disabled="busy || !target" @change="$emit('directory')" />
     <div class="copy-format">
       <label :for="formatId">{{ $t('upload_workspace.link_format') }}</label>
       <select :id="formatId" :value="selectedFormat" :disabled="busy" @change="$emit('format', formatChange($event))">

@@ -85,7 +85,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <RepositoryContextBar :repository="repository" :upload-path="uploadPath" :connection="connection" :disabled="uploading" @configure="openDirectory" @reconnect="reconnect" />
+  <RepositoryContextBar :repository="repository" :upload-path="uploadPath" :disabled="uploading" @configure="openDirectory" />
   <div class="upload-page-container">
     <div class="upload-page-main">
       <div v-if="!online" class="workspace-notice" role="alert">
@@ -107,7 +107,7 @@ onMounted(() => {
       </div>
       <UploadResultSummary v-if="lastBatch" :batch="lastBatch" @manage="viewManagement" @reconnect="reconnect" />
       <div class="upload-stage" :class="{ 'has-queue': queue.length, 'has-successes': successes.length }">
-        <section v-if="queue.length" class="upload-page-left" :aria-label="$t('upload_page.queue_label')" tabindex="0">
+        <section v-if="queue.length" class="upload-page-left" tabindex="0">
           <div class="queue-heading">
             <h2>{{ $t('upload_workspace.queue') }}</h2><span>{{ successes.length }} / {{ queue.length }}</span>
           </div>

@@ -389,7 +389,7 @@
     "steps_label": "Getting started",
     "steps": {
       "connect": "Connect GitHub",
-      "configure": "Set up repository",
+      "configure": "Change upload directory",
       "share": "Upload and share"
     },
     "recommended": "Recommended",
@@ -419,7 +419,7 @@
   "repository_context": {
     "label": "Current repository and connection",
     "no_repository": "No GitHub repository connected",
-    "configure": "Configure upload directory",
+    "configure": "Change upload directory",
     "show_path": "View full upload path {path}",
     "reconnect": "Reconnect",
     "connected": "GitHub connected",
@@ -429,10 +429,7 @@
     "unauthenticated": "Credentials expired",
     "forbidden": "Repository access denied",
     "offline": "You are offline",
-    "failed": "Connection check failed",
-    "visibility_public": "This repository is verified as public. Uploaded files can be publicly accessed.",
-    "visibility_private": "This repository is private. File access depends on repository permissions and link source.",
-    "visibility_unknown": "Repository visibility is unknown. Verify your connection first."
+    "failed": "Connection check failed"
   },
   "directory_selector": {
     "label": "Choose repository directory",

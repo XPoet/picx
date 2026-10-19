@@ -1,13 +1,12 @@
 import { expect, test } from './fixtures'
 
-test('已保存上下文回显且未验证不显示公开，长路径可展开', async ({ page, picx }, info) => {
+test('已保存上下文回显且可更改上传目录，长路径可展开', async ({ page, picx }, info) => {
   await page.setViewportSize({ width: 1440, height: 1080 })
   await picx.open('/upload', { savedRepository: true })
-  const context = page.getByRole('region', { name: '当前仓库与连接状态' })
+  const context = page.locator('.repository-context')
   await expect(context.getByText('fixture-owner/picx-images-hosting', { exact: true })).toBeVisible()
   await expect(context.getByText('master', { exact: true })).toBeVisible()
-  await expect(context.getByRole('status')).toContainText('连接待验证')
-  await expect(context).toContainText('尚未确认仓库可见性')
+  await expect(context.getByRole('button', { name: '更改上传目录' })).toBeVisible()
   if (info.project.name === 'desktop-chrome')
     await page.screenshot({ path: 'docs/UI/evidence/p2/t016-context-1440.png', fullPage: true })
   await page.evaluate(() => {

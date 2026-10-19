@@ -121,7 +121,6 @@ defineExpose({ reset, remove, selectFiles })
       <span class="upload-symbol"><PicxIcon name="image-up" :size="28" /></span>
       <h2>{{ $t('upload_workspace.drop') }}</h2>
       <el-button type="primary" :disabled="disabled" @click="selectFiles">
-        <PicxIcon name="upload" :size="18" />
         {{ $t(hasFiles ? 'upload_workspace.choose_more' : 'upload_workspace.choose') }}
       </el-button>
       <p>{{ $t('upload_workspace.accept') }}</p>

@@ -389,7 +389,7 @@
     "steps_label": "首次使用步骤",
     "steps": {
       "connect": "连接 GitHub",
-      "configure": "配置仓库",
+      "configure": "更改上传目录",
       "share": "上传并分享"
     },
     "recommended": "推荐",
@@ -419,7 +419,7 @@
   "repository_context": {
     "label": "当前仓库与连接状态",
     "no_repository": "尚未连接 GitHub 仓库",
-    "configure": "配置上传目录",
+    "configure": "更改上传目录",
     "show_path": "查看完整上传路径 {path}",
     "reconnect": "重新连接",
     "connected": "GitHub 已连接",
@@ -429,10 +429,7 @@
     "unauthenticated": "凭据已失效",
     "forbidden": "仓库访问权限不足",
     "offline": "当前离线",
-    "failed": "连接检查失败",
-    "visibility_public": "此仓库已确认为公开仓库，上传的文件可被公开访问。",
-    "visibility_private": "此仓库为私有仓库，文件访问取决于仓库权限与链接来源。",
-    "visibility_unknown": "尚未确认仓库可见性，请先验证连接。"
+    "failed": "连接检查失败"
   },
   "directory_selector": {
     "label": "选择仓库目录",
