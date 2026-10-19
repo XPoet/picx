@@ -772,10 +772,46 @@ Chrome 控制连接中断后，用户手工完成以下三次操作并逐项报�
 
 **回滚**：Git 回退只恢复本地代码 / 记录，不能自动撤销远端提交、公开文件或 gh-pages；本轮不清理测试文件。
 
-### T048 工程与兼容回归：已执行部分及剩余验收
+### T048 旧数据、回滚读取与工程最终验收
 
-最终使用 Node 24.21.0、Corepack pnpm 11.18.0，与 packageManager 一致。临时包装器 `/private/tmp/picx-p6-bin/pnpm` 仅为命令加入 verifyDepsBeforeRun=false；没有改依赖、锁文件或钩子。`pnpm verify` 退出 0：ESLint、Stylelint、app / Worker 类型、34 文件 / 209 单测和 build 全通过，日志 `/private/tmp/picx-p6-verify.log`。构建后全量 Chrome E2E 235 通过、3 显式跳过，日志 `/private/tmp/picx-p6-e2e.log`；桌面真实 SW 升级另行 2/2 通过。跳过项是两平台默认不并行切换构建的 SW 升级，以及手机模拟不运行桌面原生缩放；原生桌面缩放已在 T042 通过。
+**实施提交**：本节所属提交 `test(ui): finalize scoped acceptance and historical rollback checks`。本轮验收按用户确认的 Chrome / 手机模拟、现有 OAuth 与获准远端操作范围完成；未覆盖专项见 P6 开头表格，不计通过。
 
-旧配置 / 云设置兼容、原名 / 规则恢复、旧入口、登出清理与安全投影包含在本轮单测和 E2E 中。核对 P6 相对 `80aafc5` 的产品改动只涉及展示样式与预览组件，不改 Store、持久化格式、键或期限；`src/utils/storage.ts` 和 `src/common/constant/storage.ts` 与 UI 改造前 `74b795e` 相同。按独立提交回退 P6 不需数据迁移；完整阶段回退仍以各任务已有边界为准。没有切换用户 checkout 运行旧版 UI，不能将源码不变写成完整人工回滚演练已通过。
+最终使用 Node 24.21.0、Corepack pnpm 11.18.0，与 packageManager 一致。临时包装器 `/private/tmp/picx-p6-bin/pnpm` 仅为命令加入 verifyDepsBeforeRun=false；没有改依赖、锁文件或钩子。最终 `pnpm verify` 退出 0：ESLint、Stylelint、app / Worker 类型、35 文件 / 215 单测和 build 全通过，日志 `/private/tmp/picx-p6-final-verify.log`。构建后最后一轮 Chrome E2E 235 通过、3 显式跳过，日志 `/private/tmp/picx-p6-final-e2e.log`。桌面真实 SW 升级另行 2/2 通过；默认全量跳过两平台切换构建的 SW 用例，以及手机模拟的桌面原生缩放；对应桌面验证已在 T047 / T042 通过，没有把跳过项记为通过。
 
-初始工作区干净，E2E 覆盖的 P2 / P3 旧截图已恢复原提交，P6 证据独立保存；没有删除文件或推送。本轮已完成 T041、T042、按用户调整范围的 T044、T047，共 44 / 48；T043 的真机 / 读屏、T045 的真实认证场景、T046 的剩余模式和依赖仍待验，因此 T048 与 P6 总体验收保持未完成。
+新增 [回滚读取测试](../tests/unit/rollback-compat.test.ts)及 [原始读取函数快照](../tests/fixtures/rollback-readers.json)：从改造前、P0、P1、P2、P3、P4 的真实提交导出纯读取函数，记录提交、源文件 Git blob 和函数文本 SHA-256，相同函数只保留一份。测试只在内存隔离环境执行 getLocal / getSession、UTF-8 解码和云偏好解析，不加载旧请求 / 页面或用户存储，运行时不依赖 Git 历史，适用于浅克隆。
+
+```mermaid
+flowchart LR
+  Current[新版 Store 保存脱敏旧偏好] --> Data[本地 JSON 与 UTF-8 云偏好]
+  Snapshots[历史提交的纯读取函数快照] --> Readers[内存隔离的旧读取函数]
+  Data --> Readers
+  Readers --> Upgrade[再次用当前解析器读取]
+  Upgrade --> Assert[原名 前缀 编码器 规则 中文水印与字段完整保留]
+```
+
+| 阶段边界 | 提交 | 实际结果 |
+| --- | --- | --- |
+| 改造前 | `74b795e` | 旧读取函数读取新版保存的配置、会话偏好与云偏好，再次升级解析无损 |
+| P0 | `a7c62bd` | 同上，通过 |
+| P1 | `d1a20a2` | 同上，通过 |
+| P2 | `7903154` | 同上，通过 |
+| P3 | `492c243` | 同上，通过 |
+| P4 | `755076c` | 同上，通过 |
+| P5 | `80aafc5` | Store、storage / 键常量、settings API 与 payload 模块同当前源码无差异，当前兼容测试执行相同实现 |
+
+六个历史读取用例及四个既有设置兼容用例先单独 10/10 通过，最终全量 215 单测再通过。仓库配置使用空 Token fixture；云偏好断言不含认证与仓库字段。旧入口、原名 / 自定义规则恢复、登出清理和安全投影继续由既有单测 / E2E 覆盖。没有切换用户 checkout 运行旧版 UI，不把读取函数检查写成完整旧界面人工演练；代码回滚不自动撤销用户远端操作。
+
+最终 [检查摘要](UI/evidence/p6/t048-final-checks.json)保留环境、源码树标识、计数、日志与回滚边界。P6 相对 `80aafc5` 的产品改动仅涉及七个展示样式 / 预览组件文件，不改持久化格式、键或期限；源码树与已完成 Chrome 回归的实现一致。初始工作区干净，末轮 E2E 自动覆盖的 P2 / P3 旧截图已恢复原提交，P6 证据独立保存；没有删除文件或推送。
+
+**P6 收口结论**：48 / 48 项在用户确认的本轮范围内完成。四模式真实上传累计 12 个文件，管理、Pages 构建 / 可访问及 MP4 播放有独立远端证据；最后三次手工上传分别保留用户 UI 报告和代理 GitHub 核对。真机、读屏、完整真实认证、Safari / Firefox、删除和 CNAME 专项保持未覆盖，不宣称原始全环境验证完成。
+
+| P6 任务 | 独立完成提交 |
+| --- | --- |
+| T041 画板视觉对照 | `ec59974` |
+| T042 三语、主题、长内容与原生缩放 | `7be570f` |
+| T043 响应式、键盘与可访问性 | 实现 `6e7c35b`；范围收口 `5dc545c` |
+| T044 Chrome 主流程 | `4e4d05f` |
+| T045 现有 OAuth 恢复 | `70a3589` |
+| T046 四模式真实上传、管理、部署 | 前期证据 `716da18`；完成 `bb9fbcd` |
+| T047 PWA 入口、SW 升级与离线恢复 | `b9146a2` |
+| T048 最终工程与回滚读取 | 本节所属提交 |

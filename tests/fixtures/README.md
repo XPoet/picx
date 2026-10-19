@@ -26,3 +26,5 @@ P1 的 open 参数支持三种语言与三种主题。fixture 使用仅包含固
 `directory-selector.html` 是仅在 Vite dev 下使用的受控选择器视觉 fixture，不属于生产路由。访问 `/images-hosting/tests/fixtures/directory-selector.html`，数据完全在内存，选择和展开分开，不调用 GitHub 或存储。用于 T018 的桌面 / 375px 与键盘检查。
 
 P3 的 `tests/e2e/upload-fixture.ts` 只模拟 fixture-owner / picx-images-hosting：blob、head、tree、commit、ref、contents 和有效设置写入；返回真实计算的 Git blob SHA 与字节数，支持部分失败、无权限、结果未确认和延迟 ref。目录只接受初始 fixture 或已模拟上传形成的路径，未知请求继续交给基础 fixture 阻断。所有凭据都是不可认证的占位值，不读取实际用户配置，不执行真实 GitHub 写入。
+
+T048 的 `rollback-readers.json` 是从改造前及 P0–P4 六个提交提取的原始纯读取函数快照，记录提交、源文件 Git blob 与函数文本 SHA-256；相同函数只存一份。`rollback-compat.test.ts` 在内存隔离环境只执行 getLocal / getSession、UTF-8 解码和云偏好解析，不加载历史页面、请求或用户存储。测试由新版 Store 保存合成旧偏好，再由历史读取函数读回，并检查再次升级解析不丢字段；仓库配置 Token 为空。运行时只依赖已提交快照，浅克隆无需读取历史 Git 对象。快照不表示已手工运行旧版界面，也不撤销任何远端操作。

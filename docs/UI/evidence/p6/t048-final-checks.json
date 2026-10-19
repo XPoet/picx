@@ -1,0 +1,127 @@
+{
+  "date": "2026-10-19",
+  "scope": "User-approved Chrome desktop/mobile emulation, existing OAuth recovery, authorized real GitHub operations; uncovered specialties are listed in the acceptance document",
+  "environment": {
+    "node": "24.21.0",
+    "pnpm": "11.18.0",
+    "chrome": "155.0.8059.82"
+  },
+  "productSourceTree": "cc92c918b84d9b19d25d43e37436361842e2f6da",
+  "verify": {
+    "exitCode": 0,
+    "unitFiles": 35,
+    "unitTests": 215,
+    "lint": "passed",
+    "stylelint": "passed",
+    "appAndWorkerTypecheck": "passed",
+    "build": "passed",
+    "log": "/private/tmp/picx-p6-final-verify.log"
+  },
+  "e2e": {
+    "exitCode": 0,
+    "passed": 235,
+    "skipped": 3,
+    "projects": [
+      "desktop-chrome",
+      "mobile-chrome"
+    ],
+    "log": "/private/tmp/picx-p6-final-e2e.log",
+    "skippedCases": [
+      "SW build switch: desktop runs separately",
+      "SW build switch: not repeated on mobile emulation",
+      "Native desktop zoom: not repeated on mobile emulation"
+    ]
+  },
+  "pwaSeparateRun": {
+    "passed": 2,
+    "log": "/private/tmp/picx-p6-t047-accepted.log"
+  },
+  "rollback": {
+    "cases": 6,
+    "passed": 6,
+    "boundaries": [
+      {
+        "phase": "改造前",
+        "ref": "74b795e",
+        "storage": {
+          "snapshot": "storage-c16e4f7521df",
+          "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+        },
+        "cloud": {
+          "snapshot": "cloud-2b67e2868356",
+          "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+        }
+      },
+      {
+        "phase": "P0",
+        "ref": "a7c62bd",
+        "storage": {
+          "snapshot": "storage-c16e4f7521df",
+          "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+        },
+        "cloud": {
+          "snapshot": "cloud-2b67e2868356",
+          "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+        }
+      },
+      {
+        "phase": "P1",
+        "ref": "d1a20a2",
+        "storage": {
+          "snapshot": "storage-c16e4f7521df",
+          "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+        },
+        "cloud": {
+          "snapshot": "cloud-2b67e2868356",
+          "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+        }
+      },
+      {
+        "phase": "P2",
+        "ref": "7903154",
+        "storage": {
+          "snapshot": "storage-c16e4f7521df",
+          "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+        },
+        "cloud": {
+          "snapshot": "cloud-2b67e2868356",
+          "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+        }
+      },
+      {
+        "phase": "P3",
+        "ref": "492c243",
+        "storage": {
+          "snapshot": "storage-c16e4f7521df",
+          "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+        },
+        "cloud": {
+          "snapshot": "cloud-2b67e2868356",
+          "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+        }
+      },
+      {
+        "phase": "P4",
+        "ref": "755076c",
+        "storage": {
+          "snapshot": "storage-c16e4f7521df",
+          "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+        },
+        "cloud": {
+          "snapshot": "cloud-2b67e2868356",
+          "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+        }
+      }
+    ],
+    "readerSnapshots": 2,
+    "dependsOnGitHistoryAtTestRuntime": false,
+    "realBrowserStorageRead": false,
+    "realWorkingTreeCheckedOutToOlderVersion": false,
+    "p5PersistenceModulesUnchanged": true
+  },
+  "remoteUploads": 12,
+  "realCnameChanged": false,
+  "remoteTestMediaDeleted": false,
+  "historyScreenshotsRestored": true,
+  "pushed": false
+}

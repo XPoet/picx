@@ -1,0 +1,91 @@
+{
+  "provenance": "Pure reader declarations extracted from the named Git commits, without requests or UI modules",
+  "snapshots": [
+    {
+      "id": "storage-c16e4f7521df",
+      "path": "src/utils/storage.ts",
+      "sha256": "c16e4f7521dfc85d796c589890853aebfc2ab6374fa3288628879d73b211bc3f",
+      "source": "export const getLocal = (key: string) => {\n  const temp = window.localStorage.getItem(key)\n  return temp ? JSON.parse(temp) : null\n}\nexport const getSession = (key: string) => {\n  const temp = window.sessionStorage.getItem(key)\n  return temp ? JSON.parse(temp) : null\n}"
+    },
+    {
+      "id": "cloud-2b67e2868356",
+      "path": "src/common/api/settings.ts",
+      "sha256": "2b67e286835660ff0f6339a6e347b180192bf4d4a4c01dd2ca7caa750e71236e",
+      "source": "const decodeBase64 = (base64: string): string => {\n  const binary = window.atob(base64)\n  const bytes = Uint8Array.from(binary, char => char.charCodeAt(0))\n  return new TextDecoder().decode(bytes)\n}\nexport const parseCloudSettings = (file: CloudSettingsFileModel): UserSettingsModel | null => {\n  try {\n    const settings = JSON.parse(decodeBase64(file.content))\n    return settings && typeof settings === 'object' ? settings : null\n  }\n  catch (err) {\n    console.error('PicX Error // parse cloud settings failed >> ', err)\n    return null\n  }\n}"
+    }
+  ],
+  "boundaries": [
+    {
+      "phase": "改造前",
+      "ref": "74b795e",
+      "storage": {
+        "snapshot": "storage-c16e4f7521df",
+        "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+      },
+      "cloud": {
+        "snapshot": "cloud-2b67e2868356",
+        "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+      }
+    },
+    {
+      "phase": "P0",
+      "ref": "a7c62bd",
+      "storage": {
+        "snapshot": "storage-c16e4f7521df",
+        "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+      },
+      "cloud": {
+        "snapshot": "cloud-2b67e2868356",
+        "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+      }
+    },
+    {
+      "phase": "P1",
+      "ref": "d1a20a2",
+      "storage": {
+        "snapshot": "storage-c16e4f7521df",
+        "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+      },
+      "cloud": {
+        "snapshot": "cloud-2b67e2868356",
+        "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+      }
+    },
+    {
+      "phase": "P2",
+      "ref": "7903154",
+      "storage": {
+        "snapshot": "storage-c16e4f7521df",
+        "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+      },
+      "cloud": {
+        "snapshot": "cloud-2b67e2868356",
+        "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+      }
+    },
+    {
+      "phase": "P3",
+      "ref": "492c243",
+      "storage": {
+        "snapshot": "storage-c16e4f7521df",
+        "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+      },
+      "cloud": {
+        "snapshot": "cloud-2b67e2868356",
+        "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+      }
+    },
+    {
+      "phase": "P4",
+      "ref": "755076c",
+      "storage": {
+        "snapshot": "storage-c16e4f7521df",
+        "gitBlob": "cfc598a354bec6b5df4fdf318ee6c0c3735cb2eb"
+      },
+      "cloud": {
+        "snapshot": "cloud-2b67e2868356",
+        "gitBlob": "e7d9569394ea0f9732670860f483ce4d0bcf4898"
+      }
+    }
+  ]
+}
