@@ -682,3 +682,15 @@ Chrome 155.0.8059.82 执行三语 × light / dark / system 共 9 个组合，逐
 **验证**：locale 3 项单测、9 项组合与 1 项原生缩放 E2E 通过；既有顶栏 7 项 E2E 通过，包含真实更新通知插件 setLocale、Element Plus 关闭名称、页面标题、语言切换、主题、账户互斥及安装事件。改动 ESLint 通过。日志 `/private/tmp/picx-p6-t042-locales.log`、`picx-p6-t042.log`、`picx-p6-t042-zoom.log`、`picx-p6-t042-lint.log`。首轮测试的错误 locale 字段、英文复数参数重复计数，以及原生缩放 profile 格式均已修正，失败不计入通过。主题定量对比度另在 T043 测量并修复。
 
 **回滚**：回退新增验收测试与证据即可；无产品 / 依赖 / 存储格式修改，无真实云写入。
+
+### T043 响应式、键盘与可访问性：自动化完成，人工项目待验
+
+**实施提交**：本节所属提交 `fix(a11y): improve success contrast and add acceptance coverage`；本任务保持未勾选。
+
+新增 [可访问性回归](../tests/e2e/acceptance-accessibility.spec.ts)，在 375、768、1024、1280、1440px 和 375×400 低高度下遍历登录、上传、管理、设置，断言文档无横向溢出、页尾可滚动到达、375px Token 输入为 16px。键盘用合成凭据完成连接、目录四选项中的新建 / 取消 / 根目录保存、上传、全部复制、管理选择与所选复制；检查 Tab / Shift+Tab 焦点留在弹窗、Esc 返回触发按钮、重新打开后的初始焦点，以及管理选择 / 复制 / 更多动作至少 44×44px。文件输入由 fixture 注入，真实系统选择框另见 T044 / T046。
+
+定量检查明暗主题各 10 对实际 CSS 语义色值，普通文字阈值 4.5:1，焦点和边框阈值 3:1。亮色 success / success-soft 原值约 4.29:1，调整 `--picx-color-success` 从 `#168264` 到 `#127a5d` 后为 4.77:1；Element Plus 继续复用同一语义色。两主题样本全部达标，见 [亮色数值](UI/evidence/p6/t043-contrast-light.json)、[暗色数值](UI/evidence/p6/t043-contrast-dark.json)。同时验证可见实线焦点与 reduced-motion 下的过渡关闭；该色值修正是为达到方案对比度要求，未修改设计稿。
+
+**验证**：T043 的 4 项 Desktop Chrome E2E 最终通过，原有 layout 6 项也通过。目录弹窗测试等待实际 initial focus 后才继续，截图等待自动通知自然关闭；首轮定位 / 动画时序失败已修正，不计为通过。最终日志 `/private/tmp/picx-p6-t043-final.log`，layout 记录 `/private/tmp/picx-p6-t043.log`。已逐一查看六档 [375px](UI/evidence/p6/t043-login-375-812.png)、[低高度](UI/evidence/p6/t043-login-375-400.png)、[768px](UI/evidence/p6/t043-login-768-1024.png)、[1024px](UI/evidence/p6/t043-login-1024-900.png)、[1280px](UI/evidence/p6/t043-login-1280-900.png)、[1440px](UI/evidence/p6/t043-login-1440-1080.png) 和 [键盘管理](UI/evidence/p6/t043-keyboard-management-375.png)；透明 1×1 媒体为 fixture。
+
+**待验**：没有连接真实手机软键盘、触摸设备或读屏会话；语义角色、live region 和模拟视口不能证明实际读屏播报及软键盘通过，因此 T043 不勾选。回滚本提交可恢复成功色及验收测试，不影响用户数据和远端文件。
