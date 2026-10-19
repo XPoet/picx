@@ -722,3 +722,36 @@ Chrome 155.0.8059.82 执行三语 × light / dark / system 共 9 个组合，逐
 **验证**：最终 `PICX_CAPTURE_TASK=T047 PICX_PWA_UPDATE=1 pnpm exec playwright test tests/e2e/acceptance-pwa.spec.ts --project=desktop-chrome --workers=1` 共 2 项通过，日志 `/private/tmp/picx-p6-t047-accepted.log`；第二次构建日志 `/private/tmp/picx-p6-t047-rebuild.log`。全量中的普通离线用例在桌面 / 手机模拟均通过；默认跳过双构建用例，避免更换构建影响并行测试。使用临时 pnpm 包装器实际运行 11.18.0，与仓库 packageManager 一致；保留命令级 verifyDepsBeforeRun=false，不改安装或锁文件。
 
 **回滚**：回退新增测试和证据，不改用户缓存策略、登录态、已上传文件或部署。
+
+### T045 真实连接恢复：部分已验证
+
+用户在 `http://localhost:4000/images-hosting/#/upload` 完成 GitHub OAuth 登录后，实际 Chrome 新标签页恢复 XPoet / picx-images-hosting / master，显示 GitHub 已连接及公开仓库提示；后续真实上传、管理和部署请求成功，说明连接状态与实际仓库读写一致。没有读取浏览器认证存储、Token、OAuth code、请求头或认证 trace。
+
+用户完成的 OAuth 登录是用户报告，代理未观察首次安装 / 授权回跳全过程。真实手动 Token、首次 App 安装、空仓初始化、真实过期重连和登出仍无完整证据；已有自动化中的合成凭据与异常响应不替代这些结果。本任务保持未完成；不通过撤销用户授权或清空用户存储制造过期场景。
+
+### T046 真实上传、管理与部署：专用目录已验证，继续补充模式
+
+**实施提交**：本节所属提交 `docs(ui): preserve verified GitHub acceptance results`，本任务保持未勾选。授权目标为公开仓库 `XPoet/picx-images-hosting`、`master`，专用目录 `p6-acceptance-20261019`。用户授权自建 PNG / MP4 与所选测试图片、移动 / 重命名及部署，明确不删除测试文件、不操作 CNAME；随后补充授权根目录和 `20261019` 各上传一张带 p6-acceptance 前缀的自建图片。
+
+| 已实际执行 | UI 与远端证据 |
+| --- | --- |
+| 新建目录下批量上传 7 张用户所选图片 | 本批成功 7 / 失败 0；GitHub 提交 `38c15cdc90c37ab066c90173f3b72d2bbc354cd0`，其中 6 张 WebP 压缩、1 张 ICO 原格式；[逐文件路径 / 字节 / SHA](UI/evidence/p6/t046-upload-public.json) |
+| 继续添加并单独上传自建 MP4 | 成功 1 / 失败 0；提交 `dde4c731d6fc49e5239fe7d24f3e738dca69e7c7`；3929 字节、320×180；本地原文件 Git blob SHA 为 `eb3dde6a9871e7523be406b0603681e1cbe2f931`，与上传、重命名、移动后的远端 blob 一致 |
+| 复制全部链接、再追加自建 PNG 单图上传 | 实际复制成功提示；PNG 从 6 KB 经水印 / Worker 压缩至 2516 字节 / WebP，进入 `p6-acceptance-20261019/moved`，提交 `be873d41896663b7fc20eacd65967d1922531232`；[上传结果](UI/evidence/p6/t046-real-upload-success.png) |
+| MP4 重命名及移动 | 重命名提交 `20762e3dbf68cd2299b6e92ae36a16b46edf7730`，移动提交 `77dbaad406152c51cb45543bfa0f7a0867bc5516`；源目录变为 7 张图片，目标目录出现 PNG 处理结果与 `p6-clip-renamed.mp4`；实际复制移动后的链接；[管理截图](UI/evidence/p6/t046-real-moved.png) |
+| 部署到 GitHub Pages | 首次检查未部署 → 正在提交 → 等待生效 → 显式检查后已可用；gh-pages 指向 `77dbaad406152c51cb45543bfa0f7a0867bc5516`，实际 [Pages 工作流](https://github.com/XPoet/picx-images-hosting/actions/runs/39188764578) completed / success；[界面证据](UI/evidence/p6/t046-real-pages-available.png) |
+| 公开访问与 MP4 播放 | UI 返回站点 `http://xpoet.cn/picx-images-hosting/`；测试图片实际转 HTTPS 加载，naturalWidth / Height = 320 / 180；MP4 播放至 1.133033 秒结束，readyState=4、error=null；[图片](UI/evidence/p6/t046-pages-image-access.png)、[视频](UI/evidence/p6/t046-pages-video-access.png)、[播放器数值](UI/evidence/p6/t046-pages-video-access.json) |
+
+汇总的公开 API 路径、体积、SHA、操作提交和部署结果见 [远端操作记录](UI/evidence/p6/t046-remote-operations.json)。连接器仅读取公开仓库元数据，媒体实际可访问性通过 Chrome 验证；Node 直接访问 raw.githubusercontent.com 超时、连接器拒绝二进制响应，这两种尝试不计为链接通过证据。未下载远端媒体来代替浏览器访问；未读或提交凭据。
+
+**当前边界**：已确认成功上传共 9 个文件，保留全部文件和部署。新建目录模式已验证，仓库目录模式及根 / 日期模式仍需补充真实上传；四模式的本地 fixture 已通过。根目录素材已在系统选择框选择，但提交上传前 Chrome 控制连接断开，不能计成功；日期上传尚未执行。用户报告 Chrome 两次无响应，后续改由用户手工执行，代理只核对结果，避免重试造成重复上传。自定义域名与删除场景未授权，不执行；T045 尚未完成，因此 T046 不勾选。
+
+**回滚**：Git 回退只恢复本地代码 / 记录，不能自动撤销远端提交、公开文件或 gh-pages；本轮不清理测试文件。
+
+### T048 工程与兼容回归：已执行部分及剩余验收
+
+最终使用 Node 24.21.0、Corepack pnpm 11.18.0，与 packageManager 一致。临时包装器 `/private/tmp/picx-p6-bin/pnpm` 仅为命令加入 verifyDepsBeforeRun=false；没有改依赖、锁文件或钩子。`pnpm verify` 退出 0：ESLint、Stylelint、app / Worker 类型、34 文件 / 209 单测和 build 全通过，日志 `/private/tmp/picx-p6-verify.log`。构建后全量 Chrome E2E 235 通过、3 显式跳过，日志 `/private/tmp/picx-p6-e2e.log`；桌面真实 SW 升级另行 2/2 通过。跳过项是两平台默认不并行切换构建的 SW 升级，以及手机模拟不运行桌面原生缩放；原生桌面缩放已在 T042 通过。
+
+旧配置 / 云设置兼容、原名 / 规则恢复、旧入口、登出清理与安全投影包含在本轮单测和 E2E 中。核对 P6 相对 `80aafc5` 的产品改动只涉及展示样式与预览组件，不改 Store、持久化格式、键或期限；`src/utils/storage.ts` 和 `src/common/constant/storage.ts` 与 UI 改造前 `74b795e` 相同。按独立提交回退 P6 不需数据迁移；完整阶段回退仍以各任务已有边界为准。没有切换用户 checkout 运行旧版 UI，不能将源码不变写成完整人工回滚演练已通过。
+
+初始工作区干净，E2E 覆盖的 P2 / P3 旧截图已恢复原提交，P6 证据独立保存；没有删除文件或推送。本轮已完成 T041、T042、按用户调整范围的 T044、T047，共 44 / 48；T043 的真机 / 读屏、T045 的真实认证场景、T046 的剩余模式和依赖仍待验，因此 T048 与 P6 总体验收保持未完成。

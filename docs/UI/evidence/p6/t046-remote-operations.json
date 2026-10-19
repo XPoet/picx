@@ -1,0 +1,92 @@
+{
+  "date": "2026-10-19",
+  "repository": "XPoet/picx-images-hosting",
+  "branch": "master",
+  "authorizedDirectory": "p6-acceptance-20261019",
+  "remoteMediaDeletion": false,
+  "cnameChanged": false,
+  "uploads": {
+    "batchImages": 7,
+    "singleMp4": 1,
+    "singlePng": 1,
+    "successfulFiles": 9,
+    "rootAndDateUploads": "authorized; browser disconnected before root upload was submitted"
+  },
+  "destinationFiles": [
+    {
+      "name": "p6-clip-renamed.mp4",
+      "path": "p6-acceptance-20261019/moved/p6-clip-renamed.mp4",
+      "size": 3929,
+      "sha": "eb3dde6a9871e7523be406b0603681e1cbe2f931",
+      "html_url": "https://github.com/XPoet/picx-images-hosting/blob/master/p6-acceptance-20261019/moved/p6-clip-renamed.mp4",
+      "download_url": "https://raw.githubusercontent.com/XPoet/picx-images-hosting/master/p6-acceptance-20261019/moved/p6-clip-renamed.mp4"
+    },
+    {
+      "name": "p6-single.c9dddb08-b193-4f84-998e-e24172f5afd8.webp",
+      "path": "p6-acceptance-20261019/moved/p6-single.c9dddb08-b193-4f84-998e-e24172f5afd8.webp",
+      "size": 2516,
+      "sha": "e5cca04f8aee3978d7cef5ec53c86d6e17ddcbe4",
+      "html_url": "https://github.com/XPoet/picx-images-hosting/blob/master/p6-acceptance-20261019/moved/p6-single.c9dddb08-b193-4f84-998e-e24172f5afd8.webp",
+      "download_url": "https://raw.githubusercontent.com/XPoet/picx-images-hosting/master/p6-acceptance-20261019/moved/p6-single.c9dddb08-b193-4f84-998e-e24172f5afd8.webp"
+    }
+  ],
+  "originalMp4": {
+    "bytes": 3929,
+    "gitBlobSha": "eb3dde6a9871e7523be406b0603681e1cbe2f931",
+    "matchesUploadedRenamedAndMovedBlob": true
+  },
+  "commits": [
+    {
+      "sha": "77dbaad406152c51cb45543bfa0f7a0867bc5516",
+      "message": "Move or rename media with PicX",
+      "date": "2026-10-19T02:07:12Z",
+      "url": "https://github.com/XPoet/picx-images-hosting/commit/77dbaad406152c51cb45543bfa0f7a0867bc5516"
+    },
+    {
+      "sha": "be873d41896663b7fc20eacd65967d1922531232",
+      "message": "Upload image via PicX (https://github.com/XPoet/picx)",
+      "date": "2026-10-19T02:02:49Z",
+      "url": "https://github.com/XPoet/picx-images-hosting/commit/be873d41896663b7fc20eacd65967d1922531232"
+    },
+    {
+      "sha": "20762e3dbf68cd2299b6e92ae36a16b46edf7730",
+      "message": "Move or rename media with PicX",
+      "date": "2026-10-19T02:00:23Z",
+      "url": "https://github.com/XPoet/picx-images-hosting/commit/20762e3dbf68cd2299b6e92ae36a16b46edf7730"
+    },
+    {
+      "sha": "dde4c731d6fc49e5239fe7d24f3e738dca69e7c7",
+      "message": "Upload image via PicX (https://github.com/XPoet/picx)",
+      "date": "2026-10-19T01:58:38Z",
+      "url": "https://github.com/XPoet/picx-images-hosting/commit/dde4c731d6fc49e5239fe7d24f3e738dca69e7c7"
+    },
+    {
+      "sha": "38c15cdc90c37ab066c90173f3b72d2bbc354cd0",
+      "message": "Upload image via PicX (https://github.com/XPoet/picx)",
+      "date": "2026-10-19T01:50:42Z",
+      "url": "https://github.com/XPoet/picx-images-hosting/commit/38c15cdc90c37ab066c90173f3b72d2bbc354cd0"
+    }
+  ],
+  "deployment": {
+    "branch": "gh-pages",
+    "commit": "77dbaad406152c51cb45543bfa0f7a0867bc5516",
+    "run": [
+      {
+        "id": 39188764578,
+        "status": "completed",
+        "conclusion": "success",
+        "headSha": "77dbaad406152c51cb45543bfa0f7a0867bc5516",
+        "url": "https://github.com/XPoet/picx-images-hosting/actions/runs/39188764578"
+      }
+    ],
+    "uiStatus": "available",
+    "site": "http://xpoet.cn/picx-images-hosting/",
+    "imageAccess": {
+      "url": "https://xpoet.cn/picx-images-hosting/p6-acceptance-20261019/moved/p6-single.c9dddb08-b193-4f84-998e-e24172f5afd8.webp",
+      "complete": true,
+      "width": 320,
+      "height": 180
+    },
+    "videoAccess": "t046-pages-video-access.json"
+  }
+}
