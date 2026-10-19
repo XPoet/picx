@@ -694,3 +694,15 @@ Chrome 155.0.8059.82 执行三语 × light / dark / system 共 9 个组合，逐
 **验证**：T043 的 4 项 Desktop Chrome E2E 最终通过，原有 layout 6 项也通过。目录弹窗测试等待实际 initial focus 后才继续，截图等待自动通知自然关闭；首轮定位 / 动画时序失败已修正，不计为通过。最终日志 `/private/tmp/picx-p6-t043-final.log`，layout 记录 `/private/tmp/picx-p6-t043.log`。已逐一查看六档 [375px](UI/evidence/p6/t043-login-375-812.png)、[低高度](UI/evidence/p6/t043-login-375-400.png)、[768px](UI/evidence/p6/t043-login-768-1024.png)、[1024px](UI/evidence/p6/t043-login-1024-900.png)、[1280px](UI/evidence/p6/t043-login-1280-900.png)、[1440px](UI/evidence/p6/t043-login-1440-1080.png) 和 [键盘管理](UI/evidence/p6/t043-keyboard-management-375.png)；透明 1×1 媒体为 fixture。
 
 **待验**：没有连接真实手机软键盘、触摸设备或读屏会话；语义角色、live region 和模拟视口不能证明实际读屏播报及软键盘通过，因此 T043 不勾选。回滚本提交可恢复成功色及验收测试，不影响用户数据和远端文件。
+
+### T044 Chrome 主流程验证
+
+**实施提交**：本节所属提交 `test(ui): accept Chrome browser flows and real MP4 playback`。用户于 2026-10-19 明确将浏览器范围调整为 Chrome 通过即可，不要求 Safari / Firefox；本项按该范围完成，T043 的真机与读屏项目仍单列待验。
+
+环境为 macOS 14.5、Chrome 155.0.8059.82。Desktop Chrome 与 Pixel 5 手机模拟全量 E2E 共 235 项通过、3 项按配置跳过；其中桌面 SW 升级需在全量结束后独立运行、手机不重复 SW 升级 / 原生桌面缩放，单独结果见 T047 / T042。日志 `/private/tmp/picx-p6-e2e.log`。覆盖文件输入 / 拖放 / 粘贴与输入框不接管、真实 WASM Worker 水印 / 压缩、复制成功 / 拒绝恢复、目录事务、管理、设置、主题和主要弹窗。
+
+新增 [MP4 验收](../tests/e2e/acceptance-media.spec.ts)：用浏览器 Canvas + MediaRecorder 生成可解码 AVC MP4，真实详情播放器断言 320×180，并实际播放到 currentTime > 0.1；两 Chrome 项目均通过。已查看 [本地 MP4 预览](UI/evidence/p6/t044-chrome-mp4-preview.png)。该用例替代透明图片 / 空 MP4 fixture 对解码能力的不足，不访问真实凭据或远端接口。
+
+实际 Chrome 系统文件选择框完成自建 MP4、PNG 与用户测试图片选择；真实 Worker 处理、复制和管理媒体加载结果见 T046 的独立远端证据。公开 Pages MP4 完整播放至 1.133033 秒，ended=true、readyState=4、error=null。没有将模拟手机写成真机通过。Safari 曾在调整前尝试连接但超时，用户取消该要求后停止；不记为通过或剩余阻塞。
+
+**回滚**：回退新增媒体验收测试与记录，不撤销已上传的测试素材或用户浏览器数据。
