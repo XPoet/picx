@@ -2579,42 +2579,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "type": "frame",
-              "id": "UuS3J",
-              "name": "凭据与公开访问提醒",
-              "width": 1064,
-              "gap": 12,
-              "padding": [
-                0,
-                16
-              ],
-              "children": [
-                {
-                  "type": "icon",
-                  "id": "V30ImP",
-                  "name": "隐私提示",
-                  "width": 20,
-                  "height": 20,
-                  "icon": "shield-check",
-                  "library": "lucide",
-                  "fill": "$muted"
-                },
-                {
-                  "type": "text",
-                  "id": "YhkBE",
-                  "name": "隐私说明",
-                  "fill": "$muted",
-                  "textGrowth": "fixed-width",
-                  "width": "fill_container",
-                  "content": "授权凭据会保存在当前浏览器，请勿在共享设备登录。",
-                  "lineHeight": 1.5,
-                  "fontFamily": "$font",
-                  "fontSize": 14,
-                  "fontWeight": "normal"
-                }
-              ]
             }
           ]
         },
@@ -2759,17 +2723,6 @@
                       "height": 20.929991455078127
                     }
                   ]
-                },
-                {
-                  "type": "text",
-                  "id": "LzCQG",
-                  "name": "版权",
-                  "fill": "$muted",
-                  "content": "PicX 图床 · 图片存于你的 GitHub 仓库",
-                  "lineHeight": 1.5,
-                  "fontFamily": "$font",
-                  "fontSize": 12,
-                  "fontWeight": "normal"
                 }
               ]
             },
@@ -2820,54 +2773,6 @@
                       "name": "意见反馈",
                       "fill": "$muted",
                       "content": "意见反馈",
-                      "lineHeight": 1.5,
-                      "fontFamily": "$font",
-                      "fontSize": 12,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "R5BRO",
-                  "name": "隐私政策点击区域",
-                  "metadata": {
-                    "type": "ui-control",
-                    "accessibleLabel": "隐私政策"
-                  },
-                  "height": 44,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "MlONq",
-                      "name": "隐私政策",
-                      "fill": "$muted",
-                      "content": "隐私政策",
-                      "lineHeight": 1.5,
-                      "fontFamily": "$font",
-                      "fontSize": 12,
-                      "fontWeight": "normal"
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "ocz2z",
-                  "name": "服务条款点击区域",
-                  "metadata": {
-                    "type": "ui-control",
-                    "accessibleLabel": "服务条款"
-                  },
-                  "height": 44,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "text",
-                      "id": "gUYDl",
-                      "name": "服务条款",
-                      "fill": "$muted",
-                      "content": "服务条款",
                       "lineHeight": 1.5,
                       "fontFamily": "$font",
                       "fontSize": 12,

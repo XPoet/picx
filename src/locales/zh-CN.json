@@ -320,11 +320,6 @@
     "batch_download": "批量下载",
     "add_watermark": "添加水印"
   },
-  "feedback": {
-    "text_1": "一款基于 GitHub API 开发的图床工具，提供图片上传托管和生成图片链接。",
-    "text_2": "建议将本站添加到浏览器收藏夹，方便下次使用。",
-    "open_issue": "在 GitHub 反馈问题"
-  },
   "region": {
     "CN": "中国大陆",
     "HK": "中国香港",
@@ -373,7 +368,6 @@
     "loading_1": "复制中"
   },
   "footer": {
-    "description": "PicX 图床 · 图片存于你的 GitHub 仓库",
     "links": "帮助与反馈",
     "help": "帮助中心",
     "feedback": "意见反馈"
@@ -410,7 +404,6 @@
     "token_required": "请输入 GitHub Token。",
     "show_token": "显示 Token",
     "hide_token": "隐藏 Token",
-    "credentials_notice": "授权凭据会保存在当前浏览器，请勿在共享设备上保持登录。",
     "validating": "正在验证连接…",
     "step_user": "正在验证 GitHub 账户…",
     "step_repository": "正在检查并准备仓库…",

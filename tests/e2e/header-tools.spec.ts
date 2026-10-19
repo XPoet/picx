@@ -2,8 +2,8 @@ import { expect, openNavigation, test } from './fixtures'
 
 const languages = [
   { value: 'zh-CN', trigger: '选择语言', option: '中文简体', theme: '主题', announcement: '网站公告', title: '上传图片', update: 'zh_CN', close: /关闭/ },
-  { value: 'zh-TW', trigger: '選擇語言', option: '中文繁体', theme: '主題', announcement: '網站公告', title: '上傳圖片', update: 'zh_TW', close: /關閉/ },
-  { value: 'en', trigger: 'Choose language', option: '英文', theme: 'Theme', announcement: 'Website Announcement', title: 'Upload Image', update: 'en_US', close: /close/i },
+  { value: 'zh-TW', trigger: '選擇語言', option: '中文繁體', theme: '主題', announcement: '網站公告', title: '上傳圖片', update: 'zh_TW', close: /關閉/ },
+  { value: 'en', trigger: 'Choose language', option: 'English', theme: 'Theme', announcement: 'Website Announcement', title: 'Upload Image', update: 'en_US', close: /close/i },
 ] as const
 
 for (const language of languages) {
@@ -22,7 +22,8 @@ for (const language of languages) {
     })
     await openNavigation(page)
     await page.getByRole('button', { name: language.value === 'zh-CN' ? 'Choose language' : '选择语言', exact: true }).click()
-    await page.getByRole('menuitemradio', { name: language.value === 'zh-CN' ? 'Simplified Chinese' : language.option, exact: true }).click()
+    await expect(page.getByRole('menuitemradio')).toHaveText(['中文简体', '中文繁體', 'English'])
+    await page.getByRole('menuitemradio', { name: language.option, exact: true }).click()
     await expect(page.locator('html')).toHaveAttribute('lang', language.value)
     await expect(page).toHaveTitle(new RegExp(language.title))
     await expect(page.locator('html')).toHaveAttribute('data-update-locale', language.update)

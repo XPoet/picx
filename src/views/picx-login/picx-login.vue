@@ -203,9 +203,6 @@ watch(() => router.currentRoute.value.fullPath, () => {
     <p v-if="pending" class="connection-progress" role="status">
       {{ $t(oauthStarting ? 'connection.redirecting' : progressKey) }}
     </p>
-    <p class="credential-note">
-      <PicxIcon name="shield-check" :size="18" />{{ $t('connection.credentials_notice') }}
-    </p>
   </section>
 </template>
 

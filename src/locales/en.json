@@ -320,11 +320,6 @@
     "batch_download": "Batch Download",
     "add_watermark": "Add Watermark"
   },
-  "feedback": {
-    "text_1": "An image hosting tool built using the GitHub API that provides image upload and hosting services, as well as image link generation.",
-    "text_2": "It is recommended to add this site to your browser bookmarks for convenient use in the future.",
-    "open_issue": "Report an issue on GitHub"
-  },
   "region": {
     "CN": "Mainland China",
     "HK": "Hong Kong, China",
@@ -373,7 +368,6 @@
     "loading_1": "Copying"
   },
   "footer": {
-    "description": "PicX image hosting · Images stay in your GitHub repository",
     "links": "Help and feedback",
     "help": "Help center",
     "feedback": "Feedback"
@@ -410,7 +404,6 @@
     "token_required": "Enter your GitHub Token.",
     "show_token": "Show Token",
     "hide_token": "Hide Token",
-    "credentials_notice": "Credentials are saved in this browser. Sign out when using a shared device.",
     "validating": "Verifying connection…",
     "step_user": "Verifying your GitHub account…",
     "step_repository": "Checking and preparing your repository…",
@@ -594,7 +587,7 @@
     "add": "Add rule",
     "edit_named": "Edit rule {name}",
     "delete_named": "Delete rule {name}",
-    "delete_confirm": "Delete rule “{name}”? If selected, the source will switch to an existing default.",
+    "delete_confirm": "Delete rule \"{name}\"? If selected, the source will switch to an existing default.",
     "name-required": "Enter a rule name.",
     "name-invalid": "Use at most 60 characters and avoid reserved names.",
     "name-duplicate": "A rule with this name already exists.",

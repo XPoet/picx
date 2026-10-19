@@ -32,7 +32,7 @@ const themeIcon = computed(() => themes.find(theme => theme.value === settings.v
         :aria-checked="settings.language === language"
         @click="store.dispatch('SET_GLOBAL_SETTINGS', { language }); close()"
       >
-        {{ $t(`languages.${language}`) }}
+        {{ $t(`languages.${language}`, {}, { locale: language }) }}
       </button>
     </template>
   </HeaderMenu>

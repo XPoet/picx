@@ -8,17 +8,16 @@ import PicxIcon from '@/components/picx-icon/picx-icon.vue'
     <div class="footer-content">
       <div class="footer-brand">
         <BrandLogo />
-        <p>{{ $t('footer.description') }}</p>
       </div>
       <nav class="footer-links" :aria-label="$t('footer.links')">
         <a href="https://picx-docs.xpoet.cn" target="_blank" rel="noopener noreferrer">
           <PicxIcon name="book-open" :size="18" />
           {{ $t('footer.help') }}
         </a>
-        <RouterLink to="/feedback">
+        <a href="https://github.com/XPoet/picx/issues" target="_blank" rel="noopener noreferrer">
           <PicxIcon name="info" :size="18" />
           {{ $t('footer.feedback') }}
-        </RouterLink>
+        </a>
       </nav>
     </div>
   </footer>
@@ -40,14 +39,6 @@ import PicxIcon from '@/components/picx-icon/picx-icon.vue'
     max-width var(--picx-content-max-width)
     margin 0 auto
     padding 24px 0
-  }
-
-  .footer-brand p {
-    margin 4px 0 0
-    color var(--picx-color-text-muted)
-    font-size var(--picx-font-body)
-    line-height 1.6
-    overflow-wrap anywhere
   }
 
   .footer-links {

@@ -26,8 +26,8 @@ const onLogout = async () => {
 
 <template>
   <template v-if="!user.logined">
-    <RouterLink class="start-link" :to="loginTarget">
-      {{ $t('header.get_started') }}
+    <RouterLink class="picx-icon-button start-link" :to="loginTarget" :aria-label="$t('header.get_started')" :title="$t('header.get_started')">
+      <PicxIcon name="user-round" />
     </RouterLink>
     <button v-if="canInstall" type="button" class="picx-icon-button" :disabled="installing" :aria-label="$t('header.install')" @click="emit('install')">
       <PicxIcon name="download" />
