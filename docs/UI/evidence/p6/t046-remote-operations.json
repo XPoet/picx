@@ -8,9 +8,10 @@
   "uploads": {
     "batchImages": 7,
     "singleMp4": 1,
-    "singlePng": 1,
-    "successfulFiles": 9,
-    "rootAndDateUploads": "authorized; browser disconnected before root upload was submitted"
+    "singlePng": 4,
+    "successfulFiles": 12,
+    "rootAndDateUploads": "User reported Chrome success; verified via GitHub contents and single-file added commits",
+    "repositoryDirectoryUpload": "User reported Chrome success; GitHub verified"
   },
   "destinationFiles": [
     {
@@ -36,6 +37,24 @@
     "matchesUploadedRenamedAndMovedBlob": true
   },
   "commits": [
+    {
+      "sha": "5a0142617e3abe4026e478c2799286708c090a6a",
+      "message": "Upload image via PicX (https://github.com/XPoet/picx)",
+      "date": "2026-10-19T02:40:16Z",
+      "url": "https://github.com/XPoet/picx-images-hosting/commit/5a0142617e3abe4026e478c2799286708c090a6a"
+    },
+    {
+      "sha": "4d616de714a0f39796fcece5320022417fd971f5",
+      "message": "Upload image via PicX (https://github.com/XPoet/picx)",
+      "date": "2026-10-19T02:37:59Z",
+      "url": "https://github.com/XPoet/picx-images-hosting/commit/4d616de714a0f39796fcece5320022417fd971f5"
+    },
+    {
+      "sha": "18774bdffce15bd2488b496241f3b46afa3da91f",
+      "message": "Upload image via PicX (https://github.com/XPoet/picx)",
+      "date": "2026-10-19T02:37:34Z",
+      "url": "https://github.com/XPoet/picx-images-hosting/commit/18774bdffce15bd2488b496241f3b46afa3da91f"
+    },
     {
       "sha": "77dbaad406152c51cb45543bfa0f7a0867bc5516",
       "message": "Move or rename media with PicX",
@@ -87,6 +106,14 @@
       "width": 320,
       "height": 180
     },
-    "videoAccess": "t046-pages-video-access.json"
-  }
+    "videoAccess": "t046-pages-video-access.json",
+    "laterManualUploadsCoveredByPublicAccessCheck": false
+  },
+  "directoryModes": {
+    "new": "Agent observed UI success and verified GitHub",
+    "root": "User reported UI success and agent verified GitHub",
+    "date": "User reported UI success and agent verified GitHub",
+    "repo": "User reported UI success and agent verified GitHub"
+  },
+  "manualFollowups": "t046-manual-uploads.json"
 }

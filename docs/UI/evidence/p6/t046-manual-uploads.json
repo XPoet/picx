@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-19",
+  "repository": "XPoet/picx-images-hosting",
+  "branch": "master",
+  "execution": "Manual Chrome operation by user; independently verified via public GitHub contents and commit details",
+  "credentialsRecorded": false,
+  "filesDeleted": false,
+  "cnameChanged": false,
+  "cases": [
+    {
+      "mode": "root",
+      "userReportedResult": "success",
+      "path": "p6-acceptance-root.a1bebf89-078f-478e-837a-53eb9ca4cbb7.webp",
+      "size": 2516,
+      "sha": "e5cca04f8aee3978d7cef5ec53c86d6e17ddcbe4",
+      "url": "https://github.com/XPoet/picx-images-hosting/blob/master/p6-acceptance-root.a1bebf89-078f-478e-837a-53eb9ca4cbb7.webp",
+      "commit": "18774bdffce15bd2488b496241f3b46afa3da91f",
+      "commitURL": "https://github.com/XPoet/picx-images-hosting/commit/18774bdffce15bd2488b496241f3b46afa3da91f",
+      "commitDate": "2026-10-19T02:37:34Z",
+      "gitHubVerified": true,
+      "onlyExpectedFileAdded": true,
+      "sameContentAsEarlierProcessedSample": true
+    },
+    {
+      "mode": "date",
+      "userReportedResult": "success",
+      "path": "20261019/p6-acceptance-date.ab0fb247-48e1-453f-8ed6-10a04bcab1c4.webp",
+      "size": 2516,
+      "sha": "e5cca04f8aee3978d7cef5ec53c86d6e17ddcbe4",
+      "url": "https://github.com/XPoet/picx-images-hosting/blob/master/20261019/p6-acceptance-date.ab0fb247-48e1-453f-8ed6-10a04bcab1c4.webp",
+      "commit": "4d616de714a0f39796fcece5320022417fd971f5",
+      "commitURL": "https://github.com/XPoet/picx-images-hosting/commit/4d616de714a0f39796fcece5320022417fd971f5",
+      "commitDate": "2026-10-19T02:37:59Z",
+      "gitHubVerified": true,
+      "onlyExpectedFileAdded": true,
+      "sameContentAsEarlierProcessedSample": true
+    },
+    {
+      "mode": "repo",
+      "userReportedResult": "success",
+      "path": "p6-acceptance-20261019/p6-single.355f0f81-4f3a-4f1f-8cc2-d72c898c28bb.webp",
+      "size": 2516,
+      "sha": "e5cca04f8aee3978d7cef5ec53c86d6e17ddcbe4",
+      "url": "https://github.com/XPoet/picx-images-hosting/blob/master/p6-acceptance-20261019/p6-single.355f0f81-4f3a-4f1f-8cc2-d72c898c28bb.webp",
+      "commit": "5a0142617e3abe4026e478c2799286708c090a6a",
+      "commitURL": "https://github.com/XPoet/picx-images-hosting/commit/5a0142617e3abe4026e478c2799286708c090a6a",
+      "commitDate": "2026-10-19T02:40:16Z",
+      "gitHubVerified": true,
+      "onlyExpectedFileAdded": true,
+      "sameContentAsEarlierProcessedSample": true
+    }
+  ]
+}

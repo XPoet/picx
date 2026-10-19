@@ -743,9 +743,9 @@ Chrome 155.0.8059.82 执行三语 × light / dark / system 共 9 个组合，逐
 
 用户完成的 OAuth 登录是用户报告，代理未观察首次安装 / 授权回跳全过程。真实手动 Token、首次 App 安装、空仓初始化、真实过期重连和登出仍无完整证据；已有自动化中的合成凭据与异常响应不替代这些结果。这些分支按用户确认列为未覆盖专项，本任务在“现有 OAuth 连接恢复及真实仓库读写”范围内完成；不通过撤销用户授权或清空用户存储制造过期场景。Chrome 控制中断后用户手工完成三种目录上传，公开 GitHub 提交再次证明该会话可用；三次操作由用户报告 UI 成功、代理核对远端，不宣称代理观察了重启或重新登录全过程。
 
-### T046 真实上传、管理与部署：专用目录已验证，继续补充模式
+### T046 四模式真实上传、管理与部署：按本轮范围完成
 
-**实施提交**：本节所属提交 `docs(ui): preserve verified GitHub acceptance results`，本任务保持未勾选。授权目标为公开仓库 `XPoet/picx-images-hosting`、`master`，专用目录 `p6-acceptance-20261019`。用户授权自建 PNG / MP4 与所选测试图片、移动 / 重命名及部署，明确不删除测试文件、不操作 CNAME；随后补充授权根目录和 `20261019` 各上传一张带 p6-acceptance 前缀的自建图片。
+**实施提交**：前期证据 `716da18`；手工三模式核对及收口为本节所属提交 `docs(ui): accept verified uploads across all directory modes`。授权目标为公开仓库 `XPoet/picx-images-hosting`、`master`，专用目录 `p6-acceptance-20261019`。用户授权自建 PNG / MP4 与所选测试图片、移动 / 重命名及部署，明确不删除测试文件、不操作 CNAME；随后补充授权根目录和 `20261019` 各上传一张带 p6-acceptance 前缀的自建图片。
 
 | 已实际执行 | UI 与远端证据 |
 | --- | --- |
@@ -758,7 +758,17 @@ Chrome 155.0.8059.82 执行三语 × light / dark / system 共 9 个组合，逐
 
 汇总的公开 API 路径、体积、SHA、操作提交和部署结果见 [远端操作记录](UI/evidence/p6/t046-remote-operations.json)。连接器仅读取公开仓库元数据，媒体实际可访问性通过 Chrome 验证；Node 直接访问 raw.githubusercontent.com 超时、连接器拒绝二进制响应，这两种尝试不计为链接通过证据。未下载远端媒体来代替浏览器访问；未读或提交凭据。
 
-**当前边界**：已确认成功上传共 9 个文件，保留全部文件和部署。新建目录模式已验证，仓库目录模式及根 / 日期模式仍需补充真实上传；四模式的本地 fixture 已通过。根目录素材已在系统选择框选择，但提交上传前 Chrome 控制连接断开，不能计成功；日期上传尚未执行。用户报告 Chrome 两次无响应，后续改由用户手工执行，代理只核对结果，避免重试造成重复上传。自定义域名与删除场景未授权，不执行；T045 尚未完成，因此 T046 不勾选。
+Chrome 控制连接中断后，用户手工完成以下三次操作并逐项报告成功；代理分别读取公开 contents 与提交详情，确认每次仅新增目标文件、字节数 2516、内容 SHA 均为 `e5cca04f8aee3978d7cef5ec53c86d6e17ddcbe4`，与此前同一自建 PNG 经处理后的结果一致。没有重新连接扩展或重复上传。
+
+| 模式 | GitHub 实际路径 | 真实提交 |
+| --- | --- | --- |
+| 根目录 | `p6-acceptance-root.a1bebf89-078f-478e-837a-53eb9ca4cbb7.webp` | [18774bd](https://github.com/XPoet/picx-images-hosting/commit/18774bdffce15bd2488b496241f3b46afa3da91f) |
+| 日期目录 | `20261019/p6-acceptance-date.ab0fb247-48e1-453f-8ed6-10a04bcab1c4.webp` | [4d616de](https://github.com/XPoet/picx-images-hosting/commit/4d616de714a0f39796fcece5320022417fd971f5) |
+| 仓库目录 | `p6-acceptance-20261019/p6-single.355f0f81-4f3a-4f1f-8cc2-d72c898c28bb.webp` | [5a01426](https://github.com/XPoet/picx-images-hosting/commit/5a0142617e3abe4026e478c2799286708c090a6a) |
+
+逐项操作者、用户报告、路径 / SHA / 体积和单文件新增提交断言见 [手工核验记录](UI/evidence/p6/t046-manual-uploads.json)。结合前期新建目录操作，四模式的真实上传全部完成，成功测试文件累计 12 个。此前公开访问 / 播放检查针对已核验的 Pages 部署提交 `77dbaad`；后三个手工上传仅证明 master 已新增文件，不宣称已验证其 Pages 地址。
+
+**本轮边界**：保留全部测试文件和部署。真实自定义域名、CNAME 与删除按用户明确范围不执行，作为未覆盖专项。T045 已在用户确认的现有 OAuth 范围内收口；本任务按四模式、单 / 多、图片 / MP4、持续添加、管理、部署与实际访问范围完成。Chrome 无响应是本轮控制环境限制，未用重启假设补写产品通过证据。
 
 **回滚**：Git 回退只恢复本地代码 / 记录，不能自动撤销远端提交、公开文件或 gh-pages；本轮不清理测试文件。
 
