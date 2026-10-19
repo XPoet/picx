@@ -668,3 +668,17 @@ A / S 仅由工作区 composable 注册一次，并与按钮共用可执行条�
 **边界**：透明 1×1 图片、空 MP4、账号和数量是 fixture；MP4 的预览失败界面不证明解码成功。字体使用获准系统回退。安全说明、真实部署状态、存量设置和页脚增加高度按方案保留；没有条款目标则不补伪链接。移动 / 暗色 / 键盘 / 真实远端与 PWA 分别归后续任务。
 
 **回滚**：回退本提交的展示样式、预览和验收测试；不清空设置，不改认证，不撤销用户远端操作。
+
+### T042 完成三语、主题与长内容回归
+
+**实施提交**：本节所属提交 `test(ui): verify locales themes long content and native zoom`；T041 最终提交为 `ec59974`。
+
+新增三语键 / 参数 / 静态引用校验：简中、繁中、英文各 568 个叶子键，集合一致，非空；插值变量取集合比较，正确允许英文复数分支多次使用同一个 count。递归只读 `src` 的 Vue / TS，明确排除产物与自动声明，全部静态 t / $t 引用可解析。人工复核触达业务模板，用户文本来自 locale；仓库 / 文件 / 用户输入、协议与编码器名称按数据展示，不作为缺失翻译。
+
+Chrome 155.0.8059.82 执行三语 × light / dark / system 共 9 个组合，逐项覆盖登录、上传、管理、设置，长文件名、五层路径、完整路径浮层、规则模板和可滚动预览。系统模式在同一页面切换系统颜色后立即更新。9 个组合在 720 CSS px 下验证 1440px 显示区 200% 的等效重排，底部保存动作可滚动到达。截图已分别查看，见 [上传矩阵](UI/evidence/p6/t042-upload-matrix.png)、[简中重排](UI/evidence/p6/t042-zh-CN-reflow-matrix.png)、[繁中重排](UI/evidence/p6/t042-zh-TW-reflow-matrix.png)、[英文重排](UI/evidence/p6/t042-en-reflow-matrix.png)；原图按 `t042-语言-主题-*.png` 保存。
+
+另用新建临时 Chrome profile 的原生页面缩放独立验证 100% / 200%，不读取或修改已有浏览器配置。实测分别为 `innerWidth=1440 / devicePixelRatio=1`、`720 / 2`，有比例断言及 [原始数值](UI/evidence/p6/t042-native-zoom.json)。登录输入与设置页均无文档横向溢出，底部保存动作可见；[100% 视口](UI/evidence/p6/t042-native-zoom-100.png)、[200% 视口](UI/evidence/p6/t042-native-zoom-200.png) 用 Chrome 原生视口捕获，避免 fullPage 在原生缩放下裁掉右半边的截图问题。远端网络被阻断时明确展示同步失败，不补写成功。
+
+**验证**：locale 3 项单测、9 项组合与 1 项原生缩放 E2E 通过；既有顶栏 7 项 E2E 通过，包含真实更新通知插件 setLocale、Element Plus 关闭名称、页面标题、语言切换、主题、账户互斥及安装事件。改动 ESLint 通过。日志 `/private/tmp/picx-p6-t042-locales.log`、`picx-p6-t042.log`、`picx-p6-t042-zoom.log`、`picx-p6-t042-lint.log`。首轮测试的错误 locale 字段、英文复数参数重复计数，以及原生缩放 profile 格式均已修正，失败不计入通过。主题定量对比度另在 T043 测量并修复。
+
+**回滚**：回退新增验收测试与证据即可；无产品 / 依赖 / 存储格式修改，无真实云写入。
