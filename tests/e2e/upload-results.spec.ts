@@ -6,7 +6,7 @@ import { mockClipboard, mockUploadRequests } from './upload-fixture'
 
 const png = (name: string) => ({ name, mimeType: 'image/png', buffer: Buffer.from(fixturePngBase64, 'base64') })
 const select = async (page: Page, names: string[]) => page.locator('.getting-images-container input[type=file]').setInputFiles(names.map(png))
-const upload = (page: Page, count: number) => page.getByRole('button', { name: new RegExp(`^上传 ${count} 个文件`) }).click()
+const upload = (page: Page, _count: number) => page.getByRole('button', { name: '上传', exact: true }).click()
 const result = (page: Page) => page.getByRole('region', { name: '上传结果', exact: true })
 
 test('成功、复制、实际目录、管理和继续添加，只提交新项', async ({ page, picx }, info) => {
@@ -94,7 +94,7 @@ test('权限失败保留文件并可恢复，离线阻止上传', async ({ page,
   await select(page, ['offline.png'])
   await page.context().setOffline(true)
   await expect(page.getByRole('alert').filter({ hasText: '当前离线' })).toBeVisible()
-  await expect(page.getByRole('button', { name: /^上传 1 个文件/ })).toBeDisabled()
+  await expect(page.getByRole('button', { name: '上传', exact: true })).toBeDisabled()
   await page.context().setOffline(false)
   await upload(page, 1)
   await expect(page.locator('.upload-image-card-container.uploaded')).toHaveCount(2)

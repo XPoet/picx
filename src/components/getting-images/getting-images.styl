@@ -87,11 +87,15 @@
     }
 
     .el-button {
-      gap 8px
+      gap 10px
       min-height 48px
       height auto
       padding 12px 24px
       white-space normal
+
+      :deep(> span) {
+        gap 10px
+      }
     }
 
     @media (max-width 767px) {

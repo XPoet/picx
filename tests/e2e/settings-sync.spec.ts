@@ -38,8 +38,8 @@ for (const scenario of ['forbidden', 'corrupt'] as const) {
     }
     failed = false
     await feedback.getByRole('button', { name: '重试同步', exact: true }).click()
-    await expect(feedback).toContainText('本地与云端设置已同步')
-    expect(writes).toBe(1)
+    await expect.poll(() => writes).toBe(1)
+    await expect(feedback).toBeHidden()
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('PICX_IH_SETTINGS') ?? '{}').compress.enable)).toBe(true)
   })
 }

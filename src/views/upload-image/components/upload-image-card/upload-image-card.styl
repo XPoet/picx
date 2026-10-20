@@ -1,14 +1,16 @@
 .upload-image-card-container {
   box-sizing border-box
   min-width 0
-  padding 8px 0
+  min-height 78px
+  padding 8px
+  border 1px solid transparent
+  border-radius 10px
   color var(--picx-color-text)
-  border-bottom 1px solid var(--picx-color-border)
   font-size 14px
 
   .queue-media-line {
     display grid
-    grid-template-columns 48px minmax(0, 1fr) auto
+    grid-template-columns 48px minmax(0, 1fr) 28px
     align-items center
     gap 8px
     min-width 0
@@ -23,8 +25,12 @@
     overflow hidden
     background var(--picx-color-surface-muted)
     border 0
-    border-radius 8px
+    border-radius 6px
     cursor pointer
+
+    &:disabled {
+      cursor not-allowed
+    }
 
     img
     video {
@@ -42,6 +48,7 @@
       font-size 12px
       line-height 18px
     }
+
   }
 
   .queue-file-info {
@@ -52,7 +59,7 @@
   .queue-filename {
     display block
     overflow hidden
-    font-weight 600
+    font-weight 500
     line-height 1.5
     text-overflow ellipsis
     white-space nowrap
@@ -63,19 +70,24 @@
     display flex
     flex-wrap wrap
     align-items center
-    gap 4px
-    margin-top 0
-    font-size 14px
+    gap 6px
+    margin-top 2px
+    font-size 12px
     color var(--picx-color-text-muted)
     line-height 1.5
   }
 
-  &.uploaded .queue-status {
-    color var(--picx-color-success)
+  .queue-file-size strong {
+    color var(--picx-color-text)
+    font-weight 600
   }
 
   &.failed .queue-status {
     color var(--picx-color-danger)
+  }
+
+  &.uploading .queue-status {
+    color var(--picx-color-primary)
   }
 
   .queue-note {
@@ -89,20 +101,29 @@
     flex-shrink 0
     justify-content flex-end
 
-    button {
+    .el-button {
       display grid
       place-items center
-      width 44px
-      height 44px
+      min-width 28px
+      min-height 28px
+      width 28px
+      height 28px
+      margin 0
       padding 0
-      color var(--picx-color-primary)
+      color var(--picx-color-text-muted)
       background transparent
       border 0
-      border-radius 8px
+      border-radius 6px
       cursor pointer
 
       &:hover {
+        color var(--picx-color-primary)
         background var(--picx-color-primary-soft)
+      }
+
+      &.queue-remove:hover {
+        color var(--picx-color-danger)
+        background var(--picx-color-danger-soft)
       }
 
       &:disabled {

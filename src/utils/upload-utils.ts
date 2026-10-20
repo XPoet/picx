@@ -69,12 +69,14 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
   function stage(file: FrozenUpload, stage: UploadItemFailure['stage']) {
     if (!current())
       return
+    file.item.uploadStatus.uploading = stage === 'blob' || stage === 'contents'
     const state = store.uploadRuntime[file.item.uuid]
     if (state)
       store.uploadRuntime[file.item.uuid] = { ...state, phase: 'uploading', batchId: batch.batchId, stage }
     options.onStage?.(file.item.uuid, stage)
   }
   function fail(file: FrozenUpload, stage: UploadItemFailure['stage'], error: ApiFailure) {
+    file.item.uploadStatus.uploading = false
     const failure: UploadItemFailure = { uuid: file.item.uuid, target: file.target, stage, error }
     batch.failures.push(failure)
     const state = store.uploadRuntime[file.item.uuid]
@@ -82,6 +84,7 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
       store.uploadRuntime[file.item.uuid] = { ...state, phase: 'failed', source: 'upload', result: failure }
   }
   function succeed(file: FrozenUpload, sha: string, commitSha: string, bytes: number, recovered = false) {
+    file.item.uploadStatus.uploading = false
     const image = { checked: false, type: isVideo(file.name) ? 'video' : 'image', uuid: file.item.uuid, dir: file.target.dir, name: file.name, sha, path: file.path, deleting: false, size: bytes, deployed: true, uploadTime: Date.now() }
     const success: UploadItemSuccess = { uuid: file.item.uuid, target: file.target, image, commitSha, uploadedBytes: bytes, ...(recovered ? { recovered } : {}) }
     batch.successes.push(success)
@@ -106,7 +109,6 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
   }
   files.forEach((file) => {
     inFlight.add(file.item)
-    file.item.uploadStatus.uploading = true
   })
   let activeStage: UploadItemFailure['stage'] = files.length === 1 ? 'contents' : 'blob'
   try {
@@ -173,6 +175,7 @@ export async function uploadFilesToGitHub(config: UserConfigInfoModel, images: U
       }
       stage(file, 'blob')
       const blob = await uploadBlobResult(file.target, file.content, options.signal)
+      file.item.uploadStatus.uploading = false
       if (!blob.ok)
         fail(file, 'blob', blob.error)
       else blobs.push({ file, sha: blob.data.sha })

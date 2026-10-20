@@ -113,21 +113,21 @@ test('离开时取消等待中的请求，晚到已提交内容核验后恢复�
   await picx.open('/upload', { savedCredential: true, connectionScenario: 'ready', processingDisabled: true })
   await select(page, ['late-a.png', 'late-b.png'])
   remote.holdRef = true
-  await page.getByRole('button', { name: /^上传 2 个文件/ }).click()
+  await page.getByRole('button', { name: '上传', exact: true }).click()
   await expect.poll(() => remote.calls.ref).toBe(1)
   await navigate(page, '图床设置')
   remote.releaseRef?.()
   await expect.poll(() => remote.files.size).toBe(2)
   await navigate(page, '上传图片')
   await expect(page.locator('.upload-image-card-container.uploaded')).toHaveCount(0)
-  await page.getByRole('button', { name: /^上传 2 个文件/ }).click()
+  await page.getByRole('button', { name: '上传', exact: true }).click()
   await expect(page.locator('.upload-image-card-container.uploaded')).toHaveCount(2)
   expect(remote.calls).toMatchObject({ blob: 2, ref: 1, recovered: 2 })
 })
 
 for (const variant of [
-  { language: 'en', title: 'Batch uploaded', upload: /^Upload 1 file\b/, result: 'Upload results', file: 'Very-long-filename-for-responsive-validation.png', label: 'en-dark' },
-  { language: 'zh-TW', title: '本批上傳完成', upload: /^上傳 1 個檔案/, result: '上傳結果', file: '繁體中文與長檔名版面驗證.png', label: 'zh-tw-dark' },
+  { language: 'en', title: 'Batch uploaded', upload: /^Upload$/, result: 'Upload results', file: 'Very-long-filename-for-responsive-validation.png', label: 'en-dark' },
+  { language: 'zh-TW', title: '本批上傳完成', upload: /^上傳$/, result: '上傳結果', file: '繁體中文與長檔名版面驗證.png', label: 'zh-tw-dark' },
 ] as const) {
   test(`375px ${variant.label} 成功结果与操作均可达`, async ({ page, picx }, info) => {
     await page.emulateMedia({ reducedMotion: 'reduce' })
@@ -139,7 +139,7 @@ for (const variant of [
     await page.getByRole('button', { name: variant.upload }).click()
     await expect(page.getByRole('region', { name: variant.result, exact: true }).getByRole('heading')).toHaveText(variant.title)
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-    const format = page.locator('.copy-format select')
+    const format = page.locator('.copy-format .el-select__input')
     await expect(format).toHaveCSS('font-size', '16px')
     if (info.project.name === 'desktop-chrome') {
       await expect(page.locator('.el-message')).toHaveCount(0, { timeout: 8000 })
@@ -168,13 +168,13 @@ test('文件尚在读取时禁止抢先上传，取消读取不会追加失效�
   await expect(page.locator('.queue-status')).toContainText('待上传')
   await select(page, ['slow.png'])
   await expect(page.getByRole('status').filter({ hasText: '正在读取所选文件' })).toBeVisible()
-  await expect(page.getByRole('button', { name: /^上传 1 个文件/ })).toBeDisabled()
+  await expect(page.getByRole('button', { name: '上传', exact: true })).toBeDisabled()
   await page.locator('.queue-heading').click()
   await page.keyboard.press('ControlOrMeta+s')
   expect(remote.calls.contents).toBe(0)
   await page.evaluate(() => window.dispatchEvent(new Event('fixture-release-file')))
   await expect(page.locator('.uploaded-item')).toHaveCount(2)
-  await page.getByRole('button', { name: /^上传 2 个文件/ }).click()
+  await page.getByRole('button', { name: '上传', exact: true }).click()
   await expect(page.locator('.upload-image-card-container.uploaded')).toHaveCount(2)
   await page.getByRole('button', { name: /^重置/ }).click()
   await select(page, ['slow.png'])

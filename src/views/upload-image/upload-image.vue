@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type { UploadTargetSnapshot } from '@/common/model/upload'
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import GettingImages from '@/components/getting-images/getting-images.vue'
@@ -16,7 +15,6 @@ import { connectionLocation } from '@/utils/login-navigation'
 import { getOSName } from '@/utils/system'
 import UploadDirectoryDialog from './components/upload-directory-dialog.vue'
 import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
-import UploadResultSummary from './components/upload-result-summary.vue'
 import UploadSettingsPanel from './components/upload-settings-panel.vue'
 
 const { t } = useI18n()
@@ -25,7 +23,7 @@ const { connection, restore } = useGithubConnection()
 const directoryVisible = ref(false)
 const receiving = ref(false)
 const gettingImages = useTemplateRef<InstanceType<typeof GettingImages>>('gettingImages')
-const { queue, settings, runtime, processing, pending, pendingBytes, successes, connected, uploading, online, actionError, lastBatch, attemptedTotal, completed, canUpload, addFiles, remove, reset, upload, copyAll, setCompress, setWatermark, setFormat, retryProcessing, updateName } = useUploadWorkspace(undefined, { shortcutBlocked: () => directoryVisible.value, inputBusy: () => receiving.value, onReset: () => gettingImages.value?.reset() })
+const { queue, settings, runtime, processing, pending, pendingBytes, successes, connected, uploading, online, actionError, canUpload, addFiles, remove, reset, upload, copyAll, setCompress, setWatermark, setFormat, retryProcessing, updateName } = useUploadWorkspace(undefined, { shortcutBlocked: () => directoryVisible.value, inputBusy: () => receiving.value, onReset: () => gettingImages.value?.reset() })
 const userConfig = computed(() => store.getUserConfigInfo)
 const repository = computed(() => {
   const { owner, repo, branch } = userConfig.value
@@ -49,19 +47,6 @@ function copyItem(uuid: string) {
   const result = successes.value.find(result => result.uuid === uuid)
   if (result)
     void copyImageLink(result.image, false, result.target)
-}
-function reconnect() {
-  if (!uploading.value)
-    void router.push(connectionLocation('/upload'))
-}
-async function viewManagement(target: UploadTargetSnapshot) {
-  try {
-    store.SET_USER_CONFIG_INFO({ viewDir: target.dir })
-    await router.push('/management')
-  }
-  catch {
-    ElMessage.error(t('connection.storage-unavailable'))
-  }
 }
 watch(() => router.currentRoute.value.query.directory, async (flag) => {
   if (flag !== '1')
@@ -91,44 +76,34 @@ onMounted(() => {
       <div v-if="!online" class="workspace-notice" role="alert">
         <PicxIcon name="info" :size="20" />{{ $t('request_error.offline') }}
       </div>
-      <div v-else-if="!connected" class="workspace-notice" role="status">
-        <span>{{ $t('repository_context.unverified') }}</span><el-button :disabled="uploading" @click="reconnect">
-          {{ $t('repository_context.reconnect') }}
-        </el-button>
-      </div>
       <div v-if="actionError" class="workspace-notice" role="alert">
         {{ $t(`connection.${actionError}`) }}
       </div>
       <div v-if="receiving" class="workspace-notice" role="status">
         {{ $t('upload_workspace.receiving') }}
       </div>
-      <div v-if="uploading" class="workspace-notice" role="status">
-        {{ $t('upload_workspace.upload_progress', { completed, total: attemptedTotal }) }}
-      </div>
-      <UploadResultSummary v-if="lastBatch" :batch="lastBatch" @manage="viewManagement" @reconnect="reconnect" />
       <div class="upload-stage" :class="{ 'has-queue': queue.length, 'has-successes': successes.length }">
         <section v-if="queue.length" class="upload-page-left" tabindex="0">
           <div class="queue-heading">
-            <h2>{{ $t('upload_workspace.queue') }}</h2><span>{{ successes.length }} / {{ queue.length }}</span>
+            <h2>{{ $t('upload_workspace.queue') }}</h2><span>{{ $t('upload_workspace.queue_count', { count: queue.length }) }}</span>
           </div>
-          <div v-for="item in queue" :key="item.uuid" class="uploaded-item">
-            <UploadImageCard :img-obj="item" :runtime="runtime[item.uuid]" :naming="settings.imageName" :disabled="uploading" @remove="remove" @retry="retryProcessing" @edit-name="updateName" @copy="copyItem" />
+          <div class="queue-list">
+            <div v-for="item in queue" :key="item.uuid" class="uploaded-item">
+              <UploadImageCard :img-obj="item" :runtime="runtime[item.uuid]" :naming="settings.imageName" :disabled="uploading" @remove="remove" @retry="retryProcessing" @edit-name="updateName" @copy="copyItem" />
+            </div>
           </div>
           <el-button class="queue-add" :disabled="uploading" @click="gettingImages?.selectFiles()">
             <PicxIcon name="plus" :size="18" />{{ $t('upload_workspace.add_more') }}
           </el-button>
         </section>
         <div class="upload-intake">
-          <GettingImages ref="gettingImages" :disabled="uploading" mode="workspace" :has-files="queue.length > 0" video-enabled @get-img-list="addFiles" @receiving="receiving = $event" />
-          <p v-if="successes.length" class="retained-note">
-            {{ $t('upload_workspace.successes_retained', { count: successes.length }) }}
-          </p>
+          <GettingImages ref="gettingImages" :disabled="uploading" mode="workspace" video-enabled @get-img-list="addFiles" @receiving="receiving = $event" />
         </div>
       </div>
     </div>
     <UploadSettingsPanel :settings="settings" :target="repository" :directory="userConfig.selectedDir || '/'" :display-path="uploadPath" :pending-count="pending.length" :pending-bytes="pendingBytes" :uploaded-count="successes.length" :has-items="queue.length > 0 || receiving" :busy="uploading" :processing="processing || receiving" :can-upload="canUpload" :shortcut="shortcut" @compress="setCompress" @watermark="setWatermark" @format="setFormat" @directory="openDirectory" @reset="reset" @upload="upload" @copy-all="copyAll">
       <template #deployment>
-        <deploy-status-bar v-if="userConfig.logined" :disabled="!successes.length || uploading || !online || directoryVisible || !connected" />
+        <deploy-status-bar v-if="userConfig.logined" compact :disabled="!successes.length || uploading || !online || directoryVisible || !connected" />
       </template>
     </UploadSettingsPanel>
   </div>

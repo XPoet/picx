@@ -18,13 +18,10 @@
     border-radius 24px
 
     &.has-queue {
-      grid-template-columns 244px minmax(0, 1fr)
-      border 1px solid var(--picx-color-border)
-
-      > .upload-intake {
-        border 0
-        border-radius 0 24px 24px 0
-      }
+      grid-template-columns 280px minmax(0, 1fr)
+      gap 16px
+      height 704px
+      background transparent
     }
   }
 
@@ -39,11 +36,7 @@
   }
 
   .has-queue .upload-intake .getting-images-container {
-    border 0
-  }
-
-  .upload-stage.has-successes {
-    grid-template-columns 352px minmax(0, 1fr)
+    min-height 0
   }
 
   .workspace-notice {
@@ -60,39 +53,54 @@
     line-height 1.6
   }
 
-  .retained-note {
-    margin 0
-    padding 16px 24px
-    color var(--picx-color-text-muted)
-    font-size 14px
-    line-height 1.6
-  }
-
   .upload-page-left {
+    display flex
+    flex-direction column
     box-sizing border-box
     min-width 0
-    max-height 660px
-    padding 16px
-    overflow-y auto
-    border-right 1px solid var(--picx-color-border)
+    min-height 0
+    gap 8px
+    padding 12px
+    background var(--picx-color-surface)
+    border 1px solid var(--picx-color-border)
+    border-radius 16px
 
     .queue-heading {
       display flex
+      flex-shrink 0
       align-items center
       justify-content space-between
       gap 8px
-      min-height 44px
+      height 44px
+      padding 0 4px
+      color var(--picx-color-text-muted)
       font-size 14px
+      line-height 1.5
 
       h2 {
         margin 0
-        font-size 16px
+        color var(--picx-color-text)
+        font-size 14px
+        font-weight 600
       }
     }
 
+    .queue-list {
+      display flex
+      flex 1
+      flex-direction column
+      gap 4px
+      min-height 0
+      overflow-y auto
+      scrollbar-width thin
+    }
+
     .queue-add {
+      flex-shrink 0
       width 100%
-      margin-top 12px
+      height 44px
+      color var(--picx-color-primary)
+      border-radius 10px
 
       > span {
         gap 8px
@@ -102,33 +110,32 @@
 
   @media (max-width 1279px) {
     grid-template-columns minmax(0, 1fr)
-
-    .upload-stage {
-      min-height 408px
-    }
-
-    .upload-stage.has-successes {
-      grid-template-columns 260px minmax(0, 1fr)
-    }
   }
 
   @media (max-width 767px) {
     gap 16px
 
-    .upload-stage.has-queue
-    .upload-stage.has-successes {
+    .upload-stage.has-queue {
       grid-template-columns minmax(0, 1fr)
-
-      > .upload-intake {
-        order -1
-        border-bottom 1px solid var(--picx-color-border)
-        border-radius var(--picx-radius-control) var(--picx-radius-control) 0 0
-      }
+      height auto
     }
 
     .upload-page-left {
-      max-height 460px
-      border-right 0
+      height 460px
     }
+
+    .has-queue .upload-intake {
+      order -1
+
+      .getting-images-container {
+        min-height 340px
+      }
+    }
+  }
+}
+
+@media (min-width 1280px) {
+  .main-container .main-content:has(.upload-page-container) {
+    padding-top 16px
   }
 }

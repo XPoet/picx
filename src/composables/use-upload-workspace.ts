@@ -28,8 +28,6 @@ export function useUploadWorkspace(process = processImage, options: WorkspaceOpt
   let currentUpload: AbortController | null = null
   const online = ref(navigator.onLine !== false)
   const actionError = ref<'storage-unavailable' | null>(null)
-  const attemptedTotal = ref(0)
-  const initialSuccesses = ref(0)
   const updateOnline = () => online.value = navigator.onLine !== false
   window.addEventListener('online', updateOnline)
   window.addEventListener('offline', updateOnline)
@@ -160,8 +158,6 @@ export function useUploadWorkspace(process = processImage, options: WorkspaceOpt
       return null
     return pending.value.reduce((total, item) => total + (finalUploadFile(item)?.size ?? 0), 0)
   })
-  const lastBatch = computed(() => store.uploadBatches.at(-1) ?? null)
-  const completed = computed(() => Math.max(0, successes.value.length - initialSuccesses.value))
   function addFiles(files: ImageHandleResult[]) {
     if (!uploading.value)
       files.forEach(file => store.UPLOAD_IMG_LIST_ADD(createNamedUploadImage(file, settings.value.imageName)))
@@ -181,7 +177,6 @@ export function useUploadWorkspace(process = processImage, options: WorkspaceOpt
     store.UPLOAD_IMG_LIST_RESET()
     options.onReset?.()
     actionError.value = null
-    attemptedTotal.value = 0
   }
   function setCompress(enable: boolean) {
     if (!uploading.value)
@@ -210,8 +205,6 @@ export function useUploadWorkspace(process = processImage, options: WorkspaceOpt
     const attempt = store.connectionAttemptId
     const identity = [config.owner, config.repo, config.branch].join('/')
     const current = () => !disposed && store.connectionAttemptId === attempt && [store.getUserConfigInfo.owner, store.getUserConfigInfo.repo, store.getUserConfigInfo.branch].join('/') === identity
-    attemptedTotal.value = ready.value.length
-    initialSuccesses.value = successes.value.length
     const files = [...ready.value]
     actionError.value = null
     store.uploadTargetBusy = true
@@ -252,5 +245,5 @@ export function useUploadWorkspace(process = processImage, options: WorkspaceOpt
     }
   }
   document.addEventListener('keydown', onKeydown)
-  return { queue, settings, runtime, processing, ready, pending, pendingBytes, successes, connected, uploading, online, actionError, lastBatch, attemptedTotal, completed, canUpload, canReset, addFiles, remove, reset, upload, copyAll, setCompress, setWatermark, setFormat, retryProcessing, updateName }
+  return { queue, settings, runtime, processing, ready, pending, pendingBytes, successes, connected, uploading, online, actionError, canUpload, canReset, addFiles, remove, reset, upload, copyAll, setCompress, setWatermark, setFormat, retryProcessing, updateName }
 }

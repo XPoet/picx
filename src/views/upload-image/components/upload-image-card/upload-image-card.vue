@@ -2,6 +2,7 @@
 import type { UploadImageModel, UserSettingsModel } from '@/common/model'
 import type { QueueItemRuntime } from '@/common/model/upload'
 import type { PicxIconName } from '@/components/picx-icon/types'
+import { ElIcon } from 'element-plus'
 import { computed, reactive, ref, useId } from 'vue'
 import { RENAME_MAX_LENGTH } from '@/common/constant'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
@@ -22,13 +23,14 @@ const uploaded = computed(() => props.imgObj.uploadStatus.progress === 100)
 const video = computed(() => isVideo(props.imgObj.fileInfo.originalFile?.type ?? ''))
 const src = computed(() => props.imgObj.base64.compressBase64 || props.imgObj.base64.watermarkBase64 || props.imgObj.base64.originalBase64)
 const compressed = computed(() => props.imgObj.fileInfo.compressFile !== null)
-const phase = computed(() => uploaded.value ? 'uploaded' : props.imgObj.uploadStatus.uploading ? 'uploading' : props.runtime?.phase ?? 'processing')
-const statusIcons: Record<QueueItemRuntime['phase'], PicxIconName> = { uploaded: 'circle-check', uploading: 'upload', processing: 'loader-circle', failed: 'triangle-alert', ready: 'clock-3' }
+const phase = computed(() => uploaded.value ? 'uploaded' : props.imgObj.uploadStatus.uploading ? 'uploading' : props.runtime?.phase === 'uploading' ? 'confirming' : props.runtime?.phase ?? 'processing')
+const statusIcons: Record<QueueItemRuntime['phase'] | 'confirming', PicxIconName> = { uploaded: 'circle-check', uploading: 'loader-circle', confirming: 'clock-3', processing: 'loader-circle', failed: 'triangle-alert', ready: 'clock-3' }
 const statusIcon = computed(() => statusIcons[phase.value])
-const skipped = computed(() => props.runtime?.phase === 'ready' && props.runtime.skippedProcessing)
 const uploadFailure = computed(() => props.runtime?.phase === 'failed' && props.runtime.source === 'upload' ? props.runtime.result.error.kind : null)
 const validDraft = computed(() => (!draft.isRename || (!!draft.newName.trim() && !/[\\/\n\r]/.test(draft.newName))) && (!draft.isAddPrefix || !/[\\/\n\r]/.test(draft.prefix)))
 function details() {
+  if (props.disabled)
+    return
   Object.assign(draft, {
     isRename: props.imgObj.filename.isRename,
     newName: props.imgObj.filename.newName,
@@ -49,7 +51,7 @@ function save() {
 <template>
   <article class="upload-image-card-container" :class="phase" :data-uuid="imgObj.uuid">
     <div class="queue-media-line">
-      <button class="media-thumbnail" type="button" :aria-label="$t('upload_workspace.details_name', { name: imgObj.filename.final })" @click="details">
+      <button class="media-thumbnail" type="button" :disabled="disabled" :title="$t('upload_workspace.details_name', { name: imgObj.filename.final })" @click="details">
         <video v-if="video" :src="src" muted preload="metadata" />
         <img v-else :src="src" alt="" loading="lazy">
         <span v-if="video" class="video-label">MP4</span>
@@ -58,31 +60,38 @@ function save() {
         <strong class="queue-filename" :title="imgObj.filename.final">{{ imgObj.filename.final }}</strong>
         <div class="queue-file-size">
           <template v-if="compressed">
-            <span>{{ formatFileBytes(imgObj.fileInfo.originalFile?.size) }}</span><PicxIcon name="arrow-right" :size="14" />
+            <span>{{ formatFileBytes(imgObj.fileInfo.originalFile?.size) }}</span>
+            <PicxIcon name="arrow-right" :size="12" />
           </template>
-          <span>{{ formatFileBytes(uploaded ? imgObj.uploadedImg?.size : finalUploadFile(imgObj)?.size) }}</span>
+
+          <strong v-if="compressed">
+            {{ formatFileBytes(uploaded ? imgObj.uploadedImg?.size : finalUploadFile(imgObj)?.size) }}
+          </strong>
+          <template v-else>
+            <span>{{ formatFileBytes(uploaded ? imgObj.uploadedImg?.size : finalUploadFile(imgObj)?.size) }}</span>
+            <span>·</span><span>{{ $t('upload_workspace.size_unchanged') }}</span>
+          </template>
         </div>
         <span class="queue-status" role="status">
-          <PicxIcon :name="statusIcon" :size="14" />
+          <ElIcon v-if="imgObj.uploadStatus.uploading && !uploaded" class="is-loading" :size="12">
+            <PicxIcon :name="statusIcon" :size="12" />
+          </ElIcon>
+          <PicxIcon v-else :name="statusIcon" :size="12" />
           <span>{{ $t(`upload_workspace.status_${phase}`) }}</span>
-          <span v-if="compressed">{{ $t('upload_workspace.compressed') }}</span>
         </span>
       </div>
       <div class="queue-actions">
-        <button v-if="uploaded" type="button" :aria-label="$t('upload_workspace.copy_name', { name: imgObj.filename.final })" @click="$emit('copy', imgObj.uuid)">
+        <el-button v-if="uploaded" text native-type="button" :title="$t('upload_workspace.copy_name', { name: imgObj.filename.final })" @click="$emit('copy', imgObj.uuid)">
           <PicxIcon name="copy" :size="18" />
-        </button>
-        <button v-if="phase === 'failed' && !uploadFailure" type="button" :disabled="disabled" :aria-label="$t('upload_workspace.retry_processing')" @click="$emit('retry', imgObj.uuid)">
+        </el-button>
+        <el-button v-if="phase === 'failed' && !uploadFailure" text native-type="button" :disabled="disabled" :title="$t('upload_workspace.retry_processing')" @click="$emit('retry', imgObj.uuid)">
           <PicxIcon name="refresh-cw" :size="18" />
-        </button>
-        <button v-if="!uploaded" type="button" :disabled="disabled" :aria-label="$t('upload_workspace.remove_name', { name: imgObj.filename.final })" @click="$emit('remove', imgObj.uuid)">
-          <PicxIcon name="x" :size="18" />
-        </button>
+        </el-button>
+        <el-button v-if="!uploaded" class="queue-remove" text native-type="button" :disabled="disabled" :title="$t('upload_workspace.remove_name', { name: imgObj.filename.final })" @click="$emit('remove', imgObj.uuid)">
+          <PicxIcon name="x" :size="16" />
+        </el-button>
       </div>
     </div>
-    <p v-if="skipped" class="queue-note">
-      {{ $t('upload_workspace.processing_skipped') }}
-    </p>
     <p v-if="phase === 'failed'" class="queue-note" role="alert">
       {{ uploadFailure ? $t(`request_error.${uploadFailure}`) : $t('upload_workspace.processing_failed') }}
     </p>
@@ -95,15 +104,15 @@ function save() {
     </p>
     <p>{{ $t('upload_workspace.original_size') }}: {{ formatFileBytes(imgObj.fileInfo.originalFile?.size) }} · {{ $t('upload_workspace.final_size') }}: {{ formatFileBytes(finalUploadFile(imgObj)?.size) }}</p>
     <form v-if="!uploaded" class="item-naming-form" @submit.prevent="save">
-      <el-checkbox v-model="draft.isRename" :disabled="disabled || naming.enableTimestamp" :aria-label="$t('rename')">
+      <el-checkbox v-model="draft.isRename" :disabled="disabled || naming.enableTimestamp">
         {{ $t('rename') }}
       </el-checkbox>
       <label :for="`${formId}-name`">{{ $t('upload_workspace.new_name') }}</label>
       <input :id="`${formId}-name`" v-model="draft.newName" :disabled="disabled || !draft.isRename || naming.enableTimestamp" :maxlength="RENAME_MAX_LENGTH">
-      <el-checkbox v-model="draft.isAddHash" :disabled="disabled || naming.enableTimestamp" :aria-label="$t('upload_page.add_hash')">
+      <el-checkbox v-model="draft.isAddHash" :disabled="disabled || naming.enableTimestamp">
         {{ $t('upload_page.add_hash') }}
       </el-checkbox>
-      <el-checkbox v-model="draft.isAddPrefix" :disabled="disabled || naming.enableTimestamp" :aria-label="$t('upload_page.add_prefix')">
+      <el-checkbox v-model="draft.isAddPrefix" :disabled="disabled || naming.enableTimestamp">
         {{ $t('upload_page.add_prefix') }}
       </el-checkbox>
       <label :for="`${formId}-prefix`">{{ $t('upload_workspace.prefix') }}</label>

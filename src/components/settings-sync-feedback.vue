@@ -3,10 +3,10 @@ import { retrySettingsSync, settingsSyncState } from '@/stores/settings-sync-sta
 </script>
 
 <template>
-  <div class="settings-sync-feedback" role="status" aria-live="polite">
-    <span>{{ $t(settingsSyncState.phase === 'failed' ? `settings_sync.failed_${settingsSyncState.scope}` : `settings_sync.${settingsSyncState.phase}`) }}</span>
-    <span v-if="settingsSyncState.phase === 'failed' && settingsSyncState.error">{{ $t(settingsSyncState.error.kind === 'invalid-response' ? 'settings_sync.corrupt' : `request_error.${settingsSyncState.error.kind}`) }}</span>
-    <el-button v-if="settingsSyncState.phase === 'failed' && settingsSyncState.retryable" @click="retrySettingsSync">
+  <div v-if="settingsSyncState.phase === 'failed'" class="settings-sync-feedback" role="status">
+    <span>{{ $t(`settings_sync.failed_${settingsSyncState.scope}`) }}</span>
+    <span v-if="settingsSyncState.error">{{ $t(settingsSyncState.error.kind === 'invalid-response' ? 'settings_sync.corrupt' : `request_error.${settingsSyncState.error.kind}`) }}</span>
+    <el-button v-if="settingsSyncState.retryable" @click="retrySettingsSync">
       {{ $t('settings_sync.retry') }}
     </el-button>
   </div>

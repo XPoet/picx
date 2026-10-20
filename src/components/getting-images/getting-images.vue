@@ -10,8 +10,7 @@ const props = withDefaults(defineProps<{
   disabled?: boolean
   videoEnabled?: boolean
   mode?: 'preview' | 'workspace'
-  hasFiles?: boolean
-}>(), { disabled: false, videoEnabled: false, mode: 'preview', hasFiles: false })
+}>(), { disabled: false, videoEnabled: false, mode: 'preview' })
 const emit = defineEmits<{ getImgList: [files: ImageHandleResult[]], receiving: [active: boolean] }>()
 const store = useStore()
 const inputId = useId()
@@ -111,22 +110,22 @@ defineExpose({ reset, remove, selectFiles })
   <div
     class="getting-images-container"
     :class="{ workspace: mode === 'workspace', focus: uploadAreaState.isActive && curShowImg, dragging, disabled }"
-    :aria-disabled="disabled"
     @dragover.prevent="dragging = !disabled"
     @dragleave.prevent="dragging = false"
     @drop.stop.prevent="onDrop"
   >
-    <input :id="inputId" ref="input" type="file" :disabled="disabled" :accept="acceptTypes" :aria-label="$t(videoEnabled ? 'upload_workspace.choose' : 'upload_workspace.choose_images')" multiple @change="onSelect">
+    <input :id="inputId" ref="input" type="file" :disabled="disabled" :accept="acceptTypes" :title="$t(videoEnabled ? 'upload_workspace.choose' : 'upload_workspace.choose_images')" multiple @change="onSelect">
     <template v-if="mode === 'workspace'">
       <span class="upload-symbol"><PicxIcon name="image-up" :size="28" /></span>
       <h2>{{ $t('upload_workspace.drop') }}</h2>
       <el-button type="primary" :disabled="disabled" @click="selectFiles">
-        {{ $t(hasFiles ? 'upload_workspace.choose_more' : 'upload_workspace.choose') }}
+        {{ $t('upload_workspace.choose') }}
       </el-button>
       <p>{{ $t('upload_workspace.accept') }}</p>
     </template>
+
     <template v-else>
-      <label :for="inputId" class="preview-select" tabindex="0" :aria-label="$t('upload_workspace.choose_images')" @keydown.enter.prevent="selectFiles" @keydown.space.prevent="selectFiles" />
+      <label :for="inputId" class="preview-select" tabindex="0" :title="$t('upload_workspace.choose_images')" @keydown.enter.prevent="selectFiles" @keydown.space.prevent="selectFiles" />
       <div v-if="!curShowImg" class="upload-area-tips">
         <PicxIcon name="image-up" :size="80" />
         <div class="text">

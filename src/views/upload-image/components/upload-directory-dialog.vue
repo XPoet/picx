@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PicxIconName } from '@/components/picx-icon/types'
 import type { UploadDirectoryValue } from '@/utils/directory-utils'
+import ElSegmented from 'element-plus/es/components/segmented/index'
 import { computed, onBeforeUnmount, ref, useTemplateRef, watch } from 'vue'
 import { NEW_DIR_COUNT_MAX } from '@/common/constant'
 import { DirModeEnum } from '@/common/model/user-config'
@@ -10,6 +11,7 @@ import { useRepositoryDirectories } from '@/composables/use-repository-directori
 import { useUploadDirectory } from '@/composables/use-upload-directory'
 import i18n from '@/plugins/vue/i18n'
 import { store } from '@/stores'
+import 'element-plus/es/components/segmented/style/css'
 
 const emit = defineEmits<{ saved: [value: UploadDirectoryValue], closed: [] }>()
 const dialogOpen = defineModel<boolean>({ required: true })
@@ -81,11 +83,20 @@ onBeforeUnmount(endSession)
     @closed="emit('closed')"
   >
     <div class="directory-dialog-content" @paste.stop @keydown="editingShortcut">
-      <div ref="modeGroup" class="directory-modes" role="radiogroup" :aria-label="$t('upload_directory.mode')">
-        <label v-for="mode in modes" :key="mode.value" :class="{ selected: draft.mode === mode.value }">
-          <input v-model="draft.mode" type="radio" name="upload-directory-mode" :value="mode.value" :disabled="busy" @change="edited">
-          <PicxIcon :name="mode.icon" :size="17" />{{ $t(mode.label) }}
-        </label>
+      <div ref="modeGroup" class="directory-modes">
+        <ElSegmented
+          v-model="draft.mode"
+          :options="modes"
+          :disabled="busy"
+          block
+          @change="edited"
+        >
+          <template #default="{ item }">
+            <span class="directory-mode-label">
+              <PicxIcon :name="item.icon" :size="17" />{{ $t(item.label) }}
+            </span>
+          </template>
+        </ElSegmented>
       </div>
       <div v-if="draft.mode === DirModeEnum.rootDir || draft.mode === DirModeEnum.dateDir" class="directory-mode-content">
         <p class="directory-field-label">
@@ -120,8 +131,7 @@ onBeforeUnmount(endSession)
           spellcheck="false"
           :disabled="busy"
           :placeholder="$t('upload_directory.placeholder')"
-          :aria-invalid="Boolean(pathError)"
-          aria-describedby="directory-path-help directory-path-error"
+          :class="{ 'is-invalid': Boolean(pathError) }"
           @input="edited"
           @keydown.enter.prevent="submit"
         >
@@ -132,7 +142,7 @@ onBeforeUnmount(endSession)
       <p v-if="pathError" id="directory-path-error" class="directory-field-error" role="alert">
         {{ $t(`upload_directory.path_${pathError}`, { max: NEW_DIR_COUNT_MAX }) }}
       </p>
-      <div class="directory-preview" aria-live="polite">
+      <div class="directory-preview">
         <span>{{ $t('upload_directory.preview') }}</span>
         <strong data-testid="directory-preview">{{ preview || $t('upload_directory.incomplete') }}</strong>
       </div>
@@ -199,46 +209,19 @@ onBeforeUnmount(endSession)
   }
 
   .directory-modes {
-    display grid
-    grid-template-columns repeat(4, minmax(0, 1fr))
-    gap 4px
-    padding 4px
-    background var(--picx-color-bg)
-    border-radius 12px
+    overflow-x auto
 
-    label {
-      position relative
-      display flex
-      align-items center
-      justify-content center
-      gap 8px
-      box-sizing border-box
-      min-height 44px
-      padding 8px
-      color var(--picx-color-text-muted)
-      line-height 1.5
-      border 2px solid transparent
-      border-radius 9px
-      cursor pointer
-
-      &.selected {
-        color var(--picx-color-primary)
-        background var(--picx-color-primary-soft)
-        border-bottom-color var(--picx-color-primary)
-      }
-
-      &:has(input:focus-visible) {
-        outline 2px solid var(--picx-color-focus)
-        outline-offset 2px
-      }
+    .el-segmented {
+      min-width max-content
+      --el-segmented-item-height 44px
     }
+  }
 
-    input {
-      position absolute
-      width 1px
-      height 1px
-      opacity 0
-    }
+  .directory-mode-label {
+    display flex
+    align-items center
+    justify-content center
+    gap 8px
   }
 
   .directory-mode-content {
@@ -272,7 +255,7 @@ onBeforeUnmount(endSession)
     background var(--picx-color-surface)
     border 1px solid var(--picx-color-control-border)
 
-    &[aria-invalid='true'] {
+    &.is-invalid {
       border-color var(--picx-color-danger)
     }
   }
@@ -320,10 +303,6 @@ onBeforeUnmount(endSession)
 
     .el-dialog__footer {
       padding 16px 20px
-    }
-
-    .directory-modes {
-      grid-template-columns repeat(2, minmax(0, 1fr))
     }
 
     .new-directory-input {

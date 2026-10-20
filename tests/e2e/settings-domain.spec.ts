@@ -108,7 +108,7 @@ for (const scenario of ['create', 'update', 'consistent', 'cname-failure', 'depl
     const counts = await domainFixture(page, scenario)
     await picx.open('/settings', { savedRepository: true, settingsWritable: true })
     await expect(page.locator('.deploy-item')).toContainText('未部署')
-    await expect(page.locator('.settings-sync-feedback')).toContainText('已同步')
+    await expect(page.locator('.settings-sync-feedback')).toBeHidden()
     const input = page.getByRole('textbox', { name: '自定义域名', exact: true })
     const save = page.getByRole('button', { name: '保存并部署', exact: true })
     const feedback = page.locator('.domain-save-feedback')

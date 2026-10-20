@@ -39,6 +39,22 @@ function assertPartition(result: Awaited<ReturnType<typeof uploadFilesToGitHub>>
   expect([...settled].sort()).toEqual([...result.attemptedUuids].sort())
 }
 describe('逐项结果与分支提交边界', () => {
+  it('批量上传仅为当前传输的图片开启 loading', async () => {
+    const files = [image('a.png'), image('b.png')]
+    const states: boolean[][] = []
+    vi.mocked(api.uploadBlobResult).mockImplementation(async () => {
+      states.push(files.map(file => file.uploadStatus.uploading))
+      return ok({ sha: 'blob-sha' })
+    })
+    vi.mocked(api.uploadHeadResult).mockImplementation(async () => {
+      expect(files.map(file => file.uploadStatus.uploading)).toEqual([false, false])
+      return ok({ commit: { sha: 'parent', commit: { tree: { sha: 'base-tree' } } } })
+    })
+    const result = await uploadFilesToGitHub(config(), files)
+    expect(states).toEqual([[true, false], [false, true]])
+    expect(result.successes).toHaveLength(2)
+    expect(files.map(file => file.uploadStatus.uploading)).toEqual([false, false])
+  })
   it('单图 contents 提交成功返回实际路径、体积与 commit，旧适配兼容', async () => {
     const first = image('a.png', 7)
     vi.mocked(api.uploadContentsResult).mockResolvedValue(ok({ content: { name: 'a.png', path: 'a.png', size: 7, sha: 'blob' }, commit: { sha: 'commit' } }))

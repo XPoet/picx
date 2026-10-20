@@ -8,7 +8,7 @@ import { usePicxStore } from '@/stores/picx-store'
 import { getOSName } from '@/utils/system'
 import { canDeploy, deployGhPages, deployment, useDeploymentEntry } from './deploy-status-bar.util'
 
-const props = withDefaults(defineProps<{ disabled?: boolean }>(), { disabled: false })
+const props = withDefaults(defineProps<{ disabled?: boolean, compact?: boolean }>(), { disabled: false, compact: false })
 useDeploymentEntry(() => !props.disabled && canDeploy.value)
 const store = usePicxStore(pinia)
 const source = useImageLinkSource()
@@ -24,12 +24,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="deploy-status-bar-box">
-    <div class="deploy-item" aria-live="polite">
+  <div class="deploy-status-bar-box" :class="{ compact }">
+    <div class="deploy-item">
       <div class="left-wrap">
-        <PicxIcon :name="icon" :size="18" />
+        <PicxIcon v-if="!compact" :name="icon" :size="18" />
         <strong>GitHub Pages</strong>
-        <span>{{ $t(`deployment.${state.phase}`) }}</span>
+        <span class="deployment-state"><PicxIcon v-if="compact" :name="icon" :size="14" />{{ $t(`deployment.${state.phase}`) }}</span>
       </div>
       <p v-if="state.phase === 'submitting'">
         {{ $t(`deployment.step_${state.step}`) }}
@@ -40,12 +40,11 @@ onMounted(() => {
       <p v-if="state.phase === 'waiting'">
         {{ $t('deployment.waiting_hint') }}
       </p>
-      <a v-if="state.phase === 'available'" :href="state.url" target="_blank" rel="noopener noreferrer">{{ $t('deployment.visit') }}<PicxIcon name="external-link" :size="16" /></a>
       <div class="deployment-actions">
-        <el-button type="primary" :disabled="disabled || !canDeploy" :loading="busy" @click="deployGhPages()">
-          <PicxIcon name="rocket" :size="18" />{{ $t(state.phase === 'available' ? 'deployment.redeploy' : 'settings_page.image_hosting_deploy.one_click_deploy') }}<kbd>{{ shortcut }} D</kbd>
+        <el-button type="primary" :plain="compact" :disabled="disabled || !canDeploy" :loading="busy" @click="deployGhPages()">
+          <PicxIcon v-if="!compact" name="rocket" :size="18" />{{ $t(compact ? 'upload_workspace.deploy' : state.phase === 'available' ? 'deployment.redeploy' : 'settings_page.image_hosting_deploy.one_click_deploy') }}<kbd v-if="!compact">{{ shortcut }} D</kbd>
         </el-button>
-        <el-button v-if="state.phase !== 'idle'" :disabled="disabled || busy" @click="deployment.check()">
+        <el-button v-if="state.phase !== 'idle' && (!compact || !['not-deployed', 'checking'].includes(state.phase))" :disabled="disabled || busy" @click="deployment.check()">
           {{ $t('deployment.check') }}
         </el-button>
       </div>

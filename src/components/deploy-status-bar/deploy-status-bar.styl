@@ -38,3 +38,45 @@
     }
   }
 }
+
+.deployment-state {
+  display inline-flex
+  align-items center
+  gap 6px
+}
+
+.compact .deploy-item {
+  gap 8px
+  padding 0
+  line-height 1.5
+
+  .left-wrap {
+    justify-content space-between
+
+    strong {
+      font-weight 500
+    }
+  }
+
+  .deployment-state {
+    color var(--picx-color-text-muted)
+  }
+
+  .deployment-actions {
+    display grid
+  }
+
+  .el-button {
+    width 100%
+    height 44px
+    border-radius 10px
+  }
+
+  .el-button--primary.is-plain {
+    opacity 1
+    --el-button-border-color var(--picx-color-primary-soft)
+    --el-button-disabled-text-color var(--picx-color-primary)
+    --el-button-disabled-bg-color var(--picx-color-primary-soft)
+    --el-button-disabled-border-color var(--picx-color-primary-soft)
+  }
+}
