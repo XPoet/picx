@@ -47,7 +47,7 @@ export function createNamedUploadImage(input: ImageHandleResult, settings: UserS
   item.base64.originalBase64 = input.base64
   item.fileInfo.originalFile = input.file
   item.filename.initName = getFilename(input.file.name)
-  item.filename.hash = input.uuid
+  item.filename.hash = input.uuid.replace(/-/g, '').slice(0, 6)
   applyUploadNaming(item, settings)
   return item
 }

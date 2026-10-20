@@ -502,12 +502,13 @@
     "new_name": "新檔名（不含副檔名）",
     "prefix": "檔名前綴",
     "save_name": "儲存檔名",
-    "invalid_name": "檔名不可空白，名稱和前綴不可包含路徑分隔符號。",
+    "invalid_name": "檔名不能為空，且不能包含路徑分隔符或換行。",
     "timestamp_exclusive": "時間戳模式不疊加重新命名、雜湊或前綴，請在圖床設定中切換命名規則。",
     "queue": "圖片佇列",
     "add_more": "繼續加入",
     "connect_to_upload": "連接 GitHub 後上傳",
-    "receiving": "正在讀取所選檔案，請等待檔案加入佇列後上傳。"
+    "receiving": "正在讀取所選檔案，請等待檔案加入佇列後上傳。",
+    "filename_preview": "最終檔名預覽"
   },
   "clipboard": {
     "title": "複製未完成",

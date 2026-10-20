@@ -502,12 +502,13 @@
     "new_name": "New name (without extension)",
     "prefix": "Filename prefix",
     "save_name": "Save filename",
-    "invalid_name": "The name cannot be empty. Names and prefixes cannot contain path separators.",
+    "invalid_name": "The filename cannot be empty or contain path separators or line breaks.",
     "timestamp_exclusive": "Timestamp naming excludes rename, hash and prefix. Change the naming rule in hosting settings.",
     "queue": "File queue",
     "add_more": "Add more",
     "connect_to_upload": "Connect GitHub to upload",
-    "receiving": "Reading selected files. Upload will be available when they enter the queue."
+    "receiving": "Reading selected files. Upload will be available when they enter the queue.",
+    "filename_preview": "Final filename preview"
   },
   "clipboard": {
     "title": "Copy did not complete",

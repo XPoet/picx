@@ -18,12 +18,15 @@ describe('命名规则共用实际产物', () => {
     expect(image('picture').filename.final).toBe('picture.png')
     expect(value.namingOverrides).toBeUndefined()
   })
-  it('原名、哈希与前缀组合使用完整稳定 uuid', () => {
+  it('原名、哈希与前缀组合使用稳定的 6 字符短哈希', () => {
     const value = image('a.b.png')
     const settings = createSettingsFixture().imageName
     Object.assign(settings, { enableHash: true, addPrefix: { enable: true, prefix: 'pic-' } })
     applyUploadNaming(value, settings)
-    expect(value.filename.final).toBe(`pic-a.b.${value.uuid}.png`)
+    expect(value.filename.hash).toMatch(/^[a-f0-9]{6}$/)
+    expect(value.filename.hash).toBe(value.uuid.replace(/-/g, '').slice(0, 6))
+    expect(value.uuid).toMatch(/^[a-f0-9-]{36}$/)
+    expect(value.filename.final).toBe(`pic-a.b.${value.filename.hash}.png`)
     const name = value.filename.final
     applyUploadNaming(value, settings)
     expect(value.filename.final).toBe(name)

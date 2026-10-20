@@ -502,12 +502,13 @@
     "new_name": "新文件名（不含扩展名）",
     "prefix": "文件名前缀",
     "save_name": "保存文件名",
-    "invalid_name": "文件名不能为空，名称和前缀不能包含路径分隔符。",
+    "invalid_name": "文件名不能为空，且不能包含路径分隔符或换行。",
     "timestamp_exclusive": "时间戳模式不叠加重命名、哈希或前缀，请在图床设置中切换命名规则。",
     "queue": "图片队列",
     "add_more": "继续添加",
     "connect_to_upload": "连接 GitHub 后上传",
-    "receiving": "正在读取所选文件，请等待文件入队后上传。"
+    "receiving": "正在读取所选文件，请等待文件入队后上传。",
+    "filename_preview": "最终文件名预览"
   },
   "clipboard": {
     "title": "复制未完成",

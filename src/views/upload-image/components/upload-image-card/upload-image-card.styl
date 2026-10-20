@@ -133,3 +133,142 @@
     }
   }
 }
+
+.upload-item-detail {
+  .el-dialog__header {
+    padding-bottom 20px
+  }
+
+  .el-dialog__footer {
+    padding-top 20px
+  }
+
+  &__preview {
+    display flex
+    align-items center
+    justify-content center
+    height clamp(200px, calc(100dvh - 540px), 420px)
+    overflow hidden
+    background var(--picx-color-surface-muted)
+    border-radius var(--picx-radius-control)
+
+    img
+    video {
+      display block
+      width 100%
+      height 100%
+      object-fit contain
+    }
+  }
+
+  &__info {
+    padding 20px 0
+  }
+
+  &__name {
+    margin 0 0 12px
+    color var(--picx-color-text)
+    font-size 16px
+    font-weight 600
+    line-height 1.5
+    overflow-wrap anywhere
+  }
+
+  &__sizes {
+    display flex
+    flex-wrap wrap
+    gap 12px 32px
+    margin 0
+    font-size 13px
+    line-height 1.6
+
+    > div {
+      display flex
+      align-items baseline
+      gap 8px
+    }
+
+    dt {
+      color var(--picx-color-text-muted)
+    }
+
+    dd {
+      margin 0
+      color var(--picx-color-text)
+      font-weight 500
+    }
+  }
+
+  &__form {
+    padding-top 12px
+    border-top 1px solid var(--picx-color-border)
+
+    .el-form-item {
+      margin 8px 0 24px
+    }
+
+    .el-form-item__label {
+      line-height 1.6
+    }
+
+    .el-input-group__append {
+      padding 0 14px
+      color var(--picx-color-text-muted)
+    }
+  }
+
+  &__options {
+    display flex
+    flex-wrap wrap
+    gap 8px 28px
+
+    .el-checkbox {
+      margin-right 0
+    }
+  }
+
+  &__hint {
+    margin 8px 0 12px
+    color var(--picx-color-text-muted)
+    font-size 13px
+    line-height 1.6
+  }
+
+  &__result {
+    display grid
+    gap 6px
+    margin-top 8px
+    padding 12px 16px
+    background var(--picx-color-bg)
+    border-radius var(--picx-radius-control)
+    font-size 13px
+    line-height 1.6
+
+    span {
+      color var(--picx-color-text-muted)
+    }
+
+    strong {
+      color var(--picx-color-text)
+      font-size 14px
+      font-weight 500
+      overflow-wrap anywhere
+    }
+  }
+}
+
+@media (max-width 767px) {
+  .upload-item-detail {
+    &__preview {
+      height clamp(200px, calc(100dvh - 540px), 320px)
+    }
+
+    &__info {
+      padding 16px 0
+    }
+
+    &__sizes {
+      gap 8px 20px
+    }
+  }
+}
