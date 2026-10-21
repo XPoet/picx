@@ -1,46 +1,81 @@
-import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
+import { ElButton, ElOption, ElSelect, ElSwitch } from 'element-plus'
+import { afterEach, describe, expect, it } from 'vitest'
 import UploadSettingsPanel from '@/views/upload-image/components/upload-settings-panel.vue'
 import { createSettingsFixture, fixtureRepository } from '../fixtures/ui-redesign'
 
+enableAutoUnmount(afterEach)
+
 function panel() {
-  const settings = createSettingsFixture()
-  return mount(UploadSettingsPanel, { props: { settings, target: fixtureRepository, directory: '/', displayPath: '/', pendingCount: 0, pendingBytes: 0, uploadedCount: 0, hasItems: false, busy: false, processing: false, canUpload: false, shortcut: 'Ctrl' }, global: { mocks: { $t: (key: string) => key }, stubs: { ImageLinkPreview: true, ElSelect: { props: ['modelValue', 'disabled'], emits: ['update:modelValue'], template: '<select :value="modelValue" :disabled="disabled" @change="$emit(\'update:modelValue\', $event.target.value)"><slot /></select>' }, ElOption: { props: ['value', 'label'], template: '<option :value="value">{{ label }}</option>' }, ElSwitch: { props: ['modelValue', 'disabled'], emits: ['update:modelValue'], template: '<button :disabled="disabled" @click="$emit(\'update:modelValue\', !modelValue)">switch</button>' }, ElButton: { props: ['disabled'], template: '<button :disabled="disabled"><slot /></button>' } } } })
+  return mount(UploadSettingsPanel, {
+    props: {
+      settings: createSettingsFixture(),
+      target: fixtureRepository,
+      directory: '/',
+      displayPath: '/',
+      pendingCount: 0,
+      pendingBytes: 0,
+      uploadedCount: 0,
+      hasItems: false,
+      busy: false,
+      processing: false,
+      canUpload: false,
+      shortcut: 'Ctrl',
+    },
+    global: {
+      mocks: { $t: (key: string) => key },
+      components: { ElButton, ElOption, ElSelect, ElSwitch },
+      stubs: { ImageLinkPreview: true, SettingsSyncFeedback: true },
+    },
+  })
 }
+
 describe('快捷设置展示契约', () => {
-  it('链接格式、格式预览和部署区域仅在有上传成功结果时显示，清空后隐藏', async () => {
+  it('成功后显示格式、预览与部署区域；格式只发事件，清空后隐藏', async () => {
     const wrapper = panel()
-    for (const uploadedCount of [0, 1, 0]) {
-      await wrapper.setProps({ uploadedCount })
-      expect(wrapper.find('.copy-format').exists()).toBe(uploadedCount > 0)
-      expect(wrapper.findComponent({ name: 'ImageLinkPreview' }).exists()).toBe(uploadedCount > 0)
-      expect(wrapper.find('.workspace-deployment').exists()).toBe(uploadedCount > 0)
+    const expectResults = (visible: boolean) => {
+      expect(wrapper.findComponent(ElSelect).exists()).toBe(visible)
+      expect(wrapper.findComponent({ name: 'ImageLinkPreview' }).exists()).toBe(visible)
+      expect(wrapper.find('.workspace-deployment').exists()).toBe(visible)
     }
-    wrapper.unmount()
-  })
-  it('旧转换关闭显示 raw；选择格式只发事件而不改 props，空队列不能上传', async () => {
-    const wrapper = panel()
-    expect(wrapper.find('select').exists()).toBe(false)
+    expectResults(false)
     await wrapper.setProps({ uploadedCount: 1 })
-    expect((wrapper.get('select').element as HTMLSelectElement).value).toBe('raw')
-    await wrapper.get('select').setValue('BBCode')
-    expect(wrapper.emitted('format')).toEqual([['BBCode']])
+    expectResults(true)
+    const format = wrapper.getComponent(ElSelect)
+    expect(format.props('modelValue')).toBe('raw')
+    format.vm.$emit('update:modelValue', 'HTML')
+    expect(wrapper.emitted('format')).toEqual([['HTML']])
     expect(wrapper.props('settings').imageLinkFormat.enable).toBe(false)
+    expect(wrapper.props('settings').imageLinkFormat.selected).toBe('BBCode')
     await wrapper.setProps({ uploadedCount: 0 })
-    expect(wrapper.findAll('button').filter(button => button.text() === 'upload')[0].attributes('disabled')).toBeDefined()
-    wrapper.unmount()
+    expectResults(false)
   })
-  it('压缩 / 水印 Props Down Events Up，上传锁禁用编辑，操作区显示简洁按钮', async () => {
+
+  it('空队列禁用操作，允许上传时发出事件；压缩、水印与上传锁由 props 控制', async () => {
     const wrapper = panel()
-    const buttons = wrapper.findAll('.preference-switch button')
-    await buttons[0].trigger('click')
-    await buttons[1].trigger('click')
+    const upload = wrapper.get('.workspace-actions .el-button--primary')
+    const reset = wrapper.get('.workspace-actions .el-button--warning')
+    expect(upload.attributes('disabled')).toBeDefined()
+    expect(reset.attributes('disabled')).toBeDefined()
+    await upload.trigger('click')
+    expect(wrapper.emitted('upload')).toBeUndefined()
+    await wrapper.setProps({ hasItems: true, pendingCount: 1, canUpload: true })
+    await upload.trigger('click')
+    await reset.trigger('click')
+    expect(wrapper.emitted('upload')).toEqual([[]])
+    expect(wrapper.emitted('reset')).toEqual([[]])
+
+    const switches = wrapper.findAllComponents(ElSwitch)
+    switches[0].vm.$emit('update:modelValue', true)
+    switches[1].vm.$emit('update:modelValue', false)
     expect(wrapper.emitted('compress')).toEqual([[true]])
     expect(wrapper.emitted('watermark')).toEqual([[false]])
-    await wrapper.setProps({ busy: true, displayPath: '/saved/target', pendingCount: 2, pendingBytes: 1536, uploadedCount: 1 })
-    expect(wrapper.find('.upload-totals').exists()).toBe(false)
-    expect(wrapper.find('.workspace-actions kbd').exists()).toBe(false)
-    expect(wrapper.get('select').attributes('disabled')).toBeDefined()
-    wrapper.unmount()
+    expect(wrapper.props('settings').compress.enable).toBe(false)
+    expect(wrapper.props('settings').watermark.enable).toBe(true)
+    await wrapper.setProps({ busy: true, uploadedCount: 1, canUpload: false })
+    expect(switches.every(component => component.props('disabled'))).toBe(true)
+    expect(wrapper.getComponent(ElSelect).props('disabled')).toBe(true)
+    expect(upload.attributes('disabled')).toBeDefined()
+    expect(reset.attributes('disabled')).toBeDefined()
   })
 })

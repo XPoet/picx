@@ -4,6 +4,7 @@ export default antfu(
   {
     type: 'app',
     ignores: [
+      '.playwright-mcp/**',
       'coverage/**',
       'dist/**',
       'node_modules/**',
