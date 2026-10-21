@@ -19,6 +19,7 @@ declare module 'vue' {
     CopyFallbackDialog: typeof import('./components/copy-fallback-dialog/copy-fallback-dialog.vue')['default']
     CopySourceRepo: typeof import('./components/copy-source-repo/copy-source-repo.vue')['default']
     DeployStatusBar: typeof import('./components/deploy-status-bar/deploy-status-bar.vue')['default']
+    ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
     ElCascader: typeof import('element-plus/es')['ElCascader']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']

@@ -399,11 +399,12 @@
   "connection": {
     "title": "Connect GitHub. Start your image hosting.",
     "description": "Connect your GitHub repository, upload images and get links to share.",
+    "logged_in_account": "Currently signed in: {account}",
     "steps_label": "Getting started",
     "steps": {
       "connect": "Connect GitHub",
-      "configure": "Change upload directory",
-      "share": "Upload and share"
+      "configure": "Upload images",
+      "share": "Generate image links"
     },
     "recommended": "Recommended",
     "oauth_description": "Install the PicX GitHub App and authorize your account without creating a Token.",

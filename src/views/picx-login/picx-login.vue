@@ -8,6 +8,10 @@ import { cleanConnectionQuery, connectionReturnTo, readAuthorizationCallback } f
 import { githubAppAuthorize, githubAppAuthorizeCallback, isAuthorizeExpire } from './picx-login.util'
 
 const { connection, busy, connect, restore } = useGithubConnection()
+const loggedInAccount = computed(() => {
+  const config = store.getters.getUserConfigInfo
+  return config.logined ? config.owner : ''
+})
 const tokenDraft = ref('')
 const tokenVisible = ref(false)
 const tokenRequired = ref(false)
@@ -112,21 +116,21 @@ watch(() => router.currentRoute.value.fullPath, () => {
 </script>
 
 <template>
-  <section class="login-container" aria-labelledby="connection-title">
+  <section class="login-container">
     <header class="connection-intro">
       <h1 id="connection-title">
         {{ $t('connection.title') }}
       </h1>
       <p>{{ $t('connection.description') }}</p>
-      <ol class="connection-steps" :aria-label="$t('connection.steps_label')">
+      <ol class="connection-steps">
         <li v-for="(step, index) in ['connect', 'configure', 'share']" :key="step" :class="{ active: index === 0 }">
-          <span class="step-number" aria-hidden="true">{{ index + 1 }}</span>
+          <span class="step-number">{{ index + 1 }}</span>
           {{ $t(`connection.steps.${step}`) }}
         </li>
       </ol>
     </header>
-    <div class="connection-cards" :aria-busy="pending">
-      <section class="connection-card" aria-labelledby="oauth-title">
+    <div class="connection-cards">
+      <section class="connection-card">
         <div class="card-heading">
           <span class="login-icon"><PicxIcon name="github" :size="28" /></span>
           <span class="recommended">{{ $t('connection.recommended') }}</span>
@@ -151,7 +155,7 @@ watch(() => router.currentRoute.value.fullPath, () => {
           </div>
         </div>
       </section>
-      <form class="connection-card" aria-labelledby="token-title" @submit.prevent="submitToken">
+      <form class="connection-card" @submit.prevent="submitToken">
         <div class="card-heading">
           <span class="login-icon"><PicxIcon name="key-round" :size="28" /></span>
         </div>
@@ -174,11 +178,9 @@ watch(() => router.currentRoute.value.fullPath, () => {
               autocapitalize="none"
               spellcheck="false"
               :disabled="pending"
-              :aria-invalid="Boolean(activeMethod === 'token' && errorKey)"
-              :aria-describedby="activeMethod === 'token' && errorKey ? 'token-description token-error' : 'token-description'"
               @input="tokenRequired = false"
             >
-            <button type="button" class="picx-icon-button" :disabled="pending" :aria-label="$t(tokenVisible ? 'connection.hide_token' : 'connection.show_token')" :aria-pressed="tokenVisible" @click="tokenVisible = !tokenVisible">
+            <button type="button" class="picx-icon-button" :disabled="pending" @click="tokenVisible = !tokenVisible">
               <PicxIcon :name="tokenVisible ? 'eye-off' : 'eye'" :size="18" />
             </button>
           </div>
@@ -197,6 +199,14 @@ watch(() => router.currentRoute.value.fullPath, () => {
         </div>
       </form>
     </div>
+    <p v-if="loggedInAccount" class="login-container__account">
+      <PicxIcon name="github" :size="20" />
+      <i18n-t keypath="connection.logged_in_account" tag="span">
+        <template #account>
+          <strong>{{ loggedInAccount }}</strong>
+        </template>
+      </i18n-t>
+    </p>
     <p v-if="installationReady" class="connection-progress" role="status">
       {{ $t('connection.installation_ready') }}
     </p>

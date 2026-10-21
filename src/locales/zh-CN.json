@@ -399,11 +399,12 @@
   "connection": {
     "title": "连接 GitHub，开启你的图床。",
     "description": "连接你的 GitHub 仓库，上传图片，随时获取可分享的链接。",
+    "logged_in_account": "当前已登录账号：{account}",
     "steps_label": "首次使用步骤",
     "steps": {
       "connect": "连接 GitHub",
-      "configure": "更改上传目录",
-      "share": "上传并分享"
+      "configure": "上传图片",
+      "share": "生成图片链接"
     },
     "recommended": "推荐",
     "oauth_description": "无需配置 Token，安装 PicX GitHub App 即可一键授权登录。",
