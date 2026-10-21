@@ -1,5 +1,6 @@
 .header-content-box {
-  position relative
+  position sticky
+  top 24px
   z-index var(--picx-layer-header)
   display flex
   flex-shrink 0
@@ -41,6 +42,7 @@
   }
 
   @media (max-width 1279px) {
+    top 16px
     justify-content space-between
     gap var(--picx-space-3)
     margin 16px 24px 0
