@@ -496,6 +496,7 @@
     "copy_name": "Copy link for {name}",
     "remove_name": "Remove {name}",
     "status_processing": "Processing",
+    "status_compressing": "Compressing",
     "status_ready": "Ready",
     "status_uploading": "Uploading",
     "status_confirming": "Awaiting commit",

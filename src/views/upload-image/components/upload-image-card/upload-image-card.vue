@@ -19,15 +19,17 @@
           </strong>
           <template v-else>
             <span>{{ formatFileBytes(uploaded ? imgObj.uploadedImg?.size : finalUploadFile(imgObj)?.size) }}</span>
-            <span>·</span><span>{{ $t('upload_workspace.size_unchanged') }}</span>
+            <template v-if="phase !== 'processing'">
+              <span>·</span><span>{{ $t('upload_workspace.size_unchanged') }}</span>
+            </template>
           </template>
         </div>
         <span class="queue-status" role="status">
-          <ElIcon v-if="imgObj.uploadStatus.uploading && !uploaded" class="is-loading" :size="12">
+          <ElIcon v-if="phase === 'processing' || phase === 'uploading'" class="is-loading" :size="12">
             <PicxIcon :name="statusIcon" :size="12" />
           </ElIcon>
           <PicxIcon v-else :name="statusIcon" :size="12" />
-          <span>{{ $t(`upload_workspace.status_${phase}`) }}</span>
+          <span>{{ $t(statusKey) }}</span>
         </span>
       </div>
       <div class="queue-actions">
@@ -128,6 +130,7 @@ const video = computed(() => isVideo(props.imgObj.fileInfo.originalFile?.type ??
 const src = computed(() => props.imgObj.base64.compressBase64 || props.imgObj.base64.watermarkBase64 || props.imgObj.base64.originalBase64)
 const compressed = computed(() => props.imgObj.fileInfo.compressFile !== null)
 const phase = computed(() => uploaded.value ? 'uploaded' : props.imgObj.uploadStatus.uploading ? 'uploading' : props.runtime?.phase === 'uploading' ? 'confirming' : props.runtime?.phase ?? 'processing')
+const statusKey = computed(() => phase.value === 'processing' && props.runtime?.phase === 'processing' && props.runtime.step === 'compress' ? 'upload_workspace.status_compressing' : `upload_workspace.status_${phase.value}`)
 const statusIcons: Record<QueueItemRuntime['phase'] | 'confirming', PicxIconName> = { uploaded: 'circle-check', uploading: 'loader-circle', confirming: 'clock-3', processing: 'loader-circle', failed: 'triangle-alert', ready: 'clock-3' }
 const statusIcon = computed(() => statusIcons[phase.value])
 const uploadFailure = computed(() => props.runtime?.phase === 'failed' && props.runtime.source === 'upload' ? props.runtime.result.error.kind : null)

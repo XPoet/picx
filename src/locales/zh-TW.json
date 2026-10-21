@@ -496,6 +496,7 @@
     "copy_name": "複製 {name} 的連結",
     "remove_name": "移除 {name}",
     "status_processing": "正在處理",
+    "status_compressing": "正在壓縮",
     "status_ready": "待上傳",
     "status_uploading": "正在上傳",
     "status_confirming": "等待提交",
