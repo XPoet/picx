@@ -14,7 +14,7 @@ async function openPwa(page: Page, baseURL: string | undefined) {
   const origin = new URL(baseURL).origin
   await page.context().route('**/*', route => new URL(route.request().url()).origin === origin ? route.continue() : route.abort('blockedbyclient'))
   await page.context().addInitScript((config) => {
-    sessionStorage.setItem('PICX_IH_GLOBAL_SETTINGS', JSON.stringify({ language: 'zh-CN', languageToggleTip: false, theme: 'light', showAnnouncement: false }))
+    sessionStorage.setItem('PICX_IH_GLOBAL_SETTINGS', JSON.stringify({ language: 'zh-CN', theme: 'light', showAnnouncement: false }))
     localStorage.setItem('PICX_IH_CONFIG', JSON.stringify(config))
   }, createRepositoryFixture())
   await page.goto('/images-hosting/#/?jump=0')

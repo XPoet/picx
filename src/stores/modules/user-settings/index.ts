@@ -8,7 +8,6 @@ import {
   CompressEncoderEnum,
   ElementPlusSizeEnum,
   ImageLinkTypeEnum,
-  LanguageEnum,
   ThemeModeEnum,
   WatermarkPositionEnum,
 } from '@/common/model'
@@ -16,6 +15,7 @@ import i18n from '@/plugins/vue/i18n'
 import { ImgLinkRuleActionsEnum } from '@/stores/modules/user-settings/types'
 import { imgLinkRuleVerification } from '@/stores/modules/user-settings/utils'
 import { deepAssignObject, getLocal, getSession, getUuid, setLocal, setSession } from '@/utils'
+import { getBrowserLanguage } from '@/utils/system'
 
 const initSettings: UserSettingsModel = {
   imageName: {
@@ -110,8 +110,7 @@ const initGlobalSettings = (): GlobalSettingsModel => {
     showAnnouncement: true,
     folded: false,
     elementPlusSize: ElementPlusSizeEnum.default,
-    language: LanguageEnum.zhCN,
-    languageToggleTip: true,
+    language: getBrowserLanguage(),
     theme: ThemeModeEnum.system,
   }
 

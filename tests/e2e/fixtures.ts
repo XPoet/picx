@@ -190,7 +190,6 @@ export const test = base.extend<{ picx: PicxFixture }>({
           window.name = 'picx-ui-fixture-seeded'
           sessionStorage.setItem('PICX_IH_GLOBAL_SETTINGS', JSON.stringify({
             language,
-            languageToggleTip: false,
             theme,
             showAnnouncement: false,
           }))
