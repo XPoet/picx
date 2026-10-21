@@ -5,8 +5,8 @@ test('设置页三个分区直接浏览，四档宽度与英文暗色完整显�
   await picx.open('/settings', { savedRepository: true })
   for (const width of [1440, 1024, 768, 375]) {
     await page.setViewportSize({ width, height: 900 })
-    for (const name of ['上传处理', '链接与分享', '部署与域名'])
-      await expect(page.getByRole('region', { name, exact: true })).toBeAttached()
+    for (const name of ['上传处理', '链接与分享', 'GitHub Pages 部署与自定义域名'])
+      await expect(page.getByRole('heading', { name, exact: true })).toBeAttached()
     await expect(page.locator('.el-collapse')).toHaveCount(0)
     const columns = await page.locator('.settings-grid').first().evaluate(element => getComputedStyle(element).gridTemplateColumns.split(' ').length)
     expect(columns).toBe(width < 768 ? 1 : 2)

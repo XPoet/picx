@@ -25,6 +25,8 @@ function reset() {
   error.value = ''
 }
 function edit(rule: ImageLinkRuleModel) {
+  if (!rule.editable)
+    return
   form.name = rule.name
   form.rule = rule.rule
   editing.value = rule.name
@@ -62,10 +64,10 @@ async function remove(rule: ImageLinkRuleModel) {
       <li v-for="rule in list" :key="rule.id">
         <strong>{{ rule.name }}</strong><code class="settings-preview">{{ rule.rule }}</code>
         <div class="link-rule-actions">
-          <el-button :aria-label="$t('link_rules.edit_named', { name: rule.name })" @click="edit(rule)">
+          <el-button :disabled="!rule.editable" :title="$t('link_rules.edit_named', { name: rule.name })" @click="edit(rule)">
             <PicxIcon name="pencil" :size="18" />{{ $t('link_rules.edit') }}
           </el-button>
-          <el-button :disabled="!rule.editable" :aria-label="$t('link_rules.delete_named', { name: rule.name })" @click="remove(rule)">
+          <el-button :disabled="!rule.editable" :title="$t('link_rules.delete_named', { name: rule.name })" @click="remove(rule)">
             <PicxIcon name="trash-2" :size="18" />{{ $t('delete') }}
           </el-button>
         </div>

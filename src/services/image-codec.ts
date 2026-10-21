@@ -1,4 +1,12 @@
-import type { CompressEncoderEnum } from '@/common/model'
+import { CompressEncoderEnum } from '@/common/model'
+
+const originalEncoders: Readonly<Record<string, CompressEncoderEnum | undefined>> = {
+  'image/png': CompressEncoderEnum.png,
+  'image/jpeg': CompressEncoderEnum.mozJPEG,
+  'image/jpg': CompressEncoderEnum.mozJPEG,
+  'image/webp': CompressEncoderEnum.webP,
+  'image/avif': CompressEncoderEnum.avif,
+}
 
 interface EncodeImageRequest {
   id: string
@@ -31,6 +39,11 @@ export function encodeImage(file: File, encoder: CompressEncoderEnum, signal?: A
       reject(signal.reason)
       return
     }
+    const resolvedEncoder = encoder === CompressEncoderEnum.original ? originalEncoders[file.type.toLowerCase()] : encoder
+    if (!resolvedEncoder) {
+      resolve(file)
+      return
+    }
     const worker = new Worker(new URL('../workers/image-codec.worker.ts', import.meta.url), {
       type: 'module',
     })
@@ -60,7 +73,7 @@ export function encodeImage(file: File, encoder: CompressEncoderEnum, signal?: A
 
       const nameWithoutExtension = file.name.replace(/\.[^.]+$/, '')
       resolve(
-        new File([event.data.buffer], `${nameWithoutExtension}.${event.data.extension}`, {
+        new File([event.data.buffer], encoder === CompressEncoderEnum.original ? file.name : `${nameWithoutExtension}.${event.data.extension}`, {
           type: event.data.mimeType,
           lastModified: file.lastModified,
         }),
@@ -75,7 +88,7 @@ export function encodeImage(file: File, encoder: CompressEncoderEnum, signal?: A
     const request: EncodeImageRequest = {
       id: requestId,
       file,
-      encoder,
+      encoder: resolvedEncoder,
     }
     worker.addEventListener('messageerror', () => {
       dispose()

@@ -62,10 +62,23 @@ describe('部署阶段与失效边界', () => {
   })
 })
 describe('pages 证据判定', () => {
-  function responses(status: string, commit: string) {
+  function responses(status: string, commit: string, updatedAt?: string) {
     vi.mocked(requestResult).mockReset()
-    vi.mocked(requestResult).mockResolvedValueOnce({ ok: true, data: { object: { sha: 'new-sha' } } }).mockResolvedValueOnce({ ok: true, data: { status, html_url: 'https://images.example.test/', source: { branch: 'gh-pages', path: '/' } } }).mockResolvedValueOnce({ ok: true, data: { status, commit } })
+    vi.mocked(requestResult).mockResolvedValueOnce({ ok: true, data: { object: { sha: 'new-sha' } } }).mockResolvedValueOnce({ ok: true, data: { status, html_url: 'https://images.example.test/', source: { branch: 'gh-pages', path: '/' } } }).mockResolvedValueOnce({ ok: true, data: { status, commit, updated_at: updatedAt } })
   }
+  it('成功部署使用 GitHub 构建时间，重复检查不会改成当前时间', async () => {
+    const deployedAt = '2026-10-20T08:30:00Z'
+    responses('built', 'new-sha', deployedAt)
+    const result = await queryPagesDeployment(target, 'new-sha')
+    expect(result).toEqual({ ...available, data: { ...available.data, deployedAt } })
+    const service = createDeploymentService({ target: () => target, query: vi.fn().mockResolvedValue(result), submit: async () => null })
+    expect(await service.check()).toMatchObject({ phase: 'available', deployedAt })
+    expect(await service.check()).toMatchObject({ phase: 'available', deployedAt })
+  })
+  it.each([undefined, '', 'not-a-date'])('缺失或无效构建时间 %s 不伪造部署日期', async (updatedAt) => {
+    responses('built', 'new-sha', updatedAt)
+    expect(await queryPagesDeployment(target, 'new-sha')).toEqual(available)
+  })
   it('旧构建、构建中和最新构建不存在均等待；匹配提交且 built 才可用', async () => {
     responses('built', 'old-sha')
     expect(await queryPagesDeployment(target, 'new-sha')).toEqual(waiting)

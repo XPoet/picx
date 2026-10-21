@@ -11,7 +11,7 @@ interface PagesInfo {
   cname?: string | null
   source?: { branch: string, path: string }
 }
-interface PagesBuild { status: string, commit: string }
+interface PagesBuild { status: string, commit: string, updated_at?: string }
 function isPagesInfo(value: unknown): value is PagesInfo {
   if (!value || typeof value !== 'object' || !('html_url' in value) || typeof value.html_url !== 'string' || !('status' in value) || (value.status !== null && typeof value.status !== 'string'))
     return false
@@ -23,7 +23,7 @@ function isPagesInfo(value: unknown): value is PagesInfo {
   return Boolean(source && typeof source === 'object' && 'branch' in source && typeof source.branch === 'string' && 'path' in source && typeof source.path === 'string')
 }
 function isPagesBuild(value: unknown): value is PagesBuild {
-  return Boolean(value && typeof value === 'object' && 'status' in value && typeof value.status === 'string' && 'commit' in value && typeof value.commit === 'string')
+  return Boolean(value && typeof value === 'object' && 'status' in value && typeof value.status === 'string' && 'commit' in value && typeof value.commit === 'string' && (!('updated_at' in value) || typeof value.updated_at === 'string'))
 }
 export function getPagesInfo(target: RepositoryIdentity) {
   return requestResult({ url: `/repos/${target.owner}/${target.repo}/pages`, method: 'GET', noCache: true }, isPagesInfo)
@@ -60,8 +60,9 @@ export async function queryPagesDeployment(target: RepositoryIdentity, expectedS
     return { ok: false, error: { kind: 'service', retryable: true } }
   if (pages.data.status !== 'built' || build.data.status !== 'built')
     return waiting
+  const deployedAt = build.data.updated_at && Number.isFinite(Date.parse(build.data.updated_at)) ? build.data.updated_at : undefined
   return safeSiteUrl(pages.data.html_url)
-    ? { ok: true, data: { phase: 'available', commitSha, url: pages.data.html_url } }
+    ? { ok: true, data: { phase: 'available', commitSha, url: pages.data.html_url, ...(deployedAt ? { deployedAt } : {}) } }
     : { ok: false, error: { kind: 'invalid-response', retryable: true } }
 }
 export async function configurePages(target: RepositoryIdentity, current: () => boolean, domain?: string): Promise<ApiResult<unknown>> {

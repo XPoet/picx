@@ -9,20 +9,19 @@ import { usePicxStore } from '@/stores/picx-store'
 
 const store = usePicxStore(pinia)
 const settings = computed(() => store.getUserSettings)
+const previewSettings = computed(() => ({
+  ...settings.value,
+  imageLinkFormat: { ...settings.value.imageLinkFormat, enable: true },
+}))
 const config = computed(() => store.getUserConfigInfo)
 const target = computed(() => ({ owner: config.value.owner, repo: config.value.repo, branch: config.value.branch }))
 const source = useImageLinkSource()
 const id = useId()
-function sourceChange(event: Event) {
-  if (!(event.target instanceof HTMLSelectElement))
-    return
-  const value = event.target.value
-  event.target.value = settings.value.imageLinkType.selected
+function sourceChange(value: string) {
   void source.select(value)
 }
-function formatChange(event: Event) {
-  if (event.target instanceof HTMLSelectElement)
-    store.SAVE_SETTINGS_CANDIDATE({ imageLinkFormat: { ...settings.value.imageLinkFormat, selected: event.target.value } })
+function formatChange(value: string) {
+  store.SAVE_SETTINGS_CANDIDATE({ imageLinkFormat: { ...settings.value.imageLinkFormat, selected: value } })
 }
 function saveRule(rule: ImageLinkRuleModel, originalName: string | undefined, done: (success: boolean) => void) {
   done(store.SAVE_IMAGE_LINK_RULE(rule, originalName))
@@ -30,7 +29,7 @@ function saveRule(rule: ImageLinkRuleModel, originalName: string | undefined, do
 </script>
 
 <template>
-  <section aria-labelledby="sharing-title" class="settings-section">
+  <section class="settings-section">
     <header class="settings-section-heading">
       <h1 id="sharing-title">
         {{ $t('settings_workspace.sharing') }}
@@ -40,11 +39,9 @@ function saveRule(rule: ImageLinkRuleModel, originalName: string | undefined, do
       <article class="settings-card">
         <label :for="`${id}-source`" class="settings-field-title">{{ $t('settings_page.link_rule.select_title') }}</label>
         <p>{{ $t('link_rules.source_desc') }}</p>
-        <select :id="`${id}-source`" :value="settings.imageLinkType.selected" @change="sourceChange">
-          <option v-for="rule in settings.imageLinkType.presetList" :key="rule.id" :value="rule.name">
-            {{ rule.name }}
-          </option>
-        </select>
+        <el-select :id="`${id}-source`" :model-value="settings.imageLinkType.selected" @change="sourceChange">
+          <el-option v-for="rule in settings.imageLinkType.presetList" :key="rule.id" :value="rule.name" :label="rule.name" />
+        </el-select>
         <p v-if="source.checking.value" role="status">
           {{ $t('deployment.checking') }}
         </p>
@@ -56,16 +53,14 @@ function saveRule(rule: ImageLinkRuleModel, originalName: string | undefined, do
       <article class="settings-card">
         <label :for="`${id}-format`" class="settings-field-title">{{ $t('settings_page.link_format.select_title') }}</label>
         <p>{{ $t('link_rules.format_desc') }}</p>
-        <select :id="`${id}-format`" :value="settings.imageLinkFormat.selected" @change="formatChange">
-          <option v-for="format in settings.imageLinkFormat.presetList" :key="format.name" :value="format.name">
-            {{ format.name }}
-          </option>
-        </select>
-        <ImageLinkPreview :target="target" :directory="config.selectedDir || '/'" :settings="settings" />
+        <el-select :id="`${id}-format`" :model-value="settings.imageLinkFormat.selected" @change="formatChange">
+          <el-option v-for="format in settings.imageLinkFormat.presetList" :key="format.name" :value="format.name" :label="format.name" />
+        </el-select>
+        <ImageLinkPreview :target="target" :directory="config.selectedDir || '/'" :settings="previewSettings" />
       </article>
     </div>
     <article class="settings-card settings-switch-row">
-      <div><h2>{{ $t('settings_page.link_format.switch_name') }}</h2><p>{{ $t('settings_workspace.format_desc') }}</p></div><el-switch :model-value="settings.imageLinkFormat.enable" :aria-label="$t('settings_page.link_format.switch_name')" @update:model-value="store.SAVE_SETTINGS_CANDIDATE({ imageLinkFormat: { ...settings.imageLinkFormat, enable: $event === true } })" />
+      <div><h2><label :for="`${id}-format-enabled`">{{ $t('settings_page.link_format.switch_name') }}</label></h2><p>{{ $t('settings_workspace.format_desc') }}</p></div><el-switch :id="`${id}-format-enabled`" :model-value="settings.imageLinkFormat.enable" @update:model-value="store.SAVE_SETTINGS_CANDIDATE({ imageLinkFormat: { ...settings.imageLinkFormat, enable: $event === true } })" />
     </article>
     <ImageLinkRuleConfig :rules="settings.imageLinkType.presetList" @save="saveRule" @remove="store.REMOVE_IMAGE_LINK_RULE" />
   </section>

@@ -35,37 +35,42 @@ async function save() {
 </script>
 
 <template>
-  <section aria-labelledby="deployment-title" class="settings-section">
+  <section class="settings-section deployment-settings">
     <header class="settings-section-heading">
       <h1 id="deployment-title">
         {{ $t('settings_workspace.deployment') }}
       </h1><p>{{ $t('settings_workspace.deployment_desc') }}</p>
     </header>
-    <div class="settings-grid">
-      <article class="settings-card">
-        <DeployStatusBar /><p>{{ $t('settings_workspace.deploy_desc') }}</p>
+    <div class="settings-grid deployment-settings__grid">
+      <article class="settings-card deployment-settings__status">
+        <DeployStatusBar />
       </article>
       <article class="settings-card">
         <form class="settings-domain-form" @submit.prevent="save">
-          <label :for="id" class="settings-field-title">{{ $t('settings_page.image_hosting_deploy.custom_domain_label') }}</label>
-          <div class="settings-domain-row">
-            <el-input :id="id" v-model="input" :placeholder="$t('settings_page.image_hosting_deploy.custom_domain_placeholder')" :disabled="busy" :aria-invalid="invalid" @input="dirty = true; invalid = false" />
-            <el-button type="primary" native-type="submit" :loading="feedback?.phase === 'running' && busy" :disabled="!canDeploy">
-              <PicxIcon name="download" :size="18" />{{ $t('domain_settings.save') }}
-            </el-button>
+          <div class="deployment-settings__domain-heading">
+            <span class="deployment-settings__symbol"><PicxIcon name="globe" :size="22" /></span>
+            <label :for="id" class="settings-field-title">{{ $t('settings_page.image_hosting_deploy.custom_domain_label') }}</label>
           </div>
-          <p>{{ $t('domain_settings.format_hint') }}</p>
+          <p>{{ $t('domain_settings.description') }}</p>
+          <el-input :id="id" v-model="input" :class="{ 'is-invalid': invalid }" :placeholder="$t('settings_page.image_hosting_deploy.custom_domain_placeholder')" :disabled="busy" @input="dirty = true; invalid = false" />
           <p data-testid="domain-normalized">
             {{ $t('domain_settings.normalized', { domain: normalized || $t('domain_settings.no_domain') }) }}
           </p>
           <p v-if="invalid" role="alert" class="settings-error">
             {{ $t('settings_page.image_hosting_deploy.custom_domain_invalid') }}
           </p>
-          <p v-if="pagesDomain" class="settings-preview">
-            {{ $t('domain_settings.dns', { pagesDomain }) }}
-          </p>
+          <div v-if="pagesDomain" class="deployment-settings__dns">
+            <PicxIcon name="info" :size="18" />
+            <p>{{ $t('domain_settings.dns', { pagesDomain }) }}</p>
+          </div>
+          <div class="deployment-settings__domain-footer">
+            <p>{{ $t('domain_settings.format_hint') }}</p>
+            <el-button type="primary" native-type="submit" :loading="feedback?.phase === 'running' && busy" :disabled="!canDeploy">
+              <PicxIcon name="check" :size="18" />{{ $t('domain_settings.save') }}
+            </el-button>
+          </div>
         </form>
-        <div v-if="feedback" class="domain-save-feedback" aria-live="polite" role="status">
+        <div v-if="feedback" class="domain-save-feedback" role="status">
           <p v-if="feedback.localSaved">
             {{ $t('domain_settings.local_saved', { domain: feedback.domain || $t('domain_settings.no_domain') }) }}
           </p>
@@ -94,9 +99,5 @@ async function save() {
 </template>
 
 <style scoped lang="stylus">
-.settings-domain-form, .domain-save-feedback {
-  display grid
-  gap 12px
-  min-width 0
-}
+@import "./deployment-settings.styl"
 </style>

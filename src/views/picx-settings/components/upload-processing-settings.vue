@@ -13,7 +13,7 @@ const store = usePicxStore(pinia)
 const settings = computed(() => store.getUserSettings)
 const prefix = ref(settings.value.imageName.addPrefix.prefix)
 const error = ref(false)
-const sample = createNamedUploadImage({ uuid: 'a8f3d2e1-1234-4567-89ab-0123456789ab', base64: '', file: new File([], 'coast.png', { type: 'image/png' }) }, settings.value.imageName)
+const sample = createNamedUploadImage({ uuid: 'a8f3d2e1-1234-4567-89ab-0123456789ab', base64: '', file: new File([], 'image.png', { type: 'image/png' }) }, settings.value.imageName)
 const preview = computed(() => {
   applyUploadNaming(sample, settings.value.imageName)
   return sample.filename.final

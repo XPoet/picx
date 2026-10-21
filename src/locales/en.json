@@ -126,6 +126,8 @@
       "switch_name": "Compress Images",
       "switch_desc": "Automatically compress images before upload, reducing upload and loading times. Highly recommended to enable.",
       "radio_group_title": "Choose Image Compression Algorithm",
+      "original": "Original format",
+      "original_desc": "Compress in the image’s original format without conversion",
       "radio_1": "WebP",
       "radio_1_desc": "Resulting format is webp, offering high compression rates, supported by most browsers",
       "radio_2": "MozJPEG",
@@ -529,7 +531,7 @@
     "retry": "Retry copy",
     "close": "Close",
     "preview": "Format preview",
-    "example_name": "example.png",
+    "example_name": "image.png",
     "no_preview": "Connect a repository and select a valid link rule to preview."
   },
   "settings_workspace": {
@@ -537,11 +539,11 @@
     "processing_desc": "Choose file naming and image processing before upload.",
     "sharing": "Links and sharing",
     "sharing_desc": "Choose a link source, copy format, or add your own link rules.",
-    "deployment": "Deployment and domain",
+    "deployment": "GitHub Pages deployment and custom domain",
     "deployment_desc": "Deploy your image repository to GitHub Pages and connect a domain.",
     "current_rule": "Current link rule",
     "format_desc": "Use the default copy format when enabled; otherwise copy the original URL.",
-    "deploy_desc": "The first build can take a few minutes. Once available, choose GitHub Pages as your link source.",
+    "deploy_desc": "Status is checked automatically when you open settings. The first deployment may take a few minutes.",
     "naming": "File naming",
     "naming_desc": "Choose how files are named after upload.",
     "naming_hash": "Original + hash",
@@ -564,21 +566,25 @@
     "submitting": "Submitting",
     "waiting": "Waiting for build",
     "available": "Available",
+    "deployed": "Deployed",
+    "last_deployed": "Last deployed:",
+    "time_unavailable": "No timestamp available",
     "failed": "Check or deployment failed",
     "step_cname": "Syncing CNAME",
     "step_branch": "Submitting gh-pages branch",
     "step_pages": "Configuring Pages source",
-    "waiting_hint": "This commit has not been confirmed as built. Check again later. Your current link source is preserved.",
+    "waiting_hint": "The deployment is not ready yet. Reopen settings to check its status automatically.",
     "check": "Check status",
     "rebuild_confirm": "Rebuild gh-pages in {owner}/{repo} from the current content of {branch}? This replaces existing Pages content and may affect the current site.",
     "empty_domain_confirm": "The domain setting is empty. Deployment will remove an existing CNAME file from the source branch, if present. Continue?",
     "redeploy": "Redeploy",
     "use_pages": "Use GitHub Pages links",
-    "using_pages": "Current link source: GitHub Pages"
+    "using_pages": "Current link source: GitHub Pages",
+    "description": "Publish your repository images to GitHub Pages and access them through your site URL."
   },
   "link_rules": {
     "title": "Custom link rules",
-    "description": "Use your own CDN or image URL. Added rules appear in link sources. Preset templates can be edited; presets cannot be deleted.",
+    "description": "Use your own CDN or image URL. Added rules appear in link sources. Built-in rules cannot be edited or deleted.",
     "name": "Rule name",
     "template": "Rule template",
     "name_placeholder": "For example: My CDN",
@@ -629,6 +635,7 @@
     "cancelled": "Cancelled. Your domain draft is preserved.",
     "failed_local": "Local domain saving failed. CNAME and deployment were not submitted.",
     "failed_cname": "CNAME sync failed. Deployment was not submitted. Correct the issue and retry.",
-    "failed_deployment": "Deployment did not complete. Check its status and retry. Completed saving steps are preserved."
+    "failed_deployment": "Deployment did not complete. Check its status and retry. Completed saving steps are preserved.",
+    "description": "Connect your own domain to share images through a personal address."
   }
 }

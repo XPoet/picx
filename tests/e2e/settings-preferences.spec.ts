@@ -12,7 +12,7 @@ test('旧命名、前缀草稿、编码器与水印参数在刷新后保留', as
   await prefix.fill('picx-')
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('PICX_IH_SETTINGS') ?? '{}').imageName.addPrefix.prefix)).toBe('legacy-')
   await prefix.press('Tab')
-  await expect(processing.getByTestId('naming-preview')).toHaveText('picx-coast.png')
+  await expect(processing.getByTestId('naming-preview')).toHaveText('picx-image.png')
   await processing.getByRole('button', { name: '时间戳', exact: true }).click()
   await expect(prefix).toBeDisabled()
   await expect(prefix).toHaveValue('picx-')

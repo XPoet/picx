@@ -17,6 +17,21 @@ beforeEach(() => {
   vi.mocked(deployment.check).mockReset()
 })
 describe('规则编辑与旧数据边界', () => {
+  it('内置规则禁止修改模板或名称，即使提交 editable 也不能解锁', () => {
+    const settingsBefore = JSON.stringify(store.getUserSettings)
+    const localBefore = localStorage.getItem('PICX_IH_SETTINGS')
+    const builtInRules = Object.values(store.getUserSettings.imageLinkType.presetList).filter(rule => !rule.editable)
+    expect(builtInRules).toHaveLength(5)
+    for (const rule of builtInRules) {
+      const changed = { ...rule, rule: 'https://changed.example.test/{{path}}', editable: true }
+      expect(store.SAVE_IMAGE_LINK_RULE(changed, rule.name)).toBe(false)
+      expect(store.SAVE_IMAGE_LINK_RULE({ ...changed, name: `${rule.name} renamed` }, rule.name)).toBe(false)
+      store.UPDATE_IMAGE_LINK_TYPE_RULE({ rule: changed })
+    }
+    expect(JSON.stringify(store.getUserSettings)).toBe(settingsBefore)
+    expect(localStorage.getItem('PICX_IH_SETTINGS')).toBe(localBefore)
+  })
+
   it('名称、重复、path、变量、协议与凭据 URL 校验', () => {
     const rules = store.getUserSettings.imageLinkType.presetList
     const rule = { name: 'New CDN', rule: 'https://cdn.example.test/{{path}}' }

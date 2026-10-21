@@ -126,6 +126,8 @@
       "switch_name": "是否压缩图片",
       "switch_desc": "开启后上传前会自动压缩图片，有效缩短图片上传和加载时间，强烈建议开启",
       "radio_group_title": "选择图片压缩算法",
+      "original": "原格式",
+      "original_desc": "按图片原有格式压缩，不转换格式",
       "radio_1": "webP",
       "radio_1_desc": "压缩后图片格式为 webp，压缩率较高，大多数浏览器支持",
       "radio_2": "mozJPEG",
@@ -529,7 +531,7 @@
     "retry": "重试复制",
     "close": "关闭",
     "preview": "格式预览",
-    "example_name": "示例图片.png",
+    "example_name": "image.png",
     "no_preview": "连接仓库并选择有效链接规则后可预览。"
   },
   "settings_workspace": {
@@ -537,11 +539,11 @@
     "processing_desc": "设置文件命名和上传前的图片处理方式。",
     "sharing": "链接与分享",
     "sharing_desc": "选择访问来源、复制格式，或添加自己的链接规则。",
-    "deployment": "部署与域名",
+    "deployment": "GitHub Pages 部署与自定义域名",
     "deployment_desc": "将图片仓库部署到 GitHub Pages，并按需绑定域名。",
     "current_rule": "当前链接规则",
     "format_desc": "开启后使用默认复制格式；关闭则复制原始 URL。",
-    "deploy_desc": "首次构建需要等待几分钟。部署可用后，可在链接来源中选择 GitHub Pages。",
+    "deploy_desc": "进入图床设置时自动检查状态，首次部署可能需要几分钟。",
     "naming": "文件命名",
     "naming_desc": "选择上传后文件的命名方式。",
     "naming_hash": "原名 + 哈希",
@@ -564,21 +566,25 @@
     "submitting": "正在提交",
     "waiting": "等待生效",
     "available": "已可用",
+    "deployed": "已部署",
+    "last_deployed": "上次部署时间：",
+    "time_unavailable": "暂无时间记录",
     "failed": "检查或部署失败",
     "step_cname": "正在同步 CNAME",
     "step_branch": "正在提交 gh-pages 分支",
     "step_pages": "正在配置 Pages 来源",
-    "waiting_hint": "尚未确认本次提交已构建完成。稍后可重新检查，当前链接来源保持不变。",
+    "waiting_hint": "部署尚未生效，重新进入图床设置时会自动检查状态。",
     "check": "检查状态",
     "rebuild_confirm": "将重建 {owner}/{repo} 的 gh-pages 分支，以 {branch} 当前内容替换已有 Pages 内容。此操作可能影响现有站点，是否继续？",
     "empty_domain_confirm": "当前域名设置为空。部署会移除源分支已有的 CNAME 文件（如有）。是否继续？",
     "redeploy": "重新部署",
     "use_pages": "使用 GitHub Pages 链接",
-    "using_pages": "当前链接来源：GitHub Pages"
+    "using_pages": "当前链接来源：GitHub Pages",
+    "description": "将仓库中的图片发布到 GitHub Pages，部署后即可通过站点地址访问。"
   },
   "link_rules": {
     "title": "自定义链接规则",
-    "description": "使用自己的 CDN 或图片访问地址，添加后可在链接来源中选择。预设规则可编辑模板，不可删除。",
+    "description": "使用自己的 CDN 或图片访问地址，添加后可在链接来源中选择。内置规则不可编辑或删除。",
     "name": "规则名称",
     "template": "规则模板",
     "name_placeholder": "例如：我的 CDN",
@@ -629,6 +635,7 @@
     "cancelled": "操作已取消，域名草稿已保留。",
     "failed_local": "本地域名保存失败，未同步 CNAME 或提交部署。",
     "failed_cname": "CNAME 同步失败，未提交部署。可修正后重试。",
-    "failed_deployment": "部署未完成。请查看部署状态后重试；已完成的保存步骤保持原样。"
+    "failed_deployment": "部署未完成。请查看部署状态后重试；已完成的保存步骤保持原样。",
+    "description": "绑定自己的域名，使用专属地址访问图片。"
   }
 }

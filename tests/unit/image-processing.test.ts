@@ -121,6 +121,46 @@ describe('图片处理服务与卡片无关', () => {
 })
 
 describe('worker 生命周期', () => {
+  it.each([
+    ['image/png', 'png', CompressEncoderEnum.png],
+    ['image/jpeg', 'jpeg', CompressEncoderEnum.mozJPEG],
+    ['image/jpg', 'jpg', CompressEncoderEnum.mozJPEG],
+    ['image/webp', 'webp', CompressEncoderEnum.webP],
+    ['image/avif', 'avif', CompressEncoderEnum.avif],
+  ])('原格式按 %s 选择编码器并保留文件名', async (mimeType, extension, encoder) => {
+    const postMessage = vi.fn<(request: { id: string, encoder: CompressEncoderEnum }) => void>()
+    const terminate = vi.fn()
+    class WorkerFixture extends EventTarget {
+      postMessage = postMessage
+      terminate = terminate
+      constructor() {
+        super()
+        postMessage.mockImplementation((request) => {
+          this.dispatchEvent(new MessageEvent('message', { data: { id: request.id, ok: true, buffer: new ArrayBuffer(1), mimeType: mimeType === 'image/jpg' ? 'image/jpeg' : mimeType, extension: extension === 'jpeg' ? 'jpg' : extension } }))
+        })
+      }
+    }
+    vi.stubGlobal('Worker', WorkerFixture)
+    const original = new File(['original'], `image.${extension}`, { type: mimeType, lastModified: 123 })
+    const compressed = await encodeImage(original, CompressEncoderEnum.original)
+    expect(postMessage).toHaveBeenCalledWith(expect.objectContaining({ encoder }))
+    expect(compressed.name).toBe(original.name)
+    expect(compressed.type).toBe(mimeType === 'image/jpg' ? 'image/jpeg' : mimeType)
+    expect(compressed.lastModified).toBe(123)
+    expect(terminate).toHaveBeenCalledOnce()
+  })
+
+  it('原格式不支持的文件保持原样，取消任务不启动 Worker', async () => {
+    const worker = vi.fn()
+    vi.stubGlobal('Worker', worker)
+    const file = new File(['original'], 'image.gif', { type: 'image/gif' })
+    expect(await encodeImage(file, CompressEncoderEnum.original)).toBe(file)
+    const controller = new AbortController()
+    controller.abort()
+    await expect(encodeImage(file, CompressEncoderEnum.original, controller.signal)).rejects.toBeDefined()
+    expect(worker).not.toHaveBeenCalled()
+  })
+
   it.each(['success', 'error', 'messageerror', 'post-error', 'abort'])('%s 结束后释放 Worker', async (mode) => {
     let id = ''
     class WorkerFixture extends EventTarget {

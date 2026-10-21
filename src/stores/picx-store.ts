@@ -187,7 +187,7 @@ function createDefaultUserSettings(): UserSettingsModel {
     },
     compress: {
       enable: true,
-      encoder: CompressEncoderEnum.webP,
+      encoder: CompressEncoderEnum.original,
     },
     management: {
       sort: ImageSortEnum.default,
@@ -540,7 +540,7 @@ export const usePicxStore = defineStore('picx', {
     SAVE_IMAGE_LINK_RULE(rule: ImageLinkRuleModel, originalName?: string): boolean {
       const current = this.getUserSettings.imageLinkType
       const previous = originalName ? current.presetList[originalName] : undefined
-      if ((originalName && !previous) || (previous && !previous.editable && rule.name !== originalName) || validateLinkRule(rule, current.presetList, originalName))
+      if ((originalName && !previous) || (previous && !previous.editable) || validateLinkRule(rule, current.presetList, originalName))
         return false
       const rules = { ...current.presetList }
       if (originalName)
@@ -597,6 +597,8 @@ export const usePicxStore = defineStore('picx', {
     },
 
     UPDATE_IMAGE_LINK_TYPE_RULE({ rule }: { rule: ImageLinkRuleModel }) {
+      if (!this.getUserSettings.imageLinkType.presetList[rule.name]?.editable)
+        return
       imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.edit, (verified: boolean) => {
         if (verified) {
           this.userSettingsModule.userSettings.imageLinkType.presetList[rule.name].rule = rule.rule

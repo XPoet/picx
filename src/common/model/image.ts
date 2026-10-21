@@ -115,6 +115,8 @@ export enum DeleteStatusEnum {
  * 图片压缩编码器枚举
  */
 export enum CompressEncoderEnum {
+  original = 'original',
+
   mozJPEG = 'mozJPEG',
 
   avif = 'avif',

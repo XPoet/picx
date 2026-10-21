@@ -12,7 +12,7 @@ const emit = defineEmits<{ encoder: [encoder: CompressEncoderEnum] }>()
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 
-const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.webP)
+const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.original)
 
 const onChangeEncoder = (encoder: string | number | boolean | undefined) => {
   if (typeof encoder === 'string' && Object.values<string>(CompressEncoderEnum).includes(encoder)) {
@@ -21,7 +21,8 @@ const onChangeEncoder = (encoder: string | number | boolean | undefined) => {
 }
 
 const reset = () => {
-  compressEncoder.value = CompressEncoderEnum.webP
+  compressEncoder.value = CompressEncoderEnum.original
+  emit('encoder', compressEncoder.value)
 }
 
 watch(() => props.modelValue, (value) => {
@@ -52,6 +53,10 @@ defineExpose({ reset })
       class="img-encoder-group"
       @change="onChangeEncoder"
     >
+      <el-radio :value="CompressEncoderEnum.original">
+        {{ $t('settings_page.img_compress.original') }}
+        <span class="desc">{{ $t('settings_page.img_compress.original_desc') }}</span>
+      </el-radio>
       <el-radio :value="CompressEncoderEnum.webP">
         {{ CompressEncoderEnum.webP }}
         <span class="desc">{{ $t('settings_page.img_compress.radio_1_desc') }}</span>

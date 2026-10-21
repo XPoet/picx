@@ -1,0 +1,75 @@
+.deployment-settings {
+  .settings-domain-form {
+    display flex
+    flex-direction column
+    gap 16px
+    min-width 0
+    height 100%
+  }
+
+  .deployment-settings__domain-heading {
+    display flex
+    align-items center
+    gap 12px
+    min-height 40px
+  }
+
+  .deployment-settings__symbol {
+    display inline-flex
+    flex-shrink 0
+    align-items center
+    justify-content center
+    width 40px
+    height 40px
+    color var(--picx-color-primary)
+    background var(--picx-color-primary-soft)
+    border-radius var(--picx-radius-control)
+  }
+
+  .deployment-settings__dns {
+    display flex
+    align-items flex-start
+    gap 10px
+    padding 14px 16px
+    color var(--picx-color-text-muted)
+    background var(--picx-color-surface-muted)
+    border-radius var(--picx-radius-control)
+
+    .picx-icon {
+      margin-top 2px
+    }
+  }
+
+  .deployment-settings__domain-footer {
+    display flex
+    flex-direction column
+    align-items flex-end
+    gap 16px
+    margin-top auto
+    padding-top 16px
+    border-top 1px solid var(--picx-color-border)
+
+    p {
+      align-self stretch
+      font-size 13px
+    }
+  }
+
+  .domain-save-feedback {
+    display grid
+    gap 8px
+    min-width 0
+    padding-top 16px
+    border-top 1px solid var(--picx-color-border)
+  }
+
+  .is-invalid :deep(.el-input__wrapper) {
+    box-shadow 0 0 0 1px var(--picx-color-danger) inset
+  }
+
+  @media (max-width 767px) {
+    .deployment-settings__domain-footer .el-button {
+      width 100%
+    }
+  }
+}

@@ -1,16 +1,48 @@
-.deploy-item {
-  display grid
-  gap 12px
+.deploy-status-bar {
   min-width 0
-  color var(--picx-color-text)
-  font-size 14px
-  line-height 1.6
+  height 100%
 
-  .left-wrap, .deployment-actions {
+  .deploy-item {
+    display flex
+    flex-direction column
+    gap 20px
+    min-width 0
+    height 100%
+    color var(--picx-color-text)
+    font-size 14px
+    line-height 1.6
+  }
+
+  .left-wrap {
     display flex
     flex-wrap wrap
     align-items center
-    gap 8px
+    justify-content space-between
+    gap 12px
+    min-height 40px
+  }
+
+  .deploy-status-bar__heading {
+    display flex
+    align-items center
+    gap 12px
+
+    strong {
+      font-size 17px
+      font-weight 600
+    }
+  }
+
+  .deploy-status-bar__symbol {
+    display inline-flex
+    flex-shrink 0
+    align-items center
+    justify-content center
+    width 40px
+    height 40px
+    color var(--picx-color-primary)
+    background var(--picx-color-primary-soft)
+    border-radius var(--picx-radius-control)
   }
 
   p {
@@ -18,12 +50,46 @@
     overflow-wrap anywhere
   }
 
-  a {
-    display inline-flex
-    align-items center
+  .deploy-status-bar__description, .deploy-status-bar__auto-check {
+    color var(--picx-color-text-muted)
+  }
+
+  .deploy-status-bar__time {
+    display grid
+    gap 6px
+    padding 16px
+    color var(--picx-color-text-muted)
+    background var(--picx-color-surface-muted)
+    border-radius var(--picx-radius-control)
+    overflow-wrap anywhere
+
+    time {
+      color var(--picx-color-text)
+      font-size 16px
+      font-weight 500
+      font-variant-numeric tabular-nums
+    }
+  }
+
+  .deploy-status-bar__footer {
+    display flex
+    flex-direction column
+    align-items flex-end
+    gap 16px
+    margin-top auto
+    padding-top 16px
+    border-top 1px solid var(--picx-color-border)
+  }
+
+  .deploy-status-bar__auto-check {
+    align-self stretch
+    font-size 13px
+  }
+
+  .deployment-actions {
+    display flex
+    flex-wrap wrap
     gap 8px
-    min-height 44px
-    color var(--picx-color-primary)
   }
 
   .el-button {
@@ -37,29 +103,49 @@
       white-space normal
     }
   }
+
+  .deployment-state {
+    display inline-flex
+    align-items center
+    gap 6px
+  }
+
+  @media (max-width 767px) {
+    .deployment-actions, .deployment-actions .el-button {
+      width 100%
+    }
+  }
 }
 
-.deployment-state {
-  display inline-flex
-  align-items center
-  gap 6px
-}
+.compact.deploy-status-bar {
+  height auto
 
-.compact .deploy-item {
-  gap 8px
-  padding 0
-  line-height 1.5
+  .deploy-item {
+    gap 8px
+    padding 0
+    height auto
+    line-height 1.5
+  }
 
   .left-wrap {
-    justify-content space-between
+    min-height 0
+  }
 
-    strong {
-      font-weight 500
-    }
+  .deploy-status-bar__heading strong {
+    font-size 14px
+    font-weight 500
   }
 
   .deployment-state {
     color var(--picx-color-text-muted)
+  }
+
+  .deploy-status-bar__footer {
+    align-items stretch
+    gap 0
+    margin-top 0
+    padding-top 0
+    border-top 0
   }
 
   .deployment-actions {

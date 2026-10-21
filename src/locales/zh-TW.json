@@ -126,6 +126,8 @@
       "switch_name": "是否壓縮圖片",
       "switch_desc": "開啟後上傳前會自動壓縮圖片，有效縮短圖片上傳與載入時間，強烈建議開啟",
       "radio_group_title": "選擇圖片壓縮演算法",
+      "original": "原格式",
+      "original_desc": "依圖片原有格式壓縮，不轉換格式",
       "radio_1": "webP",
       "radio_1_desc": "壓縮後圖片格式為 webp，壓縮率較高，大多數瀏覽器支援",
       "radio_2": "mozJPEG",
@@ -529,7 +531,7 @@
     "retry": "重試複製",
     "close": "關閉",
     "preview": "格式預覽",
-    "example_name": "範例圖片.png",
+    "example_name": "image.png",
     "no_preview": "連接儲存庫並選擇有效連結規則後可預覽。"
   },
   "settings_workspace": {
@@ -537,11 +539,11 @@
     "processing_desc": "設定檔案命名與上傳前的圖片處理方式。",
     "sharing": "連結與分享",
     "sharing_desc": "選擇存取來源、複製格式，或新增自己的連結規則。",
-    "deployment": "部署與網域",
+    "deployment": "GitHub Pages 部署與自訂網域",
     "deployment_desc": "將圖片儲存庫部署至 GitHub Pages，並視需要綁定網域。",
     "current_rule": "目前連結規則",
     "format_desc": "開啟後使用預設複製格式；關閉則複製原始 URL。",
-    "deploy_desc": "首次建置需要等待幾分鐘。部署可用後，可在連結來源中選擇 GitHub Pages。",
+    "deploy_desc": "進入圖床設定時自動檢查狀態，首次部署可能需要幾分鐘。",
     "naming": "檔案命名",
     "naming_desc": "選擇上傳後檔案的命名方式。",
     "naming_hash": "原名 + 雜湊",
@@ -564,21 +566,25 @@
     "submitting": "正在提交",
     "waiting": "等待生效",
     "available": "已可用",
+    "deployed": "已部署",
+    "last_deployed": "上次部署時間：",
+    "time_unavailable": "暫無時間記錄",
     "failed": "檢查或部署失敗",
     "step_cname": "正在同步 CNAME",
     "step_branch": "正在提交 gh-pages 分支",
     "step_pages": "正在設定 Pages 來源",
-    "waiting_hint": "尚未確認此次提交已建置完成。稍後可重新檢查，目前連結來源維持不變。",
+    "waiting_hint": "部署尚未生效，重新進入圖床設定時會自動檢查狀態。",
     "check": "檢查狀態",
     "rebuild_confirm": "將重建 {owner}/{repo} 的 gh-pages 分支，以 {branch} 目前內容取代既有 Pages 內容。此操作可能影響現有網站，是否繼續？",
     "empty_domain_confirm": "目前網域設定為空。部署會移除來源分支既有的 CNAME 檔案（如有）。是否繼續？",
     "redeploy": "重新部署",
     "use_pages": "使用 GitHub Pages 連結",
-    "using_pages": "目前連結來源：GitHub Pages"
+    "using_pages": "目前連結來源：GitHub Pages",
+    "description": "將儲存庫中的圖片發佈到 GitHub Pages，部署後即可透過網站位址存取。"
   },
   "link_rules": {
     "title": "自訂連結規則",
-    "description": "使用自己的 CDN 或圖片存取位址，新增後可在連結來源中選擇。預設規則可編輯範本，不可刪除。",
+    "description": "使用自己的 CDN 或圖片存取位址，新增後可在連結來源中選擇。內建規則不可編輯或刪除。",
     "name": "規則名稱",
     "template": "規則範本",
     "name_placeholder": "例如：我的 CDN",
@@ -629,6 +635,7 @@
     "cancelled": "操作已取消，網域草稿已保留。",
     "failed_local": "本機網域儲存失敗，未同步 CNAME 或提交部署。",
     "failed_cname": "CNAME 同步失敗，未提交部署。可修正後重試。",
-    "failed_deployment": "部署未完成。請查看部署狀態後重試；已完成的儲存步驟維持原樣。"
+    "failed_deployment": "部署未完成。請查看部署狀態後重試；已完成的儲存步驟維持原樣。",
+    "description": "綁定自己的網域，使用專屬位址存取圖片。"
   }
 }

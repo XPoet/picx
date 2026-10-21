@@ -111,8 +111,8 @@ for (const scenario of ['folders', 'mixed'] as const) {
 
 test('T041 设置三分区与内容自适应双列', async ({ page, picx }, info) => {
   await picx.open('/settings', { savedRepository: true })
-  for (const name of ['上传处理', '链接与分享', '部署与域名'])
-    await expect(page.getByRole('region', { name, exact: true })).toBeAttached()
+  for (const name of ['上传处理', '链接与分享', 'GitHub Pages 部署与自定义域名'])
+    await expect(page.getByRole('heading', { name, exact: true })).toBeAttached()
   await expect(page.locator('.settings-grid').first()).toHaveCSS('grid-template-columns', '620px 620px')
   await capture(page, info, '08-settings-1440')
 })

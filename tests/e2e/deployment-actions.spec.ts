@@ -1,8 +1,8 @@
 import process from 'node:process'
 import { createCloudSettingsFixture, createSettingsFixture, fixtureRepository } from '../fixtures/ui-redesign'
-import { expect, openNavigation, test } from './fixtures'
+import { expect, test } from './fixtures'
 
-test('两处共享部署、确认取消、防重与 D 快捷键，成功后显式选择来源', async ({ page, picx }, info) => {
+test('设置页重新部署、确认取消、防重与 D 快捷键，成功后更新时间并保留链接来源', async ({ page, picx }, info) => {
   let sha = 'fixture-old'
   let deletes = 0
   let creates = 0
@@ -55,14 +55,15 @@ test('两处共享部署、确认取消、防重与 D 快捷键，成功后显�
           release = resolve
         })
       }
-      await route.fulfill({ json: { status: 'built', commit: sha } })
+      await route.fulfill({ json: { status: 'built', commit: sha, updated_at: sha === 'fixture-new' ? '2026-10-21T02:00:00Z' : '2026-10-20T08:30:00Z' } })
       return
     }
     await route.fallback()
   })
   await picx.open('/settings', { savedRepository: true, savedCredential: true, connectionScenario: 'ready', settingsWritable: true })
   const deployment = page.locator('.deploy-item')
-  await expect(deployment).toContainText('已可用')
+  await expect(deployment.locator('.el-tag')).toHaveText('已部署')
+  await expect(deployment.locator('time')).toHaveAttribute('datetime', '2026-10-20T08:30:00Z')
   await deployment.getByRole('button', { name: /重新部署/ }).click()
   await expect(page.getByRole('dialog', { name: '提示', exact: true })).toContainText('替换已有 Pages 内容')
   await page.getByRole('button', { name: '取消', exact: true }).click()
@@ -76,18 +77,14 @@ test('两处共享部署、确认取消、防重与 D 快捷键，成功后显�
   await expect(deployment.getByRole('button', { name: /一键部署/ })).toBeDisabled()
   if (process.env.PICX_CAPTURE_TASK === 'T039' && info.project.name === 'desktop-chrome')
     await deployment.screenshot({ path: 'docs/UI/evidence/p5/t039-settings-waiting.png' })
-  await openNavigation(page)
-  await page.getByRole('link', { name: '上传图片', exact: true }).click()
-  await expect(deployment).toContainText('等待生效')
-  await expect(deployment.getByRole('button', { name: /一键部署/ })).toBeDisabled()
   expect(deletes).toBe(1)
   expect(creates).toBe(1)
   hold = false
   release()
-  await expect(deployment).toContainText('已可用')
+  await expect(deployment.locator('.el-tag')).toHaveText('已部署')
+  await expect(deployment.locator('time')).toHaveAttribute('datetime', '2026-10-21T02:00:00Z')
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('PICX_IH_SETTINGS') ?? '{}').imageLinkType.selected)).toBe('Fixture CDN')
-  await deployment.getByRole('button', { name: '使用 GitHub Pages 链接', exact: true }).click()
-  await expect(deployment).toContainText('当前链接来源：GitHub Pages')
+  await expect(deployment.getByRole('button', { name: '使用 GitHub Pages 链接', exact: true })).toHaveCount(0)
   if (process.env.PICX_CAPTURE_TASK === 'T039' && info.project.name === 'desktop-chrome') {
     await page.setViewportSize({ width: 375, height: 812 })
     await deployment.screenshot({ path: 'docs/UI/evidence/p5/t039-upload-available-375.png' })

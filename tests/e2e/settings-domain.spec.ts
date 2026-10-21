@@ -152,7 +152,7 @@ for (const scenario of ['create', 'update', 'consistent', 'cname-failure', 'depl
       }
       await page.setViewportSize({ width: 375, height: 812 })
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
-      await page.getByRole('region', { name: '部署与域名', exact: true }).screenshot({ path: `docs/UI/evidence/p5/t040-${scenario}-375.png` })
+      await page.locator('.deployment-settings').screenshot({ path: `docs/UI/evidence/p5/t040-${scenario}-375.png` })
     }
   })
 }
@@ -170,7 +170,7 @@ test('375px 设置页关键输入 16px，步进按钮至少 44px', async ({ page
   expect(controls.every(control => control.width >= 44 && control.height >= 44)).toBe(true)
 })
 
-for (const variant of [{ language: 'en', title: 'Deployment and domain' }, { language: 'zh-TW', title: '部署與網域' }] as const) {
+for (const variant of [{ language: 'en', title: 'GitHub Pages deployment and custom domain' }, { language: 'zh-TW', title: 'GitHub Pages 部署與自訂網域' }] as const) {
   test(`P5 设置页 ${variant.language} 暗色 375px 完整呈现`, async ({ page, picx }, info) => {
     await page.setViewportSize({ width: 375, height: 812 })
     await picx.open('/settings', { savedRepository: true, language: variant.language, theme: 'dark' })
