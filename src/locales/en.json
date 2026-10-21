@@ -229,22 +229,6 @@
     "text_3": "If PicX is helpful to you, feel free to appreciate the author and support open source.",
     "text_4": "Disclaimer: Do not use PicX to upload images that violate local laws. The author is not responsible for any consequences."
   },
-  "region": {
-    "CN": "Mainland China",
-    "HK": "Hong Kong, China",
-    "MO": "Macau, China",
-    "TW": "Taiwan, China",
-    "SG": "Singapore",
-    "JP": "Japan",
-    "US": "United States",
-    "NL": "Netherlands"
-  },
-  "languages": {
-    "zh-CN": "Simplified Chinese",
-    "zh-TW": "Traditional Chinese",
-    "en": "English"
-  },
-  "toggle_language_msg": "Detected that your IP belongs to {region}. Do you want to switch to {language}?",
   "authorization": {
     "msg_1": "GitHub OAuth authorization has expired. Please reauthorize.",
     "msg_2": "PicX APP is not installed on GitHub, no operational permissions currently.",

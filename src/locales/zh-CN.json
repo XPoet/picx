@@ -229,22 +229,6 @@
     "text_3": "如果 PicX 对你有帮助，欢迎赞赏作者，支持开源。",
     "text_4": "郑重声明：请勿使用 PicX 上传违反你当地法律的图片，所造成的一切后果与作者无关。"
   },
-  "region": {
-    "CN": "中国大陆",
-    "HK": "中国香港",
-    "MO": "中国澳门",
-    "TW": "中国台湾",
-    "SG": "新加坡",
-    "JP": "日本",
-    "US": "美国",
-    "NL": "荷兰"
-  },
-  "languages": {
-    "zh-CN": "中文简体",
-    "zh-TW": "中文繁体",
-    "en": "英文"
-  },
-  "toggle_language_msg": "检测到你的 IP 所属地为{region}，是否切换{language}？",
   "authorization": {
     "msg_1": "GitHub OAuth 授权登录已过期，请重新授权",
     "msg_2": "未在 GitHub 安装 PicX APP，暂无操作权限",

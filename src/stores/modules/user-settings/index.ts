@@ -4,7 +4,6 @@ import {
   ElementPlusSizeEnum,
   ImageLinkRuleModel,
   ImageLinkTypeEnum,
-  LanguageEnum,
   ThemeModeEnum,
   UserSettingsModel,
   WatermarkPositionEnum
@@ -18,6 +17,7 @@ import UserSettingsStateTypes, {
 import { LS_SETTINGS, SS_GLOBAL_SETTINGS } from '@/common/constant'
 import { imgLinkRuleVerification } from '@/stores/modules/user-settings/utils'
 import i18n from '@/plugins/vue/i18n'
+import { getBrowserLanguage } from '@/utils/system'
 
 const initSettings: UserSettingsModel = {
   imageName: {
@@ -106,8 +106,7 @@ const initGlobalSettings = (): GlobalSettingsModel => {
     showAnnouncement: true,
     folded: false,
     elementPlusSize: ElementPlusSizeEnum.default,
-    language: LanguageEnum.zhCN,
-    languageToggleTip: true,
+    language: getBrowserLanguage(),
     theme: ThemeModeEnum.system,
     useCloudSettings: false
   }

@@ -12,7 +12,7 @@ import zhTW from 'element-plus/lib/locale/lang/zh-tw'
 import en from 'element-plus/lib/locale/lang/en'
 import setThemeMode from '@/utils/set-theme-mode'
 import { useStore } from '@/stores'
-import { getLanguageByRegion, getRegionByIP, setWindowTitle, throttle } from '@/utils'
+import { setWindowTitle, throttle } from '@/utils'
 import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
 import MainContainer from '@/views/main-container/main-container.vue'
 import router from '@/router'
@@ -22,7 +22,7 @@ const instance = getCurrentInstance()
 const store = useStore()
 const globalSettings = computed(() => store.getters.getGlobalSettings).value
 const elementPlusSize = ref<ElementPlusSizeEnum>(ElementPlusSizeEnum.default)
-const elementPlusLocale = ref(zhCN) // zhCN | zhTW | en
+const elementPlusLocale = ref(en) // zhCN | zhTW | en
 
 const elementPlusSizeHandle = (width: number) => {
   if (width <= 700) {
@@ -57,77 +57,13 @@ const setLanguage = (language: LanguageEnum) => {
     elementPlusLocale.value = zhTW
     // eslint-disable-next-line no-underscore-dangle
     window.pluginWebUpdateNotice_?.setLocale('zh_TW')
-  } else if (language === LanguageEnum.en) {
+  } else {
     instance!.proxy!.$i18n.locale = 'en'
     elementPlusLocale.value = en
     // eslint-disable-next-line no-underscore-dangle
     window.pluginWebUpdateNotice_?.setLocale('en_US')
-  } else {
-    elementPlusLocale.value = zhCN
-    instance!.proxy!.$i18n.locale = 'zh-CN'
-    // eslint-disable-next-line no-underscore-dangle
-    window.pluginWebUpdateNotice_?.setLocale('zh_CN')
   }
   setWindowTitle(router.currentRoute.value.meta.title as string)
-}
-
-const setLanguageByIP = () => {
-  if (!store.getters.getGlobalSettings.languageToggleTip) {
-    return
-  }
-
-  getRegionByIP().then((region) => {
-    const language = getLanguageByRegion(region)
-
-    if (language !== globalSettings.language) {
-      const confirmTxt = instance?.proxy?.$t(`confirm`, language)
-      const msgTxt = instance?.proxy?.$t(`toggle_language_msg`, language, {
-        region: instance?.proxy?.$t(`region.${region}`, language),
-        language: instance?.proxy?.$t(`languages.${language}`, language)
-      })
-
-      const msgInstance = ElMessage({
-        customClass: 'custom-message-container',
-        duration: 0,
-        offset: 20,
-        type: 'info',
-        message: `<div class="content-box language">
-                    <span class="msg">${msgTxt}</span>
-                    <spna class="btn-box">
-                      <span class="confirm btn">${confirmTxt}</span>
-                    </spna>
-                  </div>`,
-        dangerouslyUseHTMLString: true,
-        showClose: true,
-        onClose() {
-          store.dispatch('SET_GLOBAL_SETTINGS', {
-            languageToggleTip: false
-          })
-        }
-      })
-
-      document
-        .querySelector('.custom-message-container .language .confirm')
-        ?.addEventListener('click', () => {
-          setLanguage(language)
-          store.dispatch('SET_USER_SETTINGS', {
-            language
-          })
-          store.dispatch('SET_GLOBAL_SETTINGS', {
-            language
-          })
-          msgInstance.close()
-        })
-    }
-  })
-}
-
-const initSetLanguage = () => {
-  // 初始化设置
-  setLanguage(globalSettings.language)
-
-  // 根据 IP 自动设置
-  setLanguageByIP()
 }
 
 const init = () => {
@@ -140,7 +76,7 @@ const init = () => {
   )
 
   setThemeMode()
-  initSetLanguage()
+  setLanguage(globalSettings.language)
   initGithubAuthorize()
 }
 
