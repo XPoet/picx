@@ -2,7 +2,7 @@ import { Buffer } from 'node:buffer'
 import { writeFile } from 'node:fs/promises'
 import process from 'node:process'
 import { fixturePngBase64 } from '../fixtures/ui-redesign'
-import { expect, test } from './fixtures'
+import { expect, openNavigation, test } from './fixtures'
 import { mockClipboard, mockUploadRequests } from './upload-fixture'
 
 test('T043 五档宽度与低高度下主页面及关键操作完整', async ({ page, picx }, info) => {
@@ -35,7 +35,7 @@ test('T043 键盘完成连接、目录、上传、复制、管理和弹窗焦点
   await token.focus()
   await page.keyboard.type('fixture-invalid-credential')
   await page.keyboard.press('Enter')
-  await expect(page.getByRole('status').filter({ hasText: 'GitHub 已连接' })).toBeVisible()
+  await expect(page.locator('.repository-context .repository-name')).toBeVisible()
   const configure = page.getByRole('button', { name: '更改上传目录', exact: true })
   await configure.focus()
   await page.keyboard.press('Enter')
@@ -60,21 +60,22 @@ test('T043 键盘完成连接、目录、上传、复制、管理和弹窗焦点
   await directory.getByRole('button', { name: '保存目录', exact: true }).press('Enter')
   await expect(directory).toBeHidden()
   await page.locator('.getting-images-container input[type=file]').setInputFiles({ name: 'keyboard.png', mimeType: 'image/png', buffer: Buffer.from(fixturePngBase64, 'base64') })
-  const upload = page.getByRole('button', { name: /^上传 1 个文件/ })
+  const upload = page.getByRole('button', { name: /^上传\s*\(/ })
   await expect(upload).toBeEnabled()
   await upload.focus()
   await page.keyboard.press('Enter')
-  await expect(page.getByRole('region', { name: '上传结果', exact: true })).toContainText('本批上传完成')
+  await expect(page.locator('.upload-image-card-container.uploaded')).toHaveCount(1)
   await page.getByRole('button', { name: '复制全部链接', exact: true }).press('Enter')
   expect(await page.evaluate(() => document.documentElement.dataset.copied)).toContain('keyboard.png')
-  await page.getByRole('button', { name: '查看图片管理', exact: true }).press('Enter')
+  await openNavigation(page)
+  await page.locator('#picx-primary-navigation').getByRole('link', { name: '图床管理', exact: true }).press('Enter')
   await expect(page.locator('.image-card')).toHaveCount(2)
   await page.getByRole('checkbox', { name: '选择 keyboard.png', exact: true }).focus()
   await page.keyboard.press('Space')
   await expect(page.locator('.selector-wrapper').getByRole('status')).toContainText('已选 1 / 2 项')
   await page.getByRole('button', { name: '复制所选链接', exact: true }).press('Enter')
   expect(await page.evaluate(() => document.documentElement.dataset.copied)).toContain('keyboard.png')
-  const targets = await page.locator('.media-more, .copy-link, .media-checkbox').evaluateAll(elements => elements.map(element => ({ width: element.getBoundingClientRect().width, height: element.getBoundingClientRect().height })))
+  const targets = await page.locator('.media-more, .copy-link, .media-select').evaluateAll(elements => elements.map(element => ({ width: element.getBoundingClientRect().width, height: element.getBoundingClientRect().height })))
   for (const target of targets) {
     expect(target.width).toBeGreaterThanOrEqual(44)
     expect(target.height).toBeGreaterThanOrEqual(44)

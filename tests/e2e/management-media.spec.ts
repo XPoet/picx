@@ -25,9 +25,9 @@ test('常驻选择、真实体积与尺寸、键盘预览和菜单', async ({ pa
   await more.click()
   await expect(page.getByRole('menuitem', { name: '文件属性', exact: true })).toBeVisible()
   await page.getByRole('menuitem', { name: '文件属性', exact: true }).click()
-  await expect(page.getByRole('dialog', { name: '属性', exact: true })).toContainText('coast.png')
+  await expect(page.getByRole('dialog', { name: '文件属性', exact: true })).toContainText('coast.png')
   await page.keyboard.press('Escape')
-  await expect(page.getByRole('dialog', { name: '属性', exact: true })).toBeHidden()
+  await expect(page.getByRole('dialog', { name: '文件属性', exact: true })).toBeHidden()
   if (info.project.name === 'desktop-chrome' && process.env.PICX_CAPTURE_TASK === 'T031') {
     await page.screenshot({ path: 'docs/UI/evidence/p4/t031-media-1440.png', fullPage: true })
     await page.setViewportSize({ width: 375, height: 812 })
@@ -54,9 +54,9 @@ test('加载失败可重试，未知元数据省略，完整名称可查看，MP
   await expect(unknown.locator('.media-metadata')).not.toContainText('0 × 0')
   const longName = 'a-very-long-photo-name-that-can-be-opened-in-properties.png'
   await page.getByRole('article', { name: longName, exact: true }).getByRole('button', { name: longName, exact: true }).click()
-  await expect(page.getByRole('dialog', { name: '属性', exact: true })).toContainText(longName)
+  await expect(page.getByRole('dialog', { name: '文件属性', exact: true })).toContainText(longName)
   await page.keyboard.press('Escape')
-  await page.getByRole('button', { name: '进入文件夹 albums', exact: true }).click()
+  await page.getByTitle('进入文件夹 albums', { exact: true }).click()
   const video = page.getByRole('article', { name: 'clip.mp4', exact: true }).locator('video')
   await expect(video).not.toHaveAttribute('autoplay')
   expect(await video.evaluate((element: HTMLVideoElement) => element.paused)).toBe(true)

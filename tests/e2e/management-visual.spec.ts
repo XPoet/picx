@@ -17,7 +17,7 @@ test('最终混合根目录和目录内批量选择画面', async ({ page, manag
   await expect(page.locator('.media-metadata').first()).toContainText('1 × 1')
   if (info.project.name === 'desktop-chrome' && process.env.PICX_CAPTURE_TASK === 'T033')
     await page.screenshot({ path: 'docs/UI/evidence/p4/t033-mixed-1440.png', fullPage: true })
-  await page.getByRole('button', { name: '进入文件夹 albums', exact: true }).click()
+  await page.getByTitle('进入文件夹 albums', { exact: true }).click()
   await page.getByRole('checkbox', { name: '选择 lake.png', exact: true }).check()
   await expect(page.locator('.selector-wrapper').getByRole('status')).toContainText('已选 1 / 2 项')
   if (info.project.name === 'desktop-chrome' && process.env.PICX_CAPTURE_TASK === 'T033')

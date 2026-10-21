@@ -25,7 +25,7 @@ test('T041 登录双卡片、品牌与 72px 胶囊导航', async ({ page, picx }
 
 test('T041 上传空态、上下文和目录四模式与异常补充状态', async ({ page, picx }, info) => {
   await picx.open('/upload', { savedCredential: true, connectionScenario: 'ready' })
-  await expect(page.getByRole('status').filter({ hasText: 'GitHub 已连接' })).toBeVisible()
+  await expect(page.locator('.repository-context .repository-name')).toBeVisible()
   await expect(page.locator('.upload-page-container')).toHaveCSS('grid-template-columns', '920px 320px')
   await expect(page.locator('.upload-stage')).toHaveCSS('height', '408px')
   await capture(page, info, '02-upload-empty-1440')
@@ -33,7 +33,7 @@ test('T041 上传空态、上下文和目录四模式与异常补充状态', asy
   const dialog = page.getByRole('dialog', { name: '配置上传目录', exact: true })
   await expect(dialog.locator('.el-dialog')).toHaveCSS('width', '760px')
   for (const [index, mode] of ['仓库目录', '根目录', '日期目录', '新建目录'].entries()) {
-    await dialog.getByRole('radio', { name: mode, exact: true }).check()
+    await dialog.locator('.directory-modes').getByText(mode, { exact: true }).click()
     if (mode === '仓库目录') {
       await expect(dialog.getByRole('button', { name: 'albums', exact: true })).toBeVisible()
     }
@@ -43,7 +43,7 @@ test('T041 上传空态、上下文和目录四模式与异常补充状态', asy
     }
     await capture(page, info, `03-directory-${index}-1440`)
   }
-  await dialog.getByRole('radio', { name: '仓库目录', exact: true }).check()
+  await dialog.getByText('仓库目录', { exact: true }).click()
   await dialog.getByRole('button', { name: '展开目录 empty', exact: true }).click()
   await expect(dialog.getByText('此目录没有子目录，可选择上级目录或新建目录。', { exact: true })).toBeVisible()
   await capture(page, info, '03-directory-empty-1440')
@@ -65,7 +65,7 @@ test('T041 待上传队列、处理 Worker 与完成结果', async ({ page, picx
   const remote = await mockUploadRequests(page)
   await mockClipboard(page)
   await picx.open('/upload', { savedCredential: true, connectionScenario: 'ready' })
-  await expect(page.getByRole('status').filter({ hasText: 'GitHub 已连接' })).toBeVisible()
+  await expect(page.locator('.repository-context .repository-name')).toBeVisible()
   const base64 = await page.evaluate(() => {
     const canvas = document.createElement('canvas')
     canvas.width = canvas.height = 512
@@ -84,11 +84,11 @@ test('T041 待上传队列、处理 Worker 与完成结果', async ({ page, picx
     { name: 'sample.png', mimeType: 'image/png', buffer: Buffer.from(fixturePngBase64, 'base64') },
   ])
   await expect(page.locator('.uploaded-item')).toHaveCount(2)
-  await expect(page.getByRole('button', { name: /^上传 2 个文件/ })).toBeEnabled({ timeout: 20_000 })
-  await expect(page.locator('.upload-stage')).toHaveCSS('grid-template-columns', '244px 674px')
+  await expect(page.getByRole('button', { name: /^上传\s*\(/ })).toBeEnabled({ timeout: 20_000 })
+  await expect(page.locator('.upload-stage')).toHaveCSS('grid-template-columns', '280px 624px')
   await capture(page, info, '04-queue-1440')
-  await page.getByRole('button', { name: /^上传 2 个文件/ }).click()
-  await expect(page.getByRole('region', { name: '上传结果', exact: true }).getByRole('heading')).toHaveText('本批上传完成')
+  await page.getByRole('button', { name: /^上传\s*\(/ }).click()
+  await expect(page.locator('.upload-image-card-container.uploaded')).toHaveCount(2)
   expect(remote.calls.ref).toBe(1)
   await expect(page.locator('.upload-image-card-container.uploaded')).toHaveCount(2)
   await capture(page, info, '05-uploaded-1440')
@@ -97,11 +97,11 @@ test('T041 待上传队列、处理 Worker 与完成结果', async ({ page, picx
 for (const scenario of ['folders', 'mixed'] as const) {
   test(`T041 管理 ${scenario} 与目录内选择`, async ({ page, management }, info) => {
     await management.open({ scenario })
-    await expect(page.getByRole('button', { name: '进入文件夹 albums', exact: true })).toBeVisible()
+    await expect(page.getByTitle('进入文件夹 albums', { exact: true })).toBeVisible()
     await expect(page.locator('.image-card')).toHaveCount(scenario === 'folders' ? 0 : 1)
     await capture(page, info, `06-management-${scenario}-1440`)
     if (scenario === 'mixed') {
-      await page.getByRole('button', { name: '进入文件夹 albums', exact: true }).click()
+      await page.getByTitle('进入文件夹 albums', { exact: true }).click()
       await page.getByRole('checkbox', { name: '选择 lake.png', exact: true }).check()
       await expect(page.locator('.selector-wrapper').getByRole('status')).toContainText('已选 1 / 2 项')
       await capture(page, info, '07-management-selected-1440')

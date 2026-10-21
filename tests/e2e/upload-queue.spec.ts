@@ -18,7 +18,7 @@ test('轻量队列支持长名、同名、大量文件、视频与键盘详情�
   await expect(page.locator('.uploaded-item')).toHaveCount(24)
   const row = page.locator('.uploaded-item').first()
   await expect(row.getByRole('status')).toContainText('待上传')
-  const details = row.getByRole('button', { name: `查看 ${long} 的详情`, exact: true }).last()
+  const details = row.getByTitle(`查看 ${long} 的详情`, { exact: true }).last()
   await details.focus()
   await page.keyboard.press('Enter')
   const dialog = page.getByRole('dialog', { name: '文件详情', exact: true })

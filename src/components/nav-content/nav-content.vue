@@ -1,4 +1,50 @@
+<template>
+  <div ref="container" class="nav-content-container" @keydown.esc.stop.prevent="closeMenu(true)">
+    <button
+      ref="menuButton"
+      type="button"
+      class="menu-toggle picx-icon-button"
+      :title="menuOpen ? $t('nav.close_menu') : $t('nav.open_menu')"
+      @click="toggleMenu"
+    >
+      <PicxIcon :name="menuOpen ? 'x' : 'menu'" />
+    </button>
+    <div v-show="!compact || menuOpen" class="nav-panel">
+      <nav id="picx-primary-navigation" ref="navigation">
+        <ul class="nav-menu-list">
+          <li v-for="nav in visibleItems" :key="nav.name">
+            <a
+              v-if="'href' in nav"
+              :href="nav.href"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="nav-menu-item"
+              @click="closeMenu(true)"
+            >
+              <span>{{ $t(nav.name) }}</span>
+              <PicxIcon name="external-link" :size="16" />
+            </a>
+            <RouterLink
+              v-else
+              :to="nav.to"
+              class="nav-menu-item"
+              :class="{ active: route.path === nav.path }"
+              @click="onNavClick($event, nav.path)"
+            >
+              {{ $t(nav.name) }}
+            </RouterLink>
+          </li>
+        </ul>
+      </nav>
+      <div class="header-tools">
+        <slot />
+      </div>
+    </div>
+  </div>
+</template>
+
 <script setup lang="ts">
+/* eslint vue/block-order: ["error", { order: ["template", "script", "style"] }] */
 import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
@@ -70,42 +116,6 @@ onUnmounted(() => {
   document.removeEventListener('pointerdown', onOutsidePointer)
 })
 </script>
-
-<template>
-  <div ref="container" class="nav-content-container" @keydown.esc.stop.prevent="closeMenu(true)">
-    <button
-      ref="menuButton"
-      type="button"
-      class="menu-toggle picx-icon-button"
-      :aria-label="menuOpen ? $t('nav.close_menu') : $t('nav.open_menu')"
-      :aria-expanded="menuOpen"
-      aria-controls="picx-primary-navigation"
-      @click="toggleMenu"
-    >
-      <PicxIcon :name="menuOpen ? 'x' : 'menu'" />
-    </button>
-    <div v-show="!compact || menuOpen" class="nav-panel">
-      <nav id="picx-primary-navigation" ref="navigation" :aria-label="$t('nav.label')">
-        <ul class="nav-menu-list">
-          <li v-for="nav in visibleItems" :key="nav.path">
-            <RouterLink
-              :to="nav.to"
-              class="nav-menu-item"
-              :class="{ active: route.path === nav.path }"
-              :aria-current="route.path === nav.path ? 'page' : undefined"
-              @click="onNavClick($event, nav.path)"
-            >
-              {{ $t(nav.name) }}
-            </RouterLink>
-          </li>
-        </ul>
-      </nav>
-      <div class="header-tools">
-        <slot />
-      </div>
-    </div>
-  </div>
-</template>
 
 <style scoped lang="stylus">
 @import "nav-content.styl"

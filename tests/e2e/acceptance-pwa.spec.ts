@@ -53,14 +53,14 @@ test('T047 生产 manifest、实际 SW 控制、离线打开与恢复提示', as
   await page.reload()
   await expect(page.locator('.upload-page-container')).toBeVisible()
   await expect(page.locator('.workspace-notice').filter({ hasText: '当前离线' })).toBeVisible()
-  await expect(page.getByRole('button', { name: /^上传 0 个文件/ })).toBeDisabled()
+  await expect(page.getByRole('button', { name: /^上传\s*\(/ })).toBeDisabled()
   if (info.project.name === 'desktop-chrome' && process.env.PICX_CAPTURE_TASK === 'T047') {
     await page.screenshot({ path: 'docs/UI/evidence/p6/t047-offline-upload.png', fullPage: true })
     await writeFile('docs/UI/evidence/p6/t047-manifest-cache.json', JSON.stringify({ manifest, cachedResources: urls.length, remoteCredentialsCached: false }, null, 2))
   }
   await page.context().setOffline(false)
   await expect(page.locator('.workspace-notice').filter({ hasText: '当前离线' })).toHaveCount(0)
-  await expect(page.getByRole('complementary', { name: '设置', exact: true }).getByRole('button', { name: '重试同步', exact: true })).toBeEnabled()
+  await expect(page.locator('.upload-settings-panel').getByRole('button', { name: '重试同步', exact: true })).toBeEnabled()
 })
 
 test('T047 两次实际构建之间的 SW 激活与旧资源缓存升级', async ({ page, baseURL }, info) => {

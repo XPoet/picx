@@ -1,17 +1,6 @@
-<script setup lang="ts">
-import { computed } from 'vue'
-import PicxIcon from '@/components/picx-icon/picx-icon.vue'
-import { directoryBreadcrumbs } from '@/utils/management-utils'
-
-const props = defineProps<{ path: string, loading: boolean, busy: boolean }>()
-const emit = defineEmits<{ browse: [path: string], reload: [] }>()
-const breadcrumbs = computed(() => directoryBreadcrumbs(props.path))
-const parent = computed(() => breadcrumbs.value.at(-2)?.path ?? '/')
-</script>
-
 <template>
   <div class="tools-bar">
-    <button class="directory-back" type="button" :disabled="busy || path === '/'" @click="emit('browse', parent)">
+    <button class="directory-back" type="button" :title="$t('management_page.workspace.back')" :disabled="busy || path === '/'" @click="emit('browse', parent)">
       <PicxIcon name="arrow-left" />
     </button>
     <nav class="directory-breadcrumbs" tabindex="0">
@@ -33,6 +22,18 @@ const parent = computed(() => breadcrumbs.value.at(-2)?.path ?? '/')
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+/* eslint vue/block-order: ["error", { order: ["template", "script", "style"] }] */
+import { computed } from 'vue'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
+import { directoryBreadcrumbs } from '@/utils/management-utils'
+
+const props = defineProps<{ path: string, loading: boolean, busy: boolean }>()
+const emit = defineEmits<{ browse: [path: string], reload: [] }>()
+const breadcrumbs = computed(() => directoryBreadcrumbs(props.path))
+const parent = computed(() => breadcrumbs.value.at(-2)?.path ?? '/')
+</script>
 
 <style scoped lang="stylus">
 @import './tools-bar.styl'
