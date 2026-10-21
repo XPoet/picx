@@ -87,11 +87,11 @@ onMounted(() => {
           <div class="queue-heading">
             <h2>{{ $t('upload_workspace.queue') }}</h2><span>{{ $t('upload_workspace.queue_count', { count: queue.length }) }}</span>
           </div>
-          <div class="queue-list">
+          <el-scrollbar class="queue-scrollbar" view-class="queue-list">
             <div v-for="item in queue" :key="item.uuid" class="uploaded-item">
               <UploadImageCard :img-obj="item" :runtime="runtime[item.uuid]" :naming="settings.imageName" :disabled="uploading" @remove="remove" @retry="retryProcessing" @edit-name="updateName" @copy="copyItem" />
             </div>
-          </div>
+          </el-scrollbar>
           <el-button class="queue-add" :disabled="uploading" @click="gettingImages?.selectFiles()">
             <PicxIcon name="plus" :size="18" />{{ $t('upload_workspace.add_more') }}
           </el-button>
