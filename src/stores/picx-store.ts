@@ -1055,6 +1055,7 @@ export const usePicxStore = defineStore('picx', {
       this.UPLOAD_IMG_LIST_RESET()
       localStorage.clear()
       sessionStorage.clear()
+      this.userSettingsModule.globalSettings.language = getBrowserLanguage()
     },
   },
 })

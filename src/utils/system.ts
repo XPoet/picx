@@ -29,7 +29,7 @@ export const getOSName = (): 'mac' | 'win' | 'linux' | null => {
  * 根据浏览器首选语言获取界面语言，未匹配时使用英文
  */
 export const getBrowserLanguage = (): LanguageEnum => {
-  const language = (navigator.language || navigator.languages?.[0] || '').toLowerCase()
+  const language = (navigator.languages?.[0] || navigator.language || '').toLowerCase()
   const [code, ...subtags] = language.split('-')
 
   if (code !== 'zh') {

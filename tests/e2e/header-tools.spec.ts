@@ -1,5 +1,7 @@
 import { expect, openNavigation, test } from './fixtures'
 
+test.use({ locale: 'zh-CN' })
+
 const languages = [
   { value: 'zh-CN', trigger: '选择语言', option: '中文简体', theme: '主题', announcement: '网站公告', title: '上传图片', update: 'zh_CN', close: /关闭/ },
   { value: 'zh-TW', trigger: '選擇語言', option: '中文繁體', theme: '主題', announcement: '網站公告', title: '上傳圖片', update: 'zh_TW', close: /關閉/ },
