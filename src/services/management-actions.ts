@@ -1,17 +1,19 @@
 import type { UploadedImageModel } from '@/common/model'
 import type { RepositoryIdentity } from '@/common/model/github-connection'
-import type { ManagementBatchResult } from '@/common/model/management'
+import type { ManagementBatchResult, ManagementOperation } from '@/common/model/management'
 import { ref, shallowRef } from 'vue'
 import { DirModeEnum } from '@/common/model'
 import i18n from '@/plugins/vue/i18n'
 import router from '@/router'
 import { pinia, store } from '@/stores'
 import { usePicxStore } from '@/stores/picx-store'
-import { copyImageLink, getGitHubRepoDirURL } from '@/utils'
+import { batchCopyImageLinks, copyImageLink, getGitHubRepoDirURL } from '@/utils'
 import { isValidManagementName } from '@/utils/management-utils'
 import { changeManagementDirectory, deleteManagementMedia, relocateManagementMedia } from './management'
 
 export const managementBusy = ref(false)
+export const managementOperation = shallowRef<ManagementOperation | null>(null)
+export const managementPropertiesImage = shallowRef<UploadedImageModel | null>(null)
 export const managementDeleteResult = shallowRef<ManagementBatchResult | null>(null)
 const t = i18n.global.t
 const target = (): RepositoryIdentity => {
@@ -21,6 +23,32 @@ const target = (): RepositoryIdentity => {
 const sameRepository = (repository: RepositoryIdentity) => {
   const config = store.getters.getUserConfigInfo
   return config.logined && config.owner === repository.owner && config.repo === repository.repo && config.branch === repository.branch
+}
+
+export async function withManagementLoading<T>(operation: ManagementOperation, run: () => Promise<T>): Promise<T> {
+  managementOperation.value = { ...operation, media: operation.media?.map(({ path, sha }) => ({ path, sha })) }
+  try {
+    return await run()
+  }
+  finally {
+    managementOperation.value = null
+  }
+}
+
+export function isManagementMediaLoading(image: Pick<UploadedImageModel, 'path' | 'sha'>): boolean {
+  return managementOperation.value?.media?.some(item => item.path === image.path && item.sha === image.sha) ?? false
+}
+
+export async function copyManagementLinks(images: readonly UploadedImageModel[], batch = false) {
+  if (managementBusy.value || !images.length)
+    return
+  managementBusy.value = true
+  try {
+    return await withManagementLoading({ kind: 'copy', media: images }, () => batch ? batchCopyImageLinks([...images]) : copyImageLink(images[0]))
+  }
+  finally {
+    managementBusy.value = false
+  }
 }
 
 export async function deleteMediaWithConfirmation(images: readonly UploadedImageModel[]): Promise<ManagementBatchResult | null> {
@@ -33,7 +61,7 @@ export async function deleteMediaWithConfirmation(images: readonly UploadedImage
     await ElMessageBox.confirm(t('management_page.workspace.deleteSelectionConfirm', { total: snapshot.length, dir: snapshot[0].dir }), t('management_page.workspace.batchDelete'), { type: 'warning', confirmButtonText: t('confirm'), cancelButtonText: t('cancel') })
     if (!sameRepository(repository))
       return null
-    const result = await deleteManagementMedia(repository, snapshot)
+    const result = await withManagementLoading({ kind: 'delete', media: snapshot }, () => deleteManagementMedia(repository, snapshot))
     if (!sameRepository(repository))
       return result
     managementDeleteResult.value = result
@@ -53,11 +81,12 @@ export async function deleteMediaWithConfirmation(images: readonly UploadedImage
 }
 
 export function showMediaProperties(image: UploadedImageModel) {
-  const lines = [image.name, image.path, ...(image.size > 0 ? [`${Number((image.size / 1024).toFixed(2))} KB`] : [])]
-  return ElMessageBox.confirm(lines.join('\n'), t('management_page.property'), { confirmButtonText: t('confirm'), showCancelButton: false }).catch(() => undefined)
+  managementPropertiesImage.value = { ...image }
 }
 
 export function openMediaMove(image: UploadedImageModel) {
+  if (managementBusy.value)
+    return
   store.commit('SET_UPLOAD_AREA_STATE', { isShowMoveImageDialog: true, moveImageInfo: image })
 }
 
@@ -71,7 +100,7 @@ export async function renameMedia(image: UploadedImageModel) {
     if (!sameRepository(repository))
       return
     managementBusy.value = true
-    const response = await relocateManagementMedia(repository, image, image.dir, result.value)
+    const response = await withManagementLoading({ kind: 'rename', media: [image] }, () => relocateManagementMedia(repository, image, image.dir, result.value))
     if (!sameRepository(repository))
       return
     if (!response.ok) {
@@ -108,7 +137,7 @@ export async function editDirectory(path: string, action: 'rename' | 'delete') {
     if (!sameRepository(repository))
       return
     managementBusy.value = true
-    const response = await changeManagementDirectory(repository, path, name)
+    const response = await withManagementLoading({ kind: action, directory: path }, () => changeManagementDirectory(repository, path, name))
     if (!sameRepository(repository))
       return
     if (!response.ok) {
@@ -131,12 +160,22 @@ export function openManagementRepository(path: string) {
 }
 
 export async function uploadToManagementDirectory(path: string) {
-  const result = usePicxStore(pinia).SAVE_UPLOAD_DIRECTORY({ dirMode: path === '/' ? DirModeEnum.rootDir : DirModeEnum.repoDir, selectedDir: path, selectedDirList: path === '/' ? [] : path.split('/') })
-  if (!result.ok) {
-    ElMessage.error(t(`management_page.workspace.${result.reason === 'upload-busy' ? 'uploadBusy' : 'uploadSaveFailed'}`))
+  if (managementBusy.value)
     return
+  managementBusy.value = true
+  try {
+    await withManagementLoading({ kind: 'upload', directory: path }, async () => {
+      const result = usePicxStore(pinia).SAVE_UPLOAD_DIRECTORY({ dirMode: path === '/' ? DirModeEnum.rootDir : DirModeEnum.repoDir, selectedDir: path, selectedDirList: path === '/' ? [] : path.split('/') })
+      if (!result.ok) {
+        ElMessage.error(t(`management_page.workspace.${result.reason === 'upload-busy' ? 'uploadBusy' : 'uploadSaveFailed'}`))
+        return
+      }
+      await router.push('/upload')
+    })
   }
-  await router.push('/upload')
+  finally {
+    managementBusy.value = false
+  }
 }
 
 export { copyImageLink }

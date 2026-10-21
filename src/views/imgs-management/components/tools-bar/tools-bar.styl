@@ -61,20 +61,20 @@
       white-space nowrap
     }
 
-    [aria-current='page'] {
+    .is-current {
       color var(--picx-color-text)
     }
+  }
+
+  .el-button {
+    height auto
+    margin-left 0
   }
 
   .directory-tools {
     display flex
     align-items center
     gap 8px
-  }
-
-  .directory-upload {
-    gap 8px
-    border 1px solid var(--picx-color-border)
   }
 
   @media (max-width 767px) {

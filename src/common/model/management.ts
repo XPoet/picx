@@ -1,4 +1,11 @@
+import type { UploadedImageModel } from '@/common/model/image'
 import type { ApiFailure } from '@/utils/request/types'
+
+export interface ManagementOperation {
+  kind: 'delete' | 'rename' | 'move' | 'copy' | 'upload'
+  media?: readonly Pick<UploadedImageModel, 'path' | 'sha'>[]
+  directory?: string
+}
 
 export type ManagementMediaAction = 'copy' | 'property' | 'rename' | 'move' | 'delete' | 'repository'
 

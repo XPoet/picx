@@ -4,19 +4,19 @@ import type { DirObject } from '@/stores/modules/dir-image-list/types'
 import { ContextmenuEnum } from '@/common/directive/types'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 
-defineProps<{ folderObj: DirObject, busy: boolean }>()
+defineProps<{ folderObj: DirObject, busy: boolean, loading?: boolean, loadingText?: string }>()
 const emit = defineEmits<{ open: [path: string], action: [action: ManagementDirectoryAction] }>()
 </script>
 
 <template>
-  <div v-contextmenu="{ type: ContextmenuEnum.dir, dir: folderObj.dir }" class="folder-card" :class="{ active: folderObj.active }">
-    <button type="button" :disabled="busy" :aria-label="$t('management_page.workspace.openFolder', { name: folderObj.dir })" :title="folderObj.dir" @click="emit('open', folderObj.dirPath)">
+  <div v-loading="loading" v-contextmenu="{ type: ContextmenuEnum.dir, dir: folderObj.dir }" :element-loading-text="loadingText" class="folder-card" :class="{ active: folderObj.active }">
+    <button type="button" :disabled="busy" :title="folderObj.dir" @click="emit('open', folderObj.dirPath)">
       <PicxIcon name="folder" :size="44" />
       <span class="folder-name">{{ folderObj.dir }}</span>
       <span class="folder-kind">{{ $t('management_page.workspace.folder') }}</span>
     </button>
     <el-dropdown class="folder-menu" trigger="click" @command="emit('action', $event)">
-      <button type="button" :disabled="busy" :aria-label="$t('management_page.workspace.moreDirectory', { name: folderObj.dir })">
+      <button type="button" :disabled="busy">
         <PicxIcon name="ellipsis" />
       </button>
       <template #dropdown>

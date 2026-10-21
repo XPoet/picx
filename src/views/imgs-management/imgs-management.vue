@@ -8,13 +8,13 @@ import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { useImageUploadTime } from '@/composables/use-image-upload-time'
 import { useManagementDirectory } from '@/composables/use-management-directory'
 import { useManagementSelection } from '@/composables/use-management-selection'
-import { deleteMediaWithConfirmation, editDirectory, managementBusy, managementDeleteResult, openManagementRepository, openMediaMove, renameMedia, showMediaProperties } from '@/services/management-actions'
+import { copyManagementLinks, deleteMediaWithConfirmation, editDirectory, isManagementMediaLoading, managementBusy, managementDeleteResult, managementOperation, managementPropertiesImage, openManagementRepository, openMediaMove, renameMedia, showMediaProperties } from '@/services/management-actions'
 import { store } from '@/stores'
-import { batchCopyImageLinks, copyImageLink } from '@/utils'
 import { filterManagementContent, sortDirList, sortImageList } from '@/utils/management-utils'
 import FolderCard from './components/folder-card/folder-card.vue'
 import ImageCard from './components/image-card/image-card.vue'
 import ImageSelector from './components/image-selector/image-selector.vue'
+import MediaPropertiesDialog from './components/media-properties-dialog/media-properties-dialog.vue'
 import MoveImageDialog from './components/move-image-dialog/move-image-dialog.vue'
 import ToolsBar from './components/tools-bar/tools-bar.vue'
 
@@ -54,7 +54,7 @@ watch([images, sortMode], ([items, mode]) => {
     backfillUploadTime(items)
 }, { immediate: true })
 async function batchCopy() {
-  await batchCopyImageLinks([...selection.selectedImages.value])
+  await copyManagementLinks(selection.selectedImages.value, true)
 }
 async function batchDelete() {
   await deleteMediaWithConfirmation([...selection.selectedImages.value])
@@ -74,10 +74,10 @@ function setAvailability(image: UploadedImageModel, available: boolean) {
   image.deployed = available
 }
 async function mediaAction(image: UploadedImageModel, action: ManagementMediaAction) {
-  if (managementBusy.value && action !== 'copy' && action !== 'property')
+  if (managementBusy.value)
     return
   if (action === 'copy')
-    await copyImageLink(image)
+    await copyManagementLinks([image])
   else if (action === 'property')
     await showMediaProperties(image)
   else if (action === 'rename')
@@ -92,76 +92,59 @@ async function mediaAction(image: UploadedImageModel, action: ManagementMediaAct
 onBeforeUnmount(() => {
   cancelBackfill()
   managementDeleteResult.value = null
+  managementPropertiesImage.value = null
 })
 </script>
 
 <template>
   <div class="page-container management-page-container">
-    <ToolsBar :path="path" :loading="loading" :busy="managementBusy" @browse="browse" @upload="upload" @reload="reload">
+    <ToolsBar :path="path" :loading="loading" :busy="managementBusy" @browse="browse" @reload="reload">
       <label class="management-search">
         <PicxIcon name="search" :size="18" />
-        <input v-model="query" :disabled="managementBusy" type="search" :aria-label="$t('management_page.workspace.search')" :placeholder="$t('management_page.workspace.search')">
+        <input v-model="query" :disabled="managementBusy" type="search" :placeholder="$t('management_page.workspace.search')">
       </label>
-      <el-dropdown trigger="click" @command="directoryAction(path, $event)">
-        <button type="button" class="picx-icon-button" :disabled="managementBusy" :aria-label="$t('management_page.workspace.moreDirectory', { name: path })">
-          <PicxIcon name="ellipsis" />
-        </button>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item command="repository">
-              {{ $t('management_page.workspace.repository') }}
-            </el-dropdown-item>
-            <el-dropdown-item v-if="path !== '/'" command="rename">
-              {{ $t('management_page.workspace.rename') }}
-            </el-dropdown-item>
-            <el-dropdown-item v-if="path !== '/'" command="delete">
-              {{ $t('management_page.workspace.deleteDirectory') }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
     </ToolsBar>
     <div class="management-summary">
-      <ImageSelector v-if="selection.selectedImages.value.length" :total="sortedImageList.length" :selected="selection.selectedImages.value.length" :all-selected="selection.allSelected.value" :indeterminate="selection.indeterminate.value" :filtered="Boolean(query.trim())" :busy="managementBusy" @select-all="selection.selectAll" @clear="selection.clear" @copy="batchCopy" @delete="batchDelete" />
+      <ImageSelector v-if="selection.selectedImages.value.length" :total="sortedImageList.length" :selected="selection.selectedImages.value.length" :all-selected="selection.allSelected.value" :indeterminate="selection.indeterminate.value" :filtered="Boolean(query.trim())" :busy="managementBusy" :copying="managementOperation?.kind === 'copy'" :deleting="managementOperation?.kind === 'delete'" @select-all="selection.selectAll" @clear="selection.clear" @copy="batchCopy" @delete="batchDelete" />
       <h1 v-else>
         {{ $t('management_page.workspace.contents') }}
       </h1>
-      <span class="grid-indicator" :aria-label="$t('management_page.workspace.gridView')" role="img"><PicxIcon name="layout-grid" /></span>
-      <el-select :disabled="managementBusy" :model-value="sortMode" :aria-label="$t('management_page.sort')" @update:model-value="setSort">
+      <span class="grid-indicator" role="img"><PicxIcon name="layout-grid" /></span>
+      <el-select :disabled="managementBusy" :model-value="sortMode" @update:model-value="setSort">
         <el-option v-for="option in sortOptions" :key="option.value" :value="option.value" :label="$t(option.labelKey)" />
       </el-select>
     </div>
     <div v-if="failed" class="management-error" role="alert">
       <PicxIcon name="triangle-alert" />
       <span>{{ $t('management_page.workspace.loadFailed') }} {{ error ? $t(`request_error.${error.kind}`) : '' }}</span>
-      <el-button @click="reload">
+      <el-button :loading="loading" :disabled="managementBusy" @click="reload">
         {{ $t('management_page.workspace.retry') }}
       </el-button>
     </div>
     <div v-if="managementDeleteResult?.failures.length" class="management-error" role="alert">
       <PicxIcon name="triangle-alert" />
       <span>{{ $t('management_page.workspace.deletePartial', { succeeded: managementDeleteResult.successes.length, failed: managementDeleteResult.failures.length }) }}</span>
-      <el-button :disabled="managementBusy || !failedVisibleImages.length" @click="deleteMediaWithConfirmation(failedVisibleImages)">
+      <el-button :loading="managementOperation?.kind === 'delete'" :disabled="managementBusy || !failedVisibleImages.length" @click="deleteMediaWithConfirmation(failedVisibleImages)">
         {{ $t('management_page.workspace.retryDelete') }}
       </el-button>
     </div>
-    <div v-loading="loading || managementBusy" v-contextmenu="{ type: ContextmenuEnum.dirArea }" class="management-content" :aria-busy="loading || managementBusy" :element-loading-text="managementBusy ? $t('management_page.workspace.operationBusy') : $t('management_page.loadingTxt1')">
-      <section v-if="sortedDirList.length" :aria-label="$t('management_page.workspace.folders')">
+    <div v-loading="loading || managementOperation?.kind === 'upload'" v-contextmenu="{ type: ContextmenuEnum.dirArea }" class="management-content" :element-loading-text="managementOperation ? $t(`management_page.workspace.${managementOperation.kind}Loading`) : $t('management_page.loadingTxt1')">
+      <section v-if="sortedDirList.length">
         <h2>{{ $t('management_page.workspace.folders') }} <span>{{ sortedDirList.length }}</span></h2>
         <ul class="dir-card-list">
           <li v-for="dir in sortedDirList" :key="dir.dirPath">
-            <FolderCard :folder-obj="dir" :busy="managementBusy" @open="browse" @action="directoryAction(dir.dirPath, $event)" />
+            <FolderCard :folder-obj="dir" :busy="managementBusy" :loading="managementOperation?.directory === dir.dirPath" :loading-text="managementOperation ? $t(`management_page.workspace.${managementOperation.kind}Loading`) : undefined" @open="browse" @action="directoryAction(dir.dirPath, $event)" />
           </li>
         </ul>
       </section>
-      <section v-if="sortedImageList.length" :aria-label="$t('management_page.workspace.media')">
+      <section v-if="sortedImageList.length">
         <div class="media-section-heading">
           <h2>{{ $t('management_page.workspace.media') }} <span>{{ sortedImageList.length }}</span></h2>
-          <ImageSelector v-if="!selection.selectedImages.value.length" :total="sortedImageList.length" :selected="0" :all-selected="false" :indeterminate="false" :filtered="Boolean(query.trim())" :busy="managementBusy" @select-all="selection.selectAll" />
+          <ImageSelector v-if="!selection.selectedImages.value.length" :total="sortedImageList.length" :selected="0" :all-selected="false" :indeterminate="false" :filtered="Boolean(query.trim())" :busy="managementBusy" :copying="managementOperation?.kind === 'copy'" :deleting="managementOperation?.kind === 'delete'" @select-all="selection.selectAll" />
         </div>
         <ul class="image-card-list">
           <li v-for="image in sortedImageList" :key="image.uuid">
-            <ImageCard :image-obj="image" :selected="selection.isSelected(image)" :busy="managementBusy" @select="selection.select(image, $event)" @availability="setAvailability(image, $event)" @action="mediaAction(image, $event)" />
+            <ImageCard :image-obj="image" :loading="isManagementMediaLoading(image)" :loading-text="managementOperation ? $t(`management_page.workspace.${managementOperation.kind}Loading`) : undefined" :copying="managementOperation?.kind === 'copy' && isManagementMediaLoading(image)" :selected="selection.isSelected(image)" :busy="managementBusy" @select="selection.select(image, $event)" @availability="setAvailability(image, $event)" @action="mediaAction(image, $event)" />
           </li>
         </ul>
       </section>
@@ -177,13 +160,14 @@ onBeforeUnmount(() => {
         <template v-else>
           <h2>{{ $t(`management_page.workspace.${sortedDirList.length ? 'noMedia' : 'emptyDirectory'}`) }}</h2>
           <p>{{ $t(`management_page.workspace.${sortedDirList.length ? 'folderHelp' : 'emptyHelp'}`) }}</p>
-          <el-button type="primary" @click="upload()">
+          <el-button type="primary" :loading="managementOperation?.kind === 'upload'" :disabled="managementBusy" @click="upload()">
             <PicxIcon name="upload" :size="18" />
             {{ path === '/' ? $t('management_page.workspace.uploadRoot') : $t('management_page.workspace.uploadCurrent') }}
           </el-button>
         </template>
       </div>
     </div>
+    <MediaPropertiesDialog v-model:image="managementPropertiesImage" />
     <MoveImageDialog />
   </div>
 </template>

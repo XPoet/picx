@@ -1,6 +1,6 @@
 import type { ApiFailure } from '@/utils/request/types'
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import { uploadToManagementDirectory } from '@/services/management-actions'
+import { managementBusy, uploadToManagementDirectory } from '@/services/management-actions'
 import { refreshManagementDirectory } from '@/services/repository-content'
 import { pinia, store } from '@/stores'
 import { getDirContent } from '@/stores/modules/dir-image-list/utils'
@@ -24,6 +24,8 @@ export function useManagementDirectory() {
   let version = 0
 
   async function load(force = false) {
+    if (force && (loading.value || managementBusy.value))
+      return
     const target = path.value
     const requestVersion = ++version
     error.value = null
@@ -34,17 +36,26 @@ export function useManagementDirectory() {
     loading.value = true
     const repository = { owner: config.value.owner, repo: config.value.repo, branch: config.value.branch }
     const current = () => requestVersion === version && config.value.logined && config.value.owner === repository.owner && config.value.repo === repository.repo && config.value.branch === repository.branch
-    const result = await refreshManagementDirectory(repository, target, current)
-    if (requestVersion !== version)
-      return
-    loading.value = false
-    error.value = result.ok ? null : result.error
-    if (result.ok)
-      fetched.add(target)
+    try {
+      const result = await refreshManagementDirectory(repository, target, current)
+      if (requestVersion !== version)
+        return
+      error.value = result.ok ? null : result.error
+      if (result.ok)
+        fetched.add(target)
+    }
+    catch {
+      if (requestVersion === version)
+        error.value = { kind: 'service', retryable: true }
+    }
+    finally {
+      if (requestVersion === version)
+        loading.value = false
+    }
   }
 
   function browse(target: string) {
-    if (target !== path.value)
+    if (!managementBusy.value && target !== path.value)
       picx.SET_USER_CONFIG_INFO({ viewDir: target })
   }
 

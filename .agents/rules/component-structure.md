@@ -7,7 +7,7 @@
 ```
 component-name/             # 组件目录（与组件名保持一致，kebab-case）
   component-name.vue        # 组件主文件（必须使用 <script setup>）
-  component-name.scss       # 组件样式文件
+  component-name.styl       # 组件样式文件
   component-name.util.ts    # 组件内部工具函数
   component-name.data.ts    # 组件内部静态数据
   component-name.model.ts   # 组件类型定义（interface / type）
@@ -22,7 +22,7 @@ component-name/             # 组件目录（与组件名保持一致，kebab-ca
 - 类型定义必须放在 `component-name.model.ts`
 - 工具函数必须放在 `component-name.util.ts`
 - 静态数据必须放在 `component-name.data.ts`
-- 样式必须单独抽离到 `component-name.scss`
+- 样式必须单独抽离到 `component-name.styl`
 - 组件内的 CSS 类命名必须遵循 BEM 规范
 - 禁止将 util、type、data 混写进 `.vue` 文件（除非极简单场景）
 - 组件内的代码行数应控制在 500 行以内，过长组件要考虑拆分

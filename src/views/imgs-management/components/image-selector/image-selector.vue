@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 
-defineProps<{ total: number, selected: number, allSelected: boolean, indeterminate: boolean, filtered: boolean, busy: boolean }>()
+defineProps<{ total: number, selected: number, allSelected: boolean, indeterminate: boolean, filtered: boolean, busy: boolean, copying?: boolean, deleting?: boolean }>()
 const emit = defineEmits<{ selectAll: [checked: boolean], clear: [], copy: [], delete: [] }>()
 function change(event: Event) {
   if (event.target instanceof HTMLInputElement)
@@ -20,12 +20,12 @@ function change(event: Event) {
       <button type="button" :disabled="busy" @click="emit('clear')">
         {{ $t('management_page.workspace.clearSelection') }}
       </button>
-      <button type="button" :disabled="busy" @click="emit('copy')">
+      <el-button :disabled="busy" :loading="copying" @click="emit('copy')">
         <PicxIcon name="copy" :size="18" />{{ $t('management_page.workspace.batchCopy') }}
-      </button>
-      <button type="button" class="batch-delete" :disabled="busy" @click="emit('delete')">
+      </el-button>
+      <el-button class="batch-delete" :disabled="busy" :loading="deleting" @click="emit('delete')">
         <PicxIcon name="trash-2" :size="18" />{{ $t('management_page.workspace.batchDelete') }}
-      </button>
+      </el-button>
     </template>
   </div>
 </template>

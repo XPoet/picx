@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ButtonInstance } from 'element-plus/es/components/button/index'
 import type { UploadedImageModel } from '@/common/model'
 import type { ManagementMediaAction } from '@/common/model/management'
 import { computed, nextTick, ref, useTemplateRef, watch } from 'vue'
@@ -6,9 +7,9 @@ import { ContextmenuEnum } from '@/common/directive/types'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { generateImageLink } from '@/utils/image-link-utils'
 
-const props = withDefaults(defineProps<{ imageObj: UploadedImageModel, selected: boolean, busy?: boolean }>(), { busy: false })
+const props = withDefaults(defineProps<{ imageObj: UploadedImageModel, selected: boolean, busy?: boolean, loading?: boolean, loadingText?: string, copying?: boolean }>(), { busy: false })
 const emit = defineEmits<{ select: [selected: boolean], action: [action: ManagementMediaAction], availability: [available: boolean] }>()
-const previewButton = useTemplateRef<HTMLButtonElement>('previewButton')
+const previewButton = useTemplateRef<ButtonInstance>('previewButton')
 const imageUrl = computed(() => generateImageLink(props.imageObj) ?? undefined)
 const isVideo = computed(() => props.imageObj.type === 'video')
 const failed = ref(false)
@@ -45,34 +46,34 @@ function retry() {
 async function closePreview() {
   showPreview.value = false
   await nextTick()
-  previewButton.value?.focus()
+  previewButton.value?.ref?.focus()
 }
 </script>
 
 <template>
-  <article v-loading="imageObj.deleting" v-contextmenu="{ type: ContextmenuEnum.img, img: imageObj }" class="image-card" :class="{ checked: selected }" :aria-label="imageObj.name">
+  <article v-loading="loading || imageObj.deleting" v-contextmenu="{ type: ContextmenuEnum.img, img: imageObj }" :element-loading-text="loadingText" class="image-card" :class="{ checked: selected }">
     <div class="media-thumbnail">
-      <button ref="previewButton" type="button" class="image-preview" :aria-label="$t('management_page.workspace.previewMedia', { name: imageObj.name })" :disabled="!imageUrl || failed" @click="showPreview = true">
+      <el-button ref="previewButton" class="image-preview" :disabled="busy || !imageUrl || failed" @click="showPreview = true">
         <video v-if="isVideo && imageUrl" :key="retryKey" :src="imageUrl" muted preload="metadata" playsinline @loadedmetadata="loaded" @error="loadFailed" />
         <img v-else-if="imageUrl" :key="`${imageUrl}-${retryKey}`" :src="imageUrl" alt="" loading="lazy" @load="loaded" @error="loadFailed">
         <PicxIcon v-if="isVideo && !failed" class="play-icon" name="play" :size="32" />
-      </button>
+      </el-button>
       <label class="media-select">
-        <input type="checkbox" :checked="selected" :aria-label="$t('management_page.workspace.selectMedia', { name: imageObj.name })" :disabled="imageObj.deleting || busy" @change="select">
-        <span aria-hidden="true"><PicxIcon v-if="selected" name="check" :size="16" /></span>
+        <input type="checkbox" :checked="selected" :disabled="imageObj.deleting || busy" @change="select">
+        <span><PicxIcon v-if="selected" name="check" :size="16" /></span>
       </label>
       <div v-if="failed || !imageUrl" class="media-error" role="status">
         <PicxIcon name="image" :size="28" />
         <span>{{ $t(`management_page.workspace.${imageUrl ? 'previewFailed' : 'invalidLink'}`) }}</span>
-        <button v-if="imageUrl" type="button" @click="retry">
+        <el-button v-if="imageUrl" :disabled="busy" @click="retry">
           {{ $t('management_page.workspace.retryPreview') }}
-        </button>
+        </el-button>
       </div>
     </div>
     <div class="media-details">
-      <button type="button" class="media-filename" :title="imageObj.name" @click="emit('action', 'property')">
+      <el-button class="media-filename" :disabled="busy" :title="imageObj.name" @click="emit('action', 'property')">
         {{ imageObj.name }}
-      </button>
+      </el-button>
       <p class="media-metadata">
         <span v-if="size">{{ size }}</span>
         <span v-if="dimensions">{{ dimensions.width }} × {{ dimensions.height }}</span>
@@ -80,13 +81,13 @@ async function closePreview() {
       </p>
     </div>
     <div class="media-actions">
-      <button type="button" class="copy-link" :disabled="!imageUrl" @click="emit('action', 'copy')">
+      <el-button class="copy-link" :loading="copying" :disabled="busy || !imageUrl" @click="emit('action', 'copy')">
         <PicxIcon name="link" :size="16" />{{ $t('management_page.workspace.copyLink') }}
-      </button>
+      </el-button>
       <el-dropdown trigger="click" placement="bottom-end" @command="emit('action', $event)">
-        <button type="button" class="media-more" :disabled="busy" :aria-label="$t('management_page.workspace.moreMedia', { name: imageObj.name })">
+        <el-button class="media-more" :disabled="busy">
           <PicxIcon name="ellipsis" />
-        </button>
+        </el-button>
         <template #dropdown>
           <el-dropdown-menu>
             <el-dropdown-item v-for="action in menu" :key="action" :command="action">

@@ -1,9 +1,8 @@
 import type { Directive } from 'vue'
 import type { UploadedImageModel } from '@/common/model'
 import i18n from '@/plugins/vue/i18n'
-import { deleteMediaWithConfirmation, editDirectory, managementBusy, openManagementRepository, openMediaMove, renameMedia, showMediaProperties, uploadToManagementDirectory } from '@/services/management-actions'
+import { copyManagementLinks, deleteMediaWithConfirmation, editDirectory, managementBusy, openManagementRepository, openMediaMove, renameMedia, showMediaProperties, uploadToManagementDirectory } from '@/services/management-actions'
 import { store } from '@/stores'
-import { copyImageLink } from '@/utils/image-link-utils'
 import { ContextmenuEnum } from './types'
 
 interface ContextValue { type: ContextmenuEnum, dir?: string, img?: UploadedImageModel }
@@ -27,7 +26,7 @@ function openContext(event: MouseEvent, value: ContextValue, trigger: HTMLElemen
   if (value.type === ContextmenuEnum.img && value.img) {
     const image = value.img
     entries.push(
-      { label: t('management_page.workspace.copyLink'), run: () => copyImageLink(image) },
+      { label: t('management_page.workspace.copyLink'), run: () => copyManagementLinks([image]) },
       { label: t('management_page.workspace.property'), run: () => showMediaProperties(image) },
       { label: t('rename'), run: () => renameMedia(image) },
       { label: t('move'), run: () => openMediaMove(image) },

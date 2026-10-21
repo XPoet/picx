@@ -7,7 +7,7 @@ import RepoDirCascader from '@/components/repo-dir-cascader/repo-dir-cascader.vu
 import { useRepositoryDirectories } from '@/composables/use-repository-directories'
 import i18n from '@/plugins/vue/i18n'
 import { relocateManagementMedia } from '@/services/management'
-import { managementBusy } from '@/services/management-actions'
+import { managementBusy, withManagementLoading } from '@/services/management-actions'
 import { store } from '@/stores'
 
 const visible = ref(false)
@@ -38,13 +38,16 @@ function close() {
   store.commit('SET_UPLOAD_AREA_STATE', { moveImageInfo: null })
 }
 async function confirm() {
-  if (!image.value || !repository.value || !destination.value || destination.value === image.value.dir || moving.value)
+  if (!image.value || !repository.value || !destination.value || destination.value === image.value.dir || moving.value || managementBusy.value)
     return
   moving.value = true
   managementBusy.value = true
   failure.value = null
+  const source = image.value
+  const target = repository.value
+  const directory = destination.value
   try {
-    const response = await relocateManagementMedia(repository.value, image.value, destination.value)
+    const response = await withManagementLoading({ kind: 'move', media: [source] }, () => relocateManagementMedia(target, source, directory))
     if (!response.ok) {
       failure.value = response.error
       return
@@ -53,6 +56,9 @@ async function confirm() {
     if (response.data.cacheFailed)
       ElMessage.warning(i18n.global.t('management_page.workspace.cacheFailed'))
     visible.value = false
+  }
+  catch {
+    failure.value = { kind: 'service', retryable: true }
   }
   finally {
     moving.value = false
@@ -70,7 +76,7 @@ onBeforeUnmount(endSession)
     <div v-if="failure" class="move-failure" role="alert">
       {{ $t(`request_error.${failure.kind}`) }}
     </div>
-    <el-button :disabled="moving || image?.dir === '/'" :aria-pressed="destination === '/'" @click="selected = []">
+    <el-button :disabled="moving || image?.dir === '/'" @click="selected = []">
       {{ $t('config_page.root_dir') }}
     </el-button>
     <RepoDirCascader v-if="visible" controlled :model-value="selected ?? []" :loads="loads" :disabled="moving" @update:model-value="selected = $event" @request-children="loadChildren" @retry="loadChildren($event, true)" />
