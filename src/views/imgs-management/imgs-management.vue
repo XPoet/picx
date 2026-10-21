@@ -1,213 +1,173 @@
 <script lang="ts" setup>
 import type { UploadedImageModel } from '@/common/model'
-import type { DirObject } from '@/stores/modules/dir-image-list/types'
-import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { getRepoPathContent } from '@/common/api'
+import type { ManagementDirectoryAction, ManagementMediaAction } from '@/common/model/management'
+import { computed, onBeforeUnmount, ref, watch } from 'vue'
 import { ContextmenuEnum } from '@/common/directive/types'
-import { DirModeEnum, ImageSortEnum } from '@/common/model'
+import { ImageSortEnum } from '@/common/model'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { useImageUploadTime } from '@/composables/use-image-upload-time'
-import router from '@/router'
-import { useStore } from '@/stores'
-import FolderCard from '@/views/imgs-management/components/folder-card/folder-card.vue'
-import ImageCard from '@/views/imgs-management/components/image-card/image-card.vue'
-import ImageSelector from '@/views/imgs-management/components/image-selector/image-selector.vue'
-import MoveImageDialog from '@/views/imgs-management/components/move-image-dialog/move-image-dialog.vue'
-import ToolsBar from '@/views/imgs-management/components/tools-bar/tools-bar.vue'
-import {
-  filterDirContent,
-  getDirContent,
-  shiftKeyHandle,
-  sortDirList,
-  sortImageList,
-} from '@/views/imgs-management/imgs-management.util'
+import { useManagementDirectory } from '@/composables/use-management-directory'
+import { useManagementSelection } from '@/composables/use-management-selection'
+import { copyManagementLinks, deleteMediaWithConfirmation, editDirectory, isManagementMediaLoading, managementBusy, managementDeleteResult, managementOperation, managementPropertiesImage, openManagementRepository, openMediaMove, renameMedia, showMediaProperties } from '@/services/management-actions'
+import { store } from '@/stores'
+import { filterManagementContent, sortDirList, sortImageList } from '@/utils/management-utils'
+import FolderCard from './components/folder-card/folder-card.vue'
+import ImageCard from './components/image-card/image-card.vue'
+import ImageSelector from './components/image-selector/image-selector.vue'
+import MediaPropertiesDialog from './components/media-properties-dialog/media-properties-dialog.vue'
+import MoveImageDialog from './components/move-image-dialog/move-image-dialog.vue'
+import ToolsBar from './components/tools-bar/tools-bar.vue'
 
-const store = useStore()
-
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const dirObject = computed(() => store.getters.getDirObject).value
+const { path, directories, images, loading, failed, error, browse, upload, reload } = useManagementDirectory()
 const sortMode = computed(() => store.getters.getUserSettings.management.sort)
-
-const renderKey = ref(Date.now()) // key for update image-selector component
-const loadingImageList = ref(false)
-
-const currentPathDirList = ref<DirObject[]>([])
-const currentPathImageList = ref<UploadedImageModel[]>([])
-
-// 排序仅作用于渲染顺序，Store 中目录树的真实顺序保持 GitHub API 返回顺序
-const sortedDirList = computed(() => sortDirList(currentPathDirList.value, sortMode.value))
-const sortedImageList = computed(() => sortImageList(currentPathImageList.value, sortMode.value))
-
-const isShowBatchTools = ref(false)
-
+const query = ref('')
+const visible = computed(() => filterManagementContent(directories.value, images.value, query.value))
+const sortedDirList = computed(() => sortDirList(visible.value.directories, sortMode.value))
+const sortedImageList = computed(() => sortImageList(visible.value.images, sortMode.value))
+watch(path, () => {
+  query.value = ''
+})
+const selection = useManagementSelection(sortedImageList, path, query)
+managementDeleteResult.value = null
+const failedVisibleImages = computed(() => sortedImageList.value.filter(image => managementDeleteResult.value?.failures.some(item => item.path === image.path && item.sha === image.sha)))
+watch(images, (items) => {
+  const result = managementDeleteResult.value
+  if (result?.failures.length && result.failures.every(failure => !items.some(image => image.path === failure.path && image.sha === failure.sha)))
+    managementDeleteResult.value = null
+})
+watch([path, query], () => {
+  managementDeleteResult.value = null
+})
+const sortOptions = [
+  { value: ImageSortEnum.default, labelKey: 'management_page.sortDefault' },
+  { value: ImageSortEnum.nameAsc, labelKey: 'management_page.sortNameAsc' },
+  { value: ImageSortEnum.nameDesc, labelKey: 'management_page.sortNameDesc' },
+  { value: ImageSortEnum.timeDesc, labelKey: 'management_page.sortTimeDesc' },
+]
+function setSort(value: ImageSortEnum) {
+  void store.dispatch('SET_USER_SETTINGS', { management: { sort: value } })
+}
 const { backfillUploadTime, cancelBackfill } = useImageUploadTime()
-
-async function dirContentHandle(dir: string) {
-  loadingImageList.value = true
-
-  const dirContent = getDirContent(dir, dirObject)
-  if (dirContent) {
-    const dirs = filterDirContent(dirContent, 'dir')
-    const images = filterDirContent(dirContent, 'file')
-    if (!dirs.length && !images.length) {
-      await getRepoPathContent(userConfigInfo, dir)
-    }
-    else {
-      currentPathDirList.value = dirs
-      currentPathImageList.value = images
-      store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
-    }
-  }
-  else {
-    await getRepoPathContent(userConfigInfo, dir)
-  }
-  loadingImageList.value = false
+watch([images, sortMode], ([items, mode]) => {
+  cancelBackfill()
+  if (mode === ImageSortEnum.timeDesc)
+    backfillUploadTime(items)
+}, { immediate: true })
+async function batchCopy() {
+  await copyManagementLinks(selection.selectedImages.value, true)
 }
-
-async function initDirImageList() {
-  const { selectedDir, viewDir, dirMode } = userConfigInfo
-
-  if (viewDir === '') {
-    if (
-      (dirMode === DirModeEnum.newDir || dirMode === DirModeEnum.dateDir)
-      && !getDirContent(selectedDir, dirObject)
-    ) {
-      userConfigInfo.selectedDir = '/'
-      userConfigInfo.dirMode = DirModeEnum.rootDir
-    }
-
-    if (userConfigInfo.selectedDir) {
-      userConfigInfo.viewDir = userConfigInfo.selectedDir
-    }
-    else {
-      userConfigInfo.viewDir = '/'
-    }
-  }
-
-  if (!dirObject.imageList.length && !dirObject.childrenDirs.length) {
-    await getRepoPathContent(userConfigInfo, userConfigInfo.viewDir)
+async function batchDelete() {
+  await deleteMediaWithConfirmation([...selection.selectedImages.value])
+}
+function directoryAction(target: string, action: ManagementDirectoryAction) {
+  if (managementBusy.value)
     return
-  }
-
-  await dirContentHandle(userConfigInfo.viewDir)
+  if (action === 'open')
+    browse(target)
+  else if (action === 'upload')
+    void upload(target)
+  else if (action === 'repository')
+    openManagementRepository(target)
+  else void editDirectory(target, action)
 }
-
-// 重新加载当前目录内容（网络请求）
-async function reloadCurrentDirContent() {
-  const { viewDir } = userConfigInfo
-  await store.dispatch('DIR_IMAGE_LIST_INIT_DIR', viewDir)
-  loadingImageList.value = true
-  await getRepoPathContent(userConfigInfo, viewDir)
-  loadingImageList.value = false
+function setAvailability(image: UploadedImageModel, available: boolean) {
+  image.deployed = available
 }
-
-onMounted(() => {
-  shiftKeyHandle()
-  initDirImageList()
-})
-
-watch(
-  () => userConfigInfo.viewDir,
-  async (nDir) => {
-    await dirContentHandle(nDir)
-    renderKey.value += 1
-  },
-  { deep: true },
-)
-
-watch(
-  () => dirObject,
-  (nv: any) => {
-    const { viewDir } = userConfigInfo
-    const dirContent = getDirContent(viewDir, nv)
-    if (dirContent) {
-      currentPathDirList.value = filterDirContent(dirContent, 'dir')
-      currentPathImageList.value = filterDirContent(dirContent, 'file')
-      store.commit('REPLACE_IMAGE_CARD', { checkedImgArr: currentPathImageList.value })
-    }
-  },
-  { deep: true },
-)
-
-watch(
-  () => currentPathImageList.value,
-  (nv: UploadedImageModel[]) => {
-    isShowBatchTools.value = nv.some(x => x.checked)
-  },
-  { deep: true },
-)
-
-// “最新上传优先”排序下，后台回填缺少上传时间的图片；其余排序模式取消回填
-watch([currentPathImageList, sortMode], ([images, mode]) => {
-  if (mode === ImageSortEnum.timeDesc && images.length) {
-    backfillUploadTime(images)
-  }
-  else {
-    cancelBackfill()
-  }
-})
-
+async function mediaAction(image: UploadedImageModel, action: ManagementMediaAction) {
+  if (managementBusy.value)
+    return
+  if (action === 'copy')
+    await copyManagementLinks([image])
+  else if (action === 'property')
+    await showMediaProperties(image)
+  else if (action === 'rename')
+    await renameMedia(image)
+  else if (action === 'move')
+    openMediaMove(image)
+  else if (action === 'delete')
+    await deleteMediaWithConfirmation([image])
+  else if (action === 'repository')
+    openManagementRepository(image.dir)
+}
 onBeforeUnmount(() => {
   cancelBackfill()
+  managementDeleteResult.value = null
+  managementPropertiesImage.value = null
 })
-
-watch(
-  () => store.getters.getUploadAreaState.activeInfo,
-  (nv) => {
-    const { type, dir, img } = nv || {}
-
-    currentPathImageList.value.forEach((item) => {
-      item.active = type === ContextmenuEnum.img && item.name === img?.name
-    })
-
-    currentPathDirList.value.forEach((dirObj) => {
-      dirObj.active = type === ContextmenuEnum.dir && dirObj.dir === dir
-    })
-  },
-  { deep: true },
-)
 </script>
 
 <template>
   <div class="page-container management-page-container">
-    <div class="top-box border-box">
-      <ToolsBar @reload="reloadCurrentDirContent" />
+    <ToolsBar :path="path" :loading="loading" :busy="managementBusy" @browse="browse" @reload="reload">
+      <label class="management-search">
+        <PicxIcon name="search" :size="18" />
+        <input v-model="query" :disabled="managementBusy" type="search" :placeholder="$t('management_page.workspace.search')">
+      </label>
+    </ToolsBar>
+    <div class="management-summary">
+      <ImageSelector v-if="selection.selectedImages.value.length" :total="sortedImageList.length" :selected="selection.selectedImages.value.length" :all-selected="selection.allSelected.value" :indeterminate="selection.indeterminate.value" :filtered="Boolean(query.trim())" :busy="managementBusy" :copying="managementOperation?.kind === 'copy'" :deleting="managementOperation?.kind === 'delete'" @select-all="selection.selectAll" @clear="selection.clear" @copy="batchCopy" @delete="batchDelete" />
+      <h1 v-else>
+        {{ $t('management_page.workspace.contents') }}
+      </h1>
+      <span class="grid-indicator" role="img"><PicxIcon name="layout-grid" /></span>
+      <el-select :disabled="managementBusy" :model-value="sortMode" @update:model-value="setSort">
+        <el-option v-for="option in sortOptions" :key="option.value" :value="option.value" :label="$t(option.labelKey)" />
+      </el-select>
     </div>
-    <div
-      v-loading="loadingImageList"
-      class="bottom-box border-box"
-      :element-loading-text="$t('management_page.loadingTxt1')"
-    >
-      <ImageSelector
-        v-if="currentPathImageList.length"
-        :key="renderKey"
-        :current-dir-image-list="currentPathImageList"
-      />
-      <div
-        v-contextmenu="{ type: ContextmenuEnum.dirArea }"
-        class="content-list-box border-box"
-        :class="{ 'has-tools': isShowBatchTools }"
-      >
-        <ul v-if="sortedDirList.length" class="dir-card-list list-item border-box">
-          <li v-for="dir in sortedDirList" :key="dir.dirPath" class="dir-card-item border-box">
-            <FolderCard :class="`folder-card-${dir.dir}`" :folder-obj="dir" />
+    <div v-if="failed" class="management-error" role="alert">
+      <PicxIcon name="triangle-alert" />
+      <span>{{ $t('management_page.workspace.loadFailed') }} {{ error ? $t(`request_error.${error.kind}`) : '' }}</span>
+      <el-button :loading="loading" :disabled="managementBusy" @click="reload">
+        {{ $t('management_page.workspace.retry') }}
+      </el-button>
+    </div>
+    <div v-if="managementDeleteResult?.failures.length" class="management-error" role="alert">
+      <PicxIcon name="triangle-alert" />
+      <span>{{ $t('management_page.workspace.deletePartial', { succeeded: managementDeleteResult.successes.length, failed: managementDeleteResult.failures.length }) }}</span>
+      <el-button :loading="managementOperation?.kind === 'delete'" :disabled="managementBusy || !failedVisibleImages.length" @click="deleteMediaWithConfirmation(failedVisibleImages)">
+        {{ $t('management_page.workspace.retryDelete') }}
+      </el-button>
+    </div>
+    <div v-loading="loading || managementOperation?.kind === 'upload'" v-contextmenu="{ type: ContextmenuEnum.dirArea }" class="management-content" :element-loading-text="managementOperation ? $t(`management_page.workspace.${managementOperation.kind}Loading`) : $t('management_page.loadingTxt1')">
+      <section v-if="sortedDirList.length">
+        <h2>{{ $t('management_page.workspace.folders') }} <span>{{ sortedDirList.length }}</span></h2>
+        <ul class="dir-card-list">
+          <li v-for="dir in sortedDirList" :key="dir.dirPath">
+            <FolderCard :folder-obj="dir" :busy="managementBusy" :loading="managementOperation?.directory === dir.dirPath" :loading-text="managementOperation ? $t(`management_page.workspace.${managementOperation.kind}Loading`) : undefined" @open="browse" @action="directoryAction(dir.dirPath, $event)" />
           </li>
         </ul>
-        <ul v-if="sortedImageList.length" class="image-card-list list-item border-box">
-          <li
-            v-for="image in sortedImageList"
-            :key="image.uuid"
-            class="image-card-item border-box"
-          >
-            <ImageCard :image-obj="image" />
+      </section>
+      <section v-if="sortedImageList.length">
+        <div class="media-section-heading">
+          <h2>{{ $t('management_page.workspace.media') }} <span>{{ sortedImageList.length }}</span></h2>
+          <ImageSelector v-if="!selection.selectedImages.value.length" :total="sortedImageList.length" :selected="0" :all-selected="false" :indeterminate="false" :filtered="Boolean(query.trim())" :busy="managementBusy" :copying="managementOperation?.kind === 'copy'" :deleting="managementOperation?.kind === 'delete'" @select-all="selection.selectAll" />
+        </div>
+        <ul class="image-card-list">
+          <li v-for="image in sortedImageList" :key="image.uuid">
+            <ImageCard :image-obj="image" :loading="isManagementMediaLoading(image)" :loading-text="managementOperation ? $t(`management_page.workspace.${managementOperation.kind}Loading`) : undefined" :copying="managementOperation?.kind === 'copy' && isManagementMediaLoading(image)" :selected="selection.isSelected(image)" :busy="managementBusy" @select="selection.select(image, $event)" @availability="setAvailability(image, $event)" @action="mediaAction(image, $event)" />
           </li>
         </ul>
-        <el-empty v-if="!currentPathImageList.length && !currentPathDirList.length">
-          <el-button type="primary" @click="router.push('/upload')">
-            {{ $t('management_page.text_2') }}
+      </section>
+      <div v-if="!loading && !failed && !sortedImageList.length" class="management-empty">
+        <PicxIcon name="images" :size="48" />
+        <template v-if="query.trim() && !sortedDirList.length">
+          <h2>{{ $t('management_page.workspace.noResults') }}</h2>
+          <p>{{ $t('management_page.workspace.searchScope') }}</p>
+          <el-button @click="query = ''">
+            {{ $t('management_page.workspace.clearSearch') }}
           </el-button>
-        </el-empty>
+        </template>
+        <template v-else>
+          <h2>{{ $t(`management_page.workspace.${sortedDirList.length ? 'noMedia' : 'emptyDirectory'}`) }}</h2>
+          <p>{{ $t(`management_page.workspace.${sortedDirList.length ? 'folderHelp' : 'emptyHelp'}`) }}</p>
+          <el-button type="primary" :loading="managementOperation?.kind === 'upload'" :disabled="managementBusy" @click="upload()">
+            <PicxIcon name="upload" :size="18" />
+            {{ path === '/' ? $t('management_page.workspace.uploadRoot') : $t('management_page.workspace.uploadCurrent') }}
+          </el-button>
+        </template>
       </div>
     </div>
+    <MediaPropertiesDialog v-model:image="managementPropertiesImage" />
     <MoveImageDialog />
   </div>
 </template>

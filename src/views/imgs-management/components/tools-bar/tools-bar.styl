@@ -1,43 +1,92 @@
 .tools-bar {
+  box-sizing border-box
   display flex
   align-items center
-  justify-content space-between
+  gap 8px
   width 100%
-  height 100%
+  min-width 0
+  padding 8px 12px
+  border 1px solid var(--picx-color-border)
+  border-radius var(--picx-radius-control)
+  background var(--picx-color-surface)
+  font-size 14px
 
-  .left {
-    .dir-info {
-      margin-left 2rem
+  button {
+    display inline-flex
+    flex-shrink 0
+    align-items center
+    justify-content center
+    min-width 44px
+    min-height 44px
+    padding 8px
+    border 0
+    border-radius 8px
+    background transparent
+    color var(--picx-color-text-muted)
+    font inherit
+    cursor pointer
 
-      .el-icon {
-        margin-right 4rem
-        color var(--text-color-3)
-        font-size 16rem
-      }
+    &:hover:not(:disabled) {
+      background var(--picx-color-primary-soft)
+      color var(--picx-color-primary)
+    }
+
+    &:disabled {
+      opacity 0.45
+      cursor default
     }
   }
 
+  .directory-breadcrumbs {
+    display flex
+    flex 1
+    align-items center
+    gap 4px
+    min-width 0
+    overflow-x auto
+    color var(--picx-color-primary)
 
-  .right {
-    .el-icon {
-      margin-left 10rem
-      color var(--text-color-3)
-      font-size 22rem
-      cursor pointer
+    ol, li {
+      display flex
+      align-items center
+      margin 0
+      padding 0
+      list-style none
     }
 
-    .sort-dropdown {
-      cursor pointer
+    button {
+      max-width 280px
+      overflow hidden
+      text-overflow ellipsis
+      white-space nowrap
+    }
 
-      // 命中区域扩大到 44×44px，负外边距补偿使图标视觉位置与相邻图标一致
-      .el-icon {
-        margin 0 -1rem 0 -11rem
-        padding 11rem
-      }
+    .is-current {
+      color var(--picx-color-text)
+    }
+  }
 
-      .btn-icon.is-active {
-        color var(--el-color-primary)
-      }
+  .el-button {
+    height auto
+    margin-left 0
+  }
+
+  .directory-tools {
+    display flex
+    align-items center
+    gap 8px
+  }
+
+  @media (max-width 767px) {
+    flex-wrap wrap
+
+    .directory-breadcrumbs {
+      flex-basis calc(100% - 60px)
+    }
+
+    .directory-tools {
+      justify-content flex-end
+      width 100%
     }
   }
 }

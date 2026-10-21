@@ -1,221 +1,124 @@
 import type { Directive } from 'vue'
-import { computed } from 'vue'
-import { DirModeEnum } from '@/common/model'
+import type { UploadedImageModel } from '@/common/model'
 import i18n from '@/plugins/vue/i18n'
-import router from '@/router'
+import { copyManagementLinks, deleteMediaWithConfirmation, editDirectory, managementBusy, openManagementRepository, openMediaMove, renameMedia, showMediaProperties, uploadToManagementDirectory } from '@/services/management-actions'
 import { store } from '@/stores'
-import { copyImageLink, getGitHubRepoDirURL } from '@/utils'
-import { onDeleteDir, onRenameDir } from '@/views/imgs-management/components/folder-card/folder-card.util'
-import {
-  checkImgProperty,
-  onDeleteImage,
-  onMoveImage,
-  onRenameImage,
-} from '@/views/imgs-management/components/image-card/image-card.util'
 import { ContextmenuEnum } from './types'
 
-const menuClass = 'custom-contextmenu-container'
-let menuEle: any = null
-let isAddEventListenerOfContextmenu: boolean = false
+interface ContextValue { type: ContextmenuEnum, dir?: string, img?: UploadedImageModel }
+interface ContextState { value: ContextValue, handler: (event: MouseEvent) => void }
+const states = new WeakMap<HTMLElement, ContextState>()
+let closeActive: (() => void) | null = null
 
-// 右键菜单指令
-const contextmenuDirective: Directive = {
-  mounted(el: any, binding: any) {
-    el.addEventListener('contextmenu', (e: any) => {
-      e.preventDefault()
-      e.stopPropagation()
-
-      const { type, dir, img } = binding.value
-
-      store.commit('SET_UPLOAD_AREA_STATE', { activeInfo: { dir, type, img } })
-
-      const viewDir = computed(() => store.getters.getUserViewDir).value
-      const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-
-      const selectedDir = dir ? `${viewDir === '/' ? '' : `${viewDir}/`}${dir}` : viewDir
-
-      menuEle = document.querySelector(`.${menuClass}`)
-
-      if (!menuEle) {
-        menuEle = document.createElement('ul')
-        menuEle.setAttribute('class', menuClass)
-        menuEle.style.position = 'fixed'
-        menuEle.style.zIndex = '1000'
-        menuEle.innerHTML = `<li class="custom-contextmenu-item upload-image">
-                             </li>
-                             <li class="custom-contextmenu-item jump-repo">
-                               ${i18n.global.t('management_page.contextmenu_4')}
-                             </li>
-                             <li class="custom-contextmenu-item paste-image">
-                               ${i18n.global.t('paste_image')}
-                             </li>
-                             <li class="custom-contextmenu-item copy-link">
-                               ${i18n.global.t('copy_link')}
-                             </li>
-                             <li class="custom-contextmenu-item property">
-                               ${i18n.global.t('management_page.property')}
-                             </li>
-                             <li class="custom-contextmenu-item rename">
-                               ${i18n.global.t('rename')}
-                             </li>
-                             <li class="custom-contextmenu-item move">
-                               ${i18n.global.t('move')}
-                             </li>
-                             <li class="custom-contextmenu-item remove">
-                               ${i18n.global.t('delete')}
-                             </li>
-                             `
-        document.body.appendChild(menuEle)
+function openContext(event: MouseEvent, value: ContextValue, trigger: HTMLElement) {
+  event.preventDefault()
+  event.stopPropagation()
+  closeActive?.()
+  const menu = document.createElement('div')
+  menu.className = 'custom-contextmenu-container management-context-menu'
+  menu.setAttribute('role', 'menu')
+  menu.style.position = 'fixed'
+  menu.style.zIndex = 'var(--picx-layer-overlay)'
+  const currentPath = store.getters.getUserViewDir || '/'
+  const directory = value.dir ? `${currentPath === '/' ? '' : `${currentPath}/`}${value.dir}` : currentPath
+  const entries: Array<{ label: string, run: () => unknown }> = []
+  const t = i18n.global.t
+  if (value.type === ContextmenuEnum.img && value.img) {
+    const image = value.img
+    entries.push(
+      { label: t('management_page.workspace.copyLink'), run: () => copyManagementLinks([image]) },
+      { label: t('management_page.workspace.property'), run: () => showMediaProperties(image) },
+      { label: t('rename'), run: () => renameMedia(image) },
+      { label: t('move'), run: () => openMediaMove(image) },
+      { label: t('delete'), run: () => deleteMediaWithConfirmation([image]) },
+      { label: t('management_page.workspace.repository'), run: () => openManagementRepository(image.dir) },
+    )
+  }
+  else if (value.type === ContextmenuEnum.uploadArea) {
+    entries.push({ label: t('paste_image'), run: () => store.commit('SET_UPLOAD_AREA_STATE', { isPaste: true }) })
+  }
+  else {
+    entries.push(
+      { label: t('management_page.workspace.uploadCurrent'), run: () => uploadToManagementDirectory(directory) },
+      { label: t('management_page.workspace.repository'), run: () => openManagementRepository(directory) },
+    )
+    if (value.type === ContextmenuEnum.dir && directory !== '/') {
+      entries.push(
+        { label: t('rename'), run: () => editDirectory(directory, 'rename') },
+        { label: t('management_page.workspace.deleteDirectory'), run: () => editDirectory(directory, 'delete') },
+      )
+    }
+  }
+  function close() {
+    menu.remove()
+    document.removeEventListener('pointerdown', outside, true)
+    document.removeEventListener('keydown', keyboard)
+    window.removeEventListener('blur', close)
+    window.removeEventListener('resize', close)
+    if (closeActive === close)
+      closeActive = null
+  }
+  function outside(pointer: PointerEvent) {
+    if (pointer.target instanceof Node && !menu.contains(pointer.target))
+      close()
+  }
+  function keyboard(key: KeyboardEvent) {
+    const buttons = [...menu.querySelectorAll('button')]
+    const index = buttons.findIndex(button => button === document.activeElement)
+    if (key.key === 'Escape' || key.key === 'Tab') {
+      close()
+      if (key.key === 'Escape') {
+        key.preventDefault()
+        trigger.querySelector<HTMLElement>('button')?.focus()
       }
-
-      const uploadItem = menuEle?.querySelector('.upload-image')
-      const jumpRepoItem = menuEle?.querySelector('.jump-repo')
-      const removeItem = menuEle?.querySelector('.remove')
-      const renameItem = menuEle?.querySelector('.rename')
-      const moveItem = menuEle?.querySelector('.move')
-      const copyLinkItem = menuEle?.querySelector('.copy-link')
-      const propertyItem = menuEle?.querySelector('.property')
-      const pasteImageItem = menuEle?.querySelector('.paste-image')
-
-      const hideAllContextmenu = () => {
-        menuEle.querySelectorAll('.custom-contextmenu-item').forEach((d: HTMLElement) => {
-          d.style.display = 'none'
-        })
-      }
-
-      const showContextmenu = (domList: HTMLElement[]) => {
-        domList.forEach((d: HTMLElement) => {
-          d.style.display = 'flex'
-        })
-      }
-
-      // 图片
-      if (type === ContextmenuEnum.img) {
-        hideAllContextmenu()
-        showContextmenu([copyLinkItem, removeItem, renameItem, moveItem, propertyItem])
-      }
-
-      // 目录
-      if (type === ContextmenuEnum.dir) {
-        hideAllContextmenu()
-        showContextmenu([uploadItem, jumpRepoItem, renameItem, removeItem])
-        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_2', {
-          dir: selectedDir,
-        })
-      }
-
-      // 目录区域
-      if (type === ContextmenuEnum.dirArea) {
-        hideAllContextmenu()
-        showContextmenu([uploadItem, jumpRepoItem])
-        uploadItem.innerHTML = i18n.global.t('management_page.contextmenu_1')
-      }
-
-      // 上传区域
-      if (type === ContextmenuEnum.uploadArea) {
-        hideAllContextmenu()
-        showContextmenu([pasteImageItem])
-      }
-
-      let setLeft = e.clientX
-      let setTop = e.clientY
-      const menuWidth = menuEle.clientWidth
-      const menuHeight = menuEle.clientHeight
-      const documentWidth = document.documentElement.clientWidth
-      const documentHeight = document.documentElement.clientHeight
-      const offset = 6
-
-      if (menuWidth + setLeft > documentWidth) {
-        setLeft = documentWidth - menuWidth - offset
-      }
-
-      if (menuHeight + setTop > documentHeight) {
-        setTop = documentHeight - menuHeight - offset
-      }
-
-      menuEle.style.top = `${setTop}px`
-      menuEle.style.left = `${setLeft}px`
-
-      if (!isAddEventListenerOfContextmenu) {
-        isAddEventListenerOfContextmenu = true
-
-        // 上传图片
-        uploadItem?.addEventListener('click', async () => {
-          const dirMode = selectedDir === '/' ? DirModeEnum.rootDir : DirModeEnum.repoDir
-          const selectedDirList = selectedDir === '/' ? [] : selectedDir.split('/')
-          await store.dispatch('SET_USER_CONFIG_INFO', {
-            dirMode,
-            selectedDir,
-            selectedDirList,
-          })
-          await router.push('/upload')
-        })
-
-        // 跳转 GitHub 仓库目录
-        jumpRepoItem?.addEventListener('click', () => {
-          const dirPath = selectedDir === '/' ? '' : selectedDir
-          window.open(getGitHubRepoDirURL(userConfigInfo, dirPath))
-        })
-
-        // 重命名
-        renameItem?.addEventListener('click', async () => {
-          if (type === ContextmenuEnum.img) {
-            await onRenameImage(img)
-          }
-
-          if (type === ContextmenuEnum.dir) {
-            onRenameDir(selectedDir)
-          }
-        })
-
-        // 移动图片到其他目录
-        moveItem?.addEventListener('click', () => {
-          if (type === ContextmenuEnum.img) {
-            onMoveImage(img)
-          }
-        })
-
-        // 删除
-        removeItem?.addEventListener('click', async () => {
-          if (type === ContextmenuEnum.img) {
-            onDeleteImage(img)
-          }
-
-          if (type === ContextmenuEnum.dir) {
-            onDeleteDir(selectedDir)
-          }
-        })
-
-        // 复制图片链接
-        copyLinkItem?.addEventListener('click', async () => {
-          copyImageLink(img)
-        })
-
-        // 查看图片属性
-        propertyItem?.addEventListener('click', async () => {
-          await checkImgProperty(img)
-        })
-
-        // 上传区域粘贴图片
-        pasteImageItem?.addEventListener('click', () => {
-          store.commit('SET_UPLOAD_AREA_STATE', {
-            isPaste: true,
-          })
-        })
-      }
-
-      const closeContextMenu = () => {
-        store.commit('SET_UPLOAD_AREA_STATE', { activeInfo: null })
-        if (menuEle) {
-          document.removeEventListener('click', closeContextMenu)
-          document.body.removeChild(menuEle)
-          menuEle = null
-          isAddEventListenerOfContextmenu = false
-        }
-      }
-      document.addEventListener('click', closeContextMenu)
-      document.addEventListener('dblclick', closeContextMenu)
+    }
+    else if (key.key === 'ArrowDown' || key.key === 'ArrowUp') {
+      key.preventDefault()
+      buttons[(index + (key.key === 'ArrowDown' ? 1 : buttons.length - 1)) % buttons.length]?.focus()
+    }
+  }
+  for (const entry of entries) {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.className = 'custom-contextmenu-item'
+    button.setAttribute('role', 'menuitem')
+    button.textContent = entry.label
+    button.disabled = managementBusy.value
+    button.addEventListener('click', () => {
+      close()
+      if (!managementBusy.value)
+        void entry.run()
     })
+    menu.appendChild(button)
+  }
+  document.body.appendChild(menu)
+  menu.style.left = `${Math.max(8, Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 8))}px`
+  menu.style.top = `${Math.max(8, Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 8))}px`
+  document.addEventListener('pointerdown', outside, true)
+  document.addEventListener('keydown', keyboard)
+  window.addEventListener('blur', close)
+  window.addEventListener('resize', close)
+  closeActive = close
+  menu.querySelector('button')?.focus()
+}
+
+const contextmenuDirective: Directive<HTMLElement, ContextValue> = {
+  mounted(element, binding) {
+    const state: ContextState = { value: binding.value, handler: event => openContext(event, state.value, element) }
+    states.set(element, state)
+    element.addEventListener('contextmenu', state.handler)
+  },
+  updated(element, binding) {
+    const state = states.get(element)
+    if (state)
+      state.value = binding.value
+  },
+  unmounted(element) {
+    const state = states.get(element)
+    if (state)
+      element.removeEventListener('contextmenu', state.handler)
+    states.delete(element)
+    closeActive?.()
   },
 }
 

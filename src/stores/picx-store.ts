@@ -6,18 +6,22 @@ import type {
   UserConfigInfoModel,
   UserSettingsModel,
 } from '@/common/model'
+import type { ConnectedRepository, ConnectionState } from '@/common/model/github-connection'
+import type { QueueItemRuntime, UploadBatchResult } from '@/common/model/upload'
 import type DeployStatusInfo from '@/stores/modules/deploy-status/types'
 import type { DirObject } from '@/stores/modules/dir-image-list/types'
 import type { GitHubAuthorizationInfo } from '@/stores/modules/github-authorize/types'
 import type UploadAreaStateTypes from '@/stores/modules/upload-area/types'
 import type { GlobalSettingsModel } from '@/stores/modules/user-settings/types'
+import type { DirectorySaveResult, UploadDirectoryValue } from '@/utils/directory-utils'
+import type { SettingsPayload } from '@/utils/settings-payload'
+import type { UploadPreferencesPatch } from '@/utils/upload-preferences'
 import { defineStore } from 'pinia'
 import {
   LS_AUTHORIZATION,
   LS_CONFIG,
   LS_MANAGEMENT,
   LS_SETTINGS,
-  NEW_DIR_COUNT_MAX,
   SS_GLOBAL_SETTINGS,
 } from '@/common/constant'
 import {
@@ -40,6 +44,7 @@ import {
 } from '@/stores/modules/dir-image-list/utils'
 import { ImgLinkRuleActionsEnum } from '@/stores/modules/user-settings/types'
 import { imgLinkRuleVerification } from '@/stores/modules/user-settings/utils'
+import { localSettingsFailed, localSettingsSaved } from '@/stores/settings-sync-state'
 import {
   cleanObject,
   deepAssignObject,
@@ -50,8 +55,18 @@ import {
   setLocal,
   setSession,
 } from '@/utils'
+import { directoryDraft, validateDirectoryDraft } from '@/utils/directory-utils'
+import { validateLinkRule } from '@/utils/link-rule-validation'
+import { mergeSettings, projectSettings, readSettingsPayload } from '@/utils/settings-payload'
+import { validUploadPreferences } from '@/utils/upload-preferences'
 
 interface PicxState {
+  connection: ConnectionState
+  connectionAttemptId: number
+  connectionSessionId: number
+  uploadTargetBusy: boolean
+  uploadRuntime: Record<string, QueueItemRuntime>
+  uploadBatches: UploadBatchResult[]
   rootName: string
   githubAuthorizeModule: {
     authorizationInfo: GitHubAuthorizationInfo
@@ -115,6 +130,14 @@ function createAuthorizationInfo(): GitHubAuthorizationInfo {
     deepAssignObject(authorizationInfo, storedAuthorizationInfo)
   }
 
+  if (authorizationInfo.code || authorizationInfo.codeCreateTime) {
+    authorizationInfo.code = ''
+    authorizationInfo.codeCreateTime = 0
+    try {
+      setLocal(LS_AUTHORIZATION, authorizationInfo)
+    }
+    catch {}
+  }
   return authorizationInfo
 }
 
@@ -164,7 +187,7 @@ function createDefaultUserSettings(): UserSettingsModel {
     },
     compress: {
       enable: true,
-      encoder: CompressEncoderEnum.webP,
+      encoder: CompressEncoderEnum.original,
     },
     management: {
       sort: ImageSortEnum.default,
@@ -239,14 +262,13 @@ function createDefaultUserSettings(): UserSettingsModel {
  * 创建持久化后的用户设置。
  */
 function createUserSettings(): UserSettingsModel {
-  const userSettings = createDefaultUserSettings()
-  const storedSettings = getLocal(LS_SETTINGS) as Partial<UserSettingsModel> | null
-
-  if (storedSettings) {
-    deepAssignObject(userSettings, storedSettings)
+  const defaults = createDefaultUserSettings()
+  try {
+    const stored: unknown = getLocal(LS_SETTINGS)
+    const payload = readSettingsPayload(stored)
+    return payload ? mergeSettings(defaults, payload) : defaults
   }
-
-  return userSettings
+  catch { return defaults }
 }
 
 /**
@@ -281,35 +303,6 @@ function createDirectoryTree(): DirObject {
 }
 
 /**
- * 规范化新建目录和分支名称。
- */
-function normalizeUserConfigInfo(userConfigInfo: UserConfigInfoModel): void {
-  const { selectedDir, branch, dirMode } = userConfigInfo
-
-  if (dirMode === DirModeEnum.newDir) {
-    const specialCharacters = [' ', '.', '、', ',', '，', '!', '？', '?']
-    let slashCount = 0
-    let normalizedDirectory = ''
-
-    for (const character of selectedDir) {
-      const normalizedCharacter = specialCharacters.includes(character) ? '-' : character
-
-      if (normalizedCharacter === '/') {
-        slashCount += 1
-      }
-      if (slashCount >= NEW_DIR_COUNT_MAX) {
-        break
-      }
-      normalizedDirectory += normalizedCharacter
-    }
-
-    userConfigInfo.selectedDir = normalizedDirectory
-  }
-
-  userConfigInfo.branch = branch.replace(/\s+/g, '-')
-}
-
-/**
  * PicX 的 Pinia 兼容 Store。
  *
  * 第一阶段保留旧 Vuex 的模块状态形状和 action 名称，页面无需同步重写。
@@ -317,6 +310,12 @@ function normalizeUserConfigInfo(userConfigInfo: UserConfigInfoModel): void {
 export const usePicxStore = defineStore('picx', {
   state: (): PicxState => ({
     rootName: 'root',
+    connection: { phase: 'disconnected' },
+    connectionAttemptId: 0,
+    connectionSessionId: 0,
+    uploadTargetBusy: false,
+    uploadRuntime: {},
+    uploadBatches: [],
     githubAuthorizeModule: {
       authorizationInfo: createAuthorizationInfo(),
     },
@@ -376,6 +375,104 @@ export const usePicxStore = defineStore('picx', {
   },
 
   actions: {
+    SAVE_UPLOAD_DIRECTORY(value: UploadDirectoryValue): DirectorySaveResult {
+      if (this.uploadTargetBusy || this.getUploadImageList.some(image => image.uploadStatus.uploading)) {
+        return { ok: false, reason: 'upload-busy' }
+      }
+      const validated = validateDirectoryDraft(directoryDraft(value))
+      if (!validated.ok || validated.value.selectedDir !== value.selectedDir
+        || JSON.stringify(validated.value.selectedDirList) !== JSON.stringify(value.selectedDirList)) {
+        return { ok: false, reason: 'invalid-path' }
+      }
+      const candidate = { ...this.userConfigInfoModule.userConfigInfo, ...value, selectedDirList: [...value.selectedDirList] }
+      try {
+        localStorage.setItem(LS_CONFIG, JSON.stringify(candidate))
+      }
+      catch {
+        return { ok: false, reason: 'storage-unavailable' }
+      }
+      Object.assign(this.userConfigInfoModule.userConfigInfo, value, { selectedDirList: [...value.selectedDirList] })
+      return { ok: true, value: { ...value, selectedDirList: [...value.selectedDirList] } }
+    },
+    BEGIN_GITHUB_CONNECTION() {
+      this.connectionAttemptId += 1
+      this.connection = { phase: 'validating', attemptId: this.connectionAttemptId }
+      return this.connectionAttemptId
+    },
+
+    COMMIT_GITHUB_CONNECTION(attemptId: number, token: string, mode: 'token' | 'oauth', result: ConnectedRepository): boolean {
+      if (attemptId !== this.connectionAttemptId) {
+        return false
+      }
+      const previous = this.userConfigInfoModule.userConfigInfo
+      const config: UserConfigInfoModel = {
+        ...previous,
+        token,
+        logined: true,
+        id: String(result.account.id),
+        owner: result.account.login,
+        name: result.account.name ?? '',
+        email: result.account.email ?? '',
+        avatarUrl: result.account.avatar_url,
+        repo: result.repository.repo,
+        branch: result.repository.branch,
+        repoPrivate: result.visibility === 'private',
+        ...(result.reuseDirectory ? {} : { dirMode: DirModeEnum.rootDir, selectedDir: '/', selectedDirList: [], dirList: [], viewDir: '' }),
+      }
+      const authorization: GitHubAuthorizationInfo = {
+        ...this.githubAuthorizeModule.authorizationInfo,
+        code: '',
+        codeCreateTime: 0,
+        authorizing: false,
+        isAutoAuthorize: mode === 'oauth',
+        ...(mode === 'oauth'
+          ? { authorized: true, installed: true, token, tokenCreateTime: Date.now() }
+          : { authorized: false, installed: null, token: '', tokenCreateTime: 0, manualToken: token }),
+      }
+      const changedSession = !previous.logined || previous.token !== token || previous.owner !== result.repository.owner || previous.repo !== result.repository.repo || previous.branch !== result.repository.branch
+      const changedRepository = Boolean(previous.owner) && (previous.owner !== result.repository.owner || previous.repo !== result.repository.repo || previous.branch !== result.repository.branch)
+      const emptyTree = changedRepository ? createDirObject('/', '/') : null
+      const oldManagement = changedRepository ? localStorage.getItem(LS_MANAGEMENT) : null
+      const oldConfig = localStorage.getItem(LS_CONFIG)
+      const oldAuthorization = localStorage.getItem(LS_AUTHORIZATION)
+      try {
+        localStorage.setItem(LS_CONFIG, JSON.stringify(config))
+        localStorage.setItem(LS_AUTHORIZATION, JSON.stringify(authorization))
+        if (emptyTree)
+          localStorage.setItem(LS_MANAGEMENT, JSON.stringify(emptyTree))
+      }
+      catch {
+        // 尽力恢复原快照；即使存储完全不可用也不发布候选内存状态。
+        try {
+          if (oldConfig === null)
+            localStorage.removeItem(LS_CONFIG)
+          else localStorage.setItem(LS_CONFIG, oldConfig)
+          if (oldAuthorization === null)
+            localStorage.removeItem(LS_AUTHORIZATION)
+          else localStorage.setItem(LS_AUTHORIZATION, oldAuthorization)
+          if (changedRepository) {
+            if (oldManagement === null)
+              localStorage.removeItem(LS_MANAGEMENT)
+            else localStorage.setItem(LS_MANAGEMENT, oldManagement)
+          }
+        }
+        catch {}
+        this.connection = { phase: 'failed', attemptId, error: { kind: 'storage-unavailable', retryable: true } }
+        return false
+      }
+      if (emptyTree) {
+        this.dirImageListModule.dirObject = emptyTree
+        this.imageCardModule.imgCardArr = []
+        this.UPLOAD_IMG_LIST_RESET()
+        this.UPLOAD_AREA_ACTIVE_LOGOUT()
+      }
+      Object.assign(previous, config)
+      Object.assign(this.githubAuthorizeModule.authorizationInfo, authorization)
+      if (changedSession)
+        this.connectionSessionId += 1
+      this.connection = { phase: 'connected', attemptId, repository: result.repository, visibility: result.visibility, verifiedAt: Date.now() }
+      return true
+    },
     SET_GITHUB_AUTHORIZATION_INFO(authorizationInfo: Partial<GitHubAuthorizationInfo>) {
       assignKnownProperties(this.githubAuthorizeModule.authorizationInfo, authorizationInfo)
       this.GITHUB_AUTHORIZATION_INFO_PERSIST()
@@ -414,22 +511,73 @@ export const usePicxStore = defineStore('picx', {
     },
 
     USER_CONFIG_INFO_PERSIST() {
-      normalizeUserConfigInfo(this.userConfigInfoModule.userConfigInfo)
       localStorage.setItem(LS_CONFIG, JSON.stringify(this.userConfigInfoModule.userConfigInfo))
     },
 
     USER_CONFIG_INFO_LOGOUT() {
+      this.connectionSessionId += 1
       cleanObject(this.userConfigInfoModule.userConfigInfo)
     },
 
-    SET_USER_SETTINGS(settingsInfo: Partial<UserSettingsModel>) {
-      assignKnownProperties(this.userSettingsModule.userSettings, settingsInfo)
-      this.USER_SETTINGS_PERSIST()
+    SAVE_UPLOAD_PREFERENCES(patch: UploadPreferencesPatch): boolean {
+      if (this.uploadTargetBusy)
+        return false
+      const candidate = { ...this.getUserSettings, ...patch }
+      if (!validUploadPreferences(candidate))
+        return false
+      return this.SAVE_SETTINGS_CANDIDATE(patch)
+    },
+
+    SET_USER_SETTINGS(settingsInfo: SettingsPayload): boolean {
+      return this.SAVE_SETTINGS_CANDIDATE(mergeSettings(this.getUserSettings, settingsInfo))
     },
 
     SET_GLOBAL_SETTINGS(globalSettings: Partial<GlobalSettingsModel>) {
       assignKnownProperties(this.userSettingsModule.globalSettings, globalSettings)
       setSession(SS_GLOBAL_SETTINGS, this.userSettingsModule.globalSettings)
+    },
+
+    SAVE_IMAGE_LINK_RULE(rule: ImageLinkRuleModel, originalName?: string): boolean {
+      const current = this.getUserSettings.imageLinkType
+      const previous = originalName ? current.presetList[originalName] : undefined
+      if ((originalName && !previous) || (previous && !previous.editable) || validateLinkRule(rule, current.presetList, originalName))
+        return false
+      const rules = { ...current.presetList }
+      if (originalName)
+        delete rules[originalName]
+      const candidate = { ...rule, name: rule.name.trim(), rule: rule.rule.trim(), editable: previous ? previous.editable : true }
+      rules[candidate.name] = candidate
+      return this.SAVE_LINK_PREFERENCES({ ...current, presetList: rules, selected: current.selected === originalName ? candidate.name : current.selected })
+    },
+
+    REMOVE_IMAGE_LINK_RULE(rule: ImageLinkRuleModel): boolean {
+      const current = this.getUserSettings.imageLinkType
+      if (!current.presetList[rule.name]?.editable)
+        return false
+      const rules = { ...current.presetList }
+      delete rules[rule.name]
+      const selected = current.selected === rule.name ? (rules[ImageLinkTypeEnum.GitHub] ? ImageLinkTypeEnum.GitHub : Object.keys(rules)[0]) : current.selected
+      return Boolean(selected) && this.SAVE_LINK_PREFERENCES({ selected, presetList: rules })
+    },
+
+    SAVE_LINK_PREFERENCES(imageLinkType: UserSettingsModel['imageLinkType']): boolean {
+      if (!Object.hasOwn(imageLinkType.presetList, imageLinkType.selected))
+        return false
+      return this.SAVE_SETTINGS_CANDIDATE({ imageLinkType })
+    },
+
+    SAVE_SETTINGS_CANDIDATE(patch: Partial<UserSettingsModel>): boolean {
+      const candidate = projectSettings({ ...this.getUserSettings, ...patch })
+      try {
+        setLocal(LS_SETTINGS, candidate)
+      }
+      catch {
+        localSettingsFailed(() => this.SAVE_SETTINGS_CANDIDATE(patch))
+        return false
+      }
+      assignKnownProperties(this.userSettingsModule.userSettings, candidate)
+      localSettingsSaved()
+      return true
     },
 
     ADD_IMAGE_LINK_TYPE_RULE({ rule }: { rule: ImageLinkRuleModel }) {
@@ -449,6 +597,8 @@ export const usePicxStore = defineStore('picx', {
     },
 
     UPDATE_IMAGE_LINK_TYPE_RULE({ rule }: { rule: ImageLinkRuleModel }) {
+      if (!this.getUserSettings.imageLinkType.presetList[rule.name]?.editable)
+        return
       imgLinkRuleVerification(rule, ImgLinkRuleActionsEnum.edit, (verified: boolean) => {
         if (verified) {
           this.userSettingsModule.userSettings.imageLinkType.presetList[rule.name].rule = rule.rule
@@ -463,7 +613,7 @@ export const usePicxStore = defineStore('picx', {
     },
 
     USER_SETTINGS_PERSIST() {
-      setLocal(LS_SETTINGS, this.userSettingsModule.userSettings)
+      return this.SAVE_SETTINGS_CANDIDATE({})
     },
 
     USER_GLOBAL_PERSIST() {
@@ -636,6 +786,40 @@ export const usePicxStore = defineStore('picx', {
 
       directory.imageList = []
       directory.childrenDirs = []
+      this.DIR_IMAGE_LIST_PERSIST()
+    },
+
+    DIR_IMAGE_LIST_REPLACE_CONTENT({ path, directories, images }: { path: string, directories: DirObject[], images: UploadedImageModel[] }) {
+      if (path !== '/' && !getDirContent(path, this.getDirObject))
+        this.DIR_IMAGE_LIST_ADD_DIR(path)
+      const directory = getDirContent(path, this.getDirObject)
+      if (!directory)
+        return
+      directory.childrenDirs = directories
+      directory.imageList = images
+      if (path === '/') {
+        this.userConfigInfoModule.userConfigInfo.dirList = directories.map(item => ({ value: item.dir, label: item.dir }))
+        this.USER_CONFIG_INFO_PERSIST()
+      }
+      this.DIR_IMAGE_LIST_PERSIST()
+    },
+
+    DIR_IMAGE_LIST_REMOVE_CONFIRMED_MEDIA({ path, sha }: { path: string, sha: string }) {
+      const parent = path.includes('/') ? path.slice(0, path.lastIndexOf('/')) : '/'
+      const directory = getDirContent(parent, this.getDirObject)
+      if (directory)
+        directory.imageList = directory.imageList.filter(image => image.path !== path || image.sha !== sha)
+      this.DIR_IMAGE_LIST_PERSIST()
+    },
+
+    DIR_IMAGE_LIST_RELOCATE_MEDIA({ original, image }: { original: UploadedImageModel, image: UploadedImageModel }) {
+      this.DIR_IMAGE_LIST_REMOVE_CONFIRMED_MEDIA(original)
+      if (image.dir !== '/')
+        this.DIR_IMAGE_LIST_ADD_DIR(image.dir)
+      const directory = getDirContent(image.dir, this.getDirObject)
+      if (!directory)
+        return
+      directory.imageList = [...directory.imageList.filter(item => item.path !== image.path), image]
       this.DIR_IMAGE_LIST_PERSIST()
     },
 
@@ -851,6 +1035,8 @@ export const usePicxStore = defineStore('picx', {
 
     UPLOAD_IMG_LIST_RESET() {
       this.uploadImageListModule.uploadImageList = []
+      this.uploadRuntime = {}
+      this.uploadBatches = []
     },
 
     SET_DEPLOY_STATUS_INFO(statusInfo: DeployStatusInfo) {
@@ -858,6 +1044,10 @@ export const usePicxStore = defineStore('picx', {
     },
 
     LOGOUT() {
+      this.connectionAttemptId += 1
+      this.connection = { phase: 'disconnected' }
+      this.uploadTargetBusy = false
+      cleanObject(this.githubAuthorizeModule.authorizationInfo)
       this.UPLOAD_AREA_ACTIVE_LOGOUT()
       this.DIR_IMAGE_LOGOUT()
       this.USER_CONFIG_INFO_LOGOUT()

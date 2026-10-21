@@ -25,7 +25,7 @@ const initSettings: UserSettingsModel = {
   },
   compress: {
     enable: true,
-    encoder: CompressEncoderEnum.webP,
+    encoder: CompressEncoderEnum.original,
   },
   imageLinkType: {
     selected: ImageLinkTypeEnum.GitHub,

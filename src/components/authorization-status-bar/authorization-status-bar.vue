@@ -1,45 +1,29 @@
 <script setup lang="ts">
-import { computed, shallowRef } from 'vue'
+import { computed } from 'vue'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import router from '@/router'
-import { store } from '@/stores'
-import { isAuthorizeExpire } from '@/views/picx-login/picx-login.util'
+import { pinia } from '@/stores'
+import { usePicxStore } from '@/stores/picx-store'
+import { connectionLocation } from '@/utils/login-navigation'
 
-const icon = shallowRef({ IEpCheck, IEpClose, IEpSwitch })
-
-const { token, isAutoAuthorize, installed } = computed(
-  () => store.getters.getGitHubAuthorizationInfo,
-).value
-
-const onOK = () => {
-  router.push({ path: '/login', query: { jump: '0' } })
-}
+const picx = usePicxStore(pinia)
+const connection = computed(() => picx.connection)
+const statusKey = computed(() => connection.value.phase === 'connected'
+  ? 'connected'
+  : connection.value.phase === 'validating' || connection.value.phase === 'initializing'
+    ? 'connecting'
+    : connection.value.phase === 'failed' ? 'failed' : 'unverified')
 </script>
 
 <template>
-  <div
-    class="authorization-status-box status-bar"
-    :class="{
-      success: isAutoAuthorize && token && !isAuthorizeExpire(),
-      warning: isAutoAuthorize && token && !isAuthorizeExpire() && installed === false,
-      error: isAutoAuthorize && token && isAuthorizeExpire(),
-    }"
-  >
-    <div>
-      <span v-if="isAutoAuthorize">
-        <span v-if="isAuthorizeExpire()">
-          {{ $t('authorization.text_4') }}
-        </span>
-        <span v-else>{{ $t('authorization.text_3') }}</span>
-      </span>
-      <span v-else>{{ $t('authorization.text_5') }}</span>
-    </div>
-
-    <el-button text type="primary" :icon="icon.IEpSwitch" @click="onOK">
-      {{ $t('authorization.text_7') }}
+  <div class="authorization-status-box status-bar" :class="{ success: connection.phase === 'connected', error: connection.phase === 'failed' }">
+    <span>{{ $t(`repository_context.${statusKey}`) }}</span>
+    <el-button text type="primary" @click="router.push(connectionLocation('/upload'))">
+      <PicxIcon name="refresh-cw" :size="16" />{{ $t('authorization.text_7') }}
     </el-button>
   </div>
 </template>
 
 <style scoped lang="stylus">
-@import "authorization-status-bar.styl"
+@import 'authorization-status-bar.styl'
 </style>

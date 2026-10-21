@@ -1,123 +1,250 @@
-:deep(.el-collapse-item__header) {
-  font-size 16rem
-}
+.settings-page-container {
+  display grid
+  gap 40px
+  padding 8px 0 32px
+  color var(--picx-color-text)
+  font-size 14px
+  line-height 1.6
 
-
-.setting-title {
-  margin 40rem 0 25rem 0
-  font-weight bold
-  font-size 16rem
-
-  &:first-child {
-    margin-top 0
-  }
-}
-
-
-.setting-list {
-  margin 0
-  padding 0
-
-  .setting-item {
-    margin-bottom 10rem
-
-    .settings-item-card {
-      width 100%
-    }
-
-    &:last-child {
-      margin-bottom 0
-    }
-
-
-    &.has-desc {
-      display flex
-      align-items center
-      color var(--text-color-4)
-      font-size 12rem
-      user-select none
-
-      .desc {
-        margin-left 10rem
-
-        +picx-mobile() {
-          display none
-        }
-      }
-    }
-
-
-    &.select-row {
-      display flex
-      align-items center
-
-      .label {
-        flex-shrink 0
-        margin-right 10rem
-        white-space nowrap
-      }
-
-      :deep() .el-select {
-        flex 1
-        min-width 0
-      }
-    }
-
-
-    .prefix-input {
-      width calc(100% - 58rem)
-      margin-left 58rem
-    }
-
-
-    :deep() .el-switch {
-      user-select none
-    }
-  }
-}
-
-
-.image-link-type-rule-option {
-
-  .left {
-    float left
-    margin-right 10rem
-  }
-
-  .right {
-    float right
-    color var(--el-text-color-secondary)
-    font-size 12rem
-  }
-}
-
-
-.custom-domain-row {
-  display flex
-  align-items center
-
-  .label {
-    flex-shrink 0
-    margin-right 10rem
-    white-space nowrap
-  }
-
-  .input {
-    flex 1
+  .settings-section {
+    display grid
+    gap 20px
     min-width 0
   }
 
-  .el-button {
-    flex-shrink 0
-    margin-left 10rem
+  .settings-section-heading {
+    h1 {
+      margin 0 0 4px
+      font-size 22px
+      line-height 1.4
+    }
+
+    p {
+      margin 0
+    }
   }
-}
 
+  p {
+    color var(--picx-color-text-muted)
+    overflow-wrap anywhere
+  }
 
-.custom-domain-desc {
-  margin-top 8rem
-  color var(--text-color-4)
-  font-size 12rem
-  line-height 1.6
-  user-select none
+  .settings-grid {
+    display grid
+    grid-template-columns repeat(2, minmax(0, 1fr))
+    gap 24px
+    align-items stretch
+  }
+
+  .settings-card {
+    display flex
+    flex-direction column
+    gap 16px
+    min-width 0
+    padding 28px
+    background var(--picx-color-surface)
+    border-radius var(--picx-radius-card)
+
+    h2 {
+      margin 0
+      font-size 17px
+      line-height 1.5
+    }
+
+    p {
+      margin 0
+    }
+  }
+
+  .settings-switch-row {
+    display flex
+    flex-direction row
+    align-items center
+    justify-content space-between
+    gap 20px
+    min-height 44px
+
+    > div:first-child {
+      min-width 0
+    }
+
+    .el-switch {
+      min-width 44px
+      flex-shrink 0
+    }
+  }
+
+  .settings-preview {
+    display block
+    min-width 0
+    padding 12px 16px
+    color var(--picx-color-text)
+    background var(--picx-color-surface-muted)
+    border-radius var(--picx-radius-control)
+    font-size 14px
+    overflow-wrap anywhere
+    white-space pre-wrap
+  }
+
+  .settings-domain-row {
+    display flex
+    gap 8px
+
+    .el-input {
+      flex 1
+      min-width 0
+    }
+  }
+
+  .el-button {
+    min-width 44px
+    min-height 44px
+    height auto
+    margin-left 0
+
+    > span {
+      flex-wrap wrap
+      gap 8px
+      white-space normal
+    }
+  }
+
+  .el-select {
+    width 100%
+    min-width 0
+  }
+
+  .el-form-item {
+    min-width 0
+  }
+
+  .el-form-item__content {
+    min-width 0
+  }
+
+  .el-radio-group {
+    display flex
+    flex-wrap wrap
+    gap 8px
+  }
+
+  .el-radio {
+    min-height 44px
+    height auto
+    margin-right 12px
+    white-space normal
+  }
+
+  .el-table {
+    overflow-x auto
+  }
+
+  .deploy-item {
+    flex-wrap wrap
+    height auto
+    min-height 44px
+    gap 12px
+
+    .left-wrap {
+      flex-wrap wrap
+      gap 8px
+    }
+  }
+
+  @media (max-width 767px) {
+    gap 32px
+
+    .settings-grid {
+      grid-template-columns minmax(0, 1fr)
+      gap 16px
+    }
+
+    .settings-card {
+      padding 20px 16px
+    }
+
+    .settings-domain-row {
+      flex-direction column
+    }
+
+    input, textarea, select {
+      font-size 16px
+    }
+
+    .el-form-item {
+      flex-direction column
+      align-items stretch
+    }
+
+    .el-form-item__label {
+      justify-content flex-start
+      width auto !important
+      height auto
+      min-height 28px
+      line-height 1.6
+    }
+
+    .el-form-item__content {
+      margin-left 0 !important
+    }
+  }
+
+  .settings-error {
+    color var(--picx-color-danger)
+  }
+
+  .settings-segments {
+    display flex
+    flex-wrap wrap
+    gap 8px
+
+    button {
+      flex 1 1 auto
+      min-width 44px
+      min-height 44px
+      padding 8px 12px
+      color var(--picx-color-text)
+      background var(--picx-color-surface)
+      border 1px solid var(--picx-color-control-border)
+      border-radius var(--picx-radius-control)
+      font inherit
+
+      &[aria-pressed='true'] {
+        color var(--picx-color-primary)
+        background var(--picx-color-primary-soft)
+        border-color var(--picx-color-primary)
+      }
+    }
+  }
+
+  .img-encoder-group {
+    display grid
+    grid-template-columns repeat(2, minmax(0, 1fr))
+    align-items start
+    gap 8px 16px
+
+    @media (max-width 767px) {
+      grid-template-columns minmax(0, 1fr)
+    }
+  }
+  .settings-field-title {
+    font-size 17px
+    font-weight 600
+  }
+
+  select {
+    box-sizing border-box
+    width 100%
+    min-height 44px
+    padding 8px 12px
+    color var(--picx-color-text)
+    background var(--picx-color-surface)
+    border 1px solid var(--picx-color-control-border)
+    border-radius var(--picx-radius-control)
+    font inherit
+
+    @media (max-width 767px) {
+      font-size 16px
+    }
+  }
 }

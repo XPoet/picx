@@ -10,6 +10,11 @@ $left-side-width = 240rem
 $left-side-padding = 20rem
 $left-side-folded-width = 86rem
 
+// 新公共布局使用实际像素，历史 rem 保持原换算。
+$picx-content-max-width = 1264px
+$picx-mobile-breakpoint = 767px
+$picx-desktop-breakpoint = 1280px
+
 
 // ========================================================================================
 // media query
@@ -106,25 +111,22 @@ $dark-uploaded-color = darken($uploaded-color, 30%)
 
 
 root-color(mode) {
-  --background-color mode == 'light' ? $background-color : $dark-background-color
-  --background-color-2 mode == 'light' ? $background-color-2 : $dark-background-color-2
-  --background-color-3 mode == 'light' ? $background-color-3 : $dark-background-color-3
-
-  --text-color mode == 'light' ? $text-color : $dark-text-color
-  --text-color-2 mode == 'light' ? $text-color-2 : $dark-text-color-2
-  --text-color-3 mode == 'light' ? $text-color-3 : $dark-text-color-3
-  --text-color-4 mode == 'light' ? $text-color-4 : $dark-text-color-4
-  --text-color-5 mode == 'light' ? $text-color-5 : $dark-text-color-5
-
-  --border-color mode == 'light' ? $border-color : $dark-border-color
-  --shadow-color mode == 'light' ? $shadow-color : $dark-shadow-color
-  --shadow-hover-color mode == 'light' ? $shadow-hover-color : $dark-shadow-hover-color
-  --scrollbar-color mode == 'light' ? $scrollbar-color : $dark-scrollbar-color
-  --scroll-bar-bg-color mode == 'light' ? $scroll-bar-bg-color : $dark-scroll-bar-bg-color
-
-  --await-upload-color  mode == 'light' ? $await-upload-color : $dark-await-upload-color
-  --uploading-color  mode == 'light' ? $uploading-color : $dark-uploading-color
-  --uploaded-color  mode == 'light' ? $uploaded-color : $dark-uploaded-color
+  --background-color var(--picx-color-surface)
+  --background-color-2 var(--picx-color-bg)
+  --background-color-3 var(--picx-color-surface-muted)
+  --text-color var(--picx-color-text)
+  --text-color-2 var(--picx-color-text)
+  --text-color-3 var(--picx-color-text)
+  --text-color-4 var(--picx-color-text-muted)
+  --text-color-5 var(--picx-color-surface)
+  --border-color var(--picx-color-border)
+  --shadow-color var(--picx-color-shadow)
+  --shadow-hover-color var(--picx-color-shadow-hover)
+  --scrollbar-color var(--picx-color-control-border)
+  --scroll-bar-bg-color var(--picx-color-control-border)
+  --await-upload-color var(--picx-color-warning)
+  --uploading-color var(--picx-color-primary)
+  --uploaded-color var(--picx-color-success)
 }
 
 

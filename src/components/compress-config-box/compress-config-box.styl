@@ -4,21 +4,49 @@
 
 
   .img-encoder-title {
-    font-size 14rem
+    font-size var(--picx-font-body)
   }
 
   .img-encoder-group {
-    display inline-block
+    display flex
+    flex-direction column
+    min-width 0
+    width 100%
     margin-top 16rem
 
     .el-radio {
-      display block
+      display flex
+      align-items flex-start
+      min-height var(--picx-control-height)
+      height auto
+      margin-right 0
+      padding 8px 0
+      white-space normal
+    }
+
+    :deep(.el-radio__input) {
+      display inline-flex
+      align-items center
+      height 1.6em
+      font-size var(--picx-font-body)
+    }
+
+    :deep(.el-radio__label) {
+      min-width 0
+      line-height 1.6
+      white-space normal
     }
 
     .desc {
       margin-left 10rem
       color var(--text-color-4)
-      font-size 12rem
+      font-size var(--picx-font-body)
+      overflow-wrap anywhere
+
+      +picx-mobile() {
+        display block
+        margin-left 0
+      }
     }
   }
 }

@@ -1,133 +1,110 @@
 <script setup lang="ts">
-import { computed, onMounted, triggerRef, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { ElementPlusSizeEnum } from '@/common/model'
+import { computed, nextTick, onMounted, onUnmounted, ref, useTemplateRef, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import i18n from '@/plugins/vue/i18n'
 import { useStore } from '@/stores'
+import { connectionLocation } from '@/utils/login-navigation'
 import { navInfoList } from './nav-content.data'
 
+const route = useRoute()
 const router = useRouter()
 const store = useStore()
+const menuOpen = ref(false)
+const compact = ref(false)
+const menuButton = useTemplateRef<HTMLButtonElement>('menuButton')
+const navigation = useTemplateRef<HTMLElement>('navigation')
+const container = useTemplateRef<HTMLElement>('container')
+const visibleItems = computed(() => navInfoList.filter(item => !('requiresLogin' in item) || store.getters.getUserLoginStatus))
+let media: MediaQueryList | undefined
 
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const globalSettings = computed(() => store.getters.getGlobalSettings).value
-
-const navIconSize = computed(() => {
-  switch (globalSettings.elementPlusSize) {
-    case ElementPlusSizeEnum.small:
-      return 21
-    case ElementPlusSizeEnum.large:
-      return 25
-    default:
-      return 23
+const closeMenu = (restoreFocus = false) => {
+  menuOpen.value = false
+  if (restoreFocus && compact.value) {
+    menuButton.value?.focus()
   }
-})
+}
 
-const onNavClick = (e: any) => {
-  const { path } = e
+const toggleMenu = async () => {
+  menuOpen.value = !menuOpen.value
+  if (menuOpen.value) {
+    await nextTick()
+    navigation.value?.querySelector<HTMLAnchorElement>('a')?.focus()
+  }
+}
 
+const onNavClick = (event: MouseEvent, path: string) => {
   if (path === '/management') {
-    if (userConfigInfo.repo === '') {
-      ElMessage.warning(i18n.global.t('upload_page.message2'))
-      router.push('/config')
-      return
-    }
-
-    if (userConfigInfo.selectedDir === '') {
-      ElMessage.warning(i18n.global.t('upload_page.message3'))
-      router.push('/config')
-      return
+    const { repo, branch } = store.getters.getUserConfigInfo
+    if (!repo || !branch) {
+      event.preventDefault()
+      ElMessage.warning(i18n.global.t('connection.initialization-failed'))
+      router.push(connectionLocation('/management'))
     }
   }
-  router.push(path)
+  closeMenu(true)
 }
 
-const changeNavActive = (currentPath: string) => {
-  navInfoList.value.forEach((v) => {
-    const temp = v
-    temp.isActive = v.path === currentPath || currentPath.includes(v.path)
-    return temp
-  })
-
-  triggerRef(navInfoList)
+const onMediaChange = () => {
+  compact.value = media?.matches ?? false
+  closeMenu()
 }
 
-const onFoldNav = () => {
-  store.dispatch('SET_GLOBAL_SETTINGS', {
-    folded: !globalSettings.folded,
-  })
+const onOutsidePointer = (event: PointerEvent) => {
+  if (event.target instanceof Node && !container.value?.contains(event.target)) {
+    closeMenu()
+  }
 }
 
-watch(
-  () => router.currentRoute.value,
-  (_n) => {
-    changeNavActive(_n.path)
-  },
-)
-
-watch(
-  () => userConfigInfo.logined,
-  (_n) => {
-    navInfoList.value.forEach((v: any) => {
-      switch (v.path) {
-        case '/management':
-        case '/settings':
-          v.isShow = _n
-      }
-    })
-  },
-  {
-    deep: true,
-    immediate: true,
-  },
-)
+watch(() => route.fullPath, () => closeMenu())
 
 onMounted(() => {
-  router.isReady().then(() => {
-    changeNavActive(router.currentRoute.value.path)
-  })
+  media = window.matchMedia('(max-width: 1279px)')
+  onMediaChange()
+  media.addEventListener('change', onMediaChange)
+  document.addEventListener('pointerdown', onOutsidePointer)
+})
+
+onUnmounted(() => {
+  media?.removeEventListener('change', onMediaChange)
+  document.removeEventListener('pointerdown', onOutsidePointer)
 })
 </script>
 
 <template>
-  <aside
-    class="nav-content-container border-box"
-    :class="{ folded: store.getters.getGlobalSettings.folded }"
-  >
-    <div class="top-box border-box">
-      <ul class="nav-menu-list border-box">
-        <el-tooltip
-          v-for="(nav, idx) in navInfoList"
-          :key="idx + nav.uuid"
-          placement="left"
-          :content="$t(nav.name)"
-          :show-arrow="false"
-          :disabled="!store.getters.getGlobalSettings.folded"
-        >
-          <li
-            v-show="nav.isShow"
-            class="nav-menu-item border-box"
-            :class="{ active: nav.isActive }"
-            @click="onNavClick(nav)"
-          >
-            <el-icon class="nav-icon" :size="navIconSize">
-              <component :is="nav.icon" />
-            </el-icon>
-            <span class="nav-name">{{ $t(nav.name) }}</span>
+  <div ref="container" class="nav-content-container" @keydown.esc.stop.prevent="closeMenu(true)">
+    <button
+      ref="menuButton"
+      type="button"
+      class="menu-toggle picx-icon-button"
+      :aria-label="menuOpen ? $t('nav.close_menu') : $t('nav.open_menu')"
+      :aria-expanded="menuOpen"
+      aria-controls="picx-primary-navigation"
+      @click="toggleMenu"
+    >
+      <PicxIcon :name="menuOpen ? 'x' : 'menu'" />
+    </button>
+    <div v-show="!compact || menuOpen" class="nav-panel">
+      <nav id="picx-primary-navigation" ref="navigation" :aria-label="$t('nav.label')">
+        <ul class="nav-menu-list">
+          <li v-for="nav in visibleItems" :key="nav.path">
+            <RouterLink
+              :to="nav.to"
+              class="nav-menu-item"
+              :class="{ active: route.path === nav.path }"
+              :aria-current="route.path === nav.path ? 'page' : undefined"
+              @click="onNavClick($event, nav.path)"
+            >
+              {{ $t(nav.name) }}
+            </RouterLink>
           </li>
-        </el-tooltip>
-      </ul>
+        </ul>
+      </nav>
+      <div class="header-tools">
+        <slot />
+      </div>
     </div>
-
-    <div class="bottom-box border-box">
-      <el-icon v-if="globalSettings.folded" class="fold-icon" @click="onFoldNav">
-        <IEpDArrowRight />
-      </el-icon>
-      <el-icon v-else class="fold-icon" @click="onFoldNav">
-        <IEpDArrowLeft />
-      </el-icon>
-    </div>
-  </aside>
+  </div>
 </template>
 
 <style scoped lang="stylus">

@@ -1,36 +1,38 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { CompressEncoderEnum } from '@/common/model'
 import { store } from '@/stores'
 
-const props = defineProps({
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  usageScenario: {
-    type: String as () => 'imageHosting' | 'toolbox',
-    default: 'toolbox',
-  },
-})
-
-const emit = defineEmits(['encoder'])
+const props = withDefaults(defineProps<{
+  disabled?: boolean
+  usageScenario?: 'imageHosting' | 'toolbox'
+  modelValue?: CompressEncoderEnum
+}>(), { disabled: false, usageScenario: 'toolbox' })
+const emit = defineEmits<{ encoder: [encoder: CompressEncoderEnum] }>()
 
 const userSettings = computed(() => store.getters.getUserSettings).value
 
-const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.webP)
+const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.original)
 
 const onChangeEncoder = (encoder: string | number | boolean | undefined) => {
   if (typeof encoder === 'string' && Object.values<string>(CompressEncoderEnum).includes(encoder)) {
-    emit('encoder', encoder)
+    emit('encoder', encoder as CompressEncoderEnum)
   }
 }
 
 const reset = () => {
-  compressEncoder.value = CompressEncoderEnum.webP
+  compressEncoder.value = CompressEncoderEnum.original
+  emit('encoder', compressEncoder.value)
 }
 
+watch(() => props.modelValue, (value) => {
+  if (value !== undefined)
+    compressEncoder.value = value
+}, { immediate: true })
+
 onMounted(() => {
+  if (props.modelValue !== undefined)
+    return
   if (props.usageScenario === 'imageHosting') {
     compressEncoder.value = userSettings.compress.encoder
   }
@@ -51,19 +53,23 @@ defineExpose({ reset })
       class="img-encoder-group"
       @change="onChangeEncoder"
     >
-      <el-radio :label="CompressEncoderEnum.webP">
+      <el-radio :value="CompressEncoderEnum.original">
+        {{ $t('settings_page.img_compress.original') }}
+        <span class="desc">{{ $t('settings_page.img_compress.original_desc') }}</span>
+      </el-radio>
+      <el-radio :value="CompressEncoderEnum.webP">
         {{ CompressEncoderEnum.webP }}
         <span class="desc">{{ $t('settings_page.img_compress.radio_1_desc') }}</span>
       </el-radio>
-      <el-radio :label="CompressEncoderEnum.mozJPEG">
+      <el-radio :value="CompressEncoderEnum.mozJPEG">
         {{ CompressEncoderEnum.mozJPEG }}
         <span class="desc">{{ $t('settings_page.img_compress.radio_2_desc') }}</span>
       </el-radio>
-      <el-radio :label="CompressEncoderEnum.avif">
+      <el-radio :value="CompressEncoderEnum.avif">
         {{ CompressEncoderEnum.avif }}
         <span class="desc">{{ $t('settings_page.img_compress.radio_3_desc') }}</span>
       </el-radio>
-      <el-radio :label="CompressEncoderEnum.png">
+      <el-radio :value="CompressEncoderEnum.png">
         {{ CompressEncoderEnum.png }}
         <span class="desc">{{ $t('settings_page.img_compress.radio_4_desc') }}</span>
       </el-radio>

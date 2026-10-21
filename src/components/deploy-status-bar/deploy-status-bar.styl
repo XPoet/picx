@@ -1,52 +1,168 @@
-.deploy-status-bar-box {
-  width 100%
+.deploy-status-bar {
+  min-width 0
+  height 100%
 
   .deploy-item {
     display flex
+    flex-direction column
+    gap 20px
+    min-width 0
+    height 100%
+    color var(--picx-color-text)
+    font-size 14px
+    line-height 1.6
+  }
+
+  .left-wrap {
+    display flex
+    flex-wrap wrap
     align-items center
     justify-content space-between
-    margin-bottom 10rem
+    gap 12px
+    min-height 40px
+  }
 
+  .deploy-status-bar__heading {
+    display flex
+    align-items center
+    gap 12px
 
-    &:last-child {
-      margin-bottom 0
+    strong {
+      font-size 17px
+      font-weight 600
     }
+  }
 
-    .left-wrap {
-      .info-item {
-        margin-right 10rem
-      }
+  .deploy-status-bar__symbol {
+    display inline-flex
+    flex-shrink 0
+    align-items center
+    justify-content center
+    width 40px
+    height 40px
+    color var(--picx-color-primary)
+    background var(--picx-color-primary-soft)
+    border-radius var(--picx-radius-control)
+  }
+
+  p {
+    margin 0
+    overflow-wrap anywhere
+  }
+
+  .deploy-status-bar__description, .deploy-status-bar__auto-check {
+    color var(--picx-color-text-muted)
+  }
+
+  .deploy-status-bar__time {
+    display grid
+    gap 6px
+    padding 16px
+    color var(--picx-color-text-muted)
+    background var(--picx-color-surface-muted)
+    border-radius var(--picx-radius-control)
+    overflow-wrap anywhere
+
+    time {
+      color var(--picx-color-text)
+      font-size 16px
+      font-weight 500
+      font-variant-numeric tabular-nums
     }
+  }
 
-    .shortcut-key {
-      margin-left 5rem
-      padding 4rem 5rem
-      font-size 12rem
-      letter-spacing 1rem
-      border-radius 4rem
-      box-shadow 1rem 2rem 3rem var(--shadow-color)
+  .deploy-status-bar__footer {
+    display flex
+    flex-direction column
+    align-items flex-end
+    gap 16px
+    margin-top auto
+    padding-top 16px
+    border-top 1px solid var(--picx-color-border)
+  }
 
-      +picx-tablet() {
-        display none
-      }
+  .deploy-status-bar__auto-check {
+    align-self stretch
+    font-size 13px
+  }
+
+  .deployment-actions {
+    display flex
+    flex-wrap wrap
+    gap 8px
+  }
+
+  .el-button {
+    min-height 44px
+    height auto
+    margin-left 0
+
+    :deep(> span) {
+      flex-wrap wrap
+      gap 8px
+      white-space normal
     }
+  }
 
-    .deploy-status-icon {
-      display inline-block
-      width 10rem
-      height 10rem
-      background var(--el-color-info)
-      border-radius 50%
+  .deployment-state {
+    display inline-flex
+    align-items center
+    gap 6px
+  }
 
-      &.success {
-        background var(--el-color-success)
-      }
-
-      &.fail {
-        background var(--el-color-error)
-      }
+  @media (max-width 767px) {
+    .deployment-actions, .deployment-actions .el-button {
+      width 100%
     }
   }
 }
 
+.compact.deploy-status-bar {
+  height auto
 
+  .deploy-item {
+    gap 8px
+    padding 0
+    height auto
+    line-height 1.5
+  }
+
+  .left-wrap {
+    min-height 0
+  }
+
+  .deploy-status-bar__heading strong {
+    font-size 14px
+    font-weight 500
+  }
+
+  .deployment-state {
+    color var(--picx-color-text-muted)
+  }
+
+  .deploy-status-bar__footer {
+    align-items stretch
+    gap 0
+    margin-top 0
+    padding-top 0
+    border-top 0
+  }
+
+  .deployment-actions {
+    display grid
+  }
+
+  .el-button {
+    width 100%
+    height 44px
+    border-radius 10px
+  }
+
+  .el-button--primary.is-plain {
+    opacity 1
+    --el-button-border-color var(--picx-color-primary-soft)
+    --el-button-disabled-text-color var(--picx-color-primary)
+    --el-button-disabled-bg-color var(--picx-color-primary-soft)
+    --el-button-disabled-border-color var(--picx-color-primary-soft)
+  }
+}

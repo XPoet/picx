@@ -1,143 +1,109 @@
 <script setup lang="ts">
 import type { UploadedImageModel } from '@/common/model'
-import type { DirObject } from '@/stores/modules/dir-image-list/types'
-import { computed, ref, watch } from 'vue'
+import type { RepositoryIdentity } from '@/common/model/github-connection'
+import type { ApiFailure } from '@/utils/request/types'
+import { computed, onBeforeUnmount, ref, shallowRef, watch } from 'vue'
+import RepoDirCascader from '@/components/repo-dir-cascader/repo-dir-cascader.vue'
+import { useRepositoryDirectories } from '@/composables/use-repository-directories'
 import i18n from '@/plugins/vue/i18n'
+import { relocateManagementMedia } from '@/services/management'
+import { managementBusy, withManagementLoading } from '@/services/management-actions'
 import { store } from '@/stores'
-import { moveImageOnGitHub } from '@/utils/repo-content-utils'
 
-interface DirTreeNode {
-  value: string
-  label: string
-  disabled?: boolean
-  children: DirTreeNode[]
-}
-
-const uploadAreaState = computed(() => store.getters.getUploadAreaState)
-const dirObject = computed(() => store.getters.getDirObject)
-
-const dialogVisible = ref(false)
+const visible = ref(false)
 const moving = ref(false)
-const movingImg = ref<UploadedImageModel | null>(null)
-const targetDir = ref('')
-
-// 右键菜单指令通过 store 打开弹窗
-watch(
-  () => uploadAreaState.value.isShowMoveImageDialog,
-  (nv) => {
-    if (!nv) {
-      return
-    }
-
-    movingImg.value = uploadAreaState.value.moveImageInfo ?? null
-    targetDir.value = ''
-    dialogVisible.value = true
-    store.commit('SET_UPLOAD_AREA_STATE', { isShowMoveImageDialog: false })
-  },
-)
-
-// 从本地目录树构建选择器数据（图片当前所在目录禁用）
-const buildTreeData = (dirObj: DirObject, currentDir: string): DirTreeNode[] => {
-  return dirObj.childrenDirs.map(childDir => ({
-    value: childDir.dirPath,
-    label: childDir.dir,
-    disabled: childDir.dirPath === currentDir,
-    children: buildTreeData(childDir, currentDir),
-  }))
-}
-
-const dirTreeData = computed<DirTreeNode[]>(() => {
-  const currentDir = movingImg.value?.dir ?? ''
-  return [
-    {
-      value: '/',
-      label: i18n.global.t('management_page.contextmenu_3'),
-      disabled: currentDir === '/',
-      children: buildTreeData(dirObject.value, currentDir),
-    },
-  ]
+const image = shallowRef<UploadedImageModel | null>(null)
+const repository = shallowRef<RepositoryIdentity | null>(null)
+const selected = ref<string[] | null>(null)
+const failure = shallowRef<ApiFailure | null>(null)
+const { loads, beginSession, endSession, loadChildren } = useRepositoryDirectories(repository)
+const destination = computed(() => selected.value === null ? '' : selected.value.join('/') || '/')
+watch(() => store.getters.getUploadAreaState.isShowMoveImageDialog, (open) => {
+  if (!open)
+    return
+  image.value = store.getters.getUploadAreaState.moveImageInfo
+  const { owner, repo, branch } = store.getters.getUserConfigInfo
+  repository.value = { owner, repo, branch }
+  selected.value = null
+  failure.value = null
+  beginSession()
+  visible.value = true
+  store.commit('SET_UPLOAD_AREA_STATE', { isShowMoveImageDialog: false })
 })
-
-const closeDialog = () => {
-  dialogVisible.value = false
-  moving.value = false
-  movingImg.value = null
+function close() {
+  if (moving.value)
+    return
+  visible.value = false
+  endSession()
   store.commit('SET_UPLOAD_AREA_STATE', { moveImageInfo: null })
 }
-
-const onConfirm = async () => {
-  const img = movingImg.value
-  if (!img || !targetDir.value) {
+async function confirm() {
+  if (!image.value || !repository.value || !destination.value || destination.value === image.value.dir || moving.value || managementBusy.value)
     return
-  }
-
   moving.value = true
-
-  const userConfigInfo = store.getters.getUserConfigInfo
-  const res = await moveImageOnGitHub(userConfigInfo, img, targetDir.value)
-
-  moving.value = false
-
-  if (res) {
+  managementBusy.value = true
+  failure.value = null
+  const source = image.value
+  const target = repository.value
+  const directory = destination.value
+  try {
+    const response = await withManagementLoading({ kind: 'move', media: [source] }, () => relocateManagementMedia(target, source, directory))
+    if (!response.ok) {
+      failure.value = response.error
+      return
+    }
     ElMessage.success(i18n.global.t('management_page.message8'))
-    closeDialog()
+    if (response.data.cacheFailed)
+      ElMessage.warning(i18n.global.t('management_page.workspace.cacheFailed'))
+    visible.value = false
   }
-  else {
-    ElMessage.error(i18n.global.t('management_page.message9'))
+  catch {
+    failure.value = { kind: 'service', retryable: true }
+  }
+  finally {
+    moving.value = false
+    managementBusy.value = false
   }
 }
+onBeforeUnmount(endSession)
 </script>
 
 <template>
-  <el-dialog
-    v-model="dialogVisible"
-    class="move-image-dialog"
-    width="min(460px, 92vw)"
-    :title="$t('move')"
-    draggable
-    align-center
-    :show-close="!moving"
-    :close-on-click-modal="!moving"
-    :close-on-press-escape="!moving"
-    @close="closeDialog"
-  >
-    <div class="move-image-content border-box">
-      <div class="image-name text-ellipsis" :title="movingImg?.name">
-        {{ movingImg?.name }}
-      </div>
-      <el-tree-select
-        v-model="targetDir"
-        :data="dirTreeData"
-        :placeholder="$t('management_page.moveTips')"
-        :disabled="moving"
-        filterable
-        default-expand-all
-        :render-after-expand="false"
-        check-strictly
-      />
+  <el-dialog v-model="visible" :title="$t('management_page.workspace.move')" width="min(760px, 92vw)" append-to-body destroy-on-close :show-close="!moving" :close-on-click-modal="!moving" :close-on-press-escape="!moving" @closed="close">
+    <p class="move-impact">
+      {{ $t('management_page.workspace.moveImpact', { path: image?.path }) }}
+    </p>
+    <div v-if="failure" class="move-failure" role="alert">
+      {{ $t(`request_error.${failure.kind}`) }}
     </div>
+    <el-button :disabled="moving || image?.dir === '/'" @click="selected = []">
+      {{ $t('config_page.root_dir') }}
+    </el-button>
+    <RepoDirCascader v-if="visible" controlled :model-value="selected ?? []" :loads="loads" :disabled="moving" @update:model-value="selected = $event" @request-children="loadChildren" @retry="loadChildren($event, true)" />
     <template #footer>
-      <el-button v-if="!moving" @click="closeDialog">
+      <el-button :disabled="moving" @click="close">
         {{ $t('cancel') }}
       </el-button>
-      <el-button
-        type="primary"
-        :loading="moving"
-        :disabled="!targetDir"
-        @click="onConfirm"
-      >
-        {{ moving ? $t('management_page.loadingTxt4') : $t('confirm') }}
+      <el-button type="primary" :loading="moving" :disabled="!destination || destination === image?.dir" @click="confirm">
+        {{ $t('confirm') }}
       </el-button>
     </template>
   </el-dialog>
 </template>
 
 <style scoped lang="stylus">
-.move-image-content {
-  .image-name {
-    margin-bottom 12rem
-    color var(--el-text-color-secondary)
-    font-size 13rem
-  }
+.move-impact {
+  font-size 14px
+  line-height 1.6
+  overflow-wrap anywhere
+}
+
+.move-failure {
+  margin-bottom 16px
+  padding 12px
+  border-radius 8px
+  background var(--picx-color-danger-soft)
+  color var(--picx-color-danger)
+  font-size 14px
 }
 </style>

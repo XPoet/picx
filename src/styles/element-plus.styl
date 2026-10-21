@@ -1,18 +1,151 @@
-:root {
-  --el-color-primary #4975c6
-  --el-color-primary-light-3 #5482d3
-  --el-color-primary-light-5 #a0bbff
-  --el-color-primary-light-7 #c6d3ff
-  --el-color-primary-light-8 #d9e2ff
-  --el-color-primary-light-9 #ecefff
+:root
+:root.light
+:root.dark {
+  --el-bg-color var(--picx-color-surface)
+  --el-bg-color-page var(--picx-color-bg)
+  --el-bg-color-overlay var(--picx-color-surface)
+  --el-fill-color var(--picx-color-surface-muted)
+  --el-fill-color-light var(--picx-color-bg)
+  --el-fill-color-lighter var(--picx-color-bg)
+  --el-fill-color-extra-light var(--picx-color-bg)
+  --el-fill-color-blank var(--picx-color-surface)
+  --el-text-color-primary var(--picx-color-text)
+  --el-text-color-regular var(--picx-color-text)
+  --el-text-color-secondary var(--picx-color-text-muted)
+  --el-text-color-placeholder var(--picx-color-text-muted)
+  --el-text-color-disabled var(--picx-color-text-muted)
+  --el-border-color var(--picx-color-control-border)
+  --el-border-color-light var(--picx-color-border)
+  --el-border-color-lighter var(--picx-color-border)
+  --el-border-radius-base var(--picx-radius-control)
+  --el-border-radius-small var(--picx-radius-control)
+  --el-font-size-base var(--picx-font-body)
+  --el-font-size-small var(--picx-font-body)
+  --el-component-size var(--picx-control-height)
+  --el-component-size-small var(--picx-control-height)
+  --el-component-size-large var(--picx-control-height)
+  --el-disabled-bg-color var(--picx-color-surface-muted)
+  --el-disabled-text-color var(--picx-color-text-muted)
+  --el-disabled-border-color var(--picx-color-border)
+  --el-mask-color var(--picx-color-overlay)
+  --el-overlay-color-lighter var(--picx-color-overlay)
+  --el-box-shadow-light 0 8px 24px var(--picx-color-shadow)
+}
+
+.el-divider {
+  --el-border-color var(--picx-color-border)
+}
+
+.el-divider--horizontal {
+  margin 10px 0
+}
+
+.el-button {
+  min-width var(--picx-control-height)
+  min-height var(--picx-control-height)
+}
+
+.el-button--primary:not(.is-plain, .is-text, .is-link) {
+  --el-button-text-color var(--picx-color-on-primary)
+  --el-button-hover-text-color var(--picx-color-on-primary)
+  --el-button-hover-bg-color var(--picx-color-primary-hover)
+  --el-button-hover-border-color var(--picx-color-primary-hover)
+  --el-button-active-bg-color var(--picx-color-primary-hover)
+  --el-button-active-border-color var(--picx-color-primary-hover)
+  --el-button-disabled-text-color var(--picx-color-text-muted)
+  --el-button-disabled-bg-color var(--picx-color-surface-muted)
+  --el-button-disabled-border-color var(--picx-color-border)
+}
+
+.el-button.el-button--primary.is-plain {
+  --el-button-text-color var(--picx-color-primary)
+  --el-button-bg-color var(--picx-color-primary-soft)
+  --el-button-border-color var(--picx-color-primary)
+  --el-button-hover-text-color var(--picx-color-on-primary)
+  --el-button-hover-bg-color var(--picx-color-primary-hover)
+  --el-button-hover-border-color var(--picx-color-primary-hover)
+}
+
+:root .el-input .el-input__wrapper
+:root .el-select .el-select__wrapper {
+  min-height var(--picx-control-height)
+}
+
+:root .el-input .el-input__inner
+:root .el-textarea .el-textarea__inner
+:root .el-radio .el-radio__label
+:root .el-checkbox .el-checkbox__label {
+  font-size var(--picx-font-body)
+}
+
+.el-dialog
+.el-message-box {
+  --el-dialog-border-radius var(--picx-radius-dialog)
+  --el-messagebox-border-radius var(--picx-radius-dialog)
+}
+
+.el-overlay .el-dialog {
+  display flex
+  flex-direction column
+  max-width calc(100vw - 32px)
+  max-height calc(100dvh - 32px)
+  margin 16px auto
+
+  .el-dialog__header
+  .el-dialog__footer {
+    flex-shrink 0
+  }
+
+  .el-dialog__body {
+    min-height 0
+    overflow-y auto
+    overflow-wrap anywhere
+  }
+}
+
+.el-message-box {
+  max-width calc(100vw - 32px)
+}
+
+:root .el-radio
+:root .el-checkbox
+:root .el-switch
+:root .el-color-picker {
+  min-height var(--picx-control-height)
+}
+
+:root .el-color-picker {
+  min-width var(--picx-control-height)
+}
+
+.el-form-item__label
+.el-collapse-item__header
+.el-descriptions__label
+.el-descriptions__content {
+  font-size var(--picx-font-body)
+}
+
+.el-collapse-item__header {
+  min-height var(--picx-control-height)
+  height auto
+  padding 8px 0
+  line-height 1.6
 }
 
 .el-message__icon {
-  width 15rem
-  height 15rem
+  width 16px
+  height 16px
 
   svg {
-    width 15rem
-    height 15rem
+    width 16px
+    height 16px
+  }
+}
+
+@media (max-width $picx-mobile-breakpoint) {
+  :root .el-input .el-input__inner
+  :root .el-textarea .el-textarea__inner
+  :root .el-select .el-select__input {
+    font-size var(--picx-font-input-mobile)
   }
 }

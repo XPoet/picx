@@ -1,0 +1,83 @@
+import process from 'node:process'
+import { expect, test } from './fixtures'
+
+test('自动转换关闭时切换格式仍更新预览，保留复制偏好', async ({ page, picx }) => {
+  await picx.open('/settings', { savedRepository: true, settingsWritable: true })
+  const sharing = page.locator('.settings-section').filter({ has: page.getByRole('heading', { name: '链接与分享', exact: true }) })
+  const toggle = sharing.getByRole('switch', { name: '自动转换图片链接格式', exact: true })
+  const preview = sharing.locator('.image-link-preview pre')
+  await expect(toggle).not.toBeChecked()
+  for (const [format, prefix] of [['HTML', '<img src="https://'], ['BBCode', '[img]https://'], ['Markdown', '![']]) {
+    const synced = page.waitForResponse(response => response.url().includes('/contents/.settings') && response.request().method() === 'PUT')
+    await sharing.locator('.el-select').nth(1).click()
+    await page.getByRole('option', { name: format, exact: true }).click()
+    await expect(preview).toContainText(prefix)
+    await expect(toggle).not.toBeChecked()
+    expect(await page.evaluate(() => JSON.parse(localStorage.getItem('PICX_IH_SETTINGS') ?? '{}').imageLinkFormat)).toMatchObject({ selected: format, enable: false })
+    await synced
+  }
+  await page.reload()
+  await expect(preview).toContainText('![')
+  await expect(toggle).not.toBeChecked()
+  await expect(sharing.locator('.image-link-preview img')).toHaveCount(0)
+})
+
+test('规则显式增改删、非法模板与取消，格式预览保持文本', async ({ page, picx }, info) => {
+  await picx.open('/settings', { savedRepository: true, settingsWritable: true })
+  const sharing = page.locator('.settings-section').filter({ has: page.getByRole('heading', { name: '链接与分享', exact: true }) })
+  for (const name of ['GitHub Pages', 'GitHub', 'jsDelivr', 'Statically', 'ChinaJsDelivr']) {
+    await expect(sharing.getByTitle(`编辑规则 ${name}`, { exact: true })).toBeDisabled()
+    await expect(sharing.getByTitle(`删除规则 ${name}`, { exact: true })).toBeDisabled()
+  }
+  await sharing.getByRole('textbox', { name: '规则名称', exact: true }).fill('My CDN')
+  const template = sharing.getByRole('textbox', { name: '规则模板', exact: true })
+  await template.fill('javascript:{{path}}')
+  await sharing.getByRole('button', { name: '添加规则', exact: true }).click()
+  await expect(sharing.getByRole('alert')).toContainText('规则仅支持 HTTP 或 HTTPS 协议')
+  await template.fill('https://cdn.example.test/{{path}}')
+  await sharing.getByRole('button', { name: '添加规则', exact: true }).click()
+  await expect(sharing.getByTitle('编辑规则 My CDN', { exact: true })).toBeVisible()
+  await sharing.locator('.el-select').first().click()
+  await page.getByRole('option', { name: 'My CDN', exact: true }).click()
+  await sharing.getByRole('switch', { name: '自动转换图片链接格式', exact: true }).press('Space')
+  await sharing.locator('.el-select').nth(1).click()
+  await page.getByRole('option', { name: 'HTML', exact: true }).click()
+  await expect(sharing.locator('.image-link-preview pre')).toContainText('<img src="https://cdn.example.test/')
+  await expect(sharing.locator('.image-link-preview img')).toHaveCount(0)
+  await sharing.getByTitle('编辑规则 My CDN', { exact: true }).click()
+  await template.fill('https://changed.example.test/{{path}}')
+  await sharing.getByRole('button', { name: '取消', exact: true }).click()
+  await expect(sharing.locator('.settings-preview').filter({ hasText: 'https://cdn.example.test/' }).first()).toBeVisible()
+  await expect(sharing.getByTitle('删除规则 GitHub', { exact: true })).toBeDisabled()
+  await sharing.getByTitle('删除规则 My CDN', { exact: true }).click()
+  await page.getByRole('button', { name: '取消', exact: true }).click()
+  await expect(sharing.getByTitle('删除规则 My CDN', { exact: true })).toBeVisible()
+  await sharing.getByTitle('删除规则 My CDN', { exact: true }).click()
+  await page.getByRole('button', { name: '确定', exact: true }).click()
+  await expect(sharing.locator('.el-select').first()).toContainText('GitHub')
+  await expect(page.locator('.el-message-box')).toBeHidden()
+  if (process.env.PICX_CAPTURE_TASK === 'T036' && info.project.name === 'desktop-chrome') {
+    await page.setViewportSize({ width: 1440, height: 1080 })
+    await page.screenshot({ path: 'docs/UI/evidence/p5/t036-links-1440.png', fullPage: true })
+    await page.setViewportSize({ width: 375, height: 812 })
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true)
+    await page.screenshot({ path: 'docs/UI/evidence/p5/t036-links-375.png', fullPage: true })
+  }
+})
+
+test('Pages 未准备好保留原来源，匹配构建后显式选择', async ({ page, picx }) => {
+  await picx.open('/settings', { savedRepository: true, settingsWritable: true })
+  const sharing = page.locator('.settings-section').filter({ has: page.getByRole('heading', { name: '链接与分享', exact: true }) })
+  const source = sharing.locator('.el-select').first()
+  await source.click()
+  await page.getByRole('option', { name: 'GitHub Pages', exact: true }).click()
+  await expect(sharing.getByRole('alert')).toContainText('已保留原链接来源')
+  await expect(sharing.locator('.el-select').first()).toContainText('Fixture CDN')
+  await page.route('**/git/ref/heads/gh-pages*', route => route.fulfill({ json: { object: { sha: 'fixture-build' } } }))
+  await page.route('https://api.github.com/repos/**/pages**', route => route.fulfill({ json: new URL(route.request().url()).pathname.endsWith('/builds/latest')
+    ? { status: 'built', commit: 'fixture-build' }
+    : { status: 'built', html_url: 'https://images.example.test/', source: { branch: 'gh-pages', path: '/' } } }))
+  await source.click()
+  await page.getByRole('option', { name: 'GitHub Pages', exact: true }).click()
+  await expect(sharing.locator('.el-select').first()).toContainText('GitHub Pages')
+})

@@ -1,68 +1,110 @@
 .getting-images-container {
   position relative
-  z-index 999
   display flex
   align-items center
   justify-content center
   box-sizing border-box
   width 100%
-  height 300rem
-  border 4rem dashed var(--text-color-4)
-  border-radius 8rem
+  height 300px
+  color var(--picx-color-text-muted)
+  background var(--picx-color-surface)
+  border 2px dashed var(--picx-color-control-border)
+  border-radius var(--picx-radius-control)
 
-  &.focus {
-    border-color var(--el-color-primary)
+  &.focus
+  &.dragging {
+    border-color var(--picx-color-primary)
   }
 
   &.disabled {
-    pointer-events none
+    opacity .65
   }
 
-  &:hover {
-    border-color var(--el-color-primary)
-  }
-
-  label {
+  input[type="file"] {
     position absolute
-    z-index 1000
-    display block
+    width 1px
+    height 1px
+    overflow hidden
+    clip-path inset(50%)
+  }
+
+  .preview-select {
+    position absolute
+    z-index 1
     width 100%
     height 100%
     cursor pointer
   }
 
-  input[type="file"] {
-    position absolute
-    top -9999rem
-    left -9999rem
-  }
-
   .upload-area-tips {
-    color #aaa
     text-align center
-    user-select none
-
-    .icon {
-      font-size 100rem
-    }
 
     .text {
-      font-size 20rem
-      cursor default
+      margin-top 12px
+      font-size 16px
     }
   }
 
-
-  .preview-img {
-    width 100%
-    height 100%
-    object-fit cover
-  }
-
+  .preview-img
   .preview-video {
     width 100%
     height 100%
-    background #000
     object-fit contain
+  }
+
+  &.workspace {
+    flex-direction column
+    gap 20px
+    min-height 408px
+    height 100%
+    padding 32px
+    text-align center
+    border-width 1px
+    border-radius 24px
+
+    h2 {
+      margin 0
+      color var(--picx-color-text)
+      font-size 24px
+      font-weight 600
+      line-height 1.5
+    }
+
+    p {
+      margin 0
+      font-size 14px
+      line-height 1.6
+    }
+
+    .upload-symbol {
+      display grid
+      place-items center
+      width 56px
+      height 56px
+      color var(--picx-color-primary)
+      background var(--picx-color-primary-soft)
+      border-radius var(--picx-radius-control)
+    }
+
+    .el-button {
+      gap 10px
+      min-height 48px
+      height auto
+      padding 12px 24px
+      white-space normal
+
+      :deep(> span) {
+        gap 10px
+      }
+    }
+
+    @media (max-width 767px) {
+      min-height 340px
+      padding 24px 16px
+
+      h2 {
+        font-size 20px
+      }
+    }
   }
 }

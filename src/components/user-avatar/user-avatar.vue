@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from '@/stores'
 import { getGitHubOwnerURL } from '@/utils'
+import { connectionLocation } from '@/utils/login-navigation'
 
 const router = useRouter()
 const store = useStore()
@@ -10,14 +11,14 @@ const store = useStore()
 const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
 
 const onLogin = () => {
-  router.push('/login')
+  router.push(connectionLocation(router.currentRoute.value.path))
   document.body.click()
 }
 
 // 退出登录
 const onLogout = () => {
   store.dispatch('LOGOUT')
-  router.push('/login')
+  router.push(connectionLocation(router.currentRoute.value.path))
   document.body.click()
   setTimeout(() => {
     window.location.reload()
@@ -29,7 +30,7 @@ const jumpOwnerRepo = () => {
     window.open(getGitHubOwnerURL(userConfigInfo))
   }
   else {
-    router.push('/config')
+    router.push(connectionLocation('/upload'))
   }
 }
 </script>

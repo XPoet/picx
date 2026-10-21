@@ -1,200 +1,41 @@
-import { computed } from 'vue'
-import {
-  createRepo,
-  getDirInfoList,
-  getGitHubUserInfo,
-  getRepoInfo,
-  initRepoREADME,
-} from '@/common/api'
-import { INIT_REPO_BARNCH, INIT_REPO_NAME, INIT_REPO_SHORT_NAME } from '@/common/constant'
 import { DirModeEnum } from '@/common/model'
+import { useGithubConnection } from '@/composables/use-github-connection'
 import i18n from '@/plugins/vue/i18n'
 import router from '@/router'
 import { store } from '@/stores'
 
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
+interface Focusable { focus: () => void }
 
-/**
- * 持久化用户图床配置信息
- */
-export const persistUserConfigInfo = async () => {
+export async function persistUserConfigInfo() {
   await store.dispatch('USER_CONFIG_INFO_PERSIST')
 }
 
-/**
- * 保存用户信息
- * @param userInfo
- */
-export async function saveUserInfo(userInfo: any) {
-  await store.dispatch('SET_USER_CONFIG_INFO', {
-    logined: true,
-    id: userInfo.id,
-    owner: userInfo.login,
-    name: userInfo.name,
-    email: userInfo.email,
-    avatarUrl: userInfo.avatar_url,
-  })
-}
-
-/**
- * 前往 [上传图片] 页面
- */
-export const goUploadPage = async (inputRef: any) => {
-  const { selectedDir, dirMode } = userConfigInfo
-  let warningMessage: string = i18n.global.t('config_page.message_6')
-
-  if (selectedDir === '') {
-    switch (dirMode) {
-      case DirModeEnum.newDir:
-        warningMessage = i18n.global.t('config_page.message_7')
-        inputRef?.focus()
-        break
-      case DirModeEnum.repoDir:
-        warningMessage = i18n.global.t('config_page.message_8')
-        break
-    }
-    ElMessage.warning({ message: warningMessage })
-  }
-  else {
-    await router.push('/upload')
-  }
-}
-
-/**
- * PicX GitHub APP 安装状态处理
- * @param repoInfo
- * @param authorized
- * @param token
- */
-export const installedStatusHandle = async (repoInfo: any, authorized: boolean, token: string) => {
-  if (authorized && token) {
-    if (repoInfo) {
-      await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-        installed: true,
-      })
-    }
-    else {
-      const msgInstance = ElMessage({
-        customClass: 'custom-message-container',
-        duration: 0,
-        offset: 20,
-        type: 'warning',
-        message: `<div class="content-box authorization">
-                    <span class="msg">${i18n.global.t('authorization.msg_2')}</span>
-                    <spna class="btn-box">
-                      <span class="confirm btn">${i18n.global.t('authorization.btn_1')}</span>
-                    </spna>
-                  </div>`,
-        dangerouslyUseHTMLString: true,
-      })
-
-      document
-        .querySelector('.custom-message-container .authorization .confirm')
-        ?.addEventListener('click', () => {
-          msgInstance.close()
-          let url = import.meta.env.VITE_INSTALL_URL as string
-          if (userConfigInfo.id) {
-            url = import.meta.env.VITE_INSTALL_URL_USER + userConfigInfo.id
-          }
-          window.location.href = url
-        })
-    }
-  }
-}
-
-/**
- * 一键自动配置图床
- */
-export const oneClickAutoConfig = async (tokenInput: any) => {
-  const { token } = userConfigInfo
-
-  if (!token) {
-    ElMessage.error({ message: i18n.global.t('config_page.message_1') })
-    tokenInput?.focus()
+export async function goUploadPage(inputRef?: Focusable | null) {
+  const config = store.getters.getUserConfigInfo
+  if (!config.selectedDir) {
+    ElMessage.warning({ message: i18n.global.t(config.dirMode === DirModeEnum.newDir ? 'config_page.message_7' : 'config_page.message_8') })
+    inputRef?.focus()
     return
   }
+  await router.push('/upload')
+}
 
-  const loading = ElLoading.service({
-    lock: true,
-    text: i18n.global.t('config_page.loading_6'),
-  })
-
-  try {
-    // 获取用户信息
-    const userInfo = await getGitHubUserInfo(userConfigInfo.token)
-
-    if (!userInfo) {
-      loading.close()
-      ElMessage.error({ message: i18n.global.t('config_page.message_2') })
-      return
-    }
-
-    // 保存 Token 到授权信息 store
-    if (!store.getters.getGitHubAuthorizationInfo.isAutoAuthorize) {
-      await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-        manualToken: userConfigInfo.token,
-      })
-    }
-
-    // 保存用户信息
-    await saveUserInfo(userInfo)
-
-    // 判断是否已存在 PicX 图床仓库
-    // 已存在 picx-images-hosting 则继续使用；不存在则改用 picx-ih
-    let initRepoName = INIT_REPO_SHORT_NAME
-    let isExistInitRepo: boolean = false
-    let initRepoInfo = await getRepoInfo(userConfigInfo.owner, INIT_REPO_NAME)
-    if (initRepoInfo) {
-      initRepoName = INIT_REPO_NAME
-    }
-    else {
-      // 兼容已存在 picx-ih 的情况（如重复一键配置），视为图床仓库已存在
-      initRepoInfo = await getRepoInfo(userConfigInfo.owner, INIT_REPO_SHORT_NAME)
-    }
-    if (initRepoInfo) {
-      isExistInitRepo = true
-      await store.dispatch('SET_USER_CONFIG_INFO', {
-        repoPrivate: initRepoInfo.private,
-      })
-    }
-
-    const repoInfo = await createRepo(userConfigInfo.token, initRepoName)
-
-    // ---- PicX GitHub APP 安装状态处理
-    const authorizationInfo = computed(() => store.getters.getGitHubAuthorizationInfo).value
-    const { token, authorized } = authorizationInfo
-    await installedStatusHandle(repoInfo, authorized, token)
-    if (!repoInfo) {
-      loading.close()
-      if (!(authorized && token)) {
-        ElMessage.error({ message: i18n.global.t('config_page.message_3') })
-      }
-      return
-    }
-    // --------------------------------
-
-    userConfigInfo.repo = initRepoName
-    userConfigInfo.branch = INIT_REPO_BARNCH
-
-    // 获取目录列表
-    if (isExistInitRepo) {
-      userConfigInfo.dirList = await getDirInfoList(userConfigInfo)
-    }
-
-    userConfigInfo.dirMode = DirModeEnum.rootDir
-    userConfigInfo.selectedDir = '/'
-
-    if (!isExistInitRepo) {
-      await initRepoREADME(userConfigInfo)
-    }
-    // 持久化存储用户配置信息
-    await persistUserConfigInfo()
-    loading.close()
-    ElMessage.success({ message: i18n.global.t('config_page.message_4') })
+/** 迁移期旧页面仍可调用同一连接服务；T015 后不再路由渲染。 */
+export async function oneClickAutoConfig(tokenInput?: Focusable | null) {
+  const connection = useGithubConnection()
+  const token = store.getters.getUserConfigInfo.token
+  if (!token) {
+    tokenInput?.focus()
+  }
+  const ok = await connection.connect(token, store.getters.getGitHubAuthorizationInfo.isAutoAuthorize ? 'oauth' : 'token')
+  if (ok) {
     await router.push('/upload')
   }
-  catch (err) {
-    ElMessage.error({ message: i18n.global.t('config_page.message_5') })
-    console.error('oneClickAutoConfig >> ', err)
+  else if (connection.connection.value.phase === 'failed') {
+    const kind = connection.connection.value.error.kind
+    const key = kind === 'app-not-installed'
+      ? 'authorization.msg_2'
+      : kind === 'initialization-failed' || kind === 'storage-unavailable' ? 'config_page.message_5' : `request_error.${kind}`
+    ElMessage.error({ message: i18n.global.t(key) })
   }
 }

@@ -1,61 +1,44 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import type { ManagementDirectoryAction } from '@/common/model/management'
+import type { DirObject } from '@/stores/modules/dir-image-list/types'
 import { ContextmenuEnum } from '@/common/directive/types'
-import { store } from '@/stores'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 
-const props = defineProps({
-  folderObj: {
-    type: Object as () => any,
-    default: () => {},
-  },
-})
-
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-
-const onDblClick = () => {
-  userConfigInfo.viewDir = props.folderObj.dirPath
-  store.dispatch('USER_CONFIG_INFO_PERSIST')
-}
+defineProps<{ folderObj: DirObject, busy: boolean, loading?: boolean, loadingText?: string }>()
+const emit = defineEmits<{ open: [path: string], action: [action: ManagementDirectoryAction] }>()
 </script>
 
 <template>
-  <div
-    v-contextmenu="{ type: ContextmenuEnum.dir, dir: folderObj.dir }"
-    class="folder-card border-box"
-    :class="{
-      active: folderObj.active,
-    }"
-    @dblclick="onDblClick"
-  >
-    <div class="icon">
-      <svg
-        t="1639999626518"
-        class="icon"
-        viewBox="0 0 1228 1024"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        p-id="3575"
-        width="200"
-        height="200"
-      >
-        <path
-          d="M1196.987733 212.5824v540.0576c0 39.594667-34.474667 71.3728-76.765866 71.3728H323.242667c-51.780267 0-88.746667-46.762667-73.250134-92.808533l126.737067-375.808H70.417067C31.675733 355.362133 0 326.4512 0 291.089067V98.372267C0 63.044267 31.675733 34.0992 70.417067 34.0992h378.811733c26.7264 0 51.029333 13.9264 63.010133 35.703467l39.048534 71.406933H1120.256c42.257067 0 76.8 32.119467 76.8 71.3728"
-          fill="#5398DF"
-          p-id="3576"
-        />
-        <path
-          d="M1128.721067 997.853867H68.266667a68.266667 68.266667 0 0 1-68.266667-68.266667V280.3712a68.266667 68.266667 0 0 1 68.266667-68.266667h1060.4544a68.266667 68.266667 0 0 1 68.266666 68.266667V929.5872a68.266667 68.266667 0 0 1-68.266666 68.266667"
-          fill="#85BCFF"
-          p-id="3577"
-        />
-      </svg>
-    </div>
-    <div class="text">
-      {{ folderObj.dir }}
-    </div>
+  <div v-loading="loading" v-contextmenu="{ type: ContextmenuEnum.dir, dir: folderObj.dir }" :element-loading-text="loadingText" class="folder-card" :class="{ active: folderObj.active }">
+    <button type="button" :disabled="busy" :title="folderObj.dir" @click="emit('open', folderObj.dirPath)">
+      <PicxIcon name="folder" :size="44" />
+      <span class="folder-name">{{ folderObj.dir }}</span>
+      <span class="folder-kind">{{ $t('management_page.workspace.folder') }}</span>
+    </button>
+    <el-dropdown class="folder-menu" trigger="click" @command="emit('action', $event)">
+      <button type="button" :disabled="busy">
+        <PicxIcon name="ellipsis" />
+      </button>
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item command="upload">
+            {{ $t('management_page.workspace.uploadCurrent') }}
+          </el-dropdown-item>
+          <el-dropdown-item command="repository">
+            {{ $t('management_page.workspace.repository') }}
+          </el-dropdown-item>
+          <el-dropdown-item command="rename">
+            {{ $t('management_page.workspace.rename') }}
+          </el-dropdown-item>
+          <el-dropdown-item command="delete">
+            {{ $t('management_page.workspace.deleteDirectory') }}
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
   </div>
 </template>
 
 <style scoped lang="stylus">
-@import 'folder-card.styl'
+@import './folder-card.styl'
 </style>

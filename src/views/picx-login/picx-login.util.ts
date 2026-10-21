@@ -1,166 +1,88 @@
-import axios from 'axios'
-import { computed } from 'vue'
+import type { ConnectionFailure } from '@/common/model/github-connection'
+import { exchangeAuthorizationCode } from '@/common/api/oauth'
 import { GITHUB_AUTHORIZE_EXPIRE } from '@/common/constant'
+import { useGithubConnection } from '@/composables/use-github-connection'
 import i18n from '@/plugins/vue/i18n'
 import router from '@/router'
-import { store } from '@/stores'
+import { pinia, store } from '@/stores'
+import { usePicxStore } from '@/stores/picx-store'
+import { cleanAuthorizationURL, connectionLocation, connectionReturnTo, readAuthorizationCallback } from '@/utils/login-navigation'
 
-const redirect_uri = import.meta!.env.VITE_REDIRECT_URI
-const authorize_api = 'https://apis.xpoet.cn/api/github-authorize'
-
-/**
- * 判断授权获取的 Token 是否已过期
- */
-export const isAuthorizeExpire = () => {
-  const { tokenCreateTime } = computed(() => store.getters.getGitHubAuthorizationInfo).value
-  return Date.now() - tokenCreateTime > GITHUB_AUTHORIZE_EXPIRE
+export function isAuthorizeExpire() {
+  return Date.now() - store.getters.getGitHubAuthorizationInfo.tokenCreateTime > GITHUB_AUTHORIZE_EXPIRE
 }
 
-/**
- * GitHub APP 授权获取 Token
- */
-export const githubAppAuthorize = () => {
-  const authorize_uri = import.meta!.env.VITE_AUTHORIZE_URI
-  const client_id = import.meta!.env.VITE_CLIENT_ID
-  window.location.href = `${authorize_uri}?client_id=${client_id}&redirect_uri=${redirect_uri}`
+export function githubAppAuthorize(returnTo: unknown = '/upload') {
+  const url = new URL(import.meta.env.VITE_AUTHORIZE_URI)
+  url.searchParams.set('client_id', import.meta.env.VITE_CLIENT_ID)
+  url.searchParams.set('redirect_uri', import.meta.env.VITE_REDIRECT_URI)
+  url.searchParams.set('state', connectionReturnTo(returnTo))
+  window.location.assign(url.toString())
 }
 
-/**
- * GitHub APP 授权回调处理
- */
-export const githubAppAuthorizeCallback = async () => {
-  const params = new URLSearchParams(window.location.search)
-  const code = params.get('code')
-  const setup_action = params.get('setup_action')
-  const installation_id = params.get('installation_id')
+interface CallbackOutcome {
+  handled: boolean
+  connected: boolean
+  returnTo: string
+  installationReady?: boolean
+}
+let callbackPending: Promise<CallbackOutcome> | undefined
 
-  // GitHub APP 安装之后的回调处理
-  if (setup_action === 'install' && installation_id && !code) {
-    await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-      installed: true,
-      installationId: installation_id,
-    })
-
-    ElMessageBox.confirm(i18n.global.t('authorization.msg_3'), i18n.global.t('tip'), {
-      confirmButtonText: i18n.global.t('confirm'),
-      cancelButtonText: i18n.global.t('cancel'),
-      type: 'success',
-      draggable: true,
-    })
-      .then(() => {
-        githubAppAuthorize()
-      })
-      .catch(() => {
-        window.location.href = '/'
-      })
+/** 局部消费并先清理 URL，任何失败只进入脱敏连接状态。 */
+export function githubAppAuthorizeCallback(): Promise<CallbackOutcome> {
+  if (callbackPending)
+    return callbackPending
+  const source = new URL(window.location.href)
+  const callback = readAuthorizationCallback(source)
+  if (!callback)
+    return Promise.resolve({ handled: false, connected: false, returnTo: '/upload' })
+  window.history.replaceState(window.history.state, '', cleanAuthorizationURL(source))
+  const picx = usePicxStore(pinia)
+  const attemptId = picx.BEGIN_GITHUB_CONNECTION()
+  const fail = (error: ConnectionFailure) => {
+    if (picx.connectionAttemptId === attemptId)
+      picx.connection = { phase: 'failed', attemptId, error }
   }
-
-  // GitHub APP 授权之后的回调处理
-  if (code) {
-    const loading = ElLoading.service({
-      lock: true,
-      text: i18n.global.t('authorization.loading_1'),
-    })
-
-    try {
-      // 存储 code 状态信息
-      await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-        authorized: true,
-        code,
-        codeCreateTime: Date.now(),
-        isAutoAuthorize: true,
-      })
-
-      const { token } = computed(() => store.getters.getGitHubAuthorizationInfo).value
-
-      let newToken: string = ''
-
-      if (!token || (token && isAuthorizeExpire())) {
-        // 在服务端获取 Token
-        const res = await axios.get(`${authorize_api}?code=${code}&redirect_uri=${redirect_uri}`)
-
-        if (res.data?.data) {
-          newToken = res.data.data
-          // 存储授权 Token 信息
-          await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-            token: newToken,
-            tokenCreateTime: Date.now(),
-          })
-        }
-        else {
-          ElMessage.error({ message: res.data.msg, duration: 6000 })
-        }
-      }
-      else {
-        newToken = token
-      }
-
-      if (newToken) {
-        // 存储 Token
-        await store.dispatch('SET_USER_CONFIG_INFO', {
-          token: newToken,
-        })
-
-        loading.close()
-
-        // 跳转到图床配置页面，进行一键自动配置
-        const oriUrl = window.location.href.replace(window.location.search, '')
-        window.location.href = `${oriUrl}config?auto=1`
-      }
-
-      loading.close()
+  callbackPending = (async () => {
+    await router.replace(connectionLocation(callback.returnTo))
+    const outcome: CallbackOutcome = { handled: true, connected: false, returnTo: callback.returnTo }
+    if (picx.connectionAttemptId !== attemptId)
+      return outcome
+    if (callback.kind === 'cancelled') {
+      fail({ kind: 'oauth-cancelled', retryable: true })
+      return outcome
     }
-    catch {
-      loading.close()
-      ElMessage.error({ message: i18n.global.t('authorization.msg_4'), duration: 6000 })
+    if (callback.kind === 'installation') {
+      try {
+        await store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', { installed: true, installationId: callback.installationId, code: '', codeCreateTime: 0 })
+        picx.connection = { phase: 'disconnected' }
+        return { ...outcome, installationReady: true }
+      }
+      catch {
+        fail({ kind: 'storage-unavailable', retryable: true })
+        return outcome
+      }
     }
-  }
+    const result = await exchangeAuthorizationCode(callback.code)
+    if (picx.connectionAttemptId !== attemptId)
+      return outcome
+    if (!result.ok) {
+      fail(result.error)
+      return outcome
+    }
+    outcome.connected = await useGithubConnection().connect(result.data, 'oauth')
+    return outcome
+  })().finally(() => { callbackPending = undefined })
+  return callbackPending
 }
 
-/**
- * GitHub APP 授权的初始处理流程
- */
-export const initGithubAuthorize = async () => {
-  const { authorized, installed, token, isAutoAuthorize } = computed(
-    () => store.getters.getGitHubAuthorizationInfo,
-  ).value
-
-  const goLoginPage = async (cb?: any) => {
-    router.push({ path: '/login', query: { jump: '0' } }).then(() => {
-      cb && cb()
-    })
-  }
-
-  if (isAutoAuthorize && authorized && installed) {
-    if (token && isAuthorizeExpire()) {
-      const msgInstance = ElMessage.error({
-        customClass: 'custom-message-container',
-        duration: 0,
-        showClose: true,
-        message: `<div class="content-box authorization">
-                    <span class="msg">${i18n.global.t('authorization.msg_1')}</span>
-                    <spna class="btn-box">
-                      <span class="confirm btn">${i18n.global.t('authorization.text_13')}</span>
-                    </spna>
-                  </div>`,
-        dangerouslyUseHTMLString: true,
-        onClose: () => {
-          goLoginPage()
-        },
-      })
-
-      document
-        .querySelector('.custom-message-container .authorization .confirm')
-        ?.addEventListener('click', () => {
-          msgInstance.close()
-          goLoginPage(() => {
-            store.dispatch('SET_GITHUB_AUTHORIZATION_INFO', {
-              authorizing: true,
-            })
-          })
-        })
-
-      await goLoginPage()
-    }
+/** 客户端检查窗口仅引导重新验证，不将其当作服务端 Token 失效证明。 */
+export async function initGithubAuthorize() {
+  const auth = store.getters.getGitHubAuthorizationInfo
+  if (callbackPending || readAuthorizationCallback(new URL(window.location.href)))
+    return
+  if (auth.isAutoAuthorize && auth.token && isAuthorizeExpire()) {
+    ElMessage.warning({ message: i18n.global.t('connection.recheck_required') })
+    await router.replace(connectionLocation(router.currentRoute.value.path))
   }
 }

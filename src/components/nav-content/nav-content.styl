@@ -1,92 +1,99 @@
 .nav-content-container {
-  display flex
-  flex-direction column
-  justify-content space-between
-  width 100%
-  height 100%
-  padding-top $left-side-padding
-  padding-right $left-side-padding
-  padding-bottom $left-side-padding
+  flex 1
+  min-width 0
 
-
-  &.folded {
-    padding-left $left-side-padding
-
-    .top-box {
-      .nav-menu-item {
-        justify-content center
-        height $left-side-folded-width - $left-side-padding * 2
-        margin-bottom 8rem
-        padding 0
-        border-radius $box-border-radius
-
-        .nav-name {
-          display none
-        }
-      }
-    }
-
-
-    .bottom-box {
-      justify-content space-between
-      padding-left 0
-
-      .fold-icon {
-        font-size 20rem
-      }
-
-      .site-count {
-        display none
-      }
-    }
+  .menu-toggle {
+    display none
   }
 
-
-  .top-box {
-    .nav-menu-item {
-      display flex
-      align-items center
-      justify-content flex-start
-      width 100%
-      margin-bottom 4rem
-      padding-top $left-side-padding * 0.6
-      padding-bottom $left-side-padding * 0.6
-      padding-left $left-side-padding
-      border-top-right-radius $box-border-radius
-      border-bottom-right-radius $box-border-radius
-      cursor pointer
-      user-select none
-
-      &:hover {
-        color var(--el-color-primary)
-        background var(--el-color-primary-light-9)
-      }
-
-
-      &.active {
-        color var(--el-color-primary)
-        font-weight bold
-        background var(--el-color-primary-light-9)
-      }
-
-
-      .nav-name {
-        margin-left $left-side-padding * 0.5
-        font-size 14rem
-      }
-    }
-  }
-
-
-  .bottom-box {
+  .nav-panel {
     display flex
     align-items center
-    justify-content space-between
-    padding-left $left-side-padding
+    gap var(--picx-space-6)
+  }
 
-    .fold-icon {
-      font-size 20rem
-      cursor pointer
+  nav {
+    flex 1
+    min-width 0
+  }
+
+  .nav-menu-list {
+    display flex
+    align-items center
+    justify-content center
+    gap var(--picx-space-1)
+  }
+
+  .nav-menu-item {
+    display flex
+    align-items center
+    justify-content center
+    box-sizing border-box
+    min-width 44px
+    min-height var(--picx-control-height)
+    padding 8px 16px
+    color var(--picx-color-text-muted)
+    font-size var(--picx-font-body)
+    line-height 1.5
+    text-align center
+    border-radius var(--picx-radius-control)
+
+    &:hover
+    &.active {
+      color var(--picx-color-primary)
+      background var(--picx-color-primary-soft)
+    }
+
+    &.active {
+      font-weight 600
+    }
+  }
+
+  .header-tools {
+    display flex
+    flex-shrink 0
+    align-items center
+    gap var(--picx-space-1)
+  }
+
+  @media (max-width 1279px) {
+    flex 0 0 auto
+
+    .menu-toggle {
+      display inline-flex
+    }
+
+    .nav-panel {
+      position absolute
+      top calc(100% + 8px)
+      right 0
+      left 0
+      z-index var(--picx-layer-menu)
+      flex-direction column
+      align-items stretch
+      gap var(--picx-space-4)
+      padding var(--picx-space-4)
+      background var(--picx-color-surface)
+      border 1px solid var(--picx-color-border)
+      border-radius var(--picx-radius-card)
+      box-shadow 0 8px 24px var(--picx-color-shadow)
+    }
+
+    .nav-menu-list {
+      display grid
+      grid-template-columns repeat(2, minmax(0, 1fr))
+      gap var(--picx-space-2)
+    }
+
+    .nav-menu-item {
+      overflow-wrap anywhere
+    }
+
+    .header-tools {
+      flex-wrap wrap
+      justify-content flex-end
+      padding-top var(--picx-space-3)
+      border-top 1px solid var(--picx-color-border)
     }
   }
 }

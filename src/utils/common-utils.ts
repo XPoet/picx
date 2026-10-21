@@ -1,3 +1,4 @@
+import { clearCopyFailure, showCopyFailure } from '@/composables/use-copy-feedback'
 import i18n from '@/plugins/vue/i18n'
 
 /**
@@ -23,10 +24,22 @@ export const getUuid = () => {
  * @param txt
  * @param callback
  */
-export const copyText = (txt: string, callback?: () => void) => {
-  navigator.clipboard.writeText(txt).then(() => {
-    callback?.()
-  })
+export type CopyResult = { ok: true } | { ok: false, reason: 'denied' | 'unavailable', text: string }
+export async function copyText(text: string, callback?: () => void): Promise<CopyResult> {
+  if (!navigator.clipboard?.writeText) {
+    showCopyFailure(text)
+    return { ok: false, reason: 'unavailable', text }
+  }
+  try {
+    await navigator.clipboard.writeText(text)
+  }
+  catch {
+    showCopyFailure(text)
+    return { ok: false, reason: 'denied', text }
+  }
+  clearCopyFailure(text)
+  callback?.()
+  return { ok: true }
 }
 
 /**

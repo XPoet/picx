@@ -1,8 +1,7 @@
-import type { UserConfigInfoModel } from '@/common/model'
+import type { RepositoryIdentity } from '@/common/model/github-connection'
+import type { ApiResult } from '@/utils/request/types'
 import { GH_PAGES } from '@/common/constant'
-import i18n from '@/plugins/vue/i18n'
-import request from '@/utils/request'
-import axios from '@/utils/request/axios'
+import request, { requestResult } from '@/utils/request'
 
 /**
  * 获取分支信息
@@ -73,86 +72,39 @@ export const getBranchInfoList = (
   })
 }
 
-/**
- * 将当前分支 checkout 到 gh-pages 分支
- * 部署到 GitHub Pages，完成图片资源托管，获取访问能力
- * @param userConfigInfo
- * @param cb
- */
-export const checkoutGhPagesBranch = async (userConfigInfo: UserConfigInfoModel, cb?: any) => {
-  const { owner, repo, branch } = userConfigInfo
-
-  const initLoading = ElLoading.service({
-    text: i18n.global.t('settings_page.image_hosting_deploy.deploying'),
-  })
-
-  const cbHandler = (evt: boolean = false) => {
-    cb && cb(evt)
-    initLoading.close()
+export interface GitReference { object: { sha: string } }
+export function isGitReference(value: unknown): value is GitReference {
+  return Boolean(value && typeof value === 'object' && 'object' in value && value.object && typeof value.object === 'object' && 'sha' in value.object && typeof value.object.sha === 'string' && value.object.sha)
+}
+export function getGitReference(target: RepositoryIdentity, branch: string) {
+  return requestResult({ url: `/repos/${target.owner}/${target.repo}/git/ref/heads/${encodeURIComponent(branch)}`, method: 'GET', noCache: true }, isGitReference)
+}
+/** 只报告 Git ref 提交结果，Pages 可用性由部署服务查询。 */
+export async function checkoutGhPagesBranch(
+  target: RepositoryIdentity,
+  allowRebuild = false,
+  current: () => boolean = () => true,
+): Promise<ApiResult<{ commitSha: string }>> {
+  const fail = { ok: false, error: { kind: 'conflict', retryable: true } } as const
+  if (target.branch === GH_PAGES || !current())
+    return fail
+  const source = await getGitReference(target, target.branch)
+  if (!source.ok)
+    return source
+  const existing = await getGitReference(target, GH_PAGES)
+  if (!existing.ok && existing.error.kind !== 'not-found')
+    return existing
+  if (!current())
+    return fail
+  if (existing.ok) {
+    if (!allowRebuild)
+      return fail
+    const removed = await requestResult({ url: `/repos/${target.owner}/${target.repo}/git/refs/heads/${GH_PAGES}`, method: 'DELETE' }, (value): value is unknown => value === '' || value === undefined || value === null)
+    if (!removed.ok)
+      return removed
   }
-
-  try {
-    // 1、判断 gh-pages 是否存在
-    const branchsRes = await getBranchInfoList(owner, repo)
-    const hasGhPages = branchsRes.some(x => x.value === GH_PAGES)
-
-    let allowCreate = true
-
-    // 存在则删除 gh-pages
-    if (hasGhPages) {
-      allowCreate = false
-      const delRes = await axios.delete(`/repos/${owner}/${repo}/git/refs/heads/${GH_PAGES}`)
-      if (delRes) {
-        allowCreate = true
-      }
-      else {
-        cbHandler(false)
-        return
-      }
-    }
-
-    // 允许创建 gh-pages
-    if (allowCreate) {
-      // 2、获取当前分支的 SHA 值
-      let sha = ''
-      const res1 = await request({
-        url: `/repos/${owner}/${repo}/git/refs/heads/${branch}`,
-        method: 'GET',
-      })
-
-      if (res1) {
-        sha = res1?.object?.sha
-      }
-
-      if (!sha) {
-        cbHandler(false)
-        return
-      }
-
-      // 3、复制当前分支到 gh-pages
-      const res2 = await request({
-        url: `/repos/${owner}/${repo}/git/refs`,
-        method: 'POST',
-        data: {
-          ref: `refs/heads/${GH_PAGES}`,
-          sha,
-        },
-      })
-
-      // gh-pages 分支创建成功
-      if (res2.object.sha) {
-        // GitHub 部署 Pages 服务需要 50s 左右，利用 setTimeout 模拟部署进程
-        setTimeout(() => {
-          cbHandler(true)
-        }, 50000)
-      }
-      else {
-        cbHandler(false)
-      }
-    }
-  }
-  catch (err) {
-    console.error(err)
-    cbHandler(false)
-  }
+  if (!current())
+    return fail
+  const created = await requestResult({ url: `/repos/${target.owner}/${target.repo}/git/refs`, method: 'POST', data: { ref: `refs/heads/${GH_PAGES}`, sha: source.data.object.sha } }, isGitReference)
+  return created.ok ? { ok: true, data: { commitSha: created.data.object.sha } } : created
 }

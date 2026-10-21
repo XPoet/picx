@@ -42,9 +42,13 @@ async function decodeImage(file: File): Promise<ImageData> {
     throw new Error('当前浏览器无法创建离屏画布。')
   }
 
-  context.drawImage(imageBitmap, 0, 0)
-  imageBitmap.close()
-  return context.getImageData(0, 0, canvas.width, canvas.height)
+  try {
+    context.drawImage(imageBitmap, 0, 0)
+    return context.getImageData(0, 0, canvas.width, canvas.height)
+  }
+  finally {
+    imageBitmap.close()
+  }
 }
 
 /**

@@ -1,47 +1,39 @@
-$layout-padding = $left-side-padding * 0.8
-$header-margin-bottom = $left-side-padding * 0.5
-
 .main-container {
-  position absolute
   display flex
   flex-direction column
-  justify-content space-between
   box-sizing border-box
   width 100%
-  height 100%
-  background var(--background-color-2)
+  min-height 100dvh
+  color var(--picx-color-text)
+  background var(--picx-color-bg)
 
-  .top-container {
-    flex-shrink 0
+  .main-content {
+    flex 1
+    box-sizing border-box
+    min-height 0
     width 100%
-    height $header-height
-    margin-bottom $header-margin-bottom
+    max-width calc(var(--picx-content-max-width) + 64px)
+    margin 0 auto
+    padding 32px
+
+    :deep(.page-container) {
+      border-radius var(--picx-radius-card)
+    }
   }
 
-
-  .bottom-container {
-    display flex
-    justify-content space-between
-    width 100%
-    height 'calc(100% - %s)' % ($header-height + $header-margin-bottom)
-
-
-    .bottom-left-box {
-      flex-shrink 0
-      width $left-side-width
-      height 100%
-
-      &.folded {
-        width $left-side-folded-width
-      }
+  @media (min-width 768px) and (max-width 1279px) {
+    .main-content {
+      padding 24px
     }
+  }
 
+  @media (max-width $picx-mobile-breakpoint) {
+    .main-content {
+      padding 24px 16px
 
-    .bottom-right-box {
-      width 100%
-      height 100%
-      padding-right $layout-padding
-      overflow-x auto
+      :deep(.page-container) {
+        padding 16px
+      }
     }
   }
 }

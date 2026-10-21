@@ -1,102 +1,141 @@
 .upload-page-container {
-  display flex
-  justify-content space-between
+  display grid
+  grid-template-columns minmax(0, 1fr) 320px
+  align-items start
+  gap 24px
+  min-width 0
   width 100%
-  height 100%
+
+  .upload-page-main {
+    min-width 0
+  }
+
+  .upload-stage {
+    display grid
+    min-width 0
+    min-height 408px
+    background var(--picx-color-surface)
+    border-radius 24px
+
+    &.has-queue {
+      grid-template-columns 280px minmax(0, 1fr)
+      gap 16px
+      height 704px
+      background transparent
+    }
+  }
+
+  .upload-intake {
+    display flex
+    flex-direction column
+    min-width 0
+
+    .getting-images-container {
+      flex 1
+    }
+  }
+
+  .has-queue .upload-intake .getting-images-container {
+    min-height 0
+  }
+
+  .workspace-notice {
+    display flex
+    flex-wrap wrap
+    align-items center
+    gap 12px
+    margin-bottom 16px
+    padding 16px
+    color var(--picx-color-text)
+    background var(--picx-color-primary-soft)
+    border-radius var(--picx-radius-control)
+    font-size 14px
+    line-height 1.6
+  }
 
   .upload-page-left {
-    flex-shrink 0
+    display flex
+    flex-direction column
     box-sizing border-box
-    width 300rem
-    height 100%
-    margin-right 10rem
-    border-top-right-radius 0
-    border-bottom-right-radius 0
+    min-width 0
+    min-height 0
+    gap 8px
+    padding 12px
+    background var(--picx-color-surface)
+    border 1px solid var(--picx-color-border)
+    border-radius 16px
 
-    .uploaded-item {
+    .queue-heading {
+      display flex
+      flex-shrink 0
+      align-items center
+      justify-content space-between
+      gap 8px
+      height 44px
+      padding 0 4px
+      color var(--picx-color-text-muted)
+      font-size 14px
+      line-height 1.5
+
+      h2 {
+        margin 0
+        color var(--picx-color-text)
+        font-size 14px
+        font-weight 600
+      }
+    }
+
+    .queue-list {
+      display flex
+      flex 1
+      flex-direction column
+      gap 4px
+      min-height 0
+      overflow-y auto
+      scrollbar-width thin
+    }
+
+    .queue-add {
+      flex-shrink 0
       width 100%
-      margin-bottom 20rem
+      height 44px
+      color var(--picx-color-primary)
+      border-radius 10px
 
-      &:last-child {
-        margin-bottom 0
+      > span {
+        gap 8px
       }
     }
   }
 
+  @media (max-width 1279px) {
+    grid-template-columns minmax(0, 1fr)
+  }
 
-  .upload-page-right {
-    box-sizing border-box
-    width 100%
-    height 100%
-    overflow-y auto
+  @media (max-width 767px) {
+    gap 16px
 
-    &.has-left {
-      border-top-left-radius 0
-      border-bottom-left-radius 0
+    .upload-stage.has-queue {
+      grid-template-columns minmax(0, 1fr)
+      height auto
     }
 
-    .row-item {
-      display flex
-      justify-content center
-      box-sizing border-box
-      width 100%
-      margin-bottom 16rem
-
-      &:last-child {
-        margin-bottom 0
-      }
-
-      .content-box {
-        box-sizing border-box
-        width 100%
-        max-width $content-max-width
-        margin 0 auto
-
-        &.upload-area-status {
-          display flex
-          align-items center
-          justify-content space-between
-          margin-bottom 10rem
-          font-size 14rem
-        }
-
-
-        &.operation-btn {
-          display flex
-          justify-content flex-end
-        }
-
-
-        .shortcut-key {
-          margin-left 5rem
-          padding 4rem 5rem
-          font-size 12rem
-          letter-spacing 1rem
-          border-radius 4rem
-          box-shadow 1rem 2rem 3rem var(--shadow-color)
-
-          +picx-tablet() {
-            display none
-          }
-        }
-      }
+    .upload-page-left {
+      height 460px
     }
 
-    .upload-tools {
-      width 100%
+    .has-queue .upload-intake {
+      order -1
 
-      .repos-dir-info {
-        margin-bottom 20rem
-        font-size 12rem
-
-        .repos-dir-info-item {
-          margin-right 10rem
-
-          &:last-child {
-            margin-right 0
-          }
-        }
+      .getting-images-container {
+        min-height 340px
       }
     }
+  }
+}
+
+@media (min-width 1280px) {
+  .main-container .main-content:has(.upload-page-container) {
+    padding-top 16px
   }
 }

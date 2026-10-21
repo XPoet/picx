@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN" class="light">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directory selector fixture</title>
+    <style>
+      #fixture { max-width: 704px; margin: 24px auto; padding: 16px; }
+    </style>
+  </head>
+  <body>
+    <main id="fixture"></main>
+    <script type="module">
+      import { createApp, defineComponent, h, ref } from 'vue'
+      import Selector from '../../src/components/repo-dir-cascader/repo-dir-cascader.vue'
+      import i18n from '../../src/plugins/vue/i18n'
+      import '../../src/styles/base.styl'
+
+      const option = (segments) => ({ name: segments.at(-1), segments, leaf: segments.length === 5 })
+      const app = createApp(defineComponent({
+        setup() {
+          const selection = ref(['albums'])
+          const loads = ref({ '/': { phase: 'loaded', items: [option(['albums']), option(['empty'])] } })
+          function load(parent) {
+            const key = parent.join('/') || '/'
+            if (!loads.value[key]) loads.value[key] = { phase: 'loaded', items: parent.at(-1) === 'empty' ? [] : [option([...parent, '2026'])] }
+          }
+          return () => h('div', [
+            h(Selector, {
+              controlled: true, modelValue: selection.value, loads: loads.value,
+              'onUpdate:modelValue': value => { selection.value = value },
+              onRequestChildren: load,
+              onRetry: load,
+            }),
+            h('output', { 'data-testid': 'selection' }, '/' + selection.value.join('/')),
+          ])
+        },
+      }))
+      app.use(i18n).mount('#fixture')
+    </script>
+  </body>
+</html>

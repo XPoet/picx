@@ -1,166 +1,107 @@
 <script setup lang="ts">
-import { ElConfigProvider } from 'element-plus'
+import { ElConfigProvider, ElMessage } from 'element-plus'
 import en from 'element-plus/es/locale/lang/en'
 import zhCN from 'element-plus/es/locale/lang/zh-cn'
 import zhTW from 'element-plus/es/locale/lang/zh-tw'
-import { computed, onMounted, shallowRef, watch } from 'vue'
+import { computed, h, onMounted, onUnmounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { ElementPlusSizeEnum, LanguageEnum } from '@/common/model'
+import CopyFallbackDialog from '@/components/copy-fallback-dialog/copy-fallback-dialog.vue'
+import { deployGhPages, deploymentShortcutEnabled, useDeploymentLifecycle } from '@/components/deploy-status-bar/deploy-status-bar.util'
 import { useCloudSettingsSync } from '@/composables/use-cloud-settings-sync'
+import { useDeploymentShortcut } from '@/composables/use-deployment-shortcut'
 import router from '@/router'
 import { useStore } from '@/stores'
-import { getLanguageByRegion, getRegionByIP, setWindowTitle, throttle } from '@/utils'
+import { getLanguageByRegion, getRegionByIP, setWindowTitle } from '@/utils'
 import setThemeMode from '@/utils/set-theme-mode'
 import MainContainer from '@/views/main-container/main-container.vue'
 import { initGithubAuthorize } from '@/views/picx-login/picx-login.util'
 
 const { locale, t } = useI18n()
 const store = useStore()
-// 图床设置后台静默云同步（登录后拉取云端 .settings，本地修改后自动推送）
 useCloudSettingsSync()
-const globalSettings = computed(() => store.getters.getGlobalSettings).value
-const elementPlusSize = shallowRef<ElementPlusSizeEnum>(ElementPlusSizeEnum.default)
-const elementPlusLocale = shallowRef(zhCN)
+useDeploymentLifecycle()
+useDeploymentShortcut(() => ['/upload', '/settings'].includes(router.currentRoute.value.path) && deploymentShortcutEnabled(), () => {
+  void deployGhPages()
+})
+setThemeMode()
+const globalSettings = computed(() => store.getters.getGlobalSettings)
+const elementPlusLocale = computed(() => ({
+  [LanguageEnum.zhCN]: zhCN,
+  [LanguageEnum.zhTW]: zhTW,
+  [LanguageEnum.en]: en,
+})[globalSettings.value.language])
 
-const elementPlusSizeHandle = (width: number) => {
-  if (width <= 700) {
-    store?.dispatch('SET_GLOBAL_SETTINGS', {
-      elementPlusSize: ElementPlusSizeEnum.small,
-      folded: true,
-    })
-    elementPlusSize.value = ElementPlusSizeEnum.small
-  }
-  else if (width <= 1000) {
-    store?.dispatch('SET_GLOBAL_SETTINGS', {
-      elementPlusSize: ElementPlusSizeEnum.default,
-      folded: false,
-    })
-    elementPlusSize.value = ElementPlusSizeEnum.default
-  }
-  else {
-    store?.dispatch('SET_GLOBAL_SETTINGS', {
-      elementPlusSize: ElementPlusSizeEnum.large,
-      folded: false,
-    })
-    elementPlusSize.value = ElementPlusSizeEnum.large
+const onResize = () => {
+  const size = window.innerWidth <= 700 ? ElementPlusSizeEnum.small : window.innerWidth <= 1000 ? ElementPlusSizeEnum.default : ElementPlusSizeEnum.large
+  if (globalSettings.value.elementPlusSize !== size) {
+    store.dispatch('SET_GLOBAL_SETTINGS', { elementPlusSize: size })
   }
 }
 
 const setLanguage = (language: LanguageEnum) => {
-  if (language === LanguageEnum.zhCN) {
-    locale.value = 'zh-CN'
-    elementPlusLocale.value = zhCN // 设置 Element Plus 组件库语言
-    window.pluginWebUpdateNotice_?.setLocale('zh_CN')
+  locale.value = language
+  document.documentElement.lang = language
+  const updateLocale = {
+    [LanguageEnum.zhCN]: 'zh_CN',
+    [LanguageEnum.zhTW]: 'zh_TW',
+    [LanguageEnum.en]: 'en_US',
+  } as const
+  window.pluginWebUpdateNotice_?.setLocale(updateLocale[language])
+  const title = router.currentRoute.value.meta.title
+  if (typeof title === 'string') {
+    setWindowTitle(title)
   }
-  else if (language === LanguageEnum.zhTW) {
-    locale.value = 'zh-TW'
-    elementPlusLocale.value = zhTW
-    window.pluginWebUpdateNotice_?.setLocale('zh_TW')
-  }
-  else if (language === LanguageEnum.en) {
-    locale.value = 'en'
-    elementPlusLocale.value = en
-    window.pluginWebUpdateNotice_?.setLocale('en_US')
-  }
-  else {
-    elementPlusLocale.value = zhCN
-    locale.value = 'zh-CN'
-    window.pluginWebUpdateNotice_?.setLocale('zh_CN')
-  }
-  setWindowTitle(router.currentRoute.value.meta.title as string)
 }
 
-const setLanguageByIP = () => {
-  if (!store.getters.getGlobalSettings.languageToggleTip) {
+const setLanguageByIP = async () => {
+  if (!globalSettings.value.languageToggleTip) {
     return
   }
-
-  getRegionByIP().then((region) => {
-    const language = getLanguageByRegion(region)
-
-    if (language !== globalSettings.language) {
-      const confirmTxt = t('confirm', {}, { locale: language })
-      const msgTxt = t(
-        'toggle_language_msg',
-        {
-          region: t(`region.${region}`, {}, { locale: language }),
-          language: t(`languages.${language}`, {}, { locale: language }),
+  const region = await getRegionByIP()
+  const language = getLanguageByRegion(region)
+  if (language === globalSettings.value.language) {
+    return
+  }
+  const msgTxt = t('toggle_language_msg', {
+    region: t(`region.${region}`, {}, { locale: language }),
+    language: t(`languages.${language}`, {}, { locale: language }),
+  }, { locale: language })
+  const message = ElMessage({
+    customClass: 'custom-message-container',
+    duration: 0,
+    offset: 20,
+    type: 'info',
+    message: h('div', { class: 'content-box language' }, [
+      h('span', { class: 'msg' }, msgTxt),
+      h('button', {
+        class: 'confirm btn',
+        type: 'button',
+        onClick: () => {
+          store.dispatch('SET_GLOBAL_SETTINGS', { language })
+          message.close()
         },
-        { locale: language },
-      )
-
-      const msgInstance = ElMessage({
-        customClass: 'custom-message-container',
-        duration: 0,
-        offset: 20,
-        type: 'info',
-        message: `<div class="content-box language">
-                    <span class="msg">${msgTxt}</span>
-                    <span class="btn-box">
-                      <span class="confirm btn">${confirmTxt}</span>
-                    </span>
-                  </div>`,
-        dangerouslyUseHTMLString: true,
-        showClose: true,
-        onClose() {
-          store.dispatch('SET_GLOBAL_SETTINGS', {
-            languageToggleTip: false,
-          })
-        },
-      })
-
-      document
-        .querySelector('.custom-message-container .language .confirm')
-        ?.addEventListener('click', () => {
-          setLanguage(language)
-          store.dispatch('SET_USER_SETTINGS', {
-            language,
-          })
-          store.dispatch('SET_GLOBAL_SETTINGS', {
-            language,
-          })
-          msgInstance.close()
-        })
-    }
+      }, t('confirm', {}, { locale: language })),
+    ]),
+    showClose: true,
+    onClose: () => store.dispatch('SET_GLOBAL_SETTINGS', { languageToggleTip: false }),
   })
 }
 
-const initSetLanguage = () => {
-  // 初始化设置
-  setLanguage(globalSettings.language)
-
-  // 根据 IP 自动设置
-  setLanguageByIP()
-}
-
-const init = () => {
-  elementPlusSizeHandle(window.innerWidth)
-  window.addEventListener(
-    'resize',
-    throttle((e: any) => {
-      elementPlusSizeHandle(e.target.innerWidth)
-    }, 600),
-  )
-
-  setThemeMode()
-  initSetLanguage()
-  initGithubAuthorize()
-}
-
-watch(
-  () => globalSettings.language,
-  (language: LanguageEnum) => {
-    setLanguage(language)
-  },
-)
-
+watch(() => globalSettings.value.language, setLanguage, { immediate: true })
 onMounted(() => {
-  init()
+  onResize()
+  window.addEventListener('resize', onResize)
+  setLanguage(globalSettings.value.language)
+  setLanguageByIP()
+  initGithubAuthorize()
 })
+onUnmounted(() => window.removeEventListener('resize', onResize))
 </script>
 
 <template>
-  <ElConfigProvider :size="elementPlusSize" :z-index="3000" :locale="elementPlusLocale">
+  <ElConfigProvider :size="globalSettings.elementPlusSize" :z-index="3000" :locale="elementPlusLocale">
     <MainContainer />
+    <CopyFallbackDialog />
   </ElConfigProvider>
 </template>

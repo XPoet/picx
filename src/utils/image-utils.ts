@@ -1,3 +1,4 @@
+import type { RepositoryContent } from '@/common/api/dir'
 import type { UploadedImageModel, UploadImageModel, UserConfigInfoModel } from '@/common/model'
 import { createCommit, createRef, createTree, deleteSingleImage, getBranchInfo } from '@/common/api'
 import { DeleteStatusEnum } from '@/common/model'
@@ -58,7 +59,7 @@ export const createUploadImageObject = (): UploadImageModel => {
  * @param type 文件类型，默认图片
  */
 export const createManagementImageObject = (
-  item: any,
+  item: Pick<RepositoryContent, 'name' | 'sha' | 'path' | 'size'>,
   selectedDir: string,
   type: 'image' | 'video' = 'image',
 ): UploadedImageModel => {

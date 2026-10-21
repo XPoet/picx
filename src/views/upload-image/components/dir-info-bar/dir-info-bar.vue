@@ -9,7 +9,7 @@ const userConfigInfo = computed(() => store.getters.getUserConfigInfo)
 const globalSettings = computed(() => store.getters.getGlobalSettings)
 
 const goConfigPage = () => {
-  router.push('/config')
+  router.push({ path: '/upload', query: { directory: '1' } })
 }
 </script>
 

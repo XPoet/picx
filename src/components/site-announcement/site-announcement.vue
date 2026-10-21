@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { store } from '@/stores'
 
 const dialogVisible = ref(false)
@@ -32,20 +33,19 @@ onMounted(() => {
     :class="{
       dot: userSettings.showAnnouncement,
     }"
+    :aria-label="$t('header.announcement.text_1')"
+    :title="$t('header.announcement.text_1')"
     circle
     text
     @click="dialogVisible = true"
   >
-    <el-icon :size="22">
-      <IEpBell />
-    </el-icon>
+    <PicxIcon name="bell" />
   </el-button>
   <el-dialog
     v-model="dialogVisible"
     :title="$t('header.announcement.text_1')"
-    width="500"
-    :modal="false"
-    draggable
+    width="min(500px, calc(100vw - 32px))"
+    append-to-body
     @close="onClose"
   >
     <div class="announcement-item">
@@ -53,6 +53,7 @@ onMounted(() => {
         type="primary"
         target="_blank"
         href="https://picx.xpoet.cn"
+        rel="noopener noreferrer"
       >
         {{ $t('header.announcement.text_2') }}
       </el-link>

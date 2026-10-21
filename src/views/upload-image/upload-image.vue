@@ -1,254 +1,113 @@
-<script lang="ts" setup>
-import type { Ref } from 'vue'
-import type { UploadedImageModel, UploadImageModel } from '@/common/model'
-import { computed, getCurrentInstance, onMounted, ref, watch } from 'vue'
-import { ElementPlusSizeEnum, UploadStatusEnum } from '@/common/model'
+<script setup lang="ts">
+import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import GettingImages from '@/components/getting-images/getting-images.vue'
+import PicxIcon from '@/components/picx-icon/picx-icon.vue'
+import RepositoryContextBar from '@/components/repository-context-bar/repository-context-bar.vue'
+import { useGithubConnection } from '@/composables/use-github-connection'
+import { useUploadWorkspace } from '@/composables/use-upload-workspace'
 import router from '@/router'
-import { store } from '@/stores'
-import { batchCopyImageLinks, copyImageLink, getOSName } from '@/utils'
-import { uploadImagesToGitHub, uploadImageToGitHub } from '@/utils/upload-utils'
-import SelectedInfoBar from '@/views/upload-image/components/dir-info-bar/dir-info-bar.vue'
+import { pinia } from '@/stores'
+import { usePicxStore } from '@/stores/picx-store'
+import { displayDirectory } from '@/utils/directory-utils'
+import { copyImageLink } from '@/utils/image-link-utils'
+import { connectionLocation } from '@/utils/login-navigation'
+import { getOSName } from '@/utils/system'
+import UploadDirectoryDialog from './components/upload-directory-dialog.vue'
 import UploadImageCard from './components/upload-image-card/upload-image-card.vue'
-import { generateUploadImageObject } from './upload-image.util'
+import UploadSettingsPanel from './components/upload-settings-panel.vue'
 
-const instance = getCurrentInstance()
-
-const gettingImagesRef: Ref = ref<null | HTMLElement>(null)
-
-const userConfigInfo = computed(() => store.getters.getUserConfigInfo).value
-const globalSettings = computed(() => store.getters.getGlobalSettings).value
-const logoutStatus = computed(() => store.getters.getUserLoginStatus)
-
-const uploadImageList = ref<UploadImageModel[]>([])
-const uploading = ref(false)
-const shortcutKey = computed(() => (getOSName() === 'mac' ? '⌘' : 'Ctrl'))
-
-const isCanDeploy = ref(false)
-
-const setImgList = (imgList: any[]) => {
-  imgList.forEach((v) => {
-    store.dispatch('UPLOAD_IMG_LIST_ADD', generateUploadImageObject(v))
-  })
+const { t } = useI18n()
+const store = usePicxStore(pinia)
+const { connection, restore } = useGithubConnection()
+const directoryVisible = ref(false)
+const receiving = ref(false)
+const gettingImages = useTemplateRef<InstanceType<typeof GettingImages>>('gettingImages')
+const { queue, settings, runtime, processing, pending, pendingBytes, successes, connected, uploading, online, actionError, canUpload, addFiles, remove, reset, upload, copyAll, setCompress, setWatermark, setFormat, retryProcessing, updateName } = useUploadWorkspace(undefined, { shortcutBlocked: () => directoryVisible.value, inputBusy: () => receiving.value, onReset: () => gettingImages.value?.reset() })
+const userConfig = computed(() => store.getUserConfigInfo)
+const repository = computed(() => {
+  const { owner, repo, branch } = userConfig.value
+  return owner && repo && branch ? { owner, repo, branch } : null
+})
+const uploadPath = computed(() => userConfig.value.selectedDir ? displayDirectory(userConfig.value.selectedDir) : t('upload_directory.incomplete'))
+const shortcut = computed(() => getOSName() === 'mac' ? '⌘' : 'Ctrl')
+let directoryTrigger: HTMLElement | null = null
+function openDirectory() {
+  if (uploading.value)
+    return
+  directoryTrigger = document.activeElement instanceof HTMLElement ? document.activeElement : null
+  directoryVisible.value = true
 }
-
-// 重置选择图片的公共组件
-const resetGettingImages = () => {
-  gettingImagesRef.value?.reset()
+async function returnDirectoryFocus() {
+  await nextTick()
+  if (directoryTrigger?.isConnected)
+    directoryTrigger.focus({ preventScroll: true })
 }
-
-// 上传图片的具体操作
-
-const doUploadImages = async (imgList: UploadImageModel[]) => {
-  // 单张图片
-  if (imgList.length === 1) {
-    if (await uploadImageToGitHub(userConfigInfo, imgList[0])) {
-      return UploadStatusEnum.uploaded
-    }
-    return UploadStatusEnum.uploadFail
-  }
-
-  // 多张图片
-  if (imgList.length > 1) {
-    if (await uploadImagesToGitHub(userConfigInfo, imgList)) {
-      return UploadStatusEnum.allUploaded
-    }
-    return UploadStatusEnum.uploadFail
-  }
+function copyItem(uuid: string) {
+  const result = successes.value.find(result => result.uuid === uuid)
+  if (result)
+    void copyImageLink(result.image, false, result.target)
 }
-
-// 上传成功之后的操作
-const afterUploadSuccess = async (uploadedImg: UploadedImageModel[], isBatch: boolean = false) => {
-  resetGettingImages()
-  // 自动复制图片链接到系统剪贴板
-  if (isBatch) {
-    batchCopyImageLinks(uploadedImg, true)
-  }
-  else {
-    copyImageLink(uploadedImg[0], true)
-  }
-  await store.dispatch('SET_USER_CONFIG_INFO', {
-    viewDir: userConfigInfo.selectedDir,
-  })
-}
-
-// 上传
-const uploadImage = async () => {
-  const { token, repo, selectedDir } = userConfigInfo
-
-  if (!token) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message1') })
-    await router.push('/config')
+watch(() => router.currentRoute.value.query.directory, async (flag) => {
+  if (flag !== '1')
+    return
+  if (!repository.value) {
+    await router.replace(connectionLocation('/upload'))
     return
   }
-
-  if (!repo) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message2') })
-    await router.push('/config')
-    return
-  }
-
-  if (!selectedDir) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message3') })
-    await router.push('/config')
-    return
-  }
-
-  const notYetUploadList = uploadImageList.value.filter(x => x.uploadStatus.progress === 0)
-
-  if (notYetUploadList.length === 0) {
-    ElMessage.error({ message: instance?.proxy?.$t('upload_page.message4') })
-    return
-  }
-
-  uploading.value = true
-  const uploadRes: UploadStatusEnum = (await doUploadImages(notYetUploadList)) as UploadStatusEnum
-  uploading.value = false
-  const uploadedImg = notYetUploadList
-    .filter(v => v.uploadStatus.progress === 100)
-    .map((x: UploadImageModel) => x.uploadedImg!)
-
-  switch (uploadRes) {
-    // 单张图片上传成功
-    case UploadStatusEnum.uploaded:
-      ElMessage.success({ message: instance?.proxy?.$t('upload_page.message5') })
-      await afterUploadSuccess(uploadedImg)
-      break
-
-    // 多张图片上传成功
-    case UploadStatusEnum.allUploaded:
-      ElMessage.success({ message: instance?.proxy?.$t('upload_page.message6') })
-      await afterUploadSuccess(uploadedImg, true)
-      break
-
-    // 上传失败（网络错误等原因）
-    case UploadStatusEnum.uploadFail:
-      ElMessage.error({ message: instance?.proxy?.$t('upload_page.message7') })
-  }
-}
-
-// 重置
-const resetUploadInfo = () => {
-  uploading.value = false
-  isCanDeploy.value = false
-  store.dispatch('UPLOAD_IMG_LIST_RESET')
-  resetGettingImages()
-}
-
-// 删除
-const remove = (uuid: string) => {
-  store.dispatch('UPLOAD_IMG_LIST_REMOVE', uuid)
-  gettingImagesRef.value?.remove(uuid)
-}
-
-watch(
-  () => logoutStatus,
-  (_n) => {
-    // 如果退出登录，清空信息
-
-    !_n && resetUploadInfo()
-  },
-)
-
-watch(
-  () => store.state.uploadImageListModule.uploadImageList,
-  (nv) => {
-    uploadImageList.value = nv
-    isCanDeploy.value = uploadImageList.value.some(x => x.uploadStatus.progress === 100)
-  },
-  {
-    immediate: true,
-    deep: true,
-  },
-)
-
-const registerShortcuts = () => {
-  document.addEventListener('keydown', (e) => {
-    const keyCode = e.keyCode || e.which || e.charCode
-    const ctrlKey = e.ctrlKey || e.metaKey
-
-    // 重置操作快捷组合键 Command + A
-    if (ctrlKey && keyCode === 65) {
-      if (uploadImageList.value.length) {
-        resetUploadInfo()
-        e.preventDefault()
-      }
-    }
-
-    // 上传操作快捷组合键 Command + S
-    if (ctrlKey && keyCode === 83) {
-      if (!uploading.value) {
-        uploadImage()
-        e.preventDefault()
-      }
-    }
-  })
-}
-
+  const query = { ...router.currentRoute.value.query }
+  delete query.directory
+  await router.replace({ path: '/upload', query })
+  await nextTick()
+  openDirectory()
+}, { immediate: true })
 onMounted(() => {
-  registerShortcuts()
+  if (repository.value && !userConfig.value.selectedDir && !directoryVisible.value)
+    openDirectory()
+  if (userConfig.value.token && connection.value.phase === 'disconnected')
+    void restore()
 })
 </script>
 
 <template>
+  <RepositoryContextBar :repository="repository" :upload-path="uploadPath" :disabled="uploading" @configure="openDirectory" />
   <div class="upload-page-container">
-    <!-- 左侧 / 上传图片列表 -->
-    <div
-      v-if="uploadImageList.length && globalSettings!.elementPlusSize !== ElementPlusSizeEnum.small"
-      class="upload-page-left page-container"
-    >
-      <div v-for="(item, index) in uploadImageList" :key="index + item.uuid" class="uploaded-item">
-        <UploadImageCard :img-obj="item" @remove="remove($event)" />
+    <div class="upload-page-main">
+      <div v-if="!online" class="workspace-notice" role="alert">
+        <PicxIcon name="info" :size="20" />{{ $t('request_error.offline') }}
       </div>
-    </div>
-
-    <!-- 右侧 / 上传操作 -->
-    <div class="upload-page-right page-container" :class="{ 'has-left': uploadImageList.length }">
-      <!-- 选择图片区域 -->
-      <div class="row-item">
-        <div class="content-box">
-          <getting-images
-            ref="gettingImagesRef"
-            :disabled="uploading"
-            video-enabled
-            @get-img-list="setImgList"
-          />
-        </div>
+      <div v-if="actionError" class="workspace-notice" role="alert">
+        {{ $t(`connection.${actionError}`) }}
       </div>
-
-      <!-- 状态信息区域 -->
-      <div class="row-item">
-        <div class="content-box upload-area-status">
-          <SelectedInfoBar />
-          <span v-if="uploadImageList.length" class="upload-count">
-            {{ $t('uploaded') }}：{{
-              uploadImageList.filter((x) => x.uploadStatus.progress === 100).length
-            }}
-            /
-            {{ uploadImageList.length }}
-          </span>
-        </div>
+      <div v-if="receiving" class="workspace-notice" role="status">
+        {{ $t('upload_workspace.receiving') }}
       </div>
-
-      <!-- 部署 -->
-      <div v-if="userConfigInfo.logined" class="row-item">
-        <div class="content-box">
-          <deploy-status-bar :disabled="!isCanDeploy" />
-        </div>
-      </div>
-
-      <!-- 重置 & 上传   -->
-      <div v-if="uploadImageList.length" class="row-item">
-        <div class="content-box operation-btn">
-          <el-button :disabled="uploading" plain type="warning" @click="resetUploadInfo">
-            {{ $t('reset') }} <span class="shortcut-key">{{ shortcutKey }} A</span>
+      <div class="upload-stage" :class="{ 'has-queue': queue.length, 'has-successes': successes.length }">
+        <section v-if="queue.length" class="upload-page-left" tabindex="0">
+          <div class="queue-heading">
+            <h2>{{ $t('upload_workspace.queue') }}</h2><span>{{ $t('upload_workspace.queue_count', { count: queue.length }) }}</span>
+          </div>
+          <div class="queue-list">
+            <div v-for="item in queue" :key="item.uuid" class="uploaded-item">
+              <UploadImageCard :img-obj="item" :runtime="runtime[item.uuid]" :naming="settings.imageName" :disabled="uploading" @remove="remove" @retry="retryProcessing" @edit-name="updateName" @copy="copyItem" />
+            </div>
+          </div>
+          <el-button class="queue-add" :disabled="uploading" @click="gettingImages?.selectFiles()">
+            <PicxIcon name="plus" :size="18" />{{ $t('upload_workspace.add_more') }}
           </el-button>
-          <el-button :disabled="uploading" plain type="primary" @click="uploadImage">
-            {{ $t('upload') }} <span class="shortcut-key">{{ shortcutKey }} S</span>
-          </el-button>
+        </section>
+        <div class="upload-intake">
+          <GettingImages ref="gettingImages" :disabled="uploading" mode="workspace" video-enabled @get-img-list="addFiles" @receiving="receiving = $event" />
         </div>
       </div>
     </div>
+    <UploadSettingsPanel :settings="settings" :target="repository" :directory="userConfig.selectedDir || '/'" :display-path="uploadPath" :pending-count="pending.length" :pending-bytes="pendingBytes" :uploaded-count="successes.length" :has-items="queue.length > 0 || receiving" :busy="uploading" :processing="processing || receiving" :can-upload="canUpload" :shortcut="shortcut" @compress="setCompress" @watermark="setWatermark" @format="setFormat" @directory="openDirectory" @reset="reset" @upload="upload" @copy-all="copyAll">
+      <template #deployment>
+        <deploy-status-bar v-if="userConfig.logined" compact :disabled="!successes.length || uploading || !online || directoryVisible || !connected" />
+      </template>
+    </UploadSettingsPanel>
   </div>
+  <UploadDirectoryDialog v-model="directoryVisible" @closed="returnDirectoryFocus" />
 </template>
 
 <style lang="stylus">

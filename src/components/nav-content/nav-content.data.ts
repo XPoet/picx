@@ -1,45 +1,7 @@
-import { shallowRef } from 'vue'
-import { getUuid } from '@/utils'
-
-export const navInfoList = shallowRef([
-  {
-    uuid: getUuid(),
-    name: 'nav.config',
-    icon: IEpEdit,
-    isActive: false,
-    path: '/config',
-    isShow: true,
-  },
-  {
-    uuid: getUuid(),
-    name: 'nav.upload',
-    icon: IEpUpload,
-    isActive: false,
-    path: '/upload',
-    isShow: true,
-  },
-  {
-    uuid: getUuid(),
-    name: 'nav.management',
-    icon: IEpPicture,
-    isActive: false,
-    path: '/management',
-    isShow: true,
-  },
-  {
-    uuid: getUuid(),
-    name: 'nav.settings',
-    icon: IEpSetting,
-    isActive: false,
-    path: '/settings',
-    isShow: true,
-  },
-  {
-    uuid: getUuid(),
-    name: 'nav.feedback',
-    icon: IEpChatDotRound,
-    isActive: false,
-    path: '/feedback',
-    isShow: true,
-  },
-])
+export const navInfoList = [
+  { name: 'nav.home', path: '/', to: { path: '/', query: { jump: '0' } } },
+  { name: 'nav.upload', path: '/upload', to: '/upload' },
+  { name: 'nav.management', path: '/management', to: '/management', requiresLogin: true },
+  { name: 'nav.settings', path: '/settings', to: '/settings', requiresLogin: true },
+  // P2 T015 在目录配置迁移完毕后收口此入口。
+] as const

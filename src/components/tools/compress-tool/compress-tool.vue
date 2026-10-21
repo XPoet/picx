@@ -11,7 +11,7 @@ const gettingImagesRef = ref<any>(null)
 const compressConfigBoxRef = ref<any>(null)
 
 const imgList = ref<ImgProcessStateModel[]>([])
-const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.webP)
+const compressEncoder = ref<CompressEncoderEnum>(CompressEncoderEnum.original)
 
 const compressing = ref<boolean>(false)
 const isCompressed = ref<boolean>(false)

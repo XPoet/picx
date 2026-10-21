@@ -1,51 +1,286 @@
 .login-container {
-  display grid
-  grid-gap 20rem
-  grid-template-rows repeat(1, 1fr)
-  grid-template-columns repeat(2, 1fr)
+  max-width 1064px
+  margin 0 auto
+  color var(--picx-color-text)
+  font-size 14px
 
-  .box-item {
+  h1
+  h2
+  p {
+    margin 0
+  }
+
+  .connection-intro {
+    margin 8px 0 32px
+    text-align center
+
+    h1 {
+      font-size 38px
+      line-height 1.5
+    }
+
+    > p {
+      margin-top 12px
+      color var(--picx-color-text-muted)
+      font-size 16px
+      line-height 1.6
+    }
+  }
+
+  .connection-steps {
     display flex
-    flex-direction column
-    width 100%
-    height 100%
-    color var(--text-color-4)
-    background var(--background-color-2)
-    border-radius 12rem
+    flex-wrap wrap
+    align-items center
+    justify-content center
+    gap 24px
+    margin 28px 0 0
+    padding 0
+    list-style none
 
-    .tips-box {
+    li {
       display flex
-      flex-direction column
       align-items center
-      justify-content center
-      padding 10rem
-      font-size 13rem
+      gap 8px
+      color var(--picx-color-text-muted)
 
-      .tip-item {
-        display flex
-        align-items center
-        margin-bottom 8rem
+      + li::before {
+        width 52px
+        height 1px
+        margin-right 16px
+        background var(--picx-color-border)
+        content ''
+      }
 
-        .el-icon {
-          margin-right 4rem
-        }
+      &.active {
+        color var(--picx-color-primary)
 
-        .install-status {
-          margin-right 0
-          margin-left 4rem
-          color var(--el-color-success)
-        }
-
-        &.link {
-          color var(--el-color-primary)
-          font-weight bold
-          cursor pointer
-
-          &:hover {
-            border-bottom 1rem solid var(--el-color-primary)
-          }
+        .step-number {
+          color var(--picx-color-on-primary)
+          background var(--picx-color-primary)
+          border-color var(--picx-color-primary)
         }
       }
+    }
+
+    .step-number {
+      display grid
+      place-items center
+      box-sizing border-box
+      width 28px
+      height 28px
+      background var(--picx-color-surface)
+      border 1px solid var(--picx-color-border)
+      border-radius 50%
+    }
+  }
+
+  .connection-cards {
+    display grid
+    grid-template-columns repeat(2, minmax(0, 1fr))
+    gap 24px
+  }
+
+  .connection-card {
+    display flex
+    flex-direction column
+    box-sizing border-box
+    min-height 446px
+    padding 36px
+    background var(--picx-color-surface)
+    border 1px solid var(--picx-color-border)
+    border-radius 24px
+
+    h2 {
+      margin 20px 0 12px
+      font-size 24px
+      font-weight 600
+      line-height 1.5
+    }
+
+    p {
+      color var(--picx-color-text-muted)
+      line-height 1.6
+    }
+  }
+
+  .card-heading {
+    display flex
+    align-items center
+    justify-content space-between
+    min-height 52px
+  }
+
+  .login-icon {
+    display grid
+    width 52px
+    height 52px
+    place-items center
+    color var(--picx-color-text)
+    background var(--picx-color-primary-soft)
+    border-radius 16px
+  }
+
+  .recommended {
+    padding 6px 12px
+    color var(--picx-color-primary)
+    background var(--picx-color-primary-soft)
+    border-radius 20px
+  }
+
+  .revocation-note {
+    display flex
+    align-items center
+    gap 6px
+    margin-top 16px
+  }
+
+  .token-field {
+    margin-top 20px
+
+    label {
+      display block
+      margin-bottom 8px
+      font-weight 500
+    }
+  }
+
+  .token-input-wrap {
+    display flex
+    align-items center
+    box-sizing border-box
+    min-height 48px
+    padding 0 2px 0 14px
+    border 1px solid var(--picx-color-control-border)
+    border-radius 10px
+
+    &:focus-within {
+      outline 2px solid var(--picx-color-focus)
+      outline-offset 2px
+    }
+
+    &.invalid {
+      border-color var(--picx-color-danger)
+    }
+
+    input {
+      flex 1
+      min-width 0
+      min-height 44px
+      padding 0
+      color var(--picx-color-text)
+      font-size 14px
+      background transparent
+      border 0
+
+      &:focus-visible {
+        outline none
+      }
+    }
+  }
+
+  .login-actions {
+    margin-top auto
+    padding-top 28px
+
+    .el-button {
+      width 100%
+      min-height 48px
+      margin 0
+      white-space normal
+
+      :deep(> span) {
+        gap 8px
+      }
+    }
+  }
+
+  .login-links {
+    display flex
+    flex-wrap wrap
+    align-items center
+    justify-content space-between
+    gap 4px 16px
+    margin-top 12px
+
+    a {
+      display inline-flex
+      align-items center
+      min-height 44px
+      color var(--picx-color-primary)
+      line-height 1.5
+
+      &:hover {
+        text-decoration underline
+      }
+    }
+  }
+
+  .connection-error {
+    margin-top 12px
+    color var(--picx-color-danger) !important
+    line-height 1.6
+  }
+
+  .login-container__account {
+    display flex
+    align-items center
+    justify-content center
+    gap 8px
+    margin-top 20px
+    color var(--picx-color-text)
+    font-size 16px
+    font-weight 500
+    line-height 1.6
+
+    .picx-icon {
+      flex-shrink 0
+    }
+
+    span {
+      min-width 0
+      overflow-wrap anywhere
+    }
+  }
+
+  .connection-progress {
+    margin-top 16px
+    color var(--picx-color-primary)
+    text-align center
+  }
+
+  @media (max-width 767px) {
+    .connection-intro {
+      margin 0 0 24px
+
+      h1 {
+        font-size 30px
+      }
+    }
+
+    .connection-steps {
+      gap 12px
+      justify-content flex-start
+
+      li + li::before {
+        display none
+      }
+    }
+
+    .connection-cards {
+      grid-template-columns minmax(0, 1fr)
+    }
+
+    .connection-card {
+      min-height 0
+      padding 24px
+
+      h2 {
+        font-size 22px
+      }
+    }
+
+    .token-input-wrap input {
+      font-size 16px
     }
   }
 }

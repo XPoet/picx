@@ -7,9 +7,9 @@ import { isNeedCompress } from '@/utils/file-utils'
  * @param file
  * @param encoder
  */
-export const compressImage = async (file: File, encoder: CompressEncoderEnum) => {
+export const compressImage = async (file: File, encoder: CompressEncoderEnum, signal?: AbortSignal) => {
   if (isNeedCompress(file.type)) {
-    return encodeImage(file, encoder)
+    return encodeImage(file, encoder, signal)
   }
 
   return file

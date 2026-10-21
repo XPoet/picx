@@ -1,42 +1,75 @@
 .selector-wrapper {
   display flex
+  flex 1
+  flex-wrap wrap
   align-items center
-  justify-content space-between
-  box-sizing border-box
-  width 100%
-  padding 4rem 12rem
-  border-bottom 1rem solid var(--background-color-3)
+  gap 4px 12px
+  min-width 0
+  padding 4px 8px
+  border-radius 10px
+  font-size 14px
 
+  &.has-selection {
+    background var(--picx-color-primary-soft)
+  }
 
-  .selector-left-box {
-    display flex
+  .select-all {
+    display inline-flex
     align-items center
+    gap 8px
+    min-height 44px
+    cursor pointer
 
-    :deep(.el-checkbox) {
-      font-weight unset
+    input {
+      width 20px
+      height 20px
+      margin 0
+      accent-color var(--picx-color-primary)
     }
 
-    :deep(.el-checkbox__label ) {
-      line-height unset
-    }
-
-    .cancel-select-btn {
-      color var(--el-color-primary-light-3)
-      font-size 13rem
-      cursor pointer
-    }
-
-    div.item {
-      margin-left 8rem
+    span {
+      line-height 1.5
     }
   }
 
+  button {
+    display inline-flex
+    align-items center
+    justify-content center
+    gap 6px
+    min-width 44px
+    min-height 44px
+    padding 8px
+    border 0
+    border-radius 8px
+    background transparent
+    color var(--picx-color-primary)
+    font inherit
+    cursor pointer
 
-  .selector-right-box {
-    .btn-icon {
-      margin-left 10rem
-      font-size 16rem
-      cursor pointer
+    &:hover {
+      background var(--picx-color-surface)
     }
+
+    &:disabled {
+      cursor default
+      opacity 0.6
+    }
+  }
+
+  .el-button {
+    margin-left 0
+
+    :deep(> span) {
+      gap 6px
+    }
+  }
+
+  .batch-delete {
+    color var(--picx-color-danger)
+  }
+
+  @media (max-width 767px) {
+    flex-basis 100%
   }
 }
