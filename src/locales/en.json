@@ -52,6 +52,7 @@
     "upload": "Upload Image",
     "management": "Image Hosting Management",
     "settings": "Image Hosting Settings",
+    "image_processing_platform": "All-in-One Image Platform",
     "toolbox": "Toolbox",
     "feedback": "Feedback",
     "actions": "Quick Actions",
@@ -333,22 +334,11 @@
     "batch_download": "Batch Download",
     "add_watermark": "Add Watermark"
   },
-  "region": {
-    "CN": "Mainland China",
-    "HK": "Hong Kong, China",
-    "MO": "Macau, China",
-    "TW": "Taiwan, China",
-    "SG": "Singapore",
-    "JP": "Japan",
-    "US": "United States",
-    "NL": "Netherlands"
-  },
   "languages": {
     "zh-CN": "Simplified Chinese",
     "zh-TW": "Traditional Chinese",
     "en": "English"
   },
-  "toggle_language_msg": "Detected that your IP belongs to {region}. Do you want to switch to {language}?",
   "authorization": {
     "msg_1": "GitHub OAuth authorization has expired. Please reauthorize.",
     "msg_2": "PicX APP is not installed on GitHub, no operational permissions currently.",
@@ -506,6 +496,7 @@
     "copy_name": "Copy link for {name}",
     "remove_name": "Remove {name}",
     "status_processing": "Processing",
+    "status_compressing": "Compressing",
     "status_ready": "Ready",
     "status_uploading": "Uploading",
     "status_confirming": "Awaiting commit",

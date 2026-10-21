@@ -87,7 +87,7 @@
       }
     }
 
-    span {
+    > span {
       display flex
       align-items center
       justify-content center
@@ -103,6 +103,16 @@
     input:checked + span {
       border-color var(--picx-color-primary)
       background var(--picx-color-primary)
+    }
+
+    .media-select-label {
+      position absolute
+      width 1px
+      height 1px
+      overflow hidden
+      white-space nowrap
+      border 0
+      clip-path inset(50%)
     }
   }
 

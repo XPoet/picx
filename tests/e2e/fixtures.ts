@@ -190,7 +190,6 @@ export const test = base.extend<{ picx: PicxFixture }>({
           window.name = 'picx-ui-fixture-seeded'
           sessionStorage.setItem('PICX_IH_GLOBAL_SETTINGS', JSON.stringify({
             language,
-            languageToggleTip: false,
             theme,
             showAnnouncement: false,
           }))
@@ -220,8 +219,10 @@ export { expect } from '@playwright/test'
 
 export async function openNavigation(page: Page) {
   await expect(page.getByRole('main')).toBeVisible()
-  const toggle = page.locator('button[aria-controls="picx-primary-navigation"]')
-  if (await toggle.isVisible() && await toggle.getAttribute('aria-expanded') === 'false') {
+  const path = new URL(page.url()).hash.split('?')[0]
+  await expect.poll(async () => (await page.locator('#picx-primary-navigation .active').getAttribute('href'))?.split('?')[0]).toBe(path)
+  const toggle = page.locator('.nav-content-container .menu-toggle')
+  if (await toggle.isVisible() && !await page.locator('#picx-primary-navigation').isVisible()) {
     await toggle.click()
   }
 }

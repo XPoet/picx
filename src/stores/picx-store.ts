@@ -30,7 +30,6 @@ import {
   ElementPlusSizeEnum,
   ImageLinkTypeEnum,
   ImageSortEnum,
-  LanguageEnum,
   ThemeModeEnum,
   WatermarkPositionEnum,
 } from '@/common/model'
@@ -58,6 +57,7 @@ import {
 import { directoryDraft, validateDirectoryDraft } from '@/utils/directory-utils'
 import { validateLinkRule } from '@/utils/link-rule-validation'
 import { mergeSettings, projectSettings, readSettingsPayload } from '@/utils/settings-payload'
+import { getBrowserLanguage } from '@/utils/system'
 import { validUploadPreferences } from '@/utils/upload-preferences'
 
 interface PicxState {
@@ -279,8 +279,7 @@ function createGlobalSettings(): GlobalSettingsModel {
     showAnnouncement: true,
     folded: false,
     elementPlusSize: ElementPlusSizeEnum.default,
-    language: LanguageEnum.zhCN,
-    languageToggleTip: true,
+    language: getBrowserLanguage(),
     theme: ThemeModeEnum.system,
   }
   const storedSettings = getSession(SS_GLOBAL_SETTINGS) as Partial<GlobalSettingsModel> | null
@@ -1056,6 +1055,7 @@ export const usePicxStore = defineStore('picx', {
       this.UPLOAD_IMG_LIST_RESET()
       localStorage.clear()
       sessionStorage.clear()
+      this.userSettingsModule.globalSettings.language = getBrowserLanguage()
     },
   },
 })

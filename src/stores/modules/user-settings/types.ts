@@ -15,7 +15,6 @@ export interface GlobalSettingsModel {
   folded: boolean
   elementPlusSize: ElementPlusSizeEnum
   language: LanguageEnum
-  languageToggleTip: boolean
   theme: ThemeModeEnum
   showAnnouncement: boolean
 }

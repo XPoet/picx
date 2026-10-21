@@ -21,7 +21,7 @@ test('全选与半选有明确范围，排序保留选择，筛选清空，复�
   await page.getByRole('checkbox', { name: '选择 coast.png', exact: true }).check()
   await expect(all).toBeChecked({ indeterminate: true })
   await expect(page.getByRole('status')).toContainText('已选 1 / 4 项')
-  await page.getByRole('combobox', { name: '排序', exact: true }).press('Enter')
+  await page.locator('.management-summary').getByRole('combobox').press('Enter')
   await page.getByRole('option', { name: '名称降序', exact: true }).click()
   await expect(page.getByRole('listbox')).toBeHidden()
   await expect(page.getByRole('checkbox', { name: '选择 coast.png', exact: true })).toBeChecked()

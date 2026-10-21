@@ -28,7 +28,7 @@ test('T042 原生 Chrome 200% 页面缩放保持表单、重排与底部操作',
     try {
       await context.route('**/*', route => new URL(route.request().url()).origin === baseURL ? route.continue() : route.abort('blockedbyclient'))
       await context.addInitScript(({ config, settings }) => {
-        sessionStorage.setItem('PICX_IH_GLOBAL_SETTINGS', JSON.stringify({ language: 'en', languageToggleTip: false, theme: 'light', showAnnouncement: false }))
+        sessionStorage.setItem('PICX_IH_GLOBAL_SETTINGS', JSON.stringify({ language: 'en', theme: 'light', showAnnouncement: false }))
         localStorage.setItem('PICX_IH_CONFIG', JSON.stringify(config))
         localStorage.setItem('PICX_IH_SETTINGS', JSON.stringify(settings))
       }, { config: createRepositoryFixture(), settings: createSettingsFixture() })

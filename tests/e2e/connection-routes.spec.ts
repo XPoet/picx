@@ -14,16 +14,16 @@ test('旧 /config 与 /login 进入真实连接页，focus 单次消费且 Token
 
 test('完整配置通过旧链接回上传，保留路径并支持返回', async ({ page, picx }) => {
   await picx.open('/upload', { savedCredential: true, connectionScenario: 'ready' })
-  await expect(page.getByRole('status').filter({ hasText: 'GitHub 已连接' })).toBeVisible()
+  await expect(page.locator('.repository-context .repository-name')).toBeVisible()
   await page.goto('/images-hosting/#/config?auto=1')
   await expect(page).toHaveURL(/#\/upload$/)
-  await expect(page.getByTestId('saved-upload-directory')).toHaveText('/')
+  await expect(page.locator('.repository-directory')).toHaveText('/')
   await expect(page.locator('.config-page-container')).toHaveCount(0)
   await page.goto('/images-hosting/#/config?focus=1')
   await expect(page.getByLabel('GitHub Token', { exact: true })).toBeFocused()
   await page.goBack()
   await expect(page).toHaveURL(/#\/upload$/)
-  await expect(page.getByTestId('saved-upload-directory')).toHaveText('/')
+  await expect(page.locator('.repository-directory')).toHaveText('/')
 })
 
 test('auto 初始化单次消费，刷新不重复创建仓库或 README', async ({ page, picx }) => {
@@ -38,11 +38,11 @@ test('auto 初始化单次消费，刷新不重复创建仓库或 README', async
   })
   await picx.open('/config?auto=1', { partialConfiguration: true, connectionScenario: 'initialize' })
   await expect(page).toHaveURL(/#\/upload$/)
-  await expect(page.getByRole('status').filter({ hasText: 'GitHub 已连接' })).toBeVisible()
+  await expect(page.locator('.repository-context .repository-name')).toBeVisible()
   expect(creates).toBe(1)
   expect(readmes).toBe(1)
   await page.reload()
-  await expect(page.getByRole('status').filter({ hasText: 'GitHub 已连接' })).toBeVisible()
+  await expect(page.locator('.repository-context .repository-name')).toBeVisible()
   expect(creates).toBe(1)
   expect(readmes).toBe(1)
   expect(await page.evaluate(() => location.hash.includes('auto='))).toBe(false)
@@ -51,7 +51,7 @@ test('auto 初始化单次消费，刷新不重复创建仓库或 README', async
 test('旧 auto 入口仅有授权存储时也能验证后进入上传页', async ({ page, picx }) => {
   await picx.open('/config?auto=1', { savedOAuth: true, connectionScenario: 'ready' })
   await expect(page).toHaveURL(/#\/upload$/)
-  await expect(page.getByRole('status').filter({ hasText: 'GitHub 已连接' })).toBeVisible()
+  await expect(page.locator('.repository-context .repository-name')).toBeVisible()
 })
 
 test('已有仓库未选目录从旧入口进入共享弹窗，刷新仍能配置', async ({ page, picx }) => {
@@ -63,9 +63,9 @@ test('已有仓库未选目录从旧入口进入共享弹窗，刷新仍能配�
   await expect(dialog).toBeHidden()
   await page.reload()
   await expect(dialog).toBeVisible()
-  await dialog.getByRole('radio', { name: '根目录', exact: true }).check()
+  await dialog.locator('.directory-modes').getByText('根目录', { exact: true }).click()
   await dialog.getByRole('button', { name: '保存目录', exact: true }).click()
-  await expect(page.getByTestId('saved-upload-directory')).toHaveText('/')
+  await expect(page.locator('.repository-directory')).toHaveText('/')
 })
 
 for (const source of ['outer', 'hash'] as const) {
@@ -111,10 +111,10 @@ test('重连返回白名单目标，配置导航消失且教程地址保留', as
   await page.getByRole('button', { name: '验证并连接', exact: true }).click()
   await expect(page).toHaveURL(/#\/settings$/)
   await openNavigation(page)
-  const navigation = page.getByRole('navigation', { name: '主导航' })
+  const navigation = page.locator('#picx-primary-navigation')
   await expect(navigation.getByRole('link', { name: '图床配置', exact: true })).toHaveCount(0)
   await navigation.getByRole('link', { name: '上传图片', exact: true }).click()
-  await expect(page.getByRole('status').filter({ hasText: 'GitHub 已连接' })).toBeVisible()
+  await expect(page.locator('.repository-context .repository-name')).toBeVisible()
   if (info.project.name === 'desktop-chrome') {
     await page.setViewportSize({ width: 1440, height: 1080 })
     await page.screenshot({ path: 'docs/UI/evidence/p2/t015-connected-upload-1440.png', fullPage: true })

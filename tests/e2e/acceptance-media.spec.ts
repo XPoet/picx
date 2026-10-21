@@ -56,7 +56,7 @@ test('T044 真实 MP4 编码样本可在文件详情解码播放', async ({ page
   }
   await page.locator('.getting-images-container input[type=file]').setInputFiles({ name: 'p6-clip.mp4', mimeType: 'video/mp4', buffer: bytes })
   await expect(page.locator('.uploaded-item')).toHaveCount(1)
-  await page.getByRole('button', { name: '查看 p6-clip.mp4 的详情', exact: true }).click()
+  await page.getByTitle('查看 p6-clip.mp4 的详情', { exact: true }).click()
   const dialog = page.getByRole('dialog', { name: '文件详情', exact: true })
   const video = dialog.locator('video')
   await expect.poll(() => video.evaluate((element: HTMLVideoElement) => [element.videoWidth, element.videoHeight])).toEqual([320, 180])

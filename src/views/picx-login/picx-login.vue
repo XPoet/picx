@@ -1,4 +1,106 @@
+<template>
+  <section class="login-container">
+    <header class="connection-intro">
+      <h1 id="connection-title">
+        {{ $t('connection.title') }}
+      </h1>
+      <p>{{ $t('connection.description') }}</p>
+      <ol class="connection-steps">
+        <li v-for="(step, index) in ['connect', 'configure', 'share']" :key="step" :class="{ active: index === 0 }">
+          <span class="step-number">{{ index + 1 }}</span>
+          {{ $t(`connection.steps.${step}`) }}
+        </li>
+      </ol>
+    </header>
+    <div class="connection-cards">
+      <section class="connection-card">
+        <div class="card-heading">
+          <span class="login-icon"><PicxIcon name="github" :size="28" /></span>
+          <span class="recommended">{{ $t('connection.recommended') }}</span>
+        </div>
+        <h2 id="oauth-title">
+          {{ $t('authorization.text_1') }}
+        </h2>
+        <p>{{ $t('connection.oauth_description') }}</p>
+        <p class="revocation-note">
+          <PicxIcon name="shield-check" :size="16" />{{ $t('connection.revoke') }}
+        </p>
+        <div v-if="activeMethod === 'oauth' && errorKey" class="connection-error" role="alert">
+          {{ $t(errorKey) }}
+        </div>
+        <div class="login-actions">
+          <el-button type="primary" :loading="pending && activeMethod === 'oauth'" :disabled="pending" @click="submitOAuth">
+            <PicxIcon name="github" :size="18" />{{ $t('connection.oauth_continue') }}
+          </el-button>
+          <div class="login-links">
+            <a :href="installURL" target="_blank" rel="noopener noreferrer">{{ $t('authorization.text_11') }}</a>
+            <a href="https://picx-docs.xpoet.cn/usage-guide/config.html#github-oauth-授权登录" target="_blank" rel="noopener noreferrer">{{ $t('connection.oauth_help') }}</a>
+          </div>
+        </div>
+      </section>
+      <form class="connection-card" @submit.prevent="submitToken">
+        <div class="card-heading">
+          <span class="login-icon"><PicxIcon name="key-round" :size="28" /></span>
+        </div>
+        <h2 id="token-title">
+          {{ $t('authorization.text_2') }}
+        </h2>
+        <p id="token-description">
+          {{ $t('connection.token_description') }}
+        </p>
+        <div class="token-field">
+          <label for="connection-token">{{ $t('connection.token_label') }}</label>
+          <div class="token-input-wrap" :class="{ invalid: activeMethod === 'token' && errorKey }">
+            <input
+              id="connection-token"
+              ref="tokenInput"
+              v-model="tokenDraft"
+              :type="tokenVisible ? 'text' : 'password'"
+              :placeholder="$t('config_page.input_token')"
+              autocomplete="off"
+              autocapitalize="none"
+              spellcheck="false"
+              :disabled="pending"
+              @input="tokenRequired = false"
+            >
+            <button type="button" class="picx-icon-button" :title="$t(tokenVisible ? 'connection.hide_token' : 'connection.show_token')" :disabled="pending" @click="tokenVisible = !tokenVisible">
+              <PicxIcon :name="tokenVisible ? 'eye-off' : 'eye'" :size="18" />
+            </button>
+          </div>
+          <p v-if="activeMethod === 'token' && errorKey" id="token-error" class="connection-error" role="alert">
+            {{ $t(errorKey) }}
+          </p>
+        </div>
+        <div class="login-actions">
+          <el-button native-type="submit" :loading="busy && activeMethod === 'token'" :disabled="pending">
+            <PicxIcon name="key-round" :size="18" />{{ $t('connection.token_continue') }}
+          </el-button>
+          <div class="login-links">
+            <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener noreferrer">{{ $t('authorization.text_12') }}</a>
+            <a href="https://picx-docs.xpoet.cn/usage-guide/config.html#填写-github-token-登录" target="_blank" rel="noopener noreferrer">{{ $t('connection.token_help') }}</a>
+          </div>
+        </div>
+      </form>
+    </div>
+    <p v-if="loggedInAccount" class="login-container__account">
+      <PicxIcon name="github" :size="20" />
+      <i18n-t keypath="connection.logged_in_account" tag="span">
+        <template #account>
+          <strong>{{ loggedInAccount }}</strong>
+        </template>
+      </i18n-t>
+    </p>
+    <p v-if="installationReady" class="connection-progress" role="status">
+      {{ $t('connection.installation_ready') }}
+    </p>
+    <p v-if="pending" class="connection-progress" role="status">
+      {{ $t(oauthStarting ? 'connection.redirecting' : progressKey) }}
+    </p>
+  </section>
+</template>
+
 <script setup lang="ts">
+/* eslint vue/block-order: ["error", { order: ["template", "script", "style"] }] */
 import { computed, nextTick, onMounted, ref, useTemplateRef, watch } from 'vue'
 import PicxIcon from '@/components/picx-icon/picx-icon.vue'
 import { useGithubConnection } from '@/composables/use-github-connection'
@@ -114,107 +216,6 @@ watch(() => router.currentRoute.value.fullPath, () => {
   }
 })
 </script>
-
-<template>
-  <section class="login-container">
-    <header class="connection-intro">
-      <h1 id="connection-title">
-        {{ $t('connection.title') }}
-      </h1>
-      <p>{{ $t('connection.description') }}</p>
-      <ol class="connection-steps">
-        <li v-for="(step, index) in ['connect', 'configure', 'share']" :key="step" :class="{ active: index === 0 }">
-          <span class="step-number">{{ index + 1 }}</span>
-          {{ $t(`connection.steps.${step}`) }}
-        </li>
-      </ol>
-    </header>
-    <div class="connection-cards">
-      <section class="connection-card">
-        <div class="card-heading">
-          <span class="login-icon"><PicxIcon name="github" :size="28" /></span>
-          <span class="recommended">{{ $t('connection.recommended') }}</span>
-        </div>
-        <h2 id="oauth-title">
-          {{ $t('authorization.text_1') }}
-        </h2>
-        <p>{{ $t('connection.oauth_description') }}</p>
-        <p class="revocation-note">
-          <PicxIcon name="shield-check" :size="16" />{{ $t('connection.revoke') }}
-        </p>
-        <div v-if="activeMethod === 'oauth' && errorKey" class="connection-error" role="alert">
-          {{ $t(errorKey) }}
-        </div>
-        <div class="login-actions">
-          <el-button type="primary" :loading="pending && activeMethod === 'oauth'" :disabled="pending" @click="submitOAuth">
-            <PicxIcon name="github" :size="18" />{{ $t('connection.oauth_continue') }}
-          </el-button>
-          <div class="login-links">
-            <a :href="installURL" target="_blank" rel="noopener noreferrer">{{ $t('authorization.text_11') }}</a>
-            <a href="https://picx-docs.xpoet.cn/usage-guide/config.html#github-oauth-授权登录" target="_blank" rel="noopener noreferrer">{{ $t('connection.oauth_help') }}</a>
-          </div>
-        </div>
-      </section>
-      <form class="connection-card" @submit.prevent="submitToken">
-        <div class="card-heading">
-          <span class="login-icon"><PicxIcon name="key-round" :size="28" /></span>
-        </div>
-        <h2 id="token-title">
-          {{ $t('authorization.text_2') }}
-        </h2>
-        <p id="token-description">
-          {{ $t('connection.token_description') }}
-        </p>
-        <div class="token-field">
-          <label for="connection-token">{{ $t('connection.token_label') }}</label>
-          <div class="token-input-wrap" :class="{ invalid: activeMethod === 'token' && errorKey }">
-            <input
-              id="connection-token"
-              ref="tokenInput"
-              v-model="tokenDraft"
-              :type="tokenVisible ? 'text' : 'password'"
-              :placeholder="$t('config_page.input_token')"
-              autocomplete="off"
-              autocapitalize="none"
-              spellcheck="false"
-              :disabled="pending"
-              @input="tokenRequired = false"
-            >
-            <button type="button" class="picx-icon-button" :disabled="pending" @click="tokenVisible = !tokenVisible">
-              <PicxIcon :name="tokenVisible ? 'eye-off' : 'eye'" :size="18" />
-            </button>
-          </div>
-          <p v-if="activeMethod === 'token' && errorKey" id="token-error" class="connection-error" role="alert">
-            {{ $t(errorKey) }}
-          </p>
-        </div>
-        <div class="login-actions">
-          <el-button native-type="submit" :loading="busy && activeMethod === 'token'" :disabled="pending">
-            <PicxIcon name="key-round" :size="18" />{{ $t('connection.token_continue') }}
-          </el-button>
-          <div class="login-links">
-            <a href="https://github.com/settings/tokens/new" target="_blank" rel="noopener noreferrer">{{ $t('authorization.text_12') }}</a>
-            <a href="https://picx-docs.xpoet.cn/usage-guide/config.html#填写-github-token-登录" target="_blank" rel="noopener noreferrer">{{ $t('connection.token_help') }}</a>
-          </div>
-        </div>
-      </form>
-    </div>
-    <p v-if="loggedInAccount" class="login-container__account">
-      <PicxIcon name="github" :size="20" />
-      <i18n-t keypath="connection.logged_in_account" tag="span">
-        <template #account>
-          <strong>{{ loggedInAccount }}</strong>
-        </template>
-      </i18n-t>
-    </p>
-    <p v-if="installationReady" class="connection-progress" role="status">
-      {{ $t('connection.installation_ready') }}
-    </p>
-    <p v-if="pending" class="connection-progress" role="status">
-      {{ $t(oauthStarting ? 'connection.redirecting' : progressKey) }}
-    </p>
-  </section>
-</template>
 
 <style scoped lang="stylus">
 @import './picx-login.styl'

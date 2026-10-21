@@ -52,6 +52,7 @@
     "upload": "上傳圖片",
     "management": "圖床管理",
     "settings": "圖床設定",
+    "image_processing_platform": "一站式圖片處理平台",
     "toolbox": "工具箱",
     "feedback": "幫助回饋",
     "actions": "快速操作",
@@ -333,22 +334,11 @@
     "batch_download": "批次下載",
     "add_watermark": "新增浮水印"
   },
-  "region": {
-    "CN": "中國大陸",
-    "HK": "中國香港",
-    "MO": "中國澳門",
-    "TW": "中國台灣",
-    "SG": "新加坡",
-    "JP": "日本",
-    "US": "美國",
-    "NL": "荷蘭"
-  },
   "languages": {
     "zh-CN": "中文簡體",
     "zh-TW": "中文繁體",
     "en": "英文"
   },
-  "toggle_language_msg": "偵測到你的 IP 所屬地為{region}，是否切換{language}？",
   "authorization": {
     "msg_1": "GitHub OAuth 授權登入已過期，請重新授權",
     "msg_2": "未在 GitHub 安裝 PicX APP，暫無操作權限",
@@ -506,6 +496,7 @@
     "copy_name": "複製 {name} 的連結",
     "remove_name": "移除 {name}",
     "status_processing": "正在處理",
+    "status_compressing": "正在壓縮",
     "status_ready": "待上傳",
     "status_uploading": "正在上傳",
     "status_confirming": "等待提交",

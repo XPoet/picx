@@ -1,4 +1,9 @@
 /**
+ * 顶部导航「一站式图片处理平台」的外链地址
+ */
+export const IMAGE_PROCESSING_PLATFORM_URL = 'https://picx.xpoet.cn'
+
+/**
  * 新建目录时最大的目录层级数
  */
 export const NEW_DIR_COUNT_MAX: number = 5
