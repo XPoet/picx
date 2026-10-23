@@ -2,6 +2,12 @@
 
 All notable changes of PicX are documented in this file.
 
+## [3.2.1](https://github.com/XPoet/picx/compare/v3.2.0...v3.2.1) (2026-10-23)
+
+### 🎨 Styles
+
+* **deployment:** improve Pages status and deployment controls ([484da90](https://github.com/XPoet/picx/commit/484da90b14ab3da44115ec923161142eb625b0f7))
+
 ## [3.2.0](https://github.com/XPoet/picx/compare/v3.1.2...v3.2.0) (2026-10-21)
 
 ### ✨ Features
