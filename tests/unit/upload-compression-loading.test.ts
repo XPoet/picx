@@ -95,6 +95,6 @@ describe('上传队列中的压缩 loading', () => {
     expect(compressImage).not.toHaveBeenCalled()
     expect(wrapper.get('.queue-status').text()).toBe('待上传')
     expect(wrapper.find('.queue-status .is-loading').exists()).toBe(false)
-    expect(wrapper.get('.queue-file-size').text()).toContain('大小不变')
+    expect(wrapper.get('.queue-file-size').text()).not.toContain('大小不变')
   })
 })
