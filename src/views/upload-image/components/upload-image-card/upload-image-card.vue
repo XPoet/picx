@@ -19,9 +19,6 @@
           </strong>
           <template v-else>
             <span>{{ formatFileBytes(uploaded ? imgObj.uploadedImg?.size : finalUploadFile(imgObj)?.size) }}</span>
-            <template v-if="phase !== 'processing'">
-              <span>·</span><span>{{ $t('upload_workspace.size_unchanged') }}</span>
-            </template>
           </template>
         </div>
         <span class="queue-status" role="status">
@@ -32,17 +29,17 @@
           <span>{{ $t(statusKey) }}</span>
         </span>
       </div>
-      <div class="queue-actions">
+      <div v-if="uploaded || (phase === 'failed' && !uploadFailure)" class="queue-actions">
         <el-button v-if="uploaded" text native-type="button" :title="$t('upload_workspace.copy_name', { name: imgObj.filename.final })" @click="$emit('copy', imgObj.uuid)">
           <PicxIcon name="copy" :size="18" />
         </el-button>
         <el-button v-if="phase === 'failed' && !uploadFailure" text native-type="button" :disabled="disabled" :title="$t('upload_workspace.retry_processing')" @click="$emit('retry', imgObj.uuid)">
           <PicxIcon name="refresh-cw" :size="18" />
         </el-button>
-        <el-button v-if="!uploaded" class="queue-remove" text native-type="button" :disabled="disabled" :title="$t('upload_workspace.remove_name', { name: imgObj.filename.final })" @click="$emit('remove', imgObj.uuid)">
-          <PicxIcon name="x" :size="16" />
-        </el-button>
       </div>
+      <el-button v-if="!uploaded" class="queue-remove" text native-type="button" :disabled="disabled" :title="$t('upload_workspace.remove_name', { name: imgObj.filename.final })" @click="$emit('remove', imgObj.uuid)">
+        <PicxIcon name="x" :size="16" />
+      </el-button>
     </div>
     <p v-if="phase === 'failed'" class="queue-note" role="alert">
       {{ uploadFailure ? $t(`request_error.${uploadFailure}`) : $t('upload_workspace.processing_failed') }}

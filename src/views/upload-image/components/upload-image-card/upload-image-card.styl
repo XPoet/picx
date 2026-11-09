@@ -1,5 +1,7 @@
 .upload-image-card-container {
+  position relative
   box-sizing border-box
+  width 100%
   min-width 0
   min-height 78px
   padding 8px
@@ -10,7 +12,7 @@
 
   .queue-media-line {
     display grid
-    grid-template-columns 48px minmax(0, 1fr) 28px
+    grid-template-columns 60px minmax(0, 1fr)
     align-items center
     gap 8px
     min-width 0
@@ -19,8 +21,8 @@
   .media-thumbnail {
     position relative
     flex-shrink 0
-    width 48px
-    height 48px
+    width 60px
+    height 60px
     padding 0
     overflow hidden
     background var(--picx-color-surface-muted)
@@ -121,16 +123,47 @@
         background var(--picx-color-primary-soft)
       }
 
-      &.queue-remove:hover {
-        color var(--picx-color-danger)
-        background var(--picx-color-danger-soft)
-      }
-
       &:disabled {
         color var(--picx-color-text-muted)
         cursor not-allowed
       }
     }
+  }
+
+  &.failed .queue-actions {
+    align-self end
+  }
+
+  .queue-remove.el-button {
+    position absolute
+    right 0
+    top 0
+    width 28px
+    height 28px
+    margin 0
+    padding 0
+    color var(--picx-color-text-muted)
+    background var(--picx-color-surface)
+    border-radius 6px
+    opacity 0
+    pointer-events none
+    &:hover {
+      color var(--picx-color-danger)
+      background var(--picx-color-danger-soft)
+    }
+  }
+
+  &:hover .queue-remove
+  &:focus-within .queue-remove {
+    opacity 1
+    pointer-events auto
+  }
+}
+
+@media (hover: none) {
+  .upload-image-card-container .queue-remove.el-button {
+    opacity 1
+    pointer-events auto
   }
 }
 
