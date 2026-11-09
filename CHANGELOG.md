@@ -2,6 +2,16 @@
 
 All notable changes of PicX are documented in this file.
 
+## [3.2.2](https://github.com/XPoet/picx/compare/v3.2.1...v3.2.2) (2026-11-09)
+
+### 💄 UI Improvements
+
+* **upload:** update image list ([82398e5](https://github.com/XPoet/picx/commit/82398e51efcb5edbfce2191a4572974d83dea196))
+
+### 📦 Chores
+
+* update dependency versions ([6676ff9](https://github.com/XPoet/picx/commit/6676ff9b55b41ecc0fec924e8c917361d1962981))
+
 ## [3.2.1](https://github.com/XPoet/picx/compare/v3.2.0...v3.2.1) (2026-10-23)
 
 ### 🎨 Styles
